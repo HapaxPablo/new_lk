@@ -1,0 +1,12 @@
+.header {
+	display: flex;
+	flex-direction: row;
+	height: 32px;
+	background-color: var(--main-color);
+	align-items: center;
+
+	&__logo {
+		max-width: 110px;
+		max-height: 24px;
+	}
+}

@@ -1,0 +1,32 @@
+@import 'tailwindcss';
+
+:root {
+	--main-color: oklch(0.6546 0.1801 23.49);
+	--background: oklch(0.9755 0.0045 258.32);
+	--main-text-color: oklch(0.345 0.0778 258.12);
+	--second-text-color: oklch(0.5675 0.0454 250.85);
+}
+
+body {
+	color: var(--main-text-color);
+	background-color: var(--background);
+	font-family: 'Montserrat', sans-serif;
+	display: block;
+	box-sizing: border-box;
+	overflow: hidden;
+	font-weight: 500;
+	height: 100vh;
+}
+
+.layout {
+	display: flex;
+	flex-direction: column;
+	padding: 4px;
+	width: 100vw;
+	height: 100%;
+}
+.content {
+	flex: 1;
+	padding: 8px;
+	overflow-y: auto;
+}
