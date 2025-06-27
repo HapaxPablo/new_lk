@@ -49,7 +49,7 @@ deploy_test:
     - $SSH_CMD "docker container rm -f new-lk || true"
 
     # 4. Запуск нового контейнера
-    - $SSH_CMD "docker run --restart unless-stopped -d -p 80:80 --name new-lk $DOCKER_IMAGE_NAME"
+    - $SSH_CMD "docker run --restart unless-stopped -d -p 3000:3000 --name new-lk $DOCKER_IMAGE_NAME"
 
   after_script:
     - rm -f /tmp/deploy_key.pem # Очистка ключа
