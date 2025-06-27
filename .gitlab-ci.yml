@@ -30,7 +30,6 @@ deploy_test:
   stage: deploy_test
   only:
     - test
-deploy_test:
   before_script:
     - echo "$ID_RSA" > /tmp/deploy_key.pem
     - chmod 600 /tmp/deploy_key.pem
