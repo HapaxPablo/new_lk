@@ -9,7 +9,7 @@ FROM node:20-alpine AS builder
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
-RUN yarn build
+RUN yarn build && yarn export
 
 # Production image for Next.js
 FROM node:20-alpine AS runner
@@ -26,6 +26,6 @@ CMD ["node", "server.js"]
 
 # (Optional) Nginx stage
 FROM nginx:alpine AS production
-COPY --from=builder /app/dist /usr/share/nginx/html
+COPY --from=builder /app/out /usr/share/nginx/html
 COPY nginx/nginx.conf /etc/nginx/conf.d/default.conf
 EXPOSE 80
