@@ -3,16 +3,26 @@ stages:
   - push_test
   - deploy_test
 
+variables:
+  DOCKER_HOST: 'tcp://docker:2375' # Подключаемся к DinD
+  DOCKER_TLS_CERTDIR: '' # Отключаем TLS (если не нужен)
+  DOCKER_DRIVER: 'overlay2'
+
+services:
+  - docker:dind # Запускаем Docker-in-Docker
+
 build_test:
   image: docker:stable
   stage: build_test
   only:
     - test
   script:
+    - docker info # Проверка подключения к Docker
     - docker system prune -a -f
     - docker build -t registry.krasrm.com/pahapasha11/new-lk .
 
 push_test:
+  image: docker:stable
   stage: push_test
   only:
     - test
