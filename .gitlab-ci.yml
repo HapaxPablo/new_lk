@@ -10,7 +10,7 @@ build_test:
     - test
   script:
     - docker system prune -a -f
-    - docker build -t registry.krasrm.com/software/new-lk-krasrm-com .
+    - docker build -t registry.krasrm.com/pahapasha11/new-lk .
 
 push_test:
   stage: push_test
@@ -18,7 +18,7 @@ push_test:
     - test
   script:
     - docker login registry.krasrm.com -u $DOCKER_USER -p $DOCKER_TOKEN
-    - docker push registry.krasrm.com/software/new-lk-krasrm-com
+    - docker push registry.krasrm.com/pahapasha11/new-lk
 
 deploy_test:
   image: alpine:latest

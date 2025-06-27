@@ -3,7 +3,7 @@ version: '3'
 services:
   newLk:
     build: .
-    image: registry.krasrm.com/software/new-lk-krasrm-com
+    image: registry.krasrm.com/pahapasha11/new-lk
     restart: always
     ports:
       - 8080:80
