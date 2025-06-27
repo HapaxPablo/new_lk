@@ -1,18 +1,18 @@
 version: '3'
 
 services:
-  newLk:
-    build: .
+  frontend:
     image: registry.krasrm.com/pahapasha11/new-lk
     restart: always
-    build: ./frontend
+    build: .
     ports:
       - 3000:3000
 
   nginx:
     build:
-      context: .
+      context: ./nginx
       dockerfile: Dockerfile
+    container_name: gateway
     ports:
       - '80:80'
     depends_on:
