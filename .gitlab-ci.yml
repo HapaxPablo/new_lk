@@ -8,6 +8,7 @@ variables:
   REMOTE_SERVER_IP: $SERVER_IP
   REMOTE_SERVER_USER: $SERVER_USER
   SSH_PRIVATE_KEY: $ID_RSA
+  SSH_CMD: 'ssh -i /tmp/deploy_key.pem -o StrictHostKeyChecking=no $SERVER_USER@$REMOTE_SERVER_IP'
 
 build_test:
   image: docker:stable
@@ -36,9 +37,19 @@ deploy_test:
   before_script:
     - echo "$ID_RSA" > /tmp/deploy_key.pem
     - chmod 600 /tmp/deploy_key.pem
-  script:
     - apk update && apk add openssh-client
-    - ssh -i /tmp/deploy_key.pem -o StrictHostKeyChecking=no $SERVER_USER@$REMOTE_SERVER_IP "docker login registry.krasrm.com -u $DOCKER_USER -p $DOCKER_TOKEN""docker login registry.krasrm.com -u $DOCKER_USER -p $DOCKER_TOKEN"
-    - ssh -i $ID_RSA -o StrictHostKeyChecking=no $SERVER_USER@$REMOTE_SERVER_IP "docker pull $DOCKER_IMAGE_NAME"
-    - ssh -i $ID_RSA -o StrictHostKeyChecking=no $SERVER_USER@$REMOTE_SERVER_IP "docker container rm -f new-lk || true"
-    - ssh -i $ID_RSA -o StrictHostKeyChecking=no $SERVER_USER@$REMOTE_SERVER_IP "docker run --restart unless-stopped -d -p 8080:80 --name new-lk $DOCKER_IMAGE_NAME"
+  script:
+    # 1. Docker login
+    - $SSH_CMD "echo $DOCKER_TOKEN | docker login registry.krasrm.com -u $DOCKER_USER --password-stdin"
+
+    # 2. Pull образа
+    - $SSH_CMD "docker pull $DOCKER_IMAGE_NAME"
+
+    # 3. Остановка и удаление старого контейнера
+    - $SSH_CMD "docker container rm -f new-lk || true"
+
+    # 4. Запуск нового контейнера
+    - $SSH_CMD "docker run --restart unless-stopped -d -p 8080:80 --name new-lk $DOCKER_IMAGE_NAME"
+
+  after_script:
+    - rm -f /tmp/deploy_key.pem # Очистка ключа
