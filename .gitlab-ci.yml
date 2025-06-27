@@ -3,6 +3,9 @@ stages:
   - push_test
   - deploy_test
 
+variables:
+  DOCKER_HOST: 'unix:///var/run/docker.sock'
+
 build_test:
   image: docker:stable
   stage: build_test
