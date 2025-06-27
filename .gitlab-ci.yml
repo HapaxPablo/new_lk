@@ -30,10 +30,13 @@ deploy_test:
   stage: deploy_test
   only:
     - test
+deploy_test:
+  before_script:
+    - echo "$ID_RSA" > /tmp/deploy_key.pem
+    - chmod 600 /tmp/deploy_key.pem
   script:
-    - chmod 600 $ID_RSA
     - apk update && apk add openssh-client
-    - ssh -i $ID_RSA -o StrictHostKeyChecking=no $SERVER_USER@$REMOTE_SERVER_IP "docker login registry.krasrm.com -u $DOCKER_USER -p $DOCKER_TOKEN"
+    - ssh -i /tmp/deploy_key.pem -o StrictHostKeyChecking=no $SERVER_USER@$REMOTE_SERVER_IP "docker login registry.krasrm.com -u $DOCKER_USER -p $DOCKER_TOKEN""docker login registry.krasrm.com -u $DOCKER_USER -p $DOCKER_TOKEN"
     - ssh -i $ID_RSA -o StrictHostKeyChecking=no $SERVER_USER@$REMOTE_SERVER_IP "docker pull $DOCKER_IMAGE_NAME"
     - ssh -i $ID_RSA -o StrictHostKeyChecking=no $SERVER_USER@$REMOTE_SERVER_IP "docker container rm -f new-lk-krasrm-com || true"
     - ssh -i $ID_RSA -o StrictHostKeyChecking=no $SERVER_USER@$REMOTE_SERVER_IP "docker run --restart unless-stopped -d -p 8080:80 --name new-lk-krasrm-com $DOCKER_IMAGE_NAME"
