@@ -28,7 +28,7 @@ CMD ["node", "server.js"]
 
 # (Optional) Nginx stage
 FROM nginx:alpine AS production
-COPY --from=builder /app/out /usr/share/nginx/html
+COPY --from=builder /usr/share/nginx/html
 COPY nginx/nginx.conf /etc/nginx/conf.d/default.conf
 EXPOSE 80
 
