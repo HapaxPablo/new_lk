@@ -9,7 +9,7 @@ FROM node:20-alpine AS builder
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
-RUN yarn build && yarn export
+RUN yarn build
 
 # Статический экспорт лежит в /app/out
 

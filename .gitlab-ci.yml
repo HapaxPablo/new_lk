@@ -18,7 +18,7 @@ build_test:
   script:
     - docker info # Проверка подключения к Docker
     - docker system prune -a -f
-    - docker build -t registry.krasrm.com/pahapasha11/new-lk .
+    - docker build -f nginx/Dockerfile -t registry.krasrm.com/pahapasha11/new-lk .
 
 push_test:
   image: docker:stable
