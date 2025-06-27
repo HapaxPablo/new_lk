@@ -1,9 +1,17 @@
 version: '3'
 
 services:
-  newLk:
-    build: .
-    image: registry.krasrm.com/pahapasha11/new-lk
-    restart: always
+  nextjs:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    # Не запускаем, только билдим для экспорта
+
+  nginx:
+    build:
+      context: .
+      dockerfile: nginx/Dockerfile
     ports:
-      - 80:80
+      - '80:80'
+    depends_on:
+      - nextjs
