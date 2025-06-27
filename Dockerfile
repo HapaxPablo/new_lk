@@ -21,3 +21,9 @@ USER nextjs
 EXPOSE 3000
 ENV PORT 3000
 CMD ["node", "server.js"]
+
+FROM nginx:1.22.1
+COPY nginx/nginx.conf /etc/nginx/templates/default.conf.template
+
+COPY --from=build /app/dist/ /usr/share/nginx/html
+
