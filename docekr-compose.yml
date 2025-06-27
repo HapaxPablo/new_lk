@@ -5,6 +5,9 @@ services:
     build: .
     image: registry.krasrm.com/pahapasha11/new-lk
     restart: always
+    build: ./frontend
+    ports:
+      - 3000:3000
 
   nginx:
     build:
@@ -14,4 +17,4 @@ services:
     ports:
       - '80:80'
     depends_on:
-      - nextjs
+      - newLk
