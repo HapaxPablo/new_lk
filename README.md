@@ -1,36 +1,82 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
-## Getting Started
+## Описание структуры
 
-First, run the development server:
+new-lk/
+│
+├── app/ 📁 App Router - основная директория
+│ │
+│ ├── (auth)/ 🔒 Группа маршрутов для аутентификации
+│ │ ├── login/
+│ │ │ └── page.tsx 🖥️ Страница входа
+│ │ └── register/
+│ │ └── page.tsx 🖥️ Страница регистрации
+│ │
+│ ├── (main)/ 🏠 Основная группа маршрутов
+│ │ ├── nomenclatures/
+│ │ │ └── page.tsx 🪪 Номенклатура
+│ │ ├── dashboard/
+│ │ │ └── page.tsx 📊 Дашборд
+│ │ └── settings/
+│ │ └── page.tsx ⚙️ Настройки
+│ │
+│ ├── api/ 🌐 API endpoints
+│ │ └── auth/
+│ │ └── route.ts 🚀 Пример API route
+│ │ └── nomenclatures/
+│ │ └── route.ts    Пример API route
+│ │
+│ ├── layout.tsx 🖼️ Root layout
+│ ├── page.tsx 🏡 Главная страница
+│ └── template.tsx 📜 Шаблон для страниц
+│
+├── components/ 🧩 UI компоненты
+│ ├── ui/ 🔘 Базовые элементы (кнопки, карточки)
+│ ├── layouts/ 🖼️ Компоненты макетов
+│ └── shared/ 🔄 Общие компоненты
+│
+├── lib/ 🧰 Вспомогательные функции
+├── styles/ 🎨 Глобальные стили
+│ ├── globals.css 🌍 Основные стили
+│ └── theme/ 🎨 Тема оформления
+│
+├── types/ 📜 TypeScript типы
+├── hooks/ 🎣 Кастомные хуки
+│
+├── middleware.ts 🔐 Middleware
+├── next.config.js ⚙️ Конфиг Next.js
+├── package.json 📦 Зависимости
+│
+├── public/ 📁 Статические файлы
+│ ├── images/ 🖼️ Изображения
+│ └── favicon.ico � Иконка сайта
+│
+└── tsconfig.json 🛠️ Конфиг TypeScript
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### Основные директории
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- **`app/`** - Главная директория с роутингом приложения
+  - `(auth)/` - Группа маршрутов для аутентификации
+  - `(main)/` - Основные защищенные маршруты
+  - `api/` - API endpoints
+  - `layout.tsx` - Корневой layout приложения
+  - `page.tsx` - Главная страница
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### Вспомогательные директории
 
-## Learn More
+- **`components/`** - Переиспользуемые UI компоненты
+  - `ui/` - Базовые элементы интерфейса
+  - `layouts/` - Компоненты макетов
+  - `shared/` - Общие компоненты
 
-To learn more about Next.js, take a look at the following resources:
+- **`lib/`** - Вспомогательные функции и утилиты
+- **`styles/`** - Глобальные стили и темы
+- **`types/`** - TypeScript типы
+- **`hooks/`** - Кастомные React хуки
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### Конфигурационные файлы
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- `middleware.ts` - Middleware для обработки маршрутов
+- `next.config.js` - Конфигурация Next.js
+- `tsconfig.json` - Настройки TypeScript
+- `package.json` - Зависимости проекта
