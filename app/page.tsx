@@ -13,6 +13,7 @@ export default function Home() {
       <div className="p-2 flex flex-col gap-2">
         <input className="input" />
         <select className="select" />
+        <textarea className="textarea" />
       </div>
     </div>
   )
