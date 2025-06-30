@@ -8,17 +8,20 @@ import {
   useEffect,
 } from 'react'
 import { useRouter, usePathname } from 'next/navigation'
-import { encryptData } from '@/lib/crypto'
 
-type User = {
-  id: string
-  name: string
-  email: string
-}
+type User =
+  | {
+      id: string
+      name: string
+      email: string
+    }
+  | null
+  | 'guest' // Добавляем явное состояние "гость"
 
 type AuthContextType = {
-  user: User | null
+  user: User
   isLoading: boolean
+  isGuest: boolean
   login: (email: string, password: string) => Promise<void>
   logout: () => Promise<void>
   refreshSession: () => Promise<void>
@@ -27,30 +30,34 @@ type AuthContextType = {
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
-  const [user, setUser] = useState<User | null>(null)
+  const [user, setUser] = useState<User>(null)
   const [isLoading, setIsLoading] = useState(true)
   const router = useRouter()
   const pathname = usePathname()
 
+  // Явно вычисляемое свойство для проверки гостя
+  const isGuest = user === 'guest'
+
   useEffect(() => {
     const initializeAuth = async () => {
       try {
-        const res = await fetch('/api/auth/session', {
-          // cache: 'no-store' // Отключаем кеширование нужно подумать отключать или нет
-        })
+        const res = await fetch('/api/auth/session')
 
         if (!res.ok) {
-          throw new Error('Session check failed')
+          // Если сессии нет - устанавливаем статус гостя
+          setUser('guest')
+          return
         }
 
         const data = await res.json()
-        setUser(data.user)
+        setUser(data.user || 'guest')
       } catch (error) {
         console.error('Auth initialization error:', error)
-        // Перенаправляем на login если не авторизован
-        if (pathname !== '/login') {
-          router.push('/login')
-        }
+        // Устанавливаем статус гостя при ошибке
+        setUser('guest')
+
+        // Не перенаправляем автоматически на login
+        // Оставьте это на усмотрение конкретных страниц
       } finally {
         setIsLoading(false)
       }
@@ -65,22 +72,17 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       const res = await fetch('/api/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          email,
-          password: encryptData(password),
-        }),
+        body: JSON.stringify({ email, password }),
       })
 
-      if (!res.ok) {
-        const error = await res.json()
-        throw new Error(error.message || 'Login failed')
-      }
+      if (!res.ok) throw new Error(await res.text())
 
       const { user } = await res.json()
-      setUser(user)
+      setUser(user || 'guest')
       router.push('/nomenclatures')
     } catch (error) {
       console.error('Login error:', error)
+      setUser('guest')
       throw error
     } finally {
       setIsLoading(false)
@@ -90,16 +92,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const logout = async () => {
     setIsLoading(true)
     try {
-      const response = await fetch('/api/auth/logout', {
-        method: 'POST',
-      })
-
-      if (!response.ok) {
-        throw new Error('Logout failed')
-      }
-
-      setUser(null)
-      router.push('/login')
+      await fetch('/api/auth/logout', { method: 'POST' })
+      setUser('guest')
+      router.push('/')
     } catch (error) {
       console.error('Logout error:', error)
       throw error
@@ -111,27 +106,28 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const refreshSession = async () => {
     try {
       const res = await fetch('/api/auth/session')
-      if (!res.ok) {
-        throw new Error('Session refresh failed')
-      }
-      const data = await res.json()
-      setUser(data.user)
+      setUser(res.ok ? (await res.json()).user : 'guest')
     } catch (error) {
       console.error('Refresh session error:', error)
-      // Можно добавить автоматический logout при ошибке:
-      // await logout()
+      setUser('guest')
     }
   }
 
   return (
     <AuthContext.Provider
-      value={{ user, isLoading, login, logout, refreshSession }}
+      value={{
+        user,
+        isLoading,
+        isGuest,
+        login,
+        logout,
+        refreshSession,
+      }}
     >
       {children}
     </AuthContext.Provider>
   )
 }
-
 export const useAuth = () => {
   const context = useContext(AuthContext)
   if (!context) {

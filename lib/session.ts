@@ -14,7 +14,7 @@ declare module 'iron-session' {
 }
 
 const sessionOptions = {
-  password: process.env.SECRET_COOKIE_PASSWORD!,
+  password: 'd07a7d84a8f5b3e9c1f2a6b5c8d3e1f7a2b4c6d8e3f1a5b7c9d2e4f6a8b3c5',
   cookieName: '1c_auth_session',
   cookieOptions: {
     secure: process.env.NODE_ENV === 'production',
