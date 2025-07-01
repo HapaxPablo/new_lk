@@ -4,15 +4,15 @@ const algorithm = 'aes-256-cbc'
 
 // Для клиентской и серверной части
 const key = Buffer.from(
-  process.env.NEXT_PUBLIC_CRYPTO_SECRET_KEY || 
-  process.env.CRYPTO_SECRET_KEY || 
-  '', 'hex'
+  process.env.NEXT_PUBLIC_CRYPTO_SECRET_KEY ||
+    process.env.CRYPTO_SECRET_KEY ||
+    '',
+  'hex'
 )
 
 const iv = Buffer.from(
-  process.env.NEXT_PUBLIC_CRYPTO_IV || 
-  process.env.CRYPTO_IV || 
-  '', 'hex'
+  process.env.NEXT_PUBLIC_CRYPTO_IV || process.env.CRYPTO_IV || '',
+  'hex'
 )
 
 // Проверка только в серверной среде
@@ -41,3 +41,5 @@ export function decryptData(encrypted: string): string {
   decrypted += decipher.final('utf8')
   return decrypted
 }
+
+// можно дописать рандом

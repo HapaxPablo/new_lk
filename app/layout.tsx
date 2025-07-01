@@ -1,9 +1,8 @@
-import '@/styles/global.scss'
 import Footer from '@/componennts/ui/Footer/Footer'
 import Header from '@/componennts/ui/Header/Header'
+import '@/styles/global.scss'
 import type { Metadata } from 'next'
 import localFont from 'next/font/local'
-import { AuthProvider } from '@/providers/auth-provider/auth-provider'
 
 const montserrat = localFont({
   src: [
@@ -48,13 +47,13 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${montserrat.className} antialiased`}>
-        <AuthProvider>
-          <div className="layout">
-            <Header />
-            <main className="content">{children}</main>
-            <Footer />
-          </div>
-        </AuthProvider>
+        {/* <AuthProvider> */}
+        <div className="layout">
+          <Header />
+          <main className="content">{children}</main>
+          <Footer />
+        </div>
+        {/* </AuthProvider> */}
       </body>
     </html>
   )

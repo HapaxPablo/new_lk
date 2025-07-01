@@ -26,15 +26,14 @@
   --border-color-light: oklch(78.339% 0.00784 197.623);
   --border-color-dark: oklch(45.317% 0.00513 197.53);
 
-  --hover-overlay: oklch(0 0 0 / 0.05); 
-  --active-overlay: oklch(0 0 0 / 0.1); 
-  --focus-ring: oklch(0.7 0.25 250); 
+  --hover-overlay: oklch(0 0 0 / 0.05);
+  --active-overlay: oklch(0 0 0 / 0.1);
+  --focus-ring: oklch(0.7 0.25 250);
 
   /* Тени */
   --shadow-sm: 0 1px 2px 0 oklch(0 0 0 / 0.05);
   --shadow-md: 0 4px 6px -1px oklch(0 0 0 / 0.1);
   --shadow-lg: 0 10px 15px -3px oklch(0 0 0 / 0.1);
-
 
   /* Размеры шрифтов (базовые) */
   --text-xs: 0.75rem;
@@ -46,8 +45,6 @@
   --text-3xl: 1.875rem;
   --text-4xl: 2.25rem;
   --text-5xl: 3rem;
-
-
 }
 
 body {
@@ -160,7 +157,7 @@ body {
 /* Базовые стили для интерактивных элементов */
 a,
 button,
-[role="button"],
+[role='button'],
 input,
 textarea,
 select {
@@ -259,11 +256,15 @@ select {
   }
 }
 
-
 /* Утилитарные классы */
 .bg-primary {
   background-color: var(--main-color);
 }
+
+.bg-secondary {
+  background-color: var(--main-text-color);
+  color: white;
+} // перенести в taillwind class кнопки (auth)
 
 .text-primary {
   color: var(--main-text-color);

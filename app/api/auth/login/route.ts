@@ -1,52 +1,53 @@
-import { NextRequest, NextResponse } from 'next/server'
 import { httpClient1C } from '@/lib/api/HttpClient1C'
 import { getRouteSession } from '@/lib/session'
+import { NextRequest, NextResponse } from 'next/server'
 
 export async function POST(req: Request) {
   try {
-    const { email, password} = await req.json()
-   
+    const { email, password } = await req.json()
 
-    // Используем httpClient1C 
+    // Используем httpClient1C
     const { user, xrmcCookie } = await httpClient1C.post<{
-      user: any;
+      user: any
       xrmcCookie: string
     }>('/auth', { email, password })
-    
+
     // Создаем request/response для сессии
     const request = new NextRequest(req.url, {
       headers: req.headers,
-      body: req.body
+      body: req.body,
     })
     const response = new NextResponse()
-    
-    console.log("Response from 1C:", response); // 🔍 Логируем ответ 1С
-   
+
+    console.log('Response from 1C:', response) // 🔍 Логируем ответ 1С
+
     // Устанавливаем сессию
     const session = await getRouteSession(request, response)
     session.user = {
       id: user.id,
       name: user.name,
       email: user.email,
-      xrmcCookie
+      xrmcCookie,
     }
     await session.save()
 
     return new NextResponse(
-      JSON.stringify({ 
+      JSON.stringify({
         user: {
           id: user.id,
           name: user.name,
-          email: user.email
-        }
+          email: user.email,
+        },
       }),
       { headers: response.headers }
     )
-
   } catch (error) {
     console.error('Auth error:', error)
     return NextResponse.json(
-      { message: error instanceof Error ? error.message : 'Authentication failed' },
+      {
+        message:
+          error instanceof Error ? error.message : 'Authentication failed',
+      },
       { status: 401 }
     )
   }

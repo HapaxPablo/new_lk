@@ -5,7 +5,7 @@ const nextConfig: NextConfig = {
     ignoreBuildErrors: true,
   },
   images: {
-    domains: ['test,lk.krasrm.com', 'cdn.example.com'],
+    domains: ['test.lk.krasrm.com', 'cdn.example.com'],
     formats: ['image/avif', 'image/webp'],
   },
   output: 'standalone',

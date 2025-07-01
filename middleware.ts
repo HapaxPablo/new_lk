@@ -98,6 +98,7 @@ export async function middleware(request: NextRequest) {
       request: {
         headers: newHeaders,
       },
+      headers: newHeaders,
     })
   }
 
