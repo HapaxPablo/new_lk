@@ -4,6 +4,19 @@ services:
   frontend:
     image: registry.krasrm.com/pahapasha11/new-lk
     restart: always
-    build: .
+    build:
+      context: .
+      args:
+        - API_1C_URL=${API_1C_URL}
+        - CRYPTO_SECRET_KEY=${CRYPTO_SECRET_KEY}
+        - CRYPTO_IV=${CRYPTO_IV}
+        - IRON_SESSION_PASSWORD=${IRON_SESSION_PASSWORD}
+        - NODE_ENV=${NODE_ENV:-production}
     ports:
       - 3000:3000
+    environment:
+      - API_1C_URL=${API_1C_URL}
+      - CRYPTO_SECRET_KEY=${CRYPTO_SECRET_KEY}
+      - CRYPTO_IV=${CRYPTO_IV}
+      - IRON_SESSION_PASSWORD=${IRON_SESSION_PASSWORD}
+      - NODE_ENV=${NODE_ENV:-production}
