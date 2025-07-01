@@ -1,26 +1,27 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { decryptData } from '@/lib/crypto'
 import { httpClient1C } from '@/lib/api/HttpClient1C'
 import { getRouteSession } from '@/lib/session'
 
 export async function POST(req: Request) {
   try {
-    const { email, password: encrypted } = await req.json()
-    const password = decryptData(encrypted)
+    const { email, password} = await req.json()
+   
 
     // Используем httpClient1C 
     const { user, xrmcCookie } = await httpClient1C.post<{
       user: any;
       xrmcCookie: string
     }>('/auth', { email, password })
-
+    
     // Создаем request/response для сессии
     const request = new NextRequest(req.url, {
       headers: req.headers,
       body: req.body
     })
     const response = new NextResponse()
-
+    
+    console.log("Response from 1C:", response); // 🔍 Логируем ответ 1С
+   
     // Устанавливаем сессию
     const session = await getRouteSession(request, response)
     session.user = {

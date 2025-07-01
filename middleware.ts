@@ -57,7 +57,7 @@ export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl
 
   // Защищенные маршруты
-  const protectedRoutes = ['/dashboard', '/settings']
+  const protectedRoutes = ['/nomenclatures']
   const isProtected = protectedRoutes.some((route) =>
     pathname.startsWith(route)
   )
@@ -75,7 +75,14 @@ export async function middleware(request: NextRequest) {
   }
 
   // Для API запросов к 1С
-  if (pathname.startsWith('/api/1c')) {
+  const api1cUrl = new URL(process.env.API_1C_URL!)
+
+  // Проверяем, что запрос идет к нашему API 1С
+  const is1cApiRequest =
+    request.nextUrl.host === api1cUrl.host &&
+    request.nextUrl.pathname.startsWith(api1cUrl.pathname)
+
+  if (is1cApiRequest) {
     if (!session.user?.xrmcCookie) {
       return NextResponse.json(
         { message: 'Authentication required' },
