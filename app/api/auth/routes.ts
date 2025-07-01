@@ -1,11 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { decryptData } from '@/lib/crypto'
 import { getRouteSession } from '@/lib/session'
 
 export async function POST(request: Request) {
   try {
-    const { email, password: encrypted } = await request.json()
-    const password = decryptData(encrypted)
+    const { email, password} = await request.json()
+    
 
     // Создаем объекты для сессии
     const req = new NextRequest(request.url, { 

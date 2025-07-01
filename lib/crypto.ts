@@ -1,8 +1,32 @@
-import { createCipheriv, createDecipheriv, randomBytes } from 'crypto'
+import { createCipheriv, createDecipheriv } from 'crypto'
 
 const algorithm = 'aes-256-cbc'
-const key = Buffer.from(process.env.CRYPTO_SECRET_KEY!, 'hex')
-const iv = Buffer.from(process.env.CRYPTO_IV!, 'hex')
+
+// Для клиентской и серверной части
+const key = Buffer.from(
+  process.env.NEXT_PUBLIC_CRYPTO_SECRET_KEY || 
+  process.env.CRYPTO_SECRET_KEY || 
+  '', 'hex'
+)
+
+const iv = Buffer.from(
+  process.env.NEXT_PUBLIC_CRYPTO_IV || 
+  process.env.CRYPTO_IV || 
+  '', 'hex'
+)
+
+// Проверка только в серверной среде
+if (typeof window === 'undefined') {
+  if (!key.length || !iv.length) {
+    throw new Error('CRYPTO_SECRET_KEY and CRYPTO_IV must be defined')
+  }
+  if (key.length !== 32) {
+    throw new Error('Invalid CRYPTO_SECRET_KEY length. Must be 32 bytes')
+  }
+  if (iv.length !== 16) {
+    throw new Error('Invalid CRYPTO_IV length. Must be 16 bytes')
+  }
+}
 
 export function encryptData(data: string): string {
   const cipher = createCipheriv(algorithm, key, iv)
@@ -17,5 +41,3 @@ export function decryptData(encrypted: string): string {
   decrypted += decipher.final('utf8')
   return decrypted
 }
-
-// можно дописать рандом
