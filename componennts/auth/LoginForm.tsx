@@ -1,7 +1,8 @@
 'use client'
 
-import { useAuth } from '@/providers/auth-provider/auth-provider'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { useRouter } from 'next/navigation'
+import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { AuthSchema, authSchema } from './schema/auth.schema'
 
@@ -13,7 +14,9 @@ export function LoginForm() {
   } = useForm<AuthSchema>({
     resolver: zodResolver(authSchema),
   })
-  const { login, isLoading } = useAuth()
+  const [isLoading, setIsLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+  const router = useRouter()
 
   const onSubmit = async ({ email, password }: AuthSchema) => {
     try {
