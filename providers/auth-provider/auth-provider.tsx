@@ -70,14 +70,15 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     setIsLoading(true)
     try {
       const res = await fetch(
-        'http://94.73.230.145:8080/rmc_copy_3/hs/MobileApp_New/authorizeUser',
+        'http://192.168.0.2:8080/rmc_copy_3/hs/MobileApp_New/authorizeUser',
         {
-          mode: 'no-cors', //TODO: remove after fix cors
+          // mode: 'no-cors', //TODO: remove after fix cors
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ email, password }),
         }
       )
+
+      console.log('res', await res.json())
 
       if (!res.ok) throw new Error(await res.text())
 

@@ -1,9 +1,9 @@
 'use client'
 
+import { authSchema, AuthSchema } from '@/lib/schems/auth'
 import { useAuth } from '@/providers/auth-provider/auth-provider'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
-import { AuthSchema, authSchema } from './schema/auth.schema'
 
 export function LoginForm() {
   const {
