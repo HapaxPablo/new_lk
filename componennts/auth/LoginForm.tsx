@@ -2,7 +2,7 @@
 
 import { useForm } from 'react-hook-form'
 import { useAuth } from '@/providers/auth-provider/auth-provider'
-import { encryptData } from '@/lib/crypto'
+
 
 type FormData = {
   email: string
@@ -15,7 +15,7 @@ export function LoginForm() {
 
   const onSubmit = async ({ email, password }: FormData) => {
     try {
-      await login(email, encryptData(password))
+      await login(email, password)
     } catch (error) {
       console.error('Login error:', error)
     }
