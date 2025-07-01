@@ -4,6 +4,7 @@ services:
   frontend:
     image: registry.krasrm.com/pahapasha11/new-lk
     restart: always
+    env_file: .env
     build:
       context: .
       args:
