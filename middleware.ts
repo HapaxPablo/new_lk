@@ -82,6 +82,8 @@ export async function middleware(request: NextRequest) {
     request.nextUrl.host === api1cUrl.host &&
     request.nextUrl.pathname.startsWith(api1cUrl.pathname)
 
+  console.log(is1cApiRequest)
+
   if (is1cApiRequest) {
     if (!session.user?.xrmcCookie) {
       return NextResponse.json(
