@@ -1,53 +1,41 @@
-import { NextRequest, NextResponse } from 'next/server'
+import { NextResponse } from 'next/server'
 import { httpClient1C } from '@/lib/api/HttpClient1C'
-import { getRouteSession } from '@/lib/session'
 
-export async function POST(req: Request) {
+
+export async function POST(request: Request) {
   try {
-    const { email, password} = await req.json()
-   
+    const { email, password } = await request.json()
 
-    // Используем httpClient1C 
-    const { user, xrmcCookie } = await httpClient1C.post<{
-      user: any;
-      xrmcCookie: string
-    }>('/auth', { email, password })
-    
-    // Создаем request/response для сессии
-    const request = new NextRequest(req.url, {
-      headers: req.headers,
-      body: req.body
+    // Отправляем запрос к 1С API
+    const response = await fetch(`${process.env.API_1C_URL}/authorizeUser`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Accept: 'application/json',
+      },
+      body: JSON.stringify({ email, password }),
     })
-    const response = new NextResponse()
-    
-    console.log("Response from 1C:", response); // 🔍 Логируем ответ 1С
-   
-    // Устанавливаем сессию
-    const session = await getRouteSession(request, response)
-    session.user = {
-      id: user.id,
-      name: user.name,
-      email: user.email,
-      xrmcCookie
+
+    if (!response.ok) {
+      throw new Error('Authentication failed')
     }
-    await session.save()
 
-    return new NextResponse(
-      JSON.stringify({ 
-        user: {
-          id: user.id,
-          name: user.name,
-          email: user.email
-        }
-      }),
-      { headers: response.headers }
-    )
+    const data = await response.json()
+    
+    // Здесь вы должны получить куки от 1С и сохранить их в сессии
+    const xrmcCookie = response.headers.get('xrmcCookie') || ''
+console.log(data);
 
+    return NextResponse.json({
+      success: true,
+      xrmcCookie,
+      user: data.user,
+    })
   } catch (error) {
-    console.error('Auth error:', error)
     return NextResponse.json(
-      { message: error instanceof Error ? error.message : 'Authentication failed' },
+      { success: false, error: error instanceof Error ? error.message : 'Unknown error' },
       { status: 401 }
     )
   }
 }
+

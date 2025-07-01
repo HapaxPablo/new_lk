@@ -70,10 +70,12 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     setIsLoading(true)
   try {
     const res = await fetch('/api/auth/login', {
+      mode: 'no-cors',
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email, password }),
     })
+console.log('response', res);
 
       if (!res.ok) throw new Error(await res.text())
 
