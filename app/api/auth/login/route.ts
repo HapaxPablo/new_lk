@@ -1,28 +1,36 @@
-import { httpClient1C } from '@/lib/api/HttpClient1C'
 import { getRouteSession } from '@/lib/session'
 import { NextRequest, NextResponse } from 'next/server'
 
-export async function POST(req: Request) {
+export async function POST(request: Request) {
   try {
-    const { email, password } = await req.json()
+    const { email, password } = await request.json()
 
-    // Используем httpClient1C
-    const { user, xrmcCookie } = await httpClient1C.post<{
-      user: any
-      xrmcCookie: string
-    }>('/auth', { email, password })
-
-    // Создаем request/response для сессии
-    const request = new NextRequest(req.url, {
-      headers: req.headers,
-      body: req.body,
+    // Создаем объекты для сессии
+    const req = new NextRequest(request.url, {
+      headers: request.headers,
+      body: request.body,
     })
-    const response = new NextResponse()
+    const res = new NextResponse()
 
-    console.log('Response from 1C:', response) // 🔍 Логируем ответ 1С
+    // Аутентификация в 1С
+    const response1C = await fetch(`${process.env.API_1C_URL}/auth`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password }),
+    })
 
-    // Устанавливаем сессию
-    const session = await getRouteSession(request, response)
+    if (!response1C.ok) {
+      throw new Error('1C authentication failed')
+    }
+
+    const { user, xrmcCookie } = await response1C.json()
+
+    if (!xrmcCookie) {
+      throw new Error('XRMC cookie not received from 1C')
+    }
+
+    // Сохраняем сессию
+    const session = await getRouteSession(req, res)
     session.user = {
       id: user.id,
       name: user.name,
@@ -31,6 +39,7 @@ export async function POST(req: Request) {
     }
     await session.save()
 
+    // Возвращаем ответ с куками
     return new NextResponse(
       JSON.stringify({
         user: {
@@ -39,7 +48,9 @@ export async function POST(req: Request) {
           email: user.email,
         },
       }),
-      { headers: response.headers }
+      {
+        headers: res.headers,
+      }
     )
   } catch (error) {
     console.error('Auth error:', error)

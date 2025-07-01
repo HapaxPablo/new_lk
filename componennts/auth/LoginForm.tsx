@@ -1,9 +1,10 @@
 'use client'
 
-import { useAuth } from '@/providers/auth-provider/auth-provider'
+import { authSchema, AuthSchema } from '@/lib/schems/auth'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { useRouter } from 'next/navigation'
+import { useState } from 'react'
 import { useForm } from 'react-hook-form'
-import { AuthSchema, authSchema } from './schema/auth.schema'
 
 export function LoginForm() {
   const {
@@ -13,13 +14,37 @@ export function LoginForm() {
   } = useForm<AuthSchema>({
     resolver: zodResolver(authSchema),
   })
-  const { login, isLoading } = useAuth()
+  const [isLoading, setIsLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+  const router = useRouter()
 
   const onSubmit = async ({ email, password }: AuthSchema) => {
     try {
-      await login(email, password)
-    } catch (error) {
-      console.error('Login error:', error)
+      setIsLoading(true)
+      setError(null)
+
+      const response = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, password }),
+      })
+
+      const data = await response.json()
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Authentication failed')
+      }
+      console.log('RESPONSE', data)
+
+      // Если успешно, перенаправляем пользователя
+      router.push('/nomenclatures')
+    } catch (err) {
+      console.error('Login error:', err)
+      setError(err instanceof Error ? err.message : 'Unknown error')
+    } finally {
+      setIsLoading(false)
     }
   }
 

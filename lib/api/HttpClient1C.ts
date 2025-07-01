@@ -66,7 +66,7 @@ class HttpClient1C {
         config.body = JSON.stringify(data)
       }
     }
-
+    console.log('Full 1C URL:', `${this.baseUrl}${endpoint}`);
     const response = await fetch(`${this.baseUrl}${endpoint}`, config)
 
     if (!response.ok) {
