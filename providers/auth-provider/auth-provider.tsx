@@ -77,6 +77,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       })
       console.log('response', res)
 
+      console.log('res', await res.json())
+
       if (!res.ok) throw new Error(await res.text())
 
       const { user } = await res.json()

@@ -1,5 +1,6 @@
 import { LoginForm } from '@/componennts/auth/LoginForm'
 import Image from 'next/image'
+import Link from 'next/link'
 
 const page = async () => {
   return (
@@ -19,7 +20,9 @@ const page = async () => {
       <div className="flex justify-center w-full">
         <div className="text-gray-500">
           Еще нет аккаунта?{' '}
-          <span className="text-[var(--main-text-color)]">Регистрация</span>
+          <Link href="/register" className="text-[var(--main-text-color)]!">
+            Регистрация.
+          </Link>
         </div>
       </div>
     </div>
