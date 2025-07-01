@@ -1,0 +1,55 @@
+stages:
+  - build_test
+  - push_test
+  - deploy_test
+
+variables:
+  DOCKER_HOST: 'unix:///var/run/docker.sock'
+  REMOTE_SERVER_IP: $SERVER_IP
+  REMOTE_SERVER_USER: $SERVER_USER
+  SSH_PRIVATE_KEY: $ID_RSA
+  SSH_CMD: 'ssh -i /tmp/deploy_key.pem -o StrictHostKeyChecking=no $SERVER_USER@$REMOTE_SERVER_IP'
+
+build_test:
+  image: docker:stable
+  stage: build_test
+  only:
+    - test
+  script:
+    - docker info # Проверка подключения к Docker
+    - docker system prune -a -f
+    - docker build -t registry.krasrm.com/pahapasha11/new-lk .
+
+push_test:
+  image: docker:stable
+  stage: push_test
+  only:
+    - test
+  script:
+    - docker login registry.krasrm.com -u $DOCKER_USER -p $DOCKER_TOKEN
+    - docker push registry.krasrm.com/pahapasha11/new-lk
+
+deploy_test:
+  image: alpine:latest
+  stage: deploy_test
+  only:
+    - test
+  before_script:
+    - echo "$ID_RSA" > /tmp/deploy_key.pem
+    - chmod 600 /tmp/deploy_key.pem
+    - apk update && apk add openssh-client
+  script:
+    # 1. Docker login
+    - $SSH_CMD "echo $DOCKER_TOKEN | docker login registry.krasrm.com -u $DOCKER_USER --password-stdin"
+
+    # 2. Pull образа
+    - $SSH_CMD "docker pull $DOCKER_IMAGE_NAME"
+
+    # 3. Остановка и удаление старого контейнера
+    - $SSH_CMD "docker container rm -f new-lk || true"
+
+    # 4. Запуск нового контейнера
+    - $SSH_CMD "docker run --restart unless-stopped -d -p 3000:3000 --name new-lk $DOCKER_IMAGE_NAME"
+
+  after_script:
+    - rm -f /tmp/deploy_key.pem # Очистка ключа

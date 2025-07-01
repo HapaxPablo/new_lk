@@ -1,5 +1,5 @@
-
 ## Описание структуры
+
 ```bash
 new-lk/
 │
@@ -48,7 +48,7 @@ new-lk/
 │
 ├── public/ 📁 Статические файлы
 │ ├── images/ 🖼️ Изображения
-│ └── favicon.ico � Иконка сайта
+│ └── favicon.ico 🖼️ Иконка сайта
 │
 └── tsconfig.json 🛠️ Конфиг TypeScript
 ```

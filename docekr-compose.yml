@@ -1,0 +1,21 @@
+version: '3'
+
+services:
+  frontend:
+    image: registry.krasrm.com/pahapasha11/new-lk
+    restart: always
+    env_file: .env
+    build:
+      context: .
+      args:
+        - API_1C_URL=${API_1C_URL}
+        - CRYPTO_SECRET_KEY=${CRYPTO_SECRET_KEY}
+        - CRYPTO_IV=${CRYPTO_IV}
+        - SECRET_COOKIE_PASSWORD=${SECRET_COOKIE_PASSWORD}
+    ports:
+      - 3000:3000
+    environment:
+      - API_1C_URL=${API_1C_URL}
+      - CRYPTO_SECRET_KEY=${CRYPTO_SECRET_KEY}
+      - CRYPTO_IV=${CRYPTO_IV}
+      - SECRET_COOKIE_PASSWORD=${SECRET_COOKIE_PASSWORD}

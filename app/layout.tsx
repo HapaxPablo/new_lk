@@ -1,9 +1,9 @@
-import '@/styles/global.scss'
 import Footer from '@/componennts/ui/Footer/Footer'
 import Header from '@/componennts/ui/Header/Header'
+import { AuthProvider } from '@/providers/auth-provider/auth-provider'
+import '@/styles/global.scss'
 import type { Metadata } from 'next'
 import localFont from 'next/font/local'
-import { AuthProvider } from '@/providers/auth-provider/auth-provider'
 
 const montserrat = localFont({
   src: [

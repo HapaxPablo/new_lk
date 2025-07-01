@@ -1,25 +1,25 @@
 'use client'
 
+import { useAuth } from '@/providers/auth-provider/auth-provider'
+import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
-import { useRouter } from 'next/navigation'
-import { useState } from 'react'
-
-type FormData = {
-  email: string
-  password: string
-}
+import { AuthSchema, authSchema } from './schema/auth.schema'
 
 export function LoginForm() {
-  const { register, handleSubmit, formState: { errors } } = useForm<FormData>()
-  const [isLoading, setIsLoading] = useState(false)
-  const [error, setError] = useState<string | null>(null)
-  const router = useRouter()
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<AuthSchema>({
+    resolver: zodResolver(authSchema),
+  })
+  const { login, isLoading } = useAuth()
 
-  const onSubmit = async ({ email, password }: FormData) => {
+  const onSubmit = async ({ email, password }: AuthSchema) => {
     try {
       setIsLoading(true)
       setError(null)
-      
+
       const response = await fetch('/api/auth/login', {
         method: 'POST',
         headers: {
@@ -33,8 +33,8 @@ export function LoginForm() {
       if (!response.ok) {
         throw new Error(data.error || 'Authentication failed')
       }
-      console.log('RESPONSE', data);
-      
+      console.log('RESPONSE', data)
+
       // Если успешно, перенаправляем пользователя
       router.push('/nomenclatures')
     } catch (err) {
@@ -46,56 +46,45 @@ export function LoginForm() {
   }
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-      <div>
-        <label htmlFor="email" className="block text-sm font-medium text-gray-700">
-          Email
-        </label>
+    <form
+      onSubmit={handleSubmit(onSubmit)}
+      className="w-full flex flex-col gap-[14px]"
+    >
+      <div className="flex text-2xl font-bold text-gray-900 w-full justify-center">
+        Вход
+      </div>
+      <div className="flex flex-col gap-[12px]">
         <input
-          {...register('email', { required: 'Email is required' })}
-          id="email"
+          {...register('email')}
           type="email"
-          autoComplete="email"
           required
-          className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+          placeholder="Почта"
+          className={errors.email ? 'border-red-500!' : ''}
         />
         {errors.email && (
-          <p className="mt-2 text-sm text-red-600">{errors.email.message}</p>
+          <span className="text-red-500">{errors.email.message}</span>
         )}
-      </div>
-
-      <div>
-        <label htmlFor="password" className="block text-sm font-medium text-gray-700">
-          Password
-        </label>
         <input
-          {...register('password', { required: 'Password is required' })}
-          id="password"
+          {...register('password')}
           type="password"
-          autoComplete="current-password"
           required
-          className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+          placeholder="Пароль"
+          className={errors.password ? 'border-red-500!' : ''}
         />
         {errors.password && (
-          <p className="mt-2 text-sm text-red-600">{errors.password.message}</p>
+          <span className="text-red-500">{errors.password.message}</span>
         )}
-      </div>
-
-      {error && (
-        <div className="text-sm text-red-600">
-          {error}
+        <div className="flex justify-end w-full text-gray-500">
+          Забыл пароль
         </div>
-      )}
-
-      <div>
-        <button
-          type="submit"
-          disabled={isLoading}
-          className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed"
-        >
-          {isLoading ? 'Signing in...' : 'Sign in'}
-        </button>
       </div>
+      <button
+        type="submit"
+        disabled={isLoading}
+        className="w-full bg-[var(--main-text-color)]! text-white!"
+      >
+        {isLoading ? 'Загрузка...' : 'Войти'}
+      </button>
     </form>
   )
 }
