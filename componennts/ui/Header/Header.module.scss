@@ -1,25 +1,26 @@
 .header {
-	display: flex;
-	flex-direction: row;
-	height: 32px;
-	background-color: var(--main-color);
-	align-items: center;
+  display: flex;
+  flex-direction: row;
+  height: 52px;
+  background-color: var(--main-color);
+  align-items: center;
 
-	&__logo {
-		object-fit: contain;
-		object-position: left center;
-		height: auto;
-		width: auto;
-	}
+  &__logo {
+    object-fit: contain;
+    object-position: left center;
+    height: auto;
+    width: auto;
+  }
 }
 
 @media screen and (max-width: 900px) {
-	.header {
-		height: 24px;
+  .header {
+    height: 32px;
 
-		&__logo {
-			height: 16px;
-			width: auto;
-		}
-	}
+    &__logo {
+      height: 16px;
+      width: auto;
+      margin-left: 20px; //потом будет иконка бургер меню и в одном диве с логотипом
+    }
+  }
 }

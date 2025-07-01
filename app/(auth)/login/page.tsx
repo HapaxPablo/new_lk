@@ -1,16 +1,26 @@
 import { LoginForm } from '@/componennts/auth/LoginForm'
+import Image from 'next/image'
 
 const page = async () => {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50">
-      <div className="w-full max-w-md p-8 space-y-8 bg-white rounded-lg shadow-md">
-        <div className="text-center">
-          <h2 className="text-2xl font-bold text-gray-900">Вход в систему</h2>
-          <p className="mt-2 text-sm text-gray-600">
-            Введите ваш email и пароль
-          </p>
+    <div className="flex flex-col items-center justify-center mx-[20px]">
+      <div className="flex flex-col w-full gap-[34px]">
+        <div className="flex justify-center w-full">
+          <Image
+            src="/alt-logo.svg"
+            alt="logo"
+            width={120}
+            height={24}
+            priority
+          />
         </div>
         <LoginForm />
+      </div>
+      <div className="flex justify-center w-full">
+        <div className="text-gray-500">
+          Еще нет аккаунта?{' '}
+          <span className="text-[var(--main-text-color)]">Регистрация</span>
+        </div>
       </div>
     </div>
   )
