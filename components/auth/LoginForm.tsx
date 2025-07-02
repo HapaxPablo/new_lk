@@ -3,7 +3,7 @@
 import { authSchema, AuthSchema } from '@/lib/schems/auth'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
-import { useAuth } from '@/providers/auth-provider/auth-provider'
+import { useAuth } from '@/providers/auth-provider/AuthProvider'
 import { useEffect, useState } from 'react'
 import { formatTime } from '@/lib/utils'
 
@@ -16,9 +16,11 @@ export function LoginForm() {
     resolver: zodResolver(authSchema),
   })
 
-  const { login, error: authError, blockTime } = useAuth()
+  const { login, error, blockTime, isAuthenticated } = useAuth()
   const [isLoading, setIsLoading] = useState(false)
   const [countdown, setCountdown] = useState<string | null>(null)
+  console.log('isAuthenticated', isAuthenticated)
+  console.log('error', error)
 
   useEffect(() => {
     if (blockTime) {
@@ -66,8 +68,10 @@ export function LoginForm() {
         {errors.password && (
           <span className="text-red-500">{errors.password.message}</span>
         )}
-        <div className="flex justify-end w-full text-gray-500">
-          Забыл пароль
+        {!isAuthenticated ? countdown : ''}
+        {!isAuthenticated && error ? error : ''}
+        <div className="cursor-pointer flex justify-end w-full text-gray-500">
+          Забыл пароль navigate('./')
         </div>
       </div>
       <button

@@ -1,7 +1,7 @@
 @import 'tailwindcss';
 @theme {
   --color-mint-5: oklch(0.72 0.11 178);
-  --gap-1: 2rem;
+  --gap-1: 1rem;
 }
 :root {
     /* Основная цветовая палитра */
