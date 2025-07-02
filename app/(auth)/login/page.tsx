@@ -26,7 +26,7 @@ const page = () => {
         <div className="flex justify-center w-full">
           <div className="text-gray-500">
             Еще нет аккаунта?{' '}
-            <Link href="/register" className="!text-main-text">
+            <Link href="/registration" className="!text-main-text">
               Регистрация.
             </Link>
           </div>
