@@ -1,65 +1,53 @@
-import { getRouteSession } from '@/lib/session'
-import { NextRequest, NextResponse } from 'next/server'
+import { NextResponse } from 'next/server'
 
 export async function POST(request: Request) {
   try {
     const { email, password } = await request.json()
+    
+    if (!email || !password) {
+      return NextResponse.json(
+        { result: false, message: 'Email и пароль обязательны' },
+        { status: 400 }
+      )
+    }
 
-    // Создаем объекты для сессии
-    const req = new NextRequest(request.url, {
-      headers: request.headers,
-      body: request.body,
-    })
-    const res = new NextResponse()
-
-    // Аутентификация в 1С
-    const response1C = await fetch(`${process.env.API_1C_URL}/auth`, {
+    // Запрос к 1С API
+    const apiUrl = `${process.env.API_1C_URL}/authorizeUser`
+    const response = await fetch(apiUrl, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json',
+      },
       body: JSON.stringify({ email, password }),
     })
 
-    if (!response1C.ok) {
-      throw new Error('1C authentication failed')
+    const data = await response.json()
+
+    if (!response.ok) {
+      return NextResponse.json(
+        { result: false, message: 'Ошибка соединения с сервером 1С' },
+        { status: 500 }
+      )
     }
 
-    const { user, xrmcCookie } = await response1C.json()
-
-    if (!xrmcCookie) {
-      throw new Error('XRMC cookie not received from 1C')
+    // Если авторизация успешна, устанавливаем cookie
+    if (data.result && data.xrmccookie) {
+      const res = NextResponse.json(data)
+      res.cookies.set('xrmccookie', data.xrmccookie, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'strict',
+        path: '/',
+      })
+      return res
     }
 
-    // Сохраняем сессию
-    const session = await getRouteSession(req, res)
-    session.user = {
-      id: user.id,
-      name: user.name,
-      email: user.email,
-      xrmcCookie,
-    }
-    await session.save()
+    return NextResponse.json(data)
 
-    // Возвращаем ответ с куками
-    return new NextResponse(
-      JSON.stringify({
-        user: {
-          id: user.id,
-          name: user.name,
-          email: user.email,
-        },
-      }),
-      {
-        headers: res.headers,
-      }
-    )
   } catch (error) {
-    console.error('Auth error:', error)
     return NextResponse.json(
-      {
-        message:
-          error instanceof Error ? error.message : 'Authentication failed',
-      },
-      { status: 401 }
+      { result: false, message: 'Внутренняя ошибка сервера' },
+      { status: 500 }
     )
   }
 }

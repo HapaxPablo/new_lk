@@ -2,9 +2,10 @@
 
 import { authSchema, AuthSchema } from '@/lib/schems/auth'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useRouter } from 'next/navigation'
-import { useState } from 'react'
 import { useForm } from 'react-hook-form'
+import { useAuth } from '@/providers/auth-provider/auth-provider'
+import { useEffect, useState } from 'react'
+import { formatTime } from '@/lib/utils'
 
 export function LoginForm() {
   const {
@@ -14,49 +15,37 @@ export function LoginForm() {
   } = useForm<AuthSchema>({
     resolver: zodResolver(authSchema),
   })
+
+  const { login, error: authError, blockTime } = useAuth()
   const [isLoading, setIsLoading] = useState(false)
-  const [error, setError] = useState<string | null>(null)
-  const router = useRouter()
+  const [countdown, setCountdown] = useState<string | null>(null)
 
-  const onSubmit = async ({ email, password }: AuthSchema) => {
-    try {
-      setIsLoading(true)
-      setError(null)
-
-      const response = await fetch('/api/auth/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ email, password }),
-      })
-
-      const data = await response.json()
-
-      if (!response.ok) {
-        throw new Error(data.error || 'Authentication failed')
-      }
-      console.log('RESPONSE', data)
-
-      // Если успешно, перенаправляем пользователя
-      router.push('/nomenclatures')
-    } catch (err) {
-      console.error('Login error:', err)
-      setError(err instanceof Error ? err.message : 'Unknown error')
-    } finally {
-      setIsLoading(false)
+  useEffect(() => {
+    if (blockTime) {
+      const interval = setInterval(() => {
+        const now = Math.floor(Date.now() / 1000)
+        if (now >= blockTime) {
+          setCountdown(null)
+          clearInterval(interval)
+        } else {
+          setCountdown(formatTime(blockTime - now))
+        }
+      }, 1000)
+      return () => clearInterval(interval)
     }
-  }
+  }, [blockTime])
 
+  const onSubmit = async (data: AuthSchema) => {
+    setIsLoading(true)
+    await login(data.email, data.password)
+    setIsLoading(false)
+  }
   return (
-    <form
-      onSubmit={handleSubmit(onSubmit)}
-      className="w-full flex flex-col gap-[14px]"
-    >
+    <form onSubmit={handleSubmit(onSubmit)} className="w-full flex flex-col">
       <div className="flex text-2xl font-bold text-gray-900 w-full justify-center">
         Вход
       </div>
-      <div className="flex flex-col gap-[12px]">
+      <div className="flex flex-col gap-2">
         <input
           {...register('email')}
           type="email"
