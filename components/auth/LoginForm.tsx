@@ -1,6 +1,6 @@
 'use client'
 
-import { authSchema, AuthSchema } from '@/lib/schems/auth'
+import { authSchema, AuthSchema } from '@/lib/schemes/auth'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'

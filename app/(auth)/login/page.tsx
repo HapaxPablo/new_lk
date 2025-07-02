@@ -1,4 +1,4 @@
-import { LoginForm } from '@/componennts/auth/LoginForm'
+import { LoginForm } from '@/components/auth/LoginForm'
 import Image from 'next/image'
 import Link from 'next/link'
 
@@ -13,6 +13,7 @@ const page = async () => {
             width={120}
             height={24}
             priority
+            className="w-auto h-auto"
           />
         </div>
         <LoginForm />
