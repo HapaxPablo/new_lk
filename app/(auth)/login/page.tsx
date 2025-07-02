@@ -1,11 +1,15 @@
-'use client'
-
 import { LoginForm } from '@/components/auth/LoginForm'
+import { Metadata } from 'next'
 import Image from 'next/image'
 import Link from 'next/link'
 import styles from './login.module.css'
 
-const page = () => {
+export const metadata: Metadata = {
+  title: 'Вход в аккаунт',
+  description: 'Страница для входа в аккаунт RMC',
+}
+
+const page = async () => {
   return (
     <div className="flex flex-col md:flex-row md:h-full md:gap-1">
       {/* Левая часть — форма */}

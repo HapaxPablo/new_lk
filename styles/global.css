@@ -324,3 +324,30 @@ select {
     color: var(--main-text-color-light);
   }
 }
+
+/* Переопределение основного тоста */
+.Toastify__toast {
+  border-radius: 12px;
+  font-family: 'Inter', sans-serif;
+  font-size: 14px;
+  padding: 16px;
+}
+
+/* Разные цвета для типов */
+.Toastify__toast--success {
+  background: #22c55e;
+  color: white;
+}
+.Toastify__toast.Toastify__toast--error {
+  background-color: #000 !important;
+  color: #fff !important;
+}
+
+.Toastify__toast--info {
+  background: #3b82f6;
+  color: white;
+}
+.Toastify__toast--warning {
+  background: #facc15;
+  color: black;
+}
