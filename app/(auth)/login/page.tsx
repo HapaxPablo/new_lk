@@ -1,8 +1,11 @@
+'use client'
+
 import { LoginForm } from '@/components/auth/LoginForm'
 import Image from 'next/image'
 import Link from 'next/link'
+import styles from './login.module.css'
 
-const page = async () => {
+const page = () => {
   return (
     <div className="flex flex-col md:flex-row md:h-full md:gap-1">
       {/* Левая часть — форма */}
@@ -30,14 +33,8 @@ const page = async () => {
         </div>
       </div>
       {/* Правая часть — изображение */}
-      <div className="relative flex-grow hidden md:flex md:relative">
-        <Image
-          src="/wall.jpg" //TODO: заменить потом на хотелку антона
-          alt="background"
-          fill
-          loading="lazy"
-        />
-      </div>
+
+      <div className={styles.wrapper} />
     </div>
   )
 }
