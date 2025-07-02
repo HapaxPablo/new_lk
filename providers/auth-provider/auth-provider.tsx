@@ -1,141 +1,98 @@
 'use client'
 
-import { usePathname, useRouter } from 'next/navigation'
-import {
-  createContext,
-  ReactNode,
-  useContext,
-  useEffect,
-  useState,
-} from 'react'
-
-type User =
-  | {
-      id: string
-      name: string
-      email: string
-    }
-  | null
-  | 'guest' // Добавляем явное состояние "гость"
+import { createContext, useContext, useState, ReactNode, useEffect } from 'react'
+import { useRouter } from 'next/navigation'
 
 type AuthContextType = {
-  user: User
-  isLoading: boolean
-  isGuest: boolean
-  login: (email: string, password: string) => Promise<void>
-  logout: () => Promise<void>
-  refreshSession: () => Promise<void>
+  isAuthenticated: boolean
+  login: (email: string, password: string) => Promise<LoginResponse>
+  logout: () => void
+  error: string | null
+  blockTime: number | null
+}
+
+type LoginResponse = {
+  success: boolean
+  message?: string
+  blockTime?: number
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
 
-export const AuthProvider = ({ children }: { children: ReactNode }) => {
-  const [user, setUser] = useState<User>(null)
-  const [isLoading, setIsLoading] = useState(true)
+export function AuthProvider({ children }: { children: ReactNode }) {
+  const [isAuthenticated, setIsAuthenticated] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+  const [blockTime, setBlockTime] = useState<number | null>(null)
   const router = useRouter()
-  const pathname = usePathname()
-
-  // Явно вычисляемое свойство для проверки гостя
-  const isGuest = user === 'guest'
 
   useEffect(() => {
-    const initializeAuth = async () => {
-      try {
-        const res = await fetch('/api/auth/session')
-
-        if (!res.ok) {
-          // Если сессии нет - устанавливаем статус гостя
-          setUser('guest')
-          return
-        }
-
-        const data = await res.json()
-        setUser(data.user || 'guest')
-      } catch (error) {
-        console.error('Auth initialization error:', error)
-        // Устанавливаем статус гостя при ошибке
-        setUser('guest')
-
-        // Не перенаправляем автоматически на login
-        // Оставьте это на усмотрение конкретных страниц
-      } finally {
-        setIsLoading(false)
-      }
+    // Проверяем аутентификацию при загрузке (например, по наличию токена в cookies)
+    const checkAuth = async () => {
+      // Здесь добавлю проверку токена
+      // const token = getCookie('xrmccookie')
+      // setIsAuthenticated(!!token)
     }
+    checkAuth()
+  }, [])
 
-    initializeAuth()
-  }, [pathname])
-
-  const login = async (email: string, password: string) => {
-    setIsLoading(true)
+  const login = async (email: string, password: string): Promise<LoginResponse> => {
     try {
-      const res = await fetch('/api/auth/login', {
-        mode: 'no-cors',
+      const response = await fetch('/api/auth/login', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+        },
         body: JSON.stringify({ email, password }),
       })
-      console.log('response', res)
 
-      console.log('res', await res.json())
+      const data = await response.json()
 
-      if (!res.ok) throw new Error(await res.text())
+      if (!response.ok) {
+        throw new Error(data.message || 'Ошибка авторизации')
+      }
 
-      const { user } = await res.json()
-      setUser(user || 'guest')
-      router.push('/nomenclatures')
-    } catch (error) {
-      console.error('Login error:', error)
-      setUser('guest')
-      throw error
-    } finally {
-      setIsLoading(false)
+      if (data.result) {
+        setIsAuthenticated(true)
+        setError(null)
+        setBlockTime(null)
+        router.push('/nomenclatures')
+        return { success: true }
+      } else {
+        if (data.timeout) {
+          setBlockTime(data.timeout)
+          return { 
+            success: false, 
+            message: `Аккаунт заблокирован до ${new Date(data.timeout * 1000).toLocaleTimeString()}`, 
+            blockTime: data.timeout 
+          }
+        }
+        setError(data.message || 'Ошибка авторизации')
+        return { success: false, message: data.message }
+      }
+    } catch (err) {
+      const message = err instanceof Error ? err.message : 'Неизвестная ошибка'
+      setError(message)
+      return { success: false, message }
     }
   }
 
-  const logout = async () => {
-    setIsLoading(true)
-    try {
-      await fetch('/api/auth/logout', { method: 'POST' })
-      setUser('guest')
-      router.push('/')
-    } catch (error) {
-      console.error('Logout error:', error)
-      throw error
-    } finally {
-      setIsLoading(false)
-    }
-  }
-
-  const refreshSession = async () => {
-    try {
-      const res = await fetch('/api/auth/session')
-      setUser(res.ok ? (await res.json()).user : 'guest')
-    } catch (error) {
-      console.error('Refresh session error:', error)
-      setUser('guest')
-    }
+  const logout = () => {
+    // Здесь добавлю вызов API для выхода
+    setIsAuthenticated(false)
+    router.push('/login')
   }
 
   return (
-    <AuthContext.Provider
-      value={{
-        user,
-        isLoading,
-        isGuest,
-        login,
-        logout,
-        refreshSession,
-      }}
-    >
+    <AuthContext.Provider value={{ isAuthenticated, login, logout, error, blockTime }}>
       {children}
     </AuthContext.Provider>
   )
 }
-export const useAuth = () => {
+
+export function useAuth() {
   const context = useContext(AuthContext)
-  if (!context) {
-    throw new Error('useAuth must be used within AuthProvider')
+  if (context === undefined) {
+    throw new Error('useAuth must be used within an AuthProvider')
   }
   return context
 }
