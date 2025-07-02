@@ -1,7 +1,14 @@
 'use client'
 
-import { createContext, useContext, useState, ReactNode, useEffect } from 'react'
+import {
+  createContext,
+  useContext,
+  useState,
+  ReactNode,
+  useEffect,
+} from 'react'
 import { useRouter } from 'next/navigation'
+import { AuthResponse } from '@/types/auth'
 
 type AuthContextType = {
   isAuthenticated: boolean
@@ -15,6 +22,7 @@ type LoginResponse = {
   success: boolean
   message?: string
   blockTime?: number
+  data?: AuthResponse
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
@@ -29,13 +37,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     // Проверяем аутентификацию при загрузке (например, по наличию токена в cookies)
     const checkAuth = async () => {
       // Здесь добавлю проверку токена
-      // const token = getCookie('xrmccookie')
+      // const token = getCookie('xrmcCookie')
       // setIsAuthenticated(!!token)
     }
     checkAuth()
   }, [])
 
-  const login = async (email: string, password: string): Promise<LoginResponse> => {
+  const login = async (
+    email: string,
+    password: string
+  ): Promise<LoginResponse> => {
     try {
       const response = await fetch('/api/auth/login', {
         method: 'POST',
@@ -45,29 +56,41 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         body: JSON.stringify({ email, password }),
       })
 
-      const data = await response.json()
+      const data: AuthResponse = await response.json()
 
       if (!response.ok) {
         throw new Error(data.message || 'Ошибка авторизации')
       }
 
-      if (data.result) {
+      if (data.isAuthorized) {
         setIsAuthenticated(true)
         setError(null)
         setBlockTime(null)
         router.push('/nomenclatures')
-        return { success: true }
+        return {
+          success: true,
+          data,
+        }
+      } else if (!data.isAuthorized && !data.emailIsExit) {
+        router.push('/registration')
+        return { success: false }
       } else {
         if (data.timeout) {
           setBlockTime(data.timeout)
-          return { 
-            success: false, 
-            message: `Аккаунт заблокирован до ${new Date(data.timeout * 1000).toLocaleTimeString()}`, 
-            blockTime: data.timeout 
+          setError(data.message || 'Ошибка авторизации')
+          return {
+            success: false,
+            message: `Аккаунт заблокирован до ${new Date(data.timeout * 1000).toLocaleTimeString()}`,
+            blockTime: data.timeout,
+            data,
           }
         }
         setError(data.message || 'Ошибка авторизации')
-        return { success: false, message: data.message }
+        return {
+          success: false,
+          message: data.message,
+          data,
+        }
       }
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Неизвестная ошибка'
@@ -83,7 +106,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }
 
   return (
-    <AuthContext.Provider value={{ isAuthenticated, login, logout, error, blockTime }}>
+    <AuthContext.Provider
+      value={{ isAuthenticated, login, logout, error, blockTime }}
+    >
       {children}
     </AuthContext.Provider>
   )

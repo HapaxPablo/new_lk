@@ -7,18 +7,18 @@ export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl
 
   // Защищенные маршруты
-  const protectedRoutes = ['/nomenclatures']
-  const isProtected = protectedRoutes.some((route) =>
-    pathname.startsWith(route)
-  )
+  // const protectedRoutes = ['/nomenclatures']
+  // const isProtected = protectedRoutes.some((route) =>
+  //   pathname.startsWith(route)
+  // )
 
   // Маршруты аутентификации
   const authRoutes = ['/login', '/register']
   const isAuthRoute = authRoutes.some((route) => pathname.startsWith(route))
 
-  if (isProtected && !session.user) {
-    return NextResponse.redirect(new URL('/login', request.url))
-  }
+  // if (isProtected && !session.user) {
+  //   return NextResponse.redirect(new URL('/login', request.url))
+  // }
 
   if (isAuthRoute && session.user) {
     return NextResponse.redirect(new URL('/nomenclatures', request.url))

@@ -1,10 +1,9 @@
 'use client'
 
-import { authSchema, AuthSchema } from '@/lib/schemes/auth'
+import { authSchema, AuthSchema } from '@/lib/schems/auth'
 import { formatTime } from '@/lib/utils'
-import { useAuth } from '@/providers/auth-provider/auth-provider'
+import { useAuth } from '@/providers/auth-provider/AuthProvider'
 import { zodResolver } from '@hookform/resolvers/zod'
-import Link from 'next/link'
 import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 
@@ -17,9 +16,11 @@ export function LoginForm() {
     resolver: zodResolver(authSchema),
   })
 
-  const { login, error: authError, blockTime } = useAuth()
+  const { login, error, blockTime, isAuthenticated } = useAuth()
   const [isLoading, setIsLoading] = useState(false)
   const [countdown, setCountdown] = useState<string | null>(null)
+  console.log('isAuthenticated', isAuthenticated)
+  console.log('error', error)
 
   useEffect(() => {
     if (blockTime) {
@@ -67,14 +68,13 @@ export function LoginForm() {
         {errors.password && (
           <span className="text-red-500">{errors.password.message}</span>
         )}
-        <Link
-          href="/"
-          /*переписать редирект на восстановление пароля*/ className="flex justify-end w-full text-main-text!"
-        >
-          Забыл пароль
-        </Link>
+        {!isAuthenticated ? countdown : ''}
+        {!isAuthenticated && error ? error : ''}
+        <div className="cursor-pointer flex justify-end w-full text-gray-500">
+          Забыл пароль navigate('./')
+        </div>
       </div>
-      {authError && <span className="text-red-500">{authError}</span>}
+      {error && <span className="text-red-500">{error}</span>}
       <button
         type="submit"
         disabled={isLoading}

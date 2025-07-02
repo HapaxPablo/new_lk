@@ -1,6 +1,6 @@
 import Footer from '@/components/ui/Footer/Footer'
 import Header from '@/components/ui/Header/Header'
-import { AuthProvider } from '@/providers/auth-provider/auth-provider'
+import { AuthProvider } from '@/providers/auth-provider/AuthProvider'
 import '@/styles/global.css'
 import type { Metadata } from 'next'
 import localFont from 'next/font/local'
