@@ -1,13 +1,15 @@
 'use client'
 
-import { registerSchema, RegisterSchema } from '@/lib/schemes/auth'
-import { zodResolver } from '@hookform/resolvers/zod'
+import {
+  RegisterIndividualSchema,
+  RegisterLegalSchema,
+} from '@/lib/schemes/auth/register.schema'
 import { useMemo, useState } from 'react'
 import { useForm, useWatch } from 'react-hook-form'
 import { ofl } from './opf'
 
 export async function mockRegister(
-  data: RegisterSchema
+  data: any
 ): Promise<{ success: boolean; message?: string }> {
   console.log('data promise:', data)
   return new Promise((resolve) => {
@@ -32,8 +34,8 @@ export default function RegisterForm() {
     handleSubmit,
     control,
     formState: { errors },
-  } = useForm<RegisterSchema>({
-    resolver: zodResolver(registerSchema),
+  } = useForm<RegisterIndividualSchema | RegisterLegalSchema>({
+    // resolver: zodResolver(schema),
     defaultValues: {
       opf: '',
     },
@@ -48,7 +50,7 @@ export default function RegisterForm() {
     )
   }, [selectedType])
 
-  const onSubmit = async (data: RegisterSchema) => {
+  const onSubmit = async (data: any) => {
     console.log('onSubmit data:', data)
     setGeneralError(null)
     try {
@@ -116,20 +118,20 @@ export default function RegisterForm() {
               {...register('name')}
               type="text"
               placeholder="Имя"
-              className={errors.name ? 'border border-red-500!' : ''}
+              // className={errors.name ? 'border border-red-500!' : ''}
             />
-            {errors.name && (
+            {/* {errors.name && (
               <span className="text-red-500">{errors.name.message}</span>
-            )}
+            )} */}
             <input
               {...register('surName')}
               type="text"
               placeholder="Фамилия"
-              className={errors.surName ? 'border border-red-500!' : ''}
+              // className={errors.surName ? 'border border-red-500!' : ''}
             />
-            {errors.surName && (
+            {/* {errors.surName && (
               <span className="text-red-500">{errors.surName.message}</span>
-            )}{' '}
+            )} */}
           </>
         ) : (
           <>
@@ -137,11 +139,11 @@ export default function RegisterForm() {
               {...register('surName')}
               type="text"
               placeholder="Название организации"
-              className={errors.surName ? 'border border-red-500!' : ''}
+              // className={errors.surName ? 'border border-red-500!' : ''}
             />
-            {errors.surName && (
+            {/* {errors.surName && (
               <span className="text-red-500">{errors.surName.message}</span>
-            )}
+            )} */}
           </>
         )}
 
@@ -154,9 +156,9 @@ export default function RegisterForm() {
         {errors.phone && (
           <span className="text-red-500">{errors.phone.message}</span>
         )}
-        {errors.name && (
+        {/* {errors.name && (
           <span className="text-red-500">{errors.name.message}</span>
-        )}
+        )} */}
 
         <input
           {...register('email')}

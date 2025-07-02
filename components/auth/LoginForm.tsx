@@ -1,11 +1,12 @@
 'use client'
 
 import { authSchema, AuthSchema } from '@/lib/schemes/auth'
-import { zodResolver } from '@hookform/resolvers/zod'
-import { useForm } from 'react-hook-form'
-import { useAuth } from '@/providers/auth-provider/auth-provider'
-import { useEffect, useState } from 'react'
 import { formatTime } from '@/lib/utils'
+import { useAuth } from '@/providers/auth-provider/auth-provider'
+import { zodResolver } from '@hookform/resolvers/zod'
+import Link from 'next/link'
+import { useEffect, useState } from 'react'
+import { useForm } from 'react-hook-form'
 
 export function LoginForm() {
   const {
@@ -66,10 +67,11 @@ export function LoginForm() {
         {errors.password && (
           <span className="text-red-500">{errors.password.message}</span>
         )}
-        <div className="flex justify-end w-full text-gray-500">
+        <Link href="/login" className="flex justify-end w-full text-gray-500">
           Забыл пароль
-        </div>
+        </Link>
       </div>
+      {authError && <span className="text-red-500">{authError}</span>}
       <button
         type="submit"
         disabled={isLoading}
