@@ -1,14 +1,15 @@
 'use client'
 
+import { useNotification } from '@/hooks/useNotification'
+import { AuthResponse } from '@/types/auth'
+import { useRouter } from 'next/navigation'
 import {
   createContext,
-  useContext,
-  useState,
   ReactNode,
+  useContext,
   useEffect,
+  useState,
 } from 'react'
-import { useRouter } from 'next/navigation'
-import { AuthResponse } from '@/types/auth'
 
 type AuthContextType = {
   isAuthenticated: boolean
@@ -32,6 +33,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [error, setError] = useState<string | null>(null)
   const [blockTime, setBlockTime] = useState<number | null>(null)
   const router = useRouter()
+
+  const { showNotification } = useNotification()
 
   useEffect(() => {
     // Проверяем аутентификацию при загрузке (например, по наличию токена в cookies)
@@ -72,6 +75,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           data,
         }
       } else if (!data.isAuthorized && !data.emailIsExit) {
+        showNotification(`${data.message}`, 'error')
         router.push('/registration')
         return { success: false }
       } else {
