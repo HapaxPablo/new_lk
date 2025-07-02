@@ -75,7 +75,7 @@ export function LoginForm() {
         {/*TODO: спросить про navigate('./') у Сани и потом решить относительно Link*/}
         <Link
           href={'/'}
-          className="cursor-pointer flex justify-end w-full text-gray-500"
+          className="cursor-pointer flex justify-end w-full !text-gray-500"
         >
           Забыл пароль
         </Link>
