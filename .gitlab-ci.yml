@@ -18,7 +18,7 @@ build_test:
   script:
     - docker info # Проверка подключения к Docker
     - docker system prune -a -f
-    - docker build -t registry.krasrm.com/pahapasha11/new-lk .
+    - docker build --build-arg API_1C_URL=$API_1C_URL CRYPTO_SECRET_KEY=$CRYPTO_SECRET_KEY CRYPTO_IV=$CRYPTO_IV SECRET_COOKIE_PASSWORD=$SECRET_COOKIE_PASSWORD -t registry.krasrm.com/pahapasha11/new-lk .
 
 push_test:
   image: docker:stable
@@ -49,7 +49,7 @@ deploy_test:
     - $SSH_CMD "docker container rm -f new-lk || true"
 
     # 4. Запуск нового контейнера
-    - $SSH_CMD "docker run --restart unless-stopped -d -p 3000:3000 --name new-lk $DOCKER_IMAGE_NAME"
+    - $SSH_CMD "docker run --restart unless-stopped -d -p 3000:3000 --name new-lk -e API_1C_URL=$API_1C_URL CRYPTO_SECRET_KEY=$CRYPTO_SECRET_KEY CRYPTO_IV=$CRYPTO_IV SECRET_COOKIE_PASSWORD=$SECRET_COOKIE_PASSWORD $DOCKER_IMAGE_NAME"
 
   after_script:
     - rm -f /tmp/deploy_key.pem # Очистка ключа
