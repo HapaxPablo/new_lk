@@ -1,6 +1,7 @@
 import Footer from '@/components/ui/Footer/Footer'
 import Header from '@/components/ui/Header/Header'
 import { AuthProvider } from '@/providers/auth-provider/AuthProvider'
+import { NotificationProvider } from '@/providers/notification/NotificationProvider'
 import '@/styles/global.css'
 import type { Metadata } from 'next'
 import localFont from 'next/font/local'
@@ -48,13 +49,15 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${montserrat.className} antialiased`}>
-        <AuthProvider>
-          <div className="layout">
-            <Header />
-            <main className="content">{children}</main>
-            <Footer />
-          </div>
-        </AuthProvider>
+        <NotificationProvider>
+          <AuthProvider>
+            <div className="layout">
+              <Header />
+              <main className="content">{children}</main>
+              <Footer />
+            </div>
+          </AuthProvider>
+        </NotificationProvider>
       </body>
     </html>
   )

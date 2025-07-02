@@ -58,7 +58,7 @@ export default function RegisterForm() {
       if (!result.success) {
         setGeneralError(result.message || 'Ошибка регистрации')
       } else {
-        alert('Регистрация успешна!')
+        alert('ЗАГЛУШКА!!! Регистрация успешна!')
       }
     } catch (error) {
       console.error('Registration error:', error)
