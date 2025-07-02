@@ -1,9 +1,10 @@
 'use client'
 
-import { authSchema, AuthSchema } from '@/lib/schems/auth'
+import { authSchema, AuthSchema } from '@/lib/schemes/auth'
 import { formatTime } from '@/lib/utils'
 import { useAuth } from '@/providers/auth-provider/AuthProvider'
 import { zodResolver } from '@hookform/resolvers/zod'
+import Link from 'next/link'
 import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 
@@ -70,9 +71,14 @@ export function LoginForm() {
         )}
         {!isAuthenticated ? countdown : ''}
         {!isAuthenticated && error ? error : ''}
-        <div className="cursor-pointer flex justify-end w-full text-gray-500">
-          Забыл пароль navigate('./')
-        </div>
+
+        {/*TODO: спросить про navigate('./') у Сани и потом решить относительно Link*/}
+        <Link
+          href={'/'}
+          className="cursor-pointer flex justify-end w-full text-gray-500"
+        >
+          Забыл пароль
+        </Link>
       </div>
       {error && <span className="text-red-500">{error}</span>}
       <button
