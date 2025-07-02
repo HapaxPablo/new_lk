@@ -67,7 +67,10 @@ export function LoginForm() {
         {errors.password && (
           <span className="text-red-500">{errors.password.message}</span>
         )}
-        <Link href="/login" className="flex justify-end w-full text-gray-500">
+        <Link
+          href="/"
+          /*переписать редирект на восстановление пароля*/ className="flex justify-end w-full text-main-text!"
+        >
           Забыл пароль
         </Link>
       </div>
@@ -75,7 +78,7 @@ export function LoginForm() {
       <button
         type="submit"
         disabled={isLoading}
-        className="w-full bg-[var(--main-text-color)]! text-white!"
+        className="w-full !bg-main-text !text-white !m-0"
       >
         {isLoading ? 'Загрузка...' : 'Войти'}
       </button>

@@ -205,10 +205,7 @@ export default function RegisterForm() {
         )}
       </div>
 
-      <button
-        type="submit"
-        className="w-full bg-[var(--main-text-color)]! text-white!"
-      >
+      <button type="submit" className="w-full bg-main-text! text-white!">
         Зарегистрироваться
       </button>
     </form>
