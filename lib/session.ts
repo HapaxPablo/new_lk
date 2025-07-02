@@ -13,8 +13,8 @@ declare module 'iron-session' {
   }
 }
 
-const sessionOptions = {
-  password: 'd07a7d84a8f5b3e9c1f2a6b5c8d3e1f7a2b4c6d8e3f1a5b7c9d2e4f6a8b3c5',
+export const sessionOptions = {
+  password: process.env.SESSION_SECRET || 'complex_password_at_least_32_characters', // В продакшене используйте env переменную
   cookieName: '1c_auth_session',
   cookieOptions: {
     secure: process.env.NODE_ENV === 'production',
@@ -24,28 +24,27 @@ const sessionOptions = {
   }
 }
 
-// Универсальная функция для получения сессии 
+// Универсальная функция для получения сессии
 export async function getSession() {
-  // Для серверных компонентов и серверных действий
   if (typeof window === 'undefined') {
+    // Серверный код
     try {
-      // Попробуем получить через cookies() (для серверных компонентов)
       const cookieStore = cookies()
-      return getIronSession<IronSessionData>(await cookieStore, sessionOptions)
+      return await getIronSession<IronSessionData>(await cookieStore, sessionOptions)
     } catch (e) {
-      return getIronSession<IronSessionData>(
-        new NextRequest('http://localhost'),
-        new NextResponse(),
-        sessionOptions
-      )
+      console.error('Failed to get session from cookies:', e)
+      // Fallback для случаев, когда cookies() не доступен (например, в middleware)
+      const req = new NextRequest('http://localhost')
+      const res = new NextResponse()
+      return await getIronSession<IronSessionData>(req, res, sessionOptions)
     }
   } else {
-    // клиентская логика
+    // Клиентский код
     return getClientSession()
   }
 }
 
-// Клиентская функцию
+// Клиентская функция
 export async function getClientSession() {
   if (typeof window === 'undefined') {
     throw new Error('getClientSession should only be called on the client')
@@ -57,10 +56,7 @@ export async function getClientSession() {
       credentials: 'include'
     })
 
-    if (!response.ok) {
-      throw new Error('Failed to fetch session')
-    }
-
+    if (!response.ok) throw new Error('Failed to fetch session')
     return await response.json()
   } catch (error) {
     console.error('Client session error:', error)
@@ -71,22 +67,17 @@ export async function getClientSession() {
 // Для Server Components и Server Actions
 export async function getServerSession() {
   const cookieStore = cookies()
-  return getIronSession<IronSessionData>(await cookieStore, sessionOptions)
+  return await getIronSession<IronSessionData>(await cookieStore, sessionOptions)
 }
 
 // Для Route Handlers (app router)
-export async function getRouteSession(request: NextRequest, response: NextResponse) {
-  return getIronSession<IronSessionData>(request, response, sessionOptions)
+export async function getRouteSession(req: NextRequest, res: NextResponse) {
+  return await getIronSession<IronSessionData>(req, res, sessionOptions)
 }
 
 // Для middleware
-export async function getMiddlewareSession(request: NextRequest) {
-  const response = new NextResponse()
-  const session = await getIronSession<IronSessionData>(
-    request,
-    response,
-    sessionOptions
-  )
-  await session.save()
-  return { session, response }
+export async function getMiddlewareSession(req: NextRequest) {
+  const res = new NextResponse()
+  const session = await getIronSession<IronSessionData>(req, res, sessionOptions)
+  return { session, response: res }
 }

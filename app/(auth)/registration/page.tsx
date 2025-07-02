@@ -1,4 +1,4 @@
-import RegisterForm from '@/componennts/register/RegisterForm'
+import RegisterForm from '@/components/register/RegisterForm'
 import Image from 'next/image'
 import Link from 'next/link'
 
@@ -13,6 +13,7 @@ const page = async () => {
             width={120}
             height={24}
             priority
+            className="w-auto h-auto"
           />
         </div>
         <RegisterForm />

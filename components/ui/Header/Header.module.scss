@@ -4,6 +4,7 @@
   height: 52px;
   background-color: var(--main-color);
   align-items: center;
+  justify-content: center;
 
   &__logo {
     object-fit: contain;
@@ -11,6 +12,10 @@
     height: auto;
     width: auto;
   }
+}
+.header__logo_wrapper {
+  flex: 1;
+align-self: center;
 }
 
 @media screen and (max-width: 900px) {
@@ -20,7 +25,7 @@
     &__logo {
       height: 16px;
       width: auto;
-      margin-left: 20px; //потом будет иконка бургер меню и в одном диве с логотипом
+     
     }
   }
 }
