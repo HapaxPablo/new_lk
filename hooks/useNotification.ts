@@ -11,7 +11,6 @@ export const useNotification = () => {
     type: NotificationType = 'success',
     options?: ToastOptions
   ) => {
-    console.log('text', text)
     toast[type](text, {
       position: 'top-right',
       autoClose: 5000,
