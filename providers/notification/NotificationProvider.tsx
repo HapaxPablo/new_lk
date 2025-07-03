@@ -1,5 +1,6 @@
 'use client'
 
+import '@/styles/global.css'
 import { ReactNode } from 'react'
 import { Theme, ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
