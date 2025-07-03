@@ -111,6 +111,8 @@ export function LoginFormDesktop() {
       <div className={styles.imgWrapper}>
         <div className={styles.img} />
       </div>
+
+      {/* делал для теста<Image src="/wall.jpg" fill className="h-auto w-auto -z-1" alt="wall" /> */}
     </div>
   )
 }
