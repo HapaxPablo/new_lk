@@ -2,7 +2,7 @@
 @theme {
   --color-mint-5: oklch(0.72 0.11 178);
   --gap-1: 1rem;
-  --color-main-text: oklch(0.345 0.0778 258.12);
+  --color-main-text: var(--main-text-color);
 }
 :root {
   /* Основная цветовая палитра */
@@ -229,6 +229,16 @@ button,
     background-color: transparent;
     border: 2px solid var(--main-color);
   }
+}
+
+button,
+.btn-primary {
+  background-color: var(--main-text-color);
+  color: white;
+  margin: 0;
+}
+.btn-primary:hover {
+  background-color: var(--main-text-color-light);
 }
 
 /* Формы */

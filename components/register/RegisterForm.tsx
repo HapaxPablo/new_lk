@@ -3,7 +3,7 @@
 import {
   RegisterIndividualSchema,
   RegisterLegalSchema,
-} from '@/lib/schemes/auth/register.schema'
+} from '@/lib/schemes/auth'
 import { useMemo, useState } from 'react'
 import { useForm, useWatch } from 'react-hook-form'
 import { ofl } from './opf'

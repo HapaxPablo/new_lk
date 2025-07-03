@@ -1,0 +1,69 @@
+.wrapper {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.wrapper_logo {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.title {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #111827;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.inputError {
+  border-color: #ef4444;
+}
+
+.errorText {
+  color: #ef4444;
+}
+
+.forgotPasswordLink {
+  cursor: pointer;
+  display: flex;
+  justify-content: flex-end;
+  width: 100%;
+  color: #6b7280;
+  text-decoration: none;
+}
+.forgotPasswordLink:link {
+  color: var(--main-text-color);
+}
+
+.submitButton {
+  width: 100%;
+  background-color: var(--main-text-color);
+  color: white;
+  margin: 0;
+}
+
+.registerWrapper {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
+
+.registerWrapper_text {
+  color: #6b7280;
+}
+
+.registerWrapper_link {
+  color: var(--main-text-color);
+  text-decoration: none;
+}
