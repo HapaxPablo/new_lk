@@ -108,7 +108,9 @@ export function LoginFormDesktop() {
         </div>
       </form>
 
-      <div className={styles.img} />
+      <div className={styles.imgWrapper}>
+        <div className={styles.img} />
+      </div>
     </div>
   )
 }
