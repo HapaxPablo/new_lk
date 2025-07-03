@@ -11,7 +11,7 @@ export const metadata: Metadata = {
 
 const page = async () => {
   return (
-    <div className="flex flex-col md:flex-row md:h-full md:gap-1">
+    <div className="flex flex-col md:flex-row md:h-full md:gap-1 w-full ">
       {/* Левая часть — форма */}
       <div className="flex flex-col items-center justify-center md:max-w-[420px] md:h-full md:justify-around w-full md:w-1/2">
         <div className="flex flex-col w-full gap-[34px]">

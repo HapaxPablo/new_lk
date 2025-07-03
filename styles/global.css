@@ -1,6 +1,5 @@
 @import 'tailwindcss';
 @theme {
-  --color-mint-5: oklch(0.72 0.11 178);
   --gap-1: 1rem;
   --color-main-text: oklch(0.345 0.0778 258.12);
 }
@@ -17,7 +16,7 @@
   --main-text-color-light: oklch(0.445 0.0678 258.12);
 
   --second-text-color: oklch(0.5675 0.0454 250.85);
-  --second-text-color-light: oklch(0.6675 0.0354 250.85);
+  --second-text-color-light: oklch(91.041% 0.0088 248.194);
 
   /* Дополнительные цвета */
   --accent-color: oklch(0.5426 0.2101 347.49);
@@ -131,16 +130,14 @@ body {
 .layout {
   display: flex;
   flex-direction: column;
-  padding: 0.25rem;
   width: 100vw;
   height: 100%;
   max-width: 100%;
-  gap: 1rem;
 }
 
 .content {
   flex: 1;
-  padding: 0.5rem;
+  padding: 0.2rem;
   overflow-y: auto;
   scroll-behavior: smooth;
 
