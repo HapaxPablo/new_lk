@@ -1,0 +1,30 @@
+export const metaDataConfigLayout = {
+  title: 'RMC',
+  description: 'Описание  сайта для SEO',
+  keywords: ['ключевое слово 1', 'ключевое слово 2', 'ключевое слово 3'],
+  openGraph: {
+    title: 'Название для соцсетей',
+    description: 'Описание для соцсетей',
+    url: 'https://нашсайт.ру',
+    siteName: 'Название сайта',
+    images: [
+      {
+        url: 'https://нашсайт.ру/og-image.jpg',
+        width: 1200,
+        height: 630,
+      },
+    ],
+    locale: 'ru_RU',
+    type: 'website',
+  },
+  robots: {
+    index: true,
+    follow: true,
+    nocache: false,
+    googleBot: {
+      index: true,
+      follow: true,
+      noimageindex: false,
+    },
+  },
+}

@@ -1,31 +1,46 @@
 .header {
+
   display: flex;
   flex-direction: row;
   height: 52px;
   background-color: var(--main-color);
   align-items: center;
   justify-content: center;
+  padding: .1rem;
 
   &__logo {
     object-fit: contain;
     object-position: left center;
     height: auto;
     width: auto;
+    cursor: pointer;
   }
 }
+
 .header__logo_wrapper {
   flex: 1;
-align-self: center;
+  margin-left: 20px;
+  display: flex;
+  height: 100%;
+  width: 100%;
+  padding: .2rem;
+  align-items: center;
+  justify-content: flex-start;
 }
 
 @media screen and (max-width: 900px) {
   .header {
-    height: 32px;
+    height: 40px;
 
     &__logo {
-      height: 16px;
+      height: 24px;
       width: auto;
-     
+
     }
+  }
+
+  .header__logo_wrapper {
+    order: 2;
+    margin-left: 10px;
   }
 }
