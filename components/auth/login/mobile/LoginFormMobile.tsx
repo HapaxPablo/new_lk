@@ -8,7 +8,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
-import styles from './LoginMobile.module.css'
+import styles from './LoginMobile.module.scss'
 
 export function LoginFormMobile() {
   const {

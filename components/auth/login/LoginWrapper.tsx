@@ -5,7 +5,7 @@ import { useMediaQuery } from 'usehooks-ts'
 
 const LoginFormMobile = dynamic(
   () =>
-    import('./login/login/LoginFormMobile').then((mod) => ({
+    import('./mobile/LoginFormMobile').then((mod) => ({
       default: mod.LoginFormMobile,
     })),
   { ssr: false, loading: () => <div>Loading...</div> }
@@ -13,7 +13,7 @@ const LoginFormMobile = dynamic(
 
 const LoginFormDesktop = dynamic(
   () =>
-    import('./login/desktop/LoginFormDesktop').then((mod) => ({
+    import('./desktop/LoginFormDesktop').then((mod) => ({
       default: mod.LoginFormDesktop,
     })),
   { ssr: false, loading: () => <div>Loading...</div> }
