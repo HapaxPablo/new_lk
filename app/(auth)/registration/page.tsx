@@ -1,4 +1,4 @@
-import RegisterForm from '@/components/register/RegisterForm'
+import RegisterForm from '@/components/auth/register/RegisterForm'
 import Image from 'next/image'
 import Link from 'next/link'
 
