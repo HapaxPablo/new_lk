@@ -1,37 +1,51 @@
 @import 'tailwindcss';
+
 @theme {
   --gap-1: 1rem;
   --color-main-text: var(--main-text-color);
 }
+
 :root {
-  /* Основная цветовая палитра */
-  --main-color: oklch(0.6546 0.1801 23.49);
-  --main-color-light: oklch(0.7546 0.1501 23.49);
-  --main-color-dark: oklch(0.5546 0.2001 23.49);
 
   --background: oklch(0.9755 0.0045 258.32);
   --background-secondary: oklch(0.9255 0.0035 258.32);
 
-  --main-text-color: oklch(0.345 0.0778 258.12);
-  --main-text-color-light: oklch(0.445 0.0678 258.12);
+ /* Основные цвета */
+  --main-color: oklch(0.6546 0.1801 23.49);
+  --main-color-light: oklch(0.7546 0.1501 23.49);
+  --main-color-dark: oklch(0.5546 0.2001 23.49);
 
+  /* Цвета состояний */
+
+  --primary-color: oklch(0.445 0.0778 258.12);
+  --primary-color-light: oklch(0.5752 0.0938 257.75);
+  --primary-color-dark: oklch(0.2427 0.0668 258.75);
+
+  --success-color: oklch(0.7046 0.2201 142.49);
+  --success-color-light: oklch(0.8046 0.2001 142.49);
+  --success-color-dark: oklch(0.6046 0.2401 142.49);
+
+  --warning-color: oklch(0.8046 0.1801 62.49);
+  --warning-color-light: oklch(0.9046 0.1601 62.49);
+  --warning-color-dark: oklch(0.7046 0.2001 62.49);
+
+  --error-color: oklch(0.6546 0.2501 12.49);
+  --error-color-light: oklch(0.7546 0.2301 12.49);
+  --error-color-dark: oklch(0.5546 0.2701 12.49);
+
+  /* Текст и фон */
+  --main-text-color: oklch(0.345 0.0778 258.12);
   --second-text-color: oklch(0.5675 0.0454 250.85);
   --second-text-color-light: oklch(91.041% 0.0088 248.194);
 
-  /* Дополнительные цвета */
-  --accent-color: oklch(0.5426 0.2101 347.49);
-  --success-color: oklch(0.7046 0.2201 142.49);
-  --warning-color: oklch(0.8046 0.1801 62.49);
-  --error-color: oklch(0.6546 0.2501 12.49);
-
+  /* Состояния */
+  --hover-overlay: oklch(0 0 0 / 0.05);
+  --active-overlay: oklch(0 0 0 / 0.1);
+  --focus-ring: oklch(0.7 0.25 250);
   /* Цвета для рамок*/
   --border-color: oklch(66.58% 0.01044 197.307);
   --border-color-light: oklch(78.339% 0.00784 197.623);
   --border-color-dark: oklch(45.317% 0.00513 197.53);
-
-  --hover-overlay: oklch(0 0 0 / 0.05);
-  --active-overlay: oklch(0 0 0 / 0.1);
-  --focus-ring: oklch(0.7 0.25 250);
 
   /* Тени */
   --shadow-sm: 0 1px 2px 0 oklch(0 0 0 / 0.05);
@@ -157,8 +171,6 @@ body {
 
 /* Базовые стили для интерактивных элементов */
 a,
-button,
-[role='button'],
 input,
 textarea,
 select {
@@ -182,61 +194,6 @@ a {
   }
 }
 
-/* Кнопки */
-button,
-.btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0.5rem 1rem;
-  margin: 0.25rem;
-  border-radius: 0.375rem;
-  border: 1px solid var(--border-color);
-  background-color: white;
-  color: var(--main-text-color);
-  font-weight: 500;
-  cursor: pointer;
-  user-select: none;
-
-  &:hover {
-    background-color: var(--hover-overlay);
-  }
-
-  &:active {
-    background-color: var(--active-overlay);
-  }
-
-  &:focus {
-    outline: none;
-    box-shadow: var(--focus-ring);
-  }
-
-  /* Варианты кнопок */
-  &-primary {
-    background-color: var(--main-color);
-    color: white;
-    border-color: var(--main-color-dark);
-
-    &:hover {
-      background-color: var(--main-color-light);
-    }
-  }
-
-  &-outline {
-    background-color: transparent;
-    border: 2px solid var(--main-color);
-  }
-}
-
-button,
-.btn-primary {
-  background-color: var(--main-text-color);
-  color: white;
-  margin: 0;
-}
-.btn-primary:hover {
-  background-color: var(--main-text-color-light);
-}
 
 /* Формы */
 input,
@@ -345,6 +302,7 @@ select {
   background: #22c55e;
   color: white;
 }
+
 .Toastify__toast.Toastify__toast--error {
   background-color: #000 !important;
   color: #fff !important;
@@ -354,6 +312,7 @@ select {
   background: #3b82f6;
   color: white;
 }
+
 .Toastify__toast--warning {
   background: #facc15;
   color: black;
