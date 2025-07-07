@@ -75,7 +75,7 @@ export function LoginFormDesktop() {
             type="password"
             required
             placeholder="Пароль"
-            className={errors.password ? styles.inputError : ''}
+            className={errors.password ? styles.inputError : styles.input_check}
           />
           {errors.password && (
             <span className={styles.errorText}>{errors.password.message}</span>
