@@ -1,6 +1,16 @@
+.navigation_menu_wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+
+}
+
 .link_wrapper {
     display: flex;
-    gap: 1.5rem;
+    width: 100%;
+    justify-content: space-around;
+
 
     @media (max-width: 767px) {
         position: fixed;
@@ -11,7 +21,7 @@
         height: 100vh;
         background: var(--main-text-color-light);
         flex-direction: column;
-        padding: 2rem;
+        padding: 0.2rem;
         box-shadow: 5px 0 15px rgba(0, 0, 0, 0.1);
         transition: left 0.3s ease;
         z-index: 1000;
@@ -23,6 +33,7 @@
 }
 
 .link_item {
+    text-wrap: nowrap;
     color: var(--second-text-color-light);
     text-decoration: none;
     font-weight: 500;
@@ -61,11 +72,20 @@
     border: none;
     cursor: pointer;
     color: var(--second-text-color-light);
-    z-index: 1001;
 
     @media (max-width: 767px) {
         display: block;
     }
+}
+
+.wrapper_close_button {
+    display: flex;
+    width: 100%;
+    align-items: center;
+    justify-content: end;
+    z-index: 1001;
+    cursor: pointer;
+    color: var(--second-text-color-light);
 }
 
 .menuOverlay {

@@ -1,0 +1,45 @@
+.phone {
+  &_container {
+    display: flex;
+    order: 3;
+    justify-content: center;
+    text-wrap: nowrap;
+  }
+
+  & {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: none;
+    border: none;
+    color: var(--second-text-color-light);
+    font: inherit;
+    cursor: pointer;
+    padding: 0.5rem;
+    border-radius: 4px;
+    transition: background-color 0.2s;
+
+    &:hover {
+      background-color: #f5f5f5;
+    }
+
+    &:focus {
+      outline: 2px solid #0070f3;
+      outline-offset: 2px;
+    }
+  }
+
+  &__desktop {
+    @media (max-width: 768px) {
+      display: none;
+    }
+  }
+
+  &__mobile {
+    display: none;
+
+    @media (max-width: 768px) {
+      display: block;
+    }
+  }
+}
