@@ -41,7 +41,7 @@
   width: 100%;
   font-size: 1.5rem;
   font-weight: bold;
-  color: #111827; /* ~text-gray-900 */
+  color: var(--main-text-color);
 }
 
 .formFields {
@@ -72,23 +72,22 @@
   background-color: var(--main-text-color);
   color: white;
   margin: 0;
-}
 
-.submitButton:hover {
-  background-color: var(--main-text-color-light);
+  &:hover {
+    background-color: var(--main-text-color-light);
+  }
 }
 
 .loginWrapper {
   display: flex;
   justify-content: center;
   width: 100%;
-}
+  &_text {
+    color: #6b7280;
+  }
 
-.loginWrapper_text {
-  color: #6b7280;
-}
-
-.loginWrapper_link {
-  color: var(--main-text-color);
-  text-decoration: none;
+  &_link {
+    color: var(--main-text-color);
+    text-decoration: none;
+  }
 }

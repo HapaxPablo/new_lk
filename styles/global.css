@@ -248,10 +248,11 @@ select {
   width: 100%;
   max-width: 100%;
 
-  /* &:focus {
+  &:focus {
+    outline: none;
     border-color: var(--main-color);
     box-shadow: var(--focus-ring);
-  } */
+  }
 }
 
 input:focus {

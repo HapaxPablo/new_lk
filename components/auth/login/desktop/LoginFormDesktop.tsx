@@ -8,7 +8,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
-import styles from './LoginDesktop.module.css'
+import styles from './LoginDesktop.module.scss'
 
 export function LoginFormDesktop() {
   const {
