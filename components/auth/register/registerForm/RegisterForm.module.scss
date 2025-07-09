@@ -41,16 +41,13 @@
 .errorText {
   color: #ef4444;
   text-align: center;
+  font-size: 0.75rem;
 }
 
-.submitButton {
-  width: 100%;
-  background-color: var(--main-text-color);
-  color: white;
-  padding: 0.75rem;
-  border: none;
-  border-radius: 0.25rem;
-  cursor: pointer;
+.successText {
+  color: #22c55e;
+  text-align: center;
+  font-size: 0.75rem;
 }
 
 .logoWrapper {
@@ -86,5 +83,59 @@
   &_link {
     color: var(--main-text-color);
     text-decoration: none;
+  }
+}
+
+// --- Responsive ---
+
+// Desktop (default)
+@media (min-width: 1024px) {
+  .container {
+    flex-direction: row;
+  }
+  .formWrapper {
+    width: 33.3333%;
+    padding: 2rem;
+  }
+  .imgWrapper {
+    display: flex;
+  }
+}
+
+// Tablet
+@media (max-width: 1023px) and (min-width: 640px) {
+  .container {
+    flex-direction: column;
+    height: auto;
+  }
+  .formWrapper {
+    width: 100%;
+    padding: 1.5rem;
+  }
+  .imgWrapper {
+    display: none;
+  }
+}
+
+// Mobile
+@media (max-width: 639px) {
+  .container {
+    flex-direction: column;
+    height: auto;
+  }
+  .formWrapper {
+    width: 100%;
+    padding: 1rem;
+  }
+  .imgWrapper {
+    display: none;
+  }
+
+  .errorText {
+    font-size: 0.6rem;
+  }
+
+  .successText {
+    font-size: 0.6rem;
   }
 }
