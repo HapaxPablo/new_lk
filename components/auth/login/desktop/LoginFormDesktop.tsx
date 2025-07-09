@@ -1,5 +1,6 @@
 'use client'
 
+import { Button } from '@/components/ui/button/Button'
 import { authSchema, AuthSchema } from '@/lib/schemes/auth'
 import { formatTime } from '@/lib/utils'
 import { useAuth } from '@/providers/auth-provider/AuthProvider'
@@ -8,7 +9,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
-import styles from './LoginDesktop.module.scss'
+import styles from './LoginDesktop.module.css'
 
 export function LoginFormDesktop() {
   const {
@@ -89,14 +90,9 @@ export function LoginFormDesktop() {
             Забыл пароль
           </Link>
         </div>
-
-        <button
-          type="submit"
-          disabled={isLoading}
-          className={styles.submitButton}
-        >
+        <Button type="submit" variant="primary" isLoading={isLoading} fullWidth>
           {isLoading ? 'Загрузка...' : 'Войти'}
-        </button>
+        </Button>
 
         <div className={styles.loginWrapper}>
           <div className={styles.loginWrapper_text}>

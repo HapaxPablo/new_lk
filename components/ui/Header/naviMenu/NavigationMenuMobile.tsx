@@ -19,7 +19,7 @@ const NavigationMenuMobile = () => {
         onClick={toggleMenu}
         aria-label={isOpen ? 'Закрыть меню' : 'Открыть меню'}
       >
-        {isOpen ? <X size={24} /> : <MenuIcon />}
+        <MenuIcon />
       </button>
 
       {/* Оверлей */}
@@ -31,6 +31,11 @@ const NavigationMenuMobile = () => {
         aria-label="Основное меню"
         className={`${styles.link_wrapper} ${isOpen ? styles.open : ''}`}
       >
+        {isOpen && (
+          <span onClick={toggleMenu} className={styles.wrapper_close_button}>
+            <X size={36} />
+          </span>
+        )}
         {NAV_ITEMS.map((item) => (
           <Link
             key={item.path}
