@@ -8,6 +8,7 @@ export async function POST(request: NextRequest) {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        'User-Agent': request.headers.get('user-agent') || '',
       },
       body: JSON.stringify({ ...body }),
     })

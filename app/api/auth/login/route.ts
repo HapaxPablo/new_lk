@@ -1,5 +1,5 @@
-import { NextResponse } from 'next/server'
 import { AuthResponse } from '@/types/auth'
+import { NextResponse } from 'next/server'
 
 export async function POST(request: Request) {
   try {
@@ -18,6 +18,7 @@ export async function POST(request: Request) {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        'User-Agent': request.headers.get('user-agent') || '',
       },
       body: JSON.stringify({ email, password }),
     })
