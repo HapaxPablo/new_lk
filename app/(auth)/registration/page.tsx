@@ -3,7 +3,7 @@ import { RegistrationWrapper } from '@/components/auth/register/RegisterFormWrap
 const page = async () => {
   return (
     <div className="flex flex-col items-center justify-center h-full w-full">
-      <div className="flex flex-col w-full gap-1 h-full">
+      <div className="flex flex-col w-full gap-1 h-full justify-center">
         <RegistrationWrapper />
       </div>
     </div>

@@ -12,19 +12,19 @@ export function useOlfFetcher(type: string) {
 
     const getOlf = async (): Promise<void> => {
       if (type === 'individual' && olfIndividual) {
-        console.log('[CACHED individual]', olfIndividual)
+        // console.log('[CACHED individual]', olfIndividual)
         return
       }
 
       if (type === 'legal' && olfLegal) {
-        console.log('[CACHED legal]', olfLegal)
+        // console.log('[CACHED legal]', olfLegal)
         return
       }
 
       try {
         const response = await fetch(`/api/opf?type=${type}`)
         const fetched: OrganizationForm[] = await response.json()
-        console.log('[FETCHED]', fetched)
+        // console.log('[FETCHED]', fetched)
 
         if (type === 'individual') {
           setOlfIndividual(fetched)
