@@ -55,6 +55,11 @@ export default function ConfirmRegistratrionForm({ email }: { email: string }) {
     }
   }
 
+  const handleButtonClick = () => {
+    const code = inputsRef.current.map((input) => input?.value || '').join('')
+    handleConfirm(code)
+  }
+
   return (
     <div className={styles.container}>
       <h2 className={styles.title}>Введите код подтверждения</h2>
@@ -78,12 +83,7 @@ export default function ConfirmRegistratrionForm({ email }: { email: string }) {
         type="button"
         variant="primary"
         fullWidth
-        onClick={() => {
-          const code = inputsRef.current
-            .map((input) => input?.value || '')
-            .join('')
-          handleConfirm(code)
-        }}
+        onClick={handleButtonClick}
       >
         Подтвердить
       </Button>
