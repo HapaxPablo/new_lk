@@ -1,0 +1,57 @@
+.container {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: center;
+  align-items: center;
+  padding: 2rem;
+  flex-direction: column;
+}
+
+.title {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: var(--main-text-color);
+  text-align: center;
+}
+
+.codeInputs {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: center;
+}
+
+.input {
+  width: 3rem;
+  height: 3rem;
+  text-align: center;
+  font-size: 1.5rem;
+  border: 2px solid #ccc;
+  border-radius: 0.5rem;
+  outline: none;
+  transition: border-color 0.2s ease;
+
+  &:focus {
+    border-color: var(--main-color, #007bff);
+  }
+}
+
+@media (max-width: 768px) {
+  .title {
+    font-size: 1.2rem;
+  }
+  .input {
+    font-size: 1.1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .title {
+    font-size: 1rem;
+  }
+  .codeInputs {
+    gap: 0.3rem;
+  }
+  .input {
+    font-size: 1rem;
+  }
+}

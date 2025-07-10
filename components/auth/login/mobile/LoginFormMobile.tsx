@@ -9,6 +9,7 @@ import Link from 'next/link'
 import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import styles from './LoginMobile.module.scss'
+import { Button } from '@/components/ui/button/Button'
 
 export function LoginFormMobile() {
   const {
@@ -87,13 +88,14 @@ export function LoginFormMobile() {
           <Link href="/" className={styles.forgotPasswordLink}>
             Забыл пароль
           </Link>
-          <button
+          <Button
             type="submit"
-            disabled={isLoading}
-            className={styles.submitButton}
+            variant="primary"
+            isLoading={isLoading}
+            fullWidth
           >
             {isLoading ? 'Загрузка...' : 'Войти'}
-          </button>
+          </Button>
         </div>
       </form>
 

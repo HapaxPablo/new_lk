@@ -35,6 +35,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const router = useRouter()
 
   const { showNotification } = useNotification()
+  console.log(isAuthenticated)
 
   useEffect(() => {
     // Проверяем аутентификацию при загрузке (например, по наличию токена в cookies)

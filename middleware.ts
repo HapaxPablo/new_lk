@@ -1,4 +1,3 @@
-
 import { getMiddlewareSession } from '@/lib/session'
 import { NextResponse, type NextRequest } from 'next/server'
 
@@ -13,7 +12,7 @@ export async function middleware(request: NextRequest) {
   // )
 
   // Маршруты аутентификации
-  const authRoutes = ['/login', '/register']
+  const authRoutes = ['/login', '/registration']
   const isAuthRoute = authRoutes.some((route) => pathname.startsWith(route))
 
   // if (isProtected && !session.user) {
