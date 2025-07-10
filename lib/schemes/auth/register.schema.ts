@@ -11,7 +11,7 @@ export const registerIndividualSchema = z.object({
   name: z.string().min(1, 'Имя обязательно'),
   surName: z.string().min(1, 'Фамилия обязательна'),
   patronymic: z.string().optional(),
-  opf: z.string().min(1, 'ОПФ обязательно'),
+  olf: z.string().min(1, 'ОПФ обязательно'),
   brand: z.string().min(1, 'Название бренда обязательно'),
   inn: z.string().regex(/^\d{12}$/, 'ИНН физ. лица должен содержать 12 цифр'),
 })
@@ -26,7 +26,7 @@ export const registerLegalSchema = z.object({
     message: 'Некорректный номер телефона',
   }),
   organizationName: z.string().min(1, 'Название организации обязательно'),
-  opf: z.string().min(1, 'ОПФ обязательно'),
+  olf: z.string().min(1, 'ОПФ обязательно'),
   brand: z.string().min(1, 'Название бренда обязательно'),
   inn: z.string().regex(/^\d{10}$/, 'ИНН юр. лица должен содержать 10 цифр'),
 })

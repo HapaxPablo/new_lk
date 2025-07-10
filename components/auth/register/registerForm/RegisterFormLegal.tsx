@@ -17,7 +17,6 @@ export default function RegisterFormLegal({
   olfLegal,
 }: RegisterFormLegalProps) {
   const [generalError, setGeneralError] = useState<string | null>(null)
-  const [success, setSuccess] = useState<boolean>(false)
   const {
     register,
     handleSubmit,
@@ -31,27 +30,44 @@ export default function RegisterFormLegal({
 
   const onSubmit = async (data: RegisterLegalSchema) => {
     setGeneralError(null)
-    setSuccess(false)
-    // mock registration
-    if (data.email === 'already@taken.ru') {
-      setGeneralError('Пользователь с такой почтой уже существует')
-    } else {
-      setSuccess(true)
-      reset()
+    try {
+      const response = await fetch('/api/auth/registration', {
+        method: 'POST',
+        body: JSON.stringify(data),
+      })
+
+      try {
+        const result = await response.json()
+        if (!response.ok) {
+          setGeneralError(result?.message || 'Ошибка регистрации')
+          return
+        }
+
+        // Success logic here
+        console.log('registration result:', result)
+        if (!result.result) {
+          setGeneralError(`${result.message}, код ошибки: ${result.status}`)
+          return
+        }
+      } catch (e) {
+        setGeneralError('Ошибка регистрации')
+        return
+      }
+    } catch (err) {
+      setGeneralError(
+        err instanceof Error ? err.message : 'Ошибка сети или сервера'
+      )
     }
   }
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className={styles.fieldGroup}>
-      {success && (
-        <span className={styles.successText}>Регистрация успешна!</span>
-      )}
       {generalError && <span className={styles.errorText}>{generalError}</span>}
       <select
-        {...register('opf')}
+        {...register('olf')}
         className={styles.select}
         defaultValue={olfLegal[0]?.name || ''}
-        onChange={(e) => setValue('opf', e.target.value)}
+        onChange={(e) => setValue('olf', e.target.value)}
       >
         {olfLegal.map((item, idx) => (
           <option key={idx} value={item.name}>

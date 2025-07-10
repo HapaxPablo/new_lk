@@ -48,10 +48,10 @@ export default function RegisterFormIndividual({
       )}
       {generalError && <span className={styles.errorText}>{generalError}</span>}
       <select
-        {...register('opf')}
+        {...register('olf')}
         className={styles.select}
         defaultValue={olfIndividual[0]?.name || ''}
-        onChange={(e) => setValue('opf', e.target.value)}
+        onChange={(e) => setValue('olf', e.target.value)}
       >
         {olfIndividual.map((item, idx) => (
           <option key={idx} value={item.name}>
