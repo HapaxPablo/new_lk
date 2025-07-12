@@ -2,9 +2,9 @@
 import Image from 'next/image'
 import styles from './Header.module.scss'
 import { useRouter } from 'next/navigation'
-import NavigationMenu from './naviMenu/NavigationMenu'
-import InfoMenu from './infoMenu/InfoMenu'
-import UserMenu from './userMenu/UserMenu'
+import NavigationMenu from './navi-menu/NavigationMenu'
+import InfoMenu from './info-menu/InfoMenu'
+import UserMenu from './user-menu/UserMenu'
 
 export default function Header() {
   const router = useRouter()
