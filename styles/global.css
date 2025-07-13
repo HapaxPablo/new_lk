@@ -1,8 +1,14 @@
 @import 'tailwindcss';
-
+/* //TODO настроить базовый классы для тайлвинда по аналогии с цветами  постараться использовать их*/
+/* или использовать классы из root, для переиспользуемых компонентов делать модульные стили */
 @theme {
   --gap-1: 1rem;
   --color-main-text: var(--main-text-color);
+  --color-main: var(--main-color);
+  --color-primary: var(--primary-color);
+  --color-success: var(--success-color);
+  --color-warning: var(--warning-color);
+  --color-error: var(--error-color);
 }
 
 :root {
@@ -228,24 +234,6 @@ input:focus {
   &:hover {
     box-shadow: var(--shadow-md);
   }
-}
-
-/* Утилитарные классы */
-.bg-primary {
-  background-color: var(--main-color);
-}
-
-.bg-secondary {
-  background-color: var(--main-text-color);
-  color: white;
-}
-
-.text-primary {
-  color: var(--main-text-color);
-}
-
-.bg-accent {
-  background-color: var(--accent-color);
 }
 
 .rounded {

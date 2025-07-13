@@ -1,99 +1,37 @@
-import { httpClient1C } from '@/lib/api/HttpClient1C'
-import { NextResponse } from 'next/server'
+import { HttpClient1C } from '@/lib/http-client';
+import { INomenclatureQueryParams, INomenclatureResponse } from '@/types/nomenclature';
+import { NextRequest } from 'next/server';
 
-// GET /api/nomenclatures
-export async function GET(request: Request) {
+
+// TODO сделать кэширование ответа на 1 час
+export const revalidate = 3600;
+
+export async function GET(request: NextRequest) {
+  console.log('Nomenclatures API:', request.url);
+
   try {
-    const { searchParams } = new URL(request.url)
-    const data = await httpClient1C.get('/nomenclatures?' + searchParams.toString())
-    return NextResponse.json(data)
-  } catch (error) {
-    return NextResponse.json(
-      { error: error instanceof Error ? error.message : 'Unknown error' },
-      { status: 500 }
-    )
-  }
-}
-
-// POST /api/nomenclatures (с файлом)
-export async function POST(request: Request) {
-  try {
-    const formData = await request.formData()
-    const file = formData.get('file') as File
+    const { searchParams } = new URL(request.url);
     
-    const result = await httpClient1C.uploadFile('/nomenclatures/upload', file)
-    return NextResponse.json(result)
-  } catch (error) {
-    return NextResponse.json(
-      { error: 'File upload failed' },
-      { status: 500 }
-    )
-  }
-}
+    const queryParams:INomenclatureQueryParams = {
+      limit: Number(searchParams.get('limit')) || 10,
+      offset: Number(searchParams.get('offset')) || 0,
+      search: searchParams.get('search') || undefined,
+    };
 
+    // Делаем запрос к 1С через наш HttpClient
+    const response = await HttpClient1C.server(request).get<INomenclatureResponse>(
+      `getNomenclatureList?${new URLSearchParams({
+        limit: String(queryParams.limit),
+        offset: String(queryParams.offset),
+        ...(queryParams.search && { search: queryParams.search }),
+      })}`
+    );
 
-// GET /api/nomenclatures/[id]/media - получение медиафайла
-// нужно подумать возможно стоит разделить маршруты для получения типов файлов  
-// например урл не `/nomenclatures/${params.id}/media`, а `/nomenclatures/${params.id}/img`
-export async function GETMEDIA(
-  request: Request,
-  { params }: { params: { id: string } }
-) {
-  try {
-    // 1. Получаем медиафайлы из 1С
-    const mediaBlob = await httpClient1C.getMedia(`/nomenclatures/${params.id}/media`)
-    
-    // 2. Определяем Content-Type на основе URL или данных
-    const contentType = await determineContentType(
-      `/nomenclatures/${params.id}/media`,
-      mediaBlob
-    )
-    
-    // 3. Возвращаем ответ
-    return new NextResponse(mediaBlob, {
-      headers: {
-        'Content-Type': contentType,
-        'Cache-Control': 'public, max-age=604800' // Кешируем на 7 дней
-      }
-    })
-  } catch (error) {
-    console.error('Media fetch error:', error)
-    return NextResponse.json(
-      { error: 'Media not found' },
-      { status: 404 }
-    )
+    return Response.json(response);
+  } catch (error: any) {
+    return Response.json(
+      { error: error.message },
+      { status: error.status || 500 }
+    );
   }
-}
-
-// Вспомогательная функция для определения типа контента
-async function determineContentType(
-  endpoint: string,
-  data: Blob | ArrayBuffer
-): Promise<string> {
-  // Если пришел ArrayBuffer, создаем из него Blob для определения типа
-  const blob = data instanceof ArrayBuffer 
-    ? new Blob([data]) 
-    : data
-
-  // 1. Попробуем определить по расширению в URL
-  if (endpoint.endsWith('.jpg') || endpoint.endsWith('.jpeg')) {
-    return 'image/jpeg'
-  }
-  if (endpoint.endsWith('.png')) {
-    return 'image/png'
-  }
-  if (endpoint.endsWith('.mp3')) {
-    return 'audio/mpeg'
-  }
-  if (endpoint.endsWith('.mp4')) {
-    return 'video/mp4'
-  }
-  
-  // 2. Если не определили по URL, пробуем определить из Blob
-  if (blob.type && blob.type !== 'application/octet-stream') {
-    return blob.type
-  }
-  
-  // 3. Дефолтный тип
-  return 'application/octet-stream'
 }

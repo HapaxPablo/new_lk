@@ -14,7 +14,7 @@ declare module 'iron-session' {
 }
 
 export const sessionOptions = {
-  password: process.env.SESSION_SECRET || 'complex_password_at_least_32_characters', // В продакшене используйте env переменную
+  password: process.env.SESSION_SECRET || 'complex_password_at_least_32_characters', // В продакшене использовать env переменную
   cookieName: '1c_auth_session',
   cookieOptions: {
     secure: process.env.NODE_ENV === 'production',

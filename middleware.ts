@@ -33,25 +33,25 @@ export async function middleware(request: NextRequest) {
 
   console.log(is1cApiRequest)
 
-  if (is1cApiRequest) {
-    if (!session.user?.xrmcCookie) {
-      return NextResponse.json(
-        { message: 'Authentication required' },
-        { status: 401 }
-      )
-    }
+  // if (is1cApiRequest) {
+  //   if (!session.user?.xrmcCookie) {
+  //     return NextResponse.json(
+  //       { message: 'Authentication required' },
+  //       { status: 401 }
+  //     )
+  //   }
 
-    // Клонируем headers из оригинального response
-    const newHeaders = new Headers(response.headers)
-    newHeaders.set('X-XRMC-Cookie', session.user.xrmcCookie)
+  //   // Клонируем headers из оригинального response
+  //   const newHeaders = new Headers(response.headers)
+  //   newHeaders.set('X-XRMC-Cookie', session.user.xrmcCookie)
 
-    return NextResponse.next({
-      request: {
-        headers: newHeaders,
-      },
-      headers: newHeaders,
-    })
-  }
+  //   return NextResponse.next({
+  //     request: {
+  //       headers: newHeaders,
+  //     },
+  //     headers: newHeaders,
+  //   })
+  // }
 
   return NextResponse.next()
 }
