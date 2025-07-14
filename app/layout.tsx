@@ -1,5 +1,5 @@
 import Footer from '@/components/ui/Footer/Footer'
-import Header from '@/components/ui/header/Header'
+import Header from '@/components/ui/Header/Header'
 import { metaDataConfigLayout } from '@/lib/configs/config-meta/configMetaData'
 import { AuthProvider } from '@/providers/auth-provider/AuthProvider'
 import { NotificationProvider } from '@/providers/notification/NotificationProvider'
