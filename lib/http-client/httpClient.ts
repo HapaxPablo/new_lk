@@ -1,8 +1,7 @@
 'use client'
-
+//tets
 import { useAuth } from '@/providers/auth-provider/AuthProvider'
 import { THttpMethod } from '@/types'
-
 
 class HttpClient1CClient {
   private baseUrl: string
@@ -20,7 +19,7 @@ class HttpClient1CClient {
     const { isAuthenticated, logout } = useAuth()
     const token = document.cookie
       .split('; ')
-      .find(row => row.startsWith('xrmcCookie='))
+      .find((row) => row.startsWith('xrmcCookie='))
       ?.split('=')[1]
 
     if (!token || !isAuthenticated) {
@@ -29,8 +28,8 @@ class HttpClient1CClient {
     }
 
     const headers: Record<string, string> = {
-      'Authorization': `Bearer ${token}`,
-      'Cookie': `xrmcCookie=${token}`,
+      Authorization: `Bearer ${token}`,
+      Cookie: `xrmcCookie=${token}`,
     }
 
     if (!isFile) {
@@ -87,7 +86,7 @@ class HttpClient1CClient {
     return this.request<T>('DELETE', endpoint)
   }
 
-  // Загрузка файла 
+  // Загрузка файла
   async upload<T = any>(endpoint: string, file: File): Promise<T> {
     const formData = new FormData()
     formData.append('file', file)
