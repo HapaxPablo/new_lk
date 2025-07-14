@@ -1,4 +1,4 @@
-import Footer from '@/components/ui/footer/Footer'
+import Footer from '@/components/ui/Footer/Footer'
 import Header from '@/components/ui/header/Header'
 import { metaDataConfigLayout } from '@/lib/configs/config-meta/configMetaData'
 import { AuthProvider } from '@/providers/auth-provider/AuthProvider'
