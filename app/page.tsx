@@ -1,5 +1,6 @@
-import { SearchForm } from "@/components/search-form/SearchForm";
-import { Loader } from "@/components/ui/loader/Loader";
+import { SearchForm } from '@/components/search-form/SearchForm'
+import { Loader } from '@/components/ui/loader/Loader'
+import { Suspense } from 'react'
 
 export default function Home() {
   return (
@@ -16,17 +17,18 @@ export default function Home() {
         <input className="input" />
         <select className="select" />
         <textarea className="textarea" />
-        <SearchForm hideButton />
+        <Suspense fallback={<div>Loading search form...</div>}>
+          <SearchForm hideButton />
+        </Suspense>
       </div>
       <div className="flex flex-row gap-10">
-    
-      <Loader size="small" variant="primary" />
+        <Loader size="small" variant="primary" />
 
-      <Loader size="medium" variant="success" />
+        <Loader size="medium" variant="success" />
 
-      <Loader size="large" variant="error" />
+        <Loader size="large" variant="error" />
 
-      <Loader size="large" variant="warning"  />
+        <Loader size="large" variant="warning" />
       </div>
     </div>
   )
