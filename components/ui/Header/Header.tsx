@@ -1,10 +1,10 @@
 'use client'
 import Image from 'next/image'
-import styles from './Header.module.scss'
 import { useRouter } from 'next/navigation'
-import NavigationMenu from './navi-menu/NavigationMenu'
-import InfoMenu from './info-menu/InfoMenu'
-import UserMenu from './user-menu/UserMenu'
+import styles from './Header.module.scss'
+import InfoMenu from './infoMenu/InfoMenu'
+import NavigationMenu from './naviMenu/NavigationMenu'
+import UserMenu from './userMenu/UserMenu'
 
 export default function Header() {
   const router = useRouter()
