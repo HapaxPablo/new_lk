@@ -14,7 +14,7 @@ import {
 type AuthContextType = {
   isAuthenticated: boolean
   login: (email: string, password: string) => Promise<LoginResponse>
-  logout: () => void
+  logout: () => Promise<void>
   error: string | null
   blockTime: number | null
 }
@@ -33,17 +33,35 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [error, setError] = useState<string | null>(null)
   const [blockTime, setBlockTime] = useState<number | null>(null)
   const router = useRouter()
-
   const { showNotification } = useNotification()
-  console.log(isAuthenticated)
+console.log(isAuthenticated);
 
   useEffect(() => {
-    // Проверяем аутентификацию при загрузке (например, по наличию токена в cookies)
     const checkAuth = async () => {
-      // Здесь добавлю проверку токена
-      // const token = getCookie('xrmcCookie')
-      // setIsAuthenticated(!!token)
+      try {
+        const response = await fetch('/api/auth/check', {
+          credentials: 'include',
+          // cache: 'no-store',
+        })
+
+        if (response.ok) {
+          const result = await response.json()
+          setIsAuthenticated(result.isAuthenticated)
+
+          if (!result.isAuthenticated) {
+            // await logout()
+            console.log('сделать проверку токена в 1с');
+            
+          }
+        } else {
+          setIsAuthenticated(false)
+        }
+      } catch (err) {
+        console.error('Auth check failed:', err)
+        setIsAuthenticated(false)
+      }
     }
+
     checkAuth()
   }, [])
 
@@ -58,6 +76,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({ email, password }),
+        credentials: 'include',
       })
 
       const data: AuthResponse = await response.json()
@@ -104,10 +123,23 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   }
 
-  const logout = () => {
-    // Здесь добавлю вызов API для выхода
-    setIsAuthenticated(false)
-    router.push('/login')
+  const logout = async () => {
+    try {
+      const response = await fetch('/api/auth/logout', {
+        method: 'POST',
+        credentials: 'include',
+      })
+
+      if (response.ok) {
+        setIsAuthenticated(false)
+        router.push('/login')
+      } else {
+        throw new Error('Ошибка при выходе')
+      }
+    } catch (err) {
+      console.error('Logout failed:', err)
+      showNotification('Ошибка при выходе из системы', 'error')
+    }
   }
 
   return (

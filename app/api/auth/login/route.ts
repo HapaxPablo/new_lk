@@ -1,7 +1,7 @@
+import { NextRequest, NextResponse } from 'next/server'
 import { AuthResponse } from '@/types/auth'
-import { NextResponse } from 'next/server'
 
-export async function POST(request: Request) {
+export async function POST(request: NextRequest) {
   try {
     const { email, password } = await request.json()
 
@@ -13,7 +13,7 @@ export async function POST(request: Request) {
       })
     }
 
-    const apiUrl = `${process.env.API_1C_URL}/authorizeUser`
+    const apiUrl = `${process.env.API_1C_URL}authorizeUser`
     const response = await fetch(apiUrl, {
       method: 'POST',
       headers: {
@@ -31,11 +31,15 @@ export async function POST(request: Request) {
 
     if (data.isAuthorized && data.xrmcCookie) {
       const res = NextResponse.json(data)
-      res.cookies.set('xrmcCookie', data.xrmcCookie, {
+      res.cookies.set({
+        name: 'xrmcCookie',
+        value: data.xrmcCookie,
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
-        sameSite: 'strict',
+        sameSite: 'lax', 
         path: '/',
+        maxAge: 60 * 60 * 24 * 7, // 7 дней (в секундах)
+        expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 7), // 7 дней
       })
       return res
     }

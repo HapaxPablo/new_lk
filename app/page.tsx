@@ -1,3 +1,6 @@
+import { SearchForm } from "@/components/search-form/SearchForm";
+import { Loader } from "@/components/ui/loader/Loader";
+
 export default function Home() {
   return (
     <div>
@@ -13,6 +16,17 @@ export default function Home() {
         <input className="input" />
         <select className="select" />
         <textarea className="textarea" />
+        <SearchForm hideButton />
+      </div>
+      <div className="flex flex-row gap-10">
+    
+      <Loader size="small" variant="primary" />
+
+      <Loader size="medium" variant="success" />
+
+      <Loader size="large" variant="error" />
+
+      <Loader size="large" variant="warning"  />
       </div>
     </div>
   )

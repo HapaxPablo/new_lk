@@ -3,7 +3,7 @@ import { NextRequest, NextResponse } from 'next/server'
 
 export async function POST(request: NextRequest) {
   const body: RegistrationRequest = await request.json()
-  const apiUrl = `${process.env.API_1C_URL}/registrationCreate`
+  const apiUrl = `${process.env.API_1C_URL}registrationCreate`
   try {
     const response = await fetch(apiUrl, {
       method: 'POST',

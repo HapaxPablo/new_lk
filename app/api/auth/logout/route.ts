@@ -1,26 +1,25 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { getRouteSession } from '@/lib/session'
 
-export async function POST(request: Request) {
+export async function POST(request: NextRequest) {
   try {
-    // Создаем объекты request/response
-    const req = new NextRequest(request.url, { headers: request.headers })
-    const res = new NextResponse()
-    
-    // Получаем и очищаем сессию
-    const session = await getRouteSession(req, res)
-    session.destroy()
-    
-    // Возвращаем ответ с очищенными cookies
-    return new NextResponse(
-      JSON.stringify({ message: 'Logged out successfully' }),
-      { headers: res.headers }
-    )
-    
+    const apiUrl = `${process.env.API_1C_URL}logoutUser`
+    const response = await fetch(apiUrl, {
+      method: 'POST',
+      headers: {
+        'User-Agent': request.headers.get('user-agent') || '',
+        Cookie: request.cookies.toString(),
+      },
+    })
+
+    const res = NextResponse.json({ success: true })
+    res.cookies.delete('xrmcCookie')
+    return res
   } catch (error) {
-    console.error('Logout error:', error)
     return NextResponse.json(
-      { message: 'Logout failed' },
+      {
+        success: false,
+        message: 'Внутренняя ошибка сервера',
+      },
       { status: 500 }
     )
   }
