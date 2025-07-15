@@ -5,33 +5,19 @@ export async function middleware(request: NextRequest) {
   const { session, response } = await getMiddlewareSession(request)
   const { pathname } = request.nextUrl
 
-  // Защищенные маршруты
-  // const protectedRoutes = ['/nomenclatures']
-  // const isProtected = protectedRoutes.some((route) =>
-  //   pathname.startsWith(route)
-  // )
-
-  // Маршруты аутентификации
+  // ✅ Маршруты авторизации
   const authRoutes = ['/login', '/registration']
   const isAuthRoute = authRoutes.some((route) => pathname.startsWith(route))
-
-  // if (isProtected && !session.user) {
-  //   return NextResponse.redirect(new URL('/login', request.url))
-  // }
 
   if (isAuthRoute && session.user) {
     return NextResponse.redirect(new URL('/nomenclatures', request.url))
   }
 
-  // Для API запросов к 1С
+  // ✅ Защита API-запросов к 1С
   const api1cUrl = new URL(process.env.API_1C_URL!)
-
-  // Проверяем, что запрос идет к нашему API 1С
   const is1cApiRequest =
     request.nextUrl.host === api1cUrl.host &&
     request.nextUrl.pathname.startsWith(api1cUrl.pathname)
-
-  console.log(is1cApiRequest)
 
   // if (is1cApiRequest) {
   //   if (!session.user?.xrmcCookie) {
@@ -41,19 +27,23 @@ export async function middleware(request: NextRequest) {
   //     )
   //   }
 
-  //   // Клонируем headers из оригинального response
-  //   const newHeaders = new Headers(response.headers)
+  //   const newHeaders = new Headers(request.headers)
   //   newHeaders.set('X-XRMC-Cookie', session.user.xrmcCookie)
 
   //   return NextResponse.next({
   //     request: {
   //       headers: newHeaders,
   //     },
-  //     headers: newHeaders,
   //   })
   // }
 
-  return NextResponse.next()
+  // ✅ В любом случае подставляем токен для внутренних API/SSR
+  const res = NextResponse.next()
+  if (session.user?.xrmcCookie) {
+    res.headers.set('X-XRMC-Cookie', session.user.xrmcCookie)
+  }
+
+  return res
 }
 
 export const config = {

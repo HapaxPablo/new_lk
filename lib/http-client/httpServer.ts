@@ -1,7 +1,6 @@
 import { THttpMethod } from '@/types'
 import { NextRequest } from 'next/server'
 
-
 class HttpClient1CServer {
   private baseUrl: string
 
@@ -18,13 +17,15 @@ class HttpClient1CServer {
   ): Promise<T> {
     const token = request.cookies.get('xrmcCookie')?.value
 
+    // console.log('request.cookies', request.cookies)
+    // console.log('token:', token)
     if (!token) {
       throw new Error('Authentication required')
     }
 
     const headers: Record<string, string> = {
-      'Authorization': `Bearer ${token}`,
-      'Cookie': `xrmcCookie=${token}`,
+      Authorization: `xrmcCookie=${token}`,
+      Cookie: `xrmcCookie=${token}`,
     }
 
     if (!isFile) {
@@ -34,6 +35,7 @@ class HttpClient1CServer {
     const config: RequestInit = {
       method,
       headers,
+      credentials: 'include',
     }
 
     if (data) {
@@ -60,17 +62,29 @@ class HttpClient1CServer {
   }
 
   // POST запрос
-  async post<T = any>(request: NextRequest, endpoint: string, data: any): Promise<T> {
+  async post<T = any>(
+    request: NextRequest,
+    endpoint: string,
+    data: any
+  ): Promise<T> {
     return this.request<T>(request, 'POST', endpoint, data)
   }
 
   // PUT запрос
-  async put<T = any>(request: NextRequest, endpoint: string, data: any): Promise<T> {
+  async put<T = any>(
+    request: NextRequest,
+    endpoint: string,
+    data: any
+  ): Promise<T> {
     return this.request<T>(request, 'PUT', endpoint, data)
   }
 
   // PATCH запрос
-  async patch<T = any>(request: NextRequest, endpoint: string, data: any): Promise<T> {
+  async patch<T = any>(
+    request: NextRequest,
+    endpoint: string,
+    data: any
+  ): Promise<T> {
     return this.request<T>(request, 'PATCH', endpoint, data)
   }
 
@@ -80,7 +94,11 @@ class HttpClient1CServer {
   }
 
   // Загрузка файла
-  async upload<T = any>(request: NextRequest, endpoint: string, file: File): Promise<T> {
+  async upload<T = any>(
+    request: NextRequest,
+    endpoint: string,
+    file: File
+  ): Promise<T> {
     const formData = new FormData()
     formData.append('file', file)
     return this.request<T>(request, 'POST', endpoint, formData, true)

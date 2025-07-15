@@ -1,20 +1,23 @@
 export interface INomenclatureItem {
-  id: string;
-  name: string;
-  address: string;
-  description: string;
+  code: string
+  name: string
+  isExample: boolean
+  isOwn: string
+  phoneNumber: string
+  ownerPlaces: string
+
   //TODO Паша сделай типы как надо
 }
 
 export interface INomenclatureResponse {
-  nomenclatureList: INomenclatureItem[];
-  total: number;
-  limit: number;
-  offset: number;
+  nomenclatureList: INomenclatureItem[]
+  total?: number
+  limit?: number
+  offset?: number
 }
 
 export interface INomenclatureQueryParams {
-  limit?: number;
-  offset?: number;
-  search?: string;
+  limit?: number
+  offset?: number
+  search?: string
 }
