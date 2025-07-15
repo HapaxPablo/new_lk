@@ -1,5 +1,5 @@
-import { NextRequest, NextResponse } from 'next/server'
 import { AuthResponse } from '@/types/auth'
+import { NextRequest, NextResponse } from 'next/server'
 
 export async function POST(request: NextRequest) {
   try {
@@ -36,11 +36,12 @@ export async function POST(request: NextRequest) {
         value: data.xrmcCookie,
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
-        sameSite: 'lax', 
+        sameSite: 'lax',
         path: '/',
         maxAge: 60 * 60 * 24 * 7, // 7 дней (в секундах)
         expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 7), // 7 дней
       })
+      // console.log('res auth', res)
       return res
     }
 
