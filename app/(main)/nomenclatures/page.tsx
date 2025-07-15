@@ -58,7 +58,10 @@ export default async function NomenclaturesPage({
 
   try {
     // Формируем URL для API
-    const url = new URL('/api/nomenclatures', 'http://localhost:3000')
+    const url = new URL(
+      'getNomenclatureList',
+      'http://94.73.230.145:8080/rmc_copy_3/hs/MobileApp_New/'
+    )
     url.searchParams.set('limit', String(limit))
     url.searchParams.set('offset', String(offset))
     if (search) url.searchParams.set('search', search)
