@@ -18,7 +18,7 @@ class HttpClient1CServer {
     const token = request.cookies.get('xrmcCookie')?.value
 
     // console.log('request.cookies', request.cookies)
-    // console.log('token:', token)
+    console.log('token:', token)
     if (!token) {
       throw new Error('Authentication required')
     }
