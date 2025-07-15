@@ -2,7 +2,6 @@ import { Pagination } from '@/components/pagination/Pagination'
 import { SearchForm } from '@/components/search-form/SearchForm'
 import { getToken } from '@/lib/token/getToken'
 import { INomenclatureItem } from '@/types/nomenclature'
-import { Pen } from 'lucide-react'
 
 interface NomenclaturesPageProps {
   searchParams: {
@@ -56,12 +55,11 @@ export default async function NomenclaturesPage({
   // Используем только нужный срез данных для текущей страницы
   const pagedData = mockData.slice(offset, offset + limit)
 
+  console.log(process.env.API_1C_URL)
+
   try {
     // Формируем URL для API
-    const url = new URL(
-      'getNomenclatureList',
-      'http://94.73.230.145:8080/rmc_copy_3/hs/MobileApp_New/'
-    )
+    const url = new URL('/api/nomenclatures/', 'https://test.lk.krasrm.com')
     url.searchParams.set('limit', String(limit))
     url.searchParams.set('offset', String(offset))
     if (search) url.searchParams.set('search', search)
@@ -104,34 +102,41 @@ export default async function NomenclaturesPage({
             data.map((item) => (
               <div
                 key={item.code}
-                className="border w-full grid grid-cols-3 gap-2 p-2"
+                className="border p-4 rounded-lg shadow-sm hover:shadow-md transition-shadow"
               >
-                <div
-                  className="w-full h-full grid"
-                  style={{ gridTemplateRows: '12px 4px 1fr' }}
-                >
-                  <img
-                    src="/wall.jpg"
-                    alt="logo"
-                    className="w-full h-full object-cover row-start-1 row-end-2"
-                  />
-                  <div className="row-start-2 row-end-3" />
-                  <img
-                    src="/wall.jpg"
-                    alt="logo"
-                    className="w-full h-full object-cover row-start-3 row-end-4"
-                  />
-                </div>
-                <div
-                  className="w-full h-full grid"
-                  style={{ gridTemplateRows: '16px 4px 1fr' }}
-                >
-                  <div className="flex flex-row w-full gap-3 items-center">
-                    <Pen width={16} height={16} style={{ color: '99A3AE' }} />
-                    <div className="text-base font-semibold">{item.code}</div>
-                  </div>
-                </div>
+                <h2 className="text-xl font-semibold mb-2">{item.name}</h2>
               </div>
+
+              // <div
+              //   key={item.code}
+              //   className="border w-full grid grid-cols-3 gap-2 p-2"
+              // >
+              //   <div
+              //     className="w-full h-full grid"
+              //     style={{ gridTemplateRows: '12px 4px 1fr' }}
+              //   >
+              //     <img
+              //       src="/wall.jpg"
+              //       alt="logo"
+              //       className="w-full h-full object-cover row-start-1 row-end-2"
+              //     />
+              //     <div className="row-start-2 row-end-3" />
+              //     <img
+              //       src="/wall.jpg"
+              //       alt="logo"
+              //       className="w-full h-full object-cover row-start-3 row-end-4"
+              //     />
+              //   </div>
+              //   <div
+              //     className="w-full h-full grid"
+              //     style={{ gridTemplateRows: '16px 4px 1fr' }}
+              //   >
+              //     <div className="flex flex-row w-full gap-3 items-center">
+              //       <Pen width={16} height={16} style={{ color: '99A3AE' }} />
+              //       <div className="text-base font-semibold">{item.code}</div>
+              //     </div>
+              //   </div>
+              // </div>
             ))
           ) : (
             <div>Nothing</div>
