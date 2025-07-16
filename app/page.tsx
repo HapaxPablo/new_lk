@@ -1,5 +1,5 @@
+import Card from '@/components/nomenclatures/card/mobile/CardMobile'
 import { SearchForm } from '@/components/search-form/SearchForm'
-import Card from '@/components/ui/card/Card'
 import { Loader } from '@/components/ui/loader/Loader'
 import { Suspense } from 'react'
 
