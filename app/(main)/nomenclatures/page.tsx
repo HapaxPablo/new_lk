@@ -1,3 +1,4 @@
+import { NomenclatureWrapper } from '@/components/nomenclatures/NomenclatureWrapper'
 import { Pagination } from '@/components/pagination/Pagination'
 import { SearchForm } from '@/components/search-form/SearchForm'
 import { getToken } from '@/lib/token/getToken'
@@ -16,7 +17,7 @@ export default async function NomenclaturesPage({
 }: NomenclaturesPageProps) {
   // Получаем параметры с await
   const params = await searchParams
-  const limit = Number(params.limit) || 9
+  const limit = Number(params.limit) || 18
   const offset = Number(params.offset) || 0
   const search = params.search || undefined
   const token = await getToken()
@@ -42,51 +43,52 @@ export default async function NomenclaturesPage({
     'Козлов К.К.',
     'Степанов С.С.',
   ]
-  const mockData: INomenclatureItem[] = Array.from({ length: 18 }, (_, i) => ({
+  // Генерируем 150 мок-элементов
+  const mockData: INomenclatureItem[] = Array.from({ length: 150 }, (_, i) => ({
     code: `code${i + 1}`,
     name: `Номенклатура ${i + 1}`,
     isExample: i % 2 === 0,
     isOwn: i % 3 === 0 ? 'yes' : 'no',
-    phoneNumber: `+7 900 000 00${(i + 1).toString().padStart(2, '0')}`,
-    ownerPlaces: mockFio[i],
+    phoneNumber: `бренд${i + 1}`,
+    ownerPlaces: mockFio[i % mockFio.length],
+    articule: `00${(i + 1).toString().padStart(3, '0')}`,
+    address: `г. Город, ул. Улица, д. ${(i % 50) + 1}`,
   }))
 
-  const total = 18
+  const total = 150
   // Используем только нужный срез данных для текущей страницы
   const pagedData = mockData.slice(offset, offset + limit)
 
-  console.log(process.env.API_1C_URL)
-
   try {
-    // Формируем URL для API
-    const url = new URL('/api/nomenclatures/', 'https://test.lk.krasrm.com')
-    url.searchParams.set('limit', String(limit))
-    url.searchParams.set('offset', String(offset))
-    if (search) url.searchParams.set('search', search)
+    //   // Формируем URL для API
+    //   const url = new URL('/api/nomenclatures/', 'https://test.lk.krasrm.com')
+    //   url.searchParams.set('limit', String(limit))
+    //   url.searchParams.set('offset', String(offset))
+    //   if (search) url.searchParams.set('search', search)
 
-    // Делаем запрос к API
-    const response = await fetch(url.toString(), {
-      next: { tags: ['nomenclatures'] },
-      credentials: 'include',
-      headers: {
-        Authorization: `xrmcCookie ${token}`,
-        Cookie: `xrmcCookie=${token}`,
-      },
-    })
+    //   // Делаем запрос к API
+    //   const response = await fetch(url.toString(), {
+    //     next: { tags: ['nomenclatures'] },
+    //     credentials: 'include',
+    //     headers: {
+    //       Authorization: `xrmcCookie ${token}`,
+    //       Cookie: `xrmcCookie=${token}`,
+    //     },
+    //   })
 
-    if (!response.ok) {
-      const errorData = await response.json()
-      // console.log('errorData', errorData)
-      throw new Error(errorData.error || 'Failed to fetch data')
-    }
+    //   if (!response.ok) {
+    //     const errorData = await response.json()
+    //     // console.log('errorData', errorData)
+    //     throw new Error(errorData.error || 'Failed to fetch data')
+    //   }
 
-    const data: INomenclatureItem[] = await response.json()
+    //   const data: INomenclatureItem[] = await response.json()
 
-    console.log('INomenclatureResponse', data)
-    console.log('NomenclatureList length:', data.length)
+    //   console.log('INomenclatureResponse', data)
+    //   console.log('NomenclatureList length:', data.length)
 
     // Используем мок-данные вместо fetch
-    // const data: INomenclatureItem[] = pagedData
+    const data: INomenclatureItem[] = pagedData
 
     // console.log('INomenclatureResponse', data)
     // console.log('NomenclatureList length:', data.length)
@@ -100,43 +102,7 @@ export default async function NomenclaturesPage({
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
           {data?.length ? (
             data.map((item) => (
-              <div
-                key={item.code}
-                className="border p-4 rounded-lg shadow-sm hover:shadow-md transition-shadow"
-              >
-                <h2 className="text-xl font-semibold mb-2">{item.name}</h2>
-              </div>
-
-              // <div
-              //   key={item.code}
-              //   className="border w-full grid grid-cols-3 gap-2 p-2"
-              // >
-              //   <div
-              //     className="w-full h-full grid"
-              //     style={{ gridTemplateRows: '12px 4px 1fr' }}
-              //   >
-              //     <img
-              //       src="/wall.jpg"
-              //       alt="logo"
-              //       className="w-full h-full object-cover row-start-1 row-end-2"
-              //     />
-              //     <div className="row-start-2 row-end-3" />
-              //     <img
-              //       src="/wall.jpg"
-              //       alt="logo"
-              //       className="w-full h-full object-cover row-start-3 row-end-4"
-              //     />
-              //   </div>
-              //   <div
-              //     className="w-full h-full grid"
-              //     style={{ gridTemplateRows: '16px 4px 1fr' }}
-              //   >
-              //     <div className="flex flex-row w-full gap-3 items-center">
-              //       <Pen width={16} height={16} style={{ color: '99A3AE' }} />
-              //       <div className="text-base font-semibold">{item.code}</div>
-              //     </div>
-              //   </div>
-              // </div>
+              <NomenclatureWrapper key={item.code} item={item} />
             ))
           ) : (
             <div>Nothing</div>

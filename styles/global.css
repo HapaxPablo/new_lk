@@ -12,11 +12,10 @@
 }
 
 :root {
-
   --background: oklch(0.9755 0.0045 258.32);
   --background-secondary: oklch(0.9255 0.0035 258.32);
 
- /* Основные цвета */
+  /* Основные цвета */
   --main-color: oklch(0.6546 0.1801 23.49);
   --main-color-light: oklch(0.7546 0.1501 23.49);
   --main-color-dark: oklch(0.5546 0.2001 23.49);
@@ -199,7 +198,6 @@ a {
     box-shadow: var(--focus-ring);
   }
 }
-
 
 /* Формы */
 input,
