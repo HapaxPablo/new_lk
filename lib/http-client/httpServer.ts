@@ -1,5 +1,6 @@
 import { THttpMethod } from '@/types'
 import { NextRequest } from 'next/server'
+import { getToken } from '../token/getToken'
 
 class HttpClient1CServer {
   private baseUrl: string
@@ -15,7 +16,8 @@ class HttpClient1CServer {
     data?: any,
     isFile: boolean = false
   ): Promise<T> {
-    const token = request.cookies.get('xrmcCookie')?.value
+    const token = getToken()
+    console.log('token', token)
 
     // console.log('request.cookies', request.cookies)
     console.log('token:', token)

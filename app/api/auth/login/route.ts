@@ -33,7 +33,7 @@ export async function POST(request: NextRequest) {
       const res = NextResponse.json(data)
       res.cookies.set({
         name: 'xrmcCookie',
-        value: data.xrmcCookie,
+        value: data.xrmcCookie.accessToken,
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
         sameSite: 'lax',
@@ -41,7 +41,7 @@ export async function POST(request: NextRequest) {
         maxAge: 60 * 60 * 24 * 7, // 7 дней (в секундах)
         expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 7), // 7 дней
       })
-      // console.log('res auth', res)
+      console.log('res auth', res)
       return res
     }
 

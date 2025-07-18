@@ -3,13 +3,7 @@
 import { useNotification } from '@/hooks/useNotification'
 import { AuthResponse } from '@/types/auth'
 import { useRouter } from 'next/navigation'
-import {
-  createContext,
-  ReactNode,
-  useContext,
-  useEffect,
-  useState,
-} from 'react'
+import { createContext, ReactNode, useContext, useState } from 'react'
 
 type AuthContextType = {
   isAuthenticated: boolean
@@ -34,36 +28,36 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [blockTime, setBlockTime] = useState<number | null>(null)
   const router = useRouter()
   const { showNotification } = useNotification()
-console.log(isAuthenticated);
+  console.log(isAuthenticated)
 
-  useEffect(() => {
-    const checkAuth = async () => {
-      try {
-        const response = await fetch('/api/auth/check', {
-          credentials: 'include',
-          // cache: 'no-store',
-        })
+  // useEffect(() => {
+  //   const checkAuth = async () => {
+  //     try {
+  //       const response = await fetch('/api/auth/check', {
+  //         credentials: 'include',
+  //         // cache: 'no-store',
+  //       })
 
-        if (response.ok) {
-          const result = await response.json()
-          setIsAuthenticated(result.isAuthenticated)
+  //       if (response.ok) {
+  //         const result = await response.json()
+  //         setIsAuthenticated(result.isAuthenticated)
 
-          if (!result.isAuthenticated) {
-            // await logout()
-            console.log('сделать проверку токена в 1с');
-            
-          }
-        } else {
-          setIsAuthenticated(false)
-        }
-      } catch (err) {
-        console.error('Auth check failed:', err)
-        setIsAuthenticated(false)
-      }
-    }
+  //         if (!result.isAuthenticated) {
+  //           // await logout()
+  //           console.log('сделать проверку токена в 1с');
 
-    checkAuth()
-  }, [])
+  //         }
+  //       } else {
+  //         setIsAuthenticated(false)
+  //       }
+  //     } catch (err) {
+  //       console.error('Auth check failed:', err)
+  //       setIsAuthenticated(false)
+  //     }
+  //   }
+
+  //   checkAuth()
+  // }, [])
 
   const login = async (
     email: string,

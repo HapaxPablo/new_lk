@@ -1,4 +1,4 @@
-export interface AuthResponse {
+export interface IRegistrationConfirmResponse {
   isAuthorized: boolean
   emailIsExit: boolean
   message: string

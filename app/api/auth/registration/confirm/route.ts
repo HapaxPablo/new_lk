@@ -18,7 +18,21 @@ export async function POST(request: NextRequest) {
     if (!response.ok) {
       return NextResponse.json(data)
     }
-
+    if (data.result && data.xrmcCookie) {
+      const res = NextResponse.json(data)
+      res.cookies.set({
+        name: 'xrmcCookie',
+        value: data.xrmcCookie,
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'lax',
+        path: '/',
+        maxAge: 60 * 60 * 24 * 7, // 7 дней (в секундах)
+        expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 7), // 7 дней
+      })
+      console.log('res reg', res)
+      return res
+    }
     return NextResponse.json(data)
   } catch (error) {
     return NextResponse.json({

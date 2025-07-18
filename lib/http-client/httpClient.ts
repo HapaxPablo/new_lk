@@ -2,6 +2,7 @@
 //tets
 import { useAuth } from '@/providers/auth-provider/AuthProvider'
 import { THttpMethod } from '@/types'
+import { getToken } from '../token/getToken'
 
 class HttpClient1CClient {
   private baseUrl: string
@@ -17,10 +18,8 @@ class HttpClient1CClient {
     isFile: boolean = false
   ): Promise<T> {
     const { isAuthenticated, logout } = useAuth()
-    const token = document.cookie
-      .split('; ')
-      .find((row) => row.startsWith('xrmcCookie='))
-      ?.split('=')[1]
+    const token = getToken()
+    console.log('token', token)
 
     if (!token || !isAuthenticated) {
       await logout()
