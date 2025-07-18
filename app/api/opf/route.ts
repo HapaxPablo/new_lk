@@ -13,7 +13,7 @@ export async function GET(request: Request) {
       )
     }
 
-    const apiUrl = `${process.env.API_1C_URL}/getOrganizationForms?type=${type}`
+    const apiUrl = `${process.env.API_1C_URL}getOrganizationForms?type=${type}`
     const response = await fetch(apiUrl, {
       method: 'GET',
       headers: {

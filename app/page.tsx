@@ -1,4 +1,3 @@
-import Card from '@/components/nomenclatures/card/mobile/CardMobile'
 import { SearchForm } from '@/components/search-form/SearchForm'
 import { Loader } from '@/components/ui/loader/Loader'
 import { Suspense } from 'react'
@@ -30,9 +29,6 @@ export default function Home() {
         <Loader size="large" variant="error" />
 
         <Loader size="large" variant="warning" />
-      </div>
-      <div className="w-full h-full p-2">
-        <Card />
       </div>
     </div>
   )
