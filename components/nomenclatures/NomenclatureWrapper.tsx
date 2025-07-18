@@ -13,7 +13,7 @@ interface NomenclatureCardProps {
 const NomenclatureCardMobile = dynamic(
   () =>
     import('./card/mobile/CardMobile').then((mod) => ({
-      default: mod.NomenclatureCard,
+      default: mod.CardMobile,
     })),
   { ssr: false, loading: () => <div>Loading...</div> }
 )

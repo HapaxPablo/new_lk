@@ -5,7 +5,7 @@ export interface INomenclatureItem {
   isOwn: string
   phoneNumber: string
   ownerPlaces: string
-  articule: string
+  article: string
   address: string // добавлено поле адреса
   //TODO Паша сделай типы как надо
 }

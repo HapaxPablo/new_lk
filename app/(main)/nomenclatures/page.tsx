@@ -1,7 +1,7 @@
 import { NomenclatureWrapper } from '@/components/nomenclatures/NomenclatureWrapper'
 import { Pagination } from '@/components/pagination/Pagination'
 import { SearchForm } from '@/components/search-form/SearchForm'
-import { getToken } from '@/lib/token/getToken'
+// import { getToken } from '@/lib/token/getToken'
 import { INomenclatureItem } from '@/types/nomenclature'
 
 interface NomenclaturesPageProps {
@@ -20,7 +20,7 @@ export default async function NomenclaturesPage({
   const limit = Number(params.limit) || 18
   const offset = Number(params.offset) || 0
   const search = params.search || undefined
-  const token = await getToken()
+  // const token = await getToken()
 
   // Мок-данные для тестирования UI
   const mockFio = [
@@ -51,7 +51,7 @@ export default async function NomenclaturesPage({
     isOwn: i % 3 === 0 ? 'yes' : 'no',
     phoneNumber: `бренд${i + 1}`,
     ownerPlaces: mockFio[i % mockFio.length],
-    articule: `00${(i + 1).toString().padStart(3, '0')}`,
+    article: `00${(i + 1).toString().padStart(3, '0')}`,
     address: `г. Город, ул. Улица, д. ${(i % 50) + 1}`,
   }))
 

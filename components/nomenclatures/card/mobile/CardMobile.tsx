@@ -8,7 +8,7 @@ interface NomenclatureCardProps {
   children?: React.ReactNode
 }
 
-export const NomenclatureCard: React.FC<NomenclatureCardProps> = ({
+export const CardMobile: React.FC<NomenclatureCardProps> = ({
   item,
   className = '',
   children,
@@ -18,7 +18,7 @@ export const NomenclatureCard: React.FC<NomenclatureCardProps> = ({
       className={`relative  p-2 rounded-lg shadow-sm hover:shadow-md transition-shadow ${className} bg-white`}
     >
       <div className="absolute right-2 top-2">
-        <span className="text-gray-400 text-[0.5rem]">{item.articule}</span>
+        <span className="text-gray-400 text-[0.5rem]">{item.article}</span>
       </div>
       <div className="flex flex-row gap-2 items-center">
         <div
