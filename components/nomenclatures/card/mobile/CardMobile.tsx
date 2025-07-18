@@ -42,7 +42,9 @@ export const CardMobile: React.FC<NomenclatureCardProps> = ({
         <div className="flex flex-col gap-1.5 w-full h-full">
           <div className="flex flex-row items-center gap-2 h-[20px]">
             <UserRound height={18} width={18} />
-            <h2 className="text-base font-semibold">{item.ownerPlaces}</h2>
+            <h2 className="text-base font-semibold">
+              {item.ownerPlaces ?? `${item.name.slice(0, 25)}...`}
+            </h2>
           </div>
           <div className="flex flex-row items-center gap-2 h-[20px]">
             <Badge height={18} width={18} />

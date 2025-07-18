@@ -23,6 +23,7 @@ export function useOlfFetcher(type: string) {
 
       try {
         const response = await fetch(`/api/opf?type=${type}`)
+
         const fetched: OrganizationForm[] = await response.json()
         // console.log('[FETCHED]', fetched)
 
