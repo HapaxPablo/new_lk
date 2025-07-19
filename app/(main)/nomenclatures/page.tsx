@@ -1,14 +1,14 @@
-import { NomenclatureCard } from '@/components/nomenclatures/card/mobile/CardMobile'
+import { CardMobile } from '@/components/nomenclatures/card/mobile/CardMobile'
 import { Pagination } from '@/components/pagination/Pagination'
 import { SearchForm } from '@/components/search-form/SearchForm'
-// import { getToken } from '@/lib/token/getToken'
+import { getToken } from '@/lib/token/getToken'
 import { INomenclatureItem } from '@/types/nomenclature'
 
 interface NomenclaturesPageProps {
   searchParams: {
     limit?: string
     offset?: string
-    search?: string
+    searchValue?: string
   }
 }
 
@@ -19,8 +19,8 @@ export default async function NomenclaturesPage({
   const params = await searchParams
   const limit = Number(params.limit) || 18
   const offset = Number(params.offset) || 0
-  const search = params.search || undefined
-  // const token = await getToken()
+  const search = params.searchValue || ''
+  const token = await getToken()
 
   console.log('token nomen', token)
 
@@ -29,16 +29,16 @@ export default async function NomenclaturesPage({
     const url = new URL('/api/nomenclatures/', 'http://localhost:3000')
     url.searchParams.set('limit', String(limit))
     url.searchParams.set('offset', String(offset))
-    if (search) url.searchParams.set('search', search)
+    url.searchParams.set('searchValue', search)
 
     // Делаем запрос к API
     const response = await fetch(url.toString(), {
       next: { tags: ['nomenclatures'] },
-      // credentials: 'include',
-      // headers: {
-      //   Authorization: `xrmcCookie=${token}`,
-      //   Cookie: `xrmcCookie=${token}`,
-      // },
+      credentials: 'include',
+      headers: {
+        Authorization: `xrmcCookie${token}`,
+        Cookie: `xrmcCookie=${token}`,
+      },
     })
 
     if (!response.ok) {
@@ -66,7 +66,7 @@ export default async function NomenclaturesPage({
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
           {data?.length ? (
-            data.map((item) => <NomenclatureCard key={item.code} item={item} />)
+            data.map((item) => <CardMobile key={item.code} item={item} />)
           ) : (
             <div>Nothing</div>
           )}

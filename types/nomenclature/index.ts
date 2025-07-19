@@ -20,5 +20,5 @@ export interface INomenclatureResponse {
 export interface INomenclatureQueryParams {
   limit?: number
   offset?: number
-  search?: string
+  searchValue?: string
 }

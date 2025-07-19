@@ -20,30 +20,30 @@ class HttpClient1CServer {
     console.log('token', token)
 
     // console.log('request.cookies', request.cookies)
-    console.log('token:', token)
     if (!token) {
       throw new Error('Authentication required')
     }
-
+    
     const headers: Record<string, string> = {
       Authorization: `xrmcCookie=${token}`,
       Cookie: `xrmcCookie=${token}`,
     }
-
+    
     if (!isFile) {
       headers['Content-Type'] = 'application/json'
     }
-
+    
     const config: RequestInit = {
       method,
       headers,
       credentials: 'include',
     }
-
+    
     if (data) {
       config.body = isFile ? data : JSON.stringify(data)
     }
-
+    
+    console.log('fullUrl:', `${this.baseUrl}${endpoint}`, config)
     const response = await fetch(`${this.baseUrl}${endpoint}`, config)
 
     if (response.status === 401) {
