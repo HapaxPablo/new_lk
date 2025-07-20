@@ -14,10 +14,10 @@ const InfoMenu = () => {
         aria-label="Позвонить по номеру 8 800 500 50 50"
         title="Бесплатная горячая линия"
       >
-        <span className={styles.phone__desktop} aria-hidden="false">
+        <span className={styles.phone__desktop} aria-hidden="false" aria-label='телефон'>
           8 800 500 50 50
         </span>
-        <Phone className={styles.phone__mobile} size={24} aria-hidden="true" />
+        <Phone className={styles.phone__mobile} size={24} aria-hidden="false" aria-label='телефон' />
       </button>
     </div>
   )

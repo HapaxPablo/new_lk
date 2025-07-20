@@ -15,12 +15,11 @@
     color: var(--second-text-color-light);
     font: inherit;
     cursor: pointer;
-    padding: 0.5rem;
-    border-radius: 4px;
+    padding: 0.2rem;
     transition: background-color 0.2s;
 
     &:hover {
-      background-color: #f5f5f5;
+     color: (--main-text-color);
     }
 
     &:focus {
@@ -32,6 +31,12 @@
   &__desktop {
     @media (max-width: 768px) {
       display: none;
+    }
+     // отдельное правило для текста в десктопе
+    @media (min-width: 769px) {
+      .phone:hover & {
+        color: var(--main-text-color);
+      }
     }
   }
 

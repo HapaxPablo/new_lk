@@ -14,14 +14,18 @@ const NavigationMenuMobile = () => {
 
   return (
     <>
-      <button
-        className={styles.menuButton}
-        onClick={toggleMenu}
-        aria-label={isOpen ? 'Закрыть меню' : 'Открыть меню'}
-      >
-        <MenuIcon />
-      </button>
-
+      <div className={styles.menu_button_wrapper}>
+        <button
+          className={styles.menuButton}
+          onClick={toggleMenu}
+          aria-label={isOpen ? 'Закрыть меню' : 'Открыть меню'}
+        >
+          <MenuIcon />
+        </button>
+        <span className={styles.menu_button_description}>
+          {NAV_ITEMS.map((item) => (item.path === pathname ? item.title : ''))}
+        </span>
+      </div>
       {/* Оверлей */}
       <div
         className={`${styles.menuOverlay} ${isOpen ? styles.open : ''}`}
