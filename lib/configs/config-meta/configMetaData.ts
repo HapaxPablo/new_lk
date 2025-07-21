@@ -24,7 +24,14 @@ export const metaDataConfigLayout = {
     googleBot: {
       index: true,
       follow: true,
-      noimageindex: false,
+      iopageindex: false,
+    },
+  },
+   verification: {
+    google: 'google',
+    yandex: 'yandex',
+    other: {
+      me: ['my-email', 'my-link'],
     },
   },
 }

@@ -63,6 +63,19 @@
     }
 }
 
+.menu_button_wrapper {
+    display: flex;
+    flex-direction: row;
+    gap: 1rem;
+
+    .menu_button_description {
+        color: var(--second-text-color-light);
+        display: flex;
+        text-align: center;
+        justify-content: center;
+        align-items: center;
+    }
+}
 
 .menuButton {
     display: none;
@@ -75,6 +88,7 @@
 
     @media (max-width: 767px) {
         display: block;
+        order: 0;
     }
 }
 

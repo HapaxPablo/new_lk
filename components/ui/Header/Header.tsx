@@ -1,20 +1,18 @@
-'use client'
 import Image from 'next/image'
-import { useRouter } from 'next/navigation'
 import styles from './Header.module.scss'
 import InfoMenu from './infoMenu/InfoMenu'
 import NavigationMenu from './naviMenu/NavigationMenu'
 import UserMenu from './userMenu/UserMenu'
+import Link from 'next/link'
+import SearchMenu from './search/SearchMenu'
+import NotificationMenu from './notification/NotificationMenu'
 
 export default function Header() {
-  const router = useRouter()
-  const onClickLogo = () => {
-    router.push('/about', { scroll: false })
-  }
+
   return (
     <div className={styles.header}>
       <div className={styles.wrapper_menu}>
-        <div className={styles.header__logo_wrapper} onClick={onClickLogo}>
+        <Link className={styles.header__logo_wrapper} href="/about" aria-label="RMS адрес о нас">
           <Image
             className={styles.header__logo}
             src="/logo.svg"
@@ -25,10 +23,12 @@ export default function Header() {
             title="логотип-rmc"
             aria-label="logo"
           />
-        </div>
+        </Link>
         <NavigationMenu />
       </div>
       <div className={styles.wrapper_info_user}>
+        <SearchMenu />
+        <NotificationMenu />
         <InfoMenu />
         <UserMenu />
       </div>

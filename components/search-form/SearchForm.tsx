@@ -3,6 +3,7 @@
 import { useRouter, usePathname, useSearchParams } from 'next/navigation'
 import { useDebounceCallback } from 'usehooks-ts'
 import { useCallback, useEffect, useRef } from 'react'
+import { Button } from '../ui/button/Button'
 
 interface SearchFormProps {
   /**
@@ -19,7 +20,7 @@ interface SearchFormProps {
 
   /**
    * Имя параметра в URL для поискового запроса
-   * @default 'search'
+   * @default 'searchValue'
    */
   searchParamName?: string
 
@@ -64,9 +65,9 @@ interface SearchFormProps {
 export function SearchForm({
   initialSearch = '',
   placeholder = 'Поиск...',
-  searchParamName = 'search',
+  searchParamName = 'searchValue',
   className = '',
-  debounceDelay = 500,
+  debounceDelay = 800,
   hideButton = false,
   buttonText = 'Найти',
   buttonClassName = '',
@@ -85,8 +86,7 @@ export function SearchForm({
     } else {
       params.delete(searchParamName)
     }
-
-    params.delete('offset') // Сбрасываем пагинацию
+    // params.delete('offset') // Сбрасываем пагинацию
     router.push(`${pathname}?${params.toString()}`)
   }, debounceDelay)
 
@@ -131,12 +131,9 @@ export function SearchForm({
         className={`px-4 py-2 border ${hideButton ? 'rounded' : 'rounded-l'} flex-grow focus:outline-none focus:ring-2 focus:ring-blue-300`}
       />
       {!hideButton && (
-        <button
-          type="submit"
-          className={`px-4 py-2 bg-primary text-white rounded-r hover:bg-primary-dark transition-colors focus:outline-none focus:ring-2 focus:ring-blue-300 ${buttonClassName}`}
-        >
+        <Button type="submit" variant="primary" className={buttonClassName}>
           {buttonText}
-        </button>
+        </Button>
       )}
     </form>
   )

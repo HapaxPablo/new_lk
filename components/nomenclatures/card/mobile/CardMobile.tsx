@@ -8,7 +8,7 @@ interface NomenclatureCardProps {
   children?: React.ReactNode
 }
 
-export const NomenclatureCard: React.FC<NomenclatureCardProps> = ({
+export const CardMobile: React.FC<NomenclatureCardProps> = ({
   item,
   className = '',
   children,
