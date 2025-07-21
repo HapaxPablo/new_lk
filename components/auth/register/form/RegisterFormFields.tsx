@@ -14,11 +14,11 @@ import styles from './RegisterForm.module.scss'
 export default function RegisterFormFields({
   setEmail,
   setCanConfirm,
-  showNotification,
+  showToast,
 }: {
   setEmail: (email: string) => void
   setCanConfirm: (can: boolean) => void
-  showNotification: (msg: string, type: 'success' | 'error') => void
+  showToast: (msg: string, type: 'success' | 'error') => void
 }) {
   const [typeOlf, setTypeOlf] = useState<'individual' | 'legal'>('individual')
   const { olfIndividual, olfLegal } = useOlfFetcher(typeOlf)
@@ -62,10 +62,10 @@ export default function RegisterFormFields({
       const result = await response.json()
       if (!response.ok || !result.result) {
         setGeneralError(result?.message || 'Ошибка регистрации')
-        showNotification(`${result.message}`, 'error')
+        showToast(`${result.message}`, 'error')
       } else {
         setEmail(apiData.email)
-        showNotification(`${result.message}`, 'success')
+        showToast(`${result.message}`, 'success')
         setCanConfirm(result.result)
       }
     } catch (err) {

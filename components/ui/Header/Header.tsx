@@ -6,13 +6,18 @@ import UserMenu from './userMenu/UserMenu'
 import Link from 'next/link'
 import SearchMenu from './search/SearchMenu'
 import NotificationMenu from './notification/NotificationMenu'
+import { ModalWrapper } from '@/components/modal/ModalWrapper'
+import { SearchForm } from '@/components/search-form/SearchForm'
 
 export default function Header() {
-
   return (
     <div className={styles.header}>
       <div className={styles.wrapper_menu}>
-        <Link className={styles.header__logo_wrapper} href="/about" aria-label="RMS адрес о нас">
+        <Link
+          className={styles.header__logo_wrapper}
+          href="/about"
+          aria-label="RMS адрес о нас"
+        >
           <Image
             className={styles.header__logo}
             src="/logo.svg"
@@ -32,6 +37,16 @@ export default function Header() {
         <InfoMenu />
         <UserMenu />
       </div>
+      {/* //TODO добавить логику в форме закрытия модального окна после выполнения запроса */}
+      <ModalWrapper id="search" title="Поиск">
+        <SearchForm hideButton />
+      </ModalWrapper>
+       <ModalWrapper id="notifications" title="Уведомления">
+      <div className="notifications-content">
+        {/* TODO добавить компонент с уведомлениями */}
+        что то с Уведомления
+      </div>
+    </ModalWrapper>
     </div>
   )
 }

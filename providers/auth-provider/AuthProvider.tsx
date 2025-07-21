@@ -1,6 +1,6 @@
 'use client'
 
-import { useNotification } from '@/hooks/useNotification'
+import { useToast } from '@/hooks/useToast'
 import { AuthResponse } from '@/types/auth'
 import { useRouter } from 'next/navigation'
 import { createContext, ReactNode, useContext, useState } from 'react'
@@ -27,7 +27,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [error, setError] = useState<string | null>(null)
   const [blockTime, setBlockTime] = useState<number | null>(null)
   const router = useRouter()
-  const { showNotification } = useNotification()
+  const { showToast } = useToast()
   console.log(isAuthenticated)
 
   // useEffect(() => {
@@ -89,7 +89,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           data,
         }
       } else if (!data.isAuthorized && !data.emailIsExit) {
-        showNotification(`${data.message}`, 'error')
+        showToast(`${data.message}`, 'error')
         router.push('/registration')
         return { success: false }
       } else {
@@ -132,7 +132,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       }
     } catch (err) {
       console.error('Logout failed:', err)
-      showNotification('Ошибка при выходе из системы', 'error')
+      showToast('Ошибка при выходе из системы', 'error')
     }
   }
 

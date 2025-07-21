@@ -2,7 +2,8 @@ import Footer from '@/components/ui/footer/Footer'
 import Header from '@/components/ui/header/Header'
 import { metaDataConfigLayout } from '@/lib/configs/config-meta/configMetaData'
 import { AuthProvider } from '@/providers/auth-provider/AuthProvider'
-import { NotificationProvider } from '@/providers/notification/NotificationProvider'
+import { ModalProvider } from '@/providers/modal/ModalProvider'
+import { ToastProvider } from '@/providers/toast/ToastProvider'
 import '@/styles/global.css'
 import type { Metadata } from 'next'
 import localFont from 'next/font/local'
@@ -45,17 +46,19 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="en">
+    <html lang="ru">
       <body className={`${montserrat.className} antialiased`}>
-        <NotificationProvider>
-          <AuthProvider>
-            <div className="layout">
-              <Header />
-              <main className="content">{children}</main>
-              <Footer />
-            </div>
-          </AuthProvider>
-        </NotificationProvider>
+        <ModalProvider>
+          <ToastProvider>
+            <AuthProvider>
+              <div className="layout">
+                <Header />
+                <main className="content">{children}</main>
+                <Footer />
+              </div>
+            </AuthProvider>
+          </ToastProvider>
+        </ModalProvider>
       </body>
     </html>
   )

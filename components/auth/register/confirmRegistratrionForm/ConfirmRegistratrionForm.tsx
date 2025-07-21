@@ -1,14 +1,14 @@
 'use client'
 
 import { Button } from '@/components/ui/button/Button'
-import { useNotification } from '@/hooks/useNotification'
+import { useToast} from '@/hooks/useToast'
 import { useRouter } from 'next/navigation'
 import { useRef } from 'react'
 import styles from './ConfirmRegistratrionForm.module.scss'
 
 export default function ConfirmRegistratrionForm({ email }: { email: string }) {
   const inputsRef = useRef<Array<HTMLInputElement | null>>([])
-  const { showNotification } = useNotification()
+  const { showToast } = useToast()
   const router = useRouter()
 
   const handleChange = (index: number, value: string) => {
@@ -45,9 +45,9 @@ export default function ConfirmRegistratrionForm({ email }: { email: string }) {
       const result = await response.json()
 
       if (!response.ok || !result.result) {
-        showNotification(`${result.message}`, 'error')
+        showToast(`${result.message}`, 'error')
       } else {
-        showNotification(`${result.message}`, 'success')
+        showToast(`${result.message}`, 'success')
         router.push('/nomenclatures')
       }
     } catch (err) {
