@@ -1,8 +1,10 @@
 import { CardMobile } from '@/components/ui/card/mobile/CardMobile'
+import { FieldLabel } from '@/components/ui/fields/fieldLabel/FieldLabel'
+import { FieldValue } from '@/components/ui/fields/fieldValue/FeildValue'
 import { INomenclatureItem } from '@/types/nomenclature'
-import { Badge, MapPin, UserRound } from 'lucide-react'
 import Image from 'next/image'
 import React from 'react'
+import styles from '../desktop/NomenclatureItemDesktop.module.scss'
 
 interface NomenclatureCardProps {
   item: INomenclatureItem
@@ -28,20 +30,23 @@ export const NomenclatureItemMobile: React.FC<NomenclatureCardProps> = ({
             className="grid h-full w-1/3"
             style={{ gridTemplateRows: '20% 5% 75%' }}
           >
-            <Image
-              src={item.logotype}
-              alt={`Логотип бренда ${item.brand}`}
-              width={100}
-              height={100}
-              className="w-full h-full object-cover"
-              style={{ gridRow: '1 / 2' }}
-              loading="lazy"
-            />
-            <div style={{ gridRow: '2 / 3' }} />
-            {item.outside && (
+            {item.logotypeURL && (
               <Image
-                src={item.outside}
-                alt={`Фасад магазина ${item.name}`}
+                src={item.logotypeURL}
+                alt={`Логотип бренда ${item.brand}`}
+                width={100}
+                height={100}
+                className="w-full h-full object-cover"
+                style={{ gridRow: '1 / 2' }}
+                loading="lazy"
+              />
+            )}
+
+            <div style={{ gridRow: '2 / 3' }} />
+            {item.outSidePhotoURL && (
+              <Image
+                src={item.outSidePhotoURL}
+                alt={`Фасад магазина ${item.brand}`}
                 width={100}
                 height={100}
                 className="w-full h-full object-cover"
@@ -51,25 +56,62 @@ export const NomenclatureItemMobile: React.FC<NomenclatureCardProps> = ({
             )}
           </figure>
 
-          <section className="flex flex-col gap-1.5 w-full h-full">
-            <header className="flex flex-row items-center gap-2 h-[20px]">
-              <UserRound height={18} width={18} aria-hidden="true" />
-              <h3 className="text-base font-semibold">
-                {item.ownerPlaces ?? `${item.name.slice(0, 25)}...`}
-              </h3>
-            </header>
+          <section className={styles.infoSection}>
+            {item.legalEntity && (
+              <div className={styles.infoRow}>
+                <FieldLabel text="Юр. лицо:" />
+                <FieldValue
+                  text={`${item.legalEntity}`.trim()}
+                  type="h3"
+                  ariaLabel={`Юр лицо ${item.brand}`}
+                />
+              </div>
+            )}
+            {(item.brand || item.typeOfPlace) && (
+              <header className={styles.header}>
+                <div className={styles.header}>
+                  <FieldLabel text="Бренд:" />
+                  <FieldValue
+                    text={`${item.typeOfPlace} ${item.brand}`.trim()}
+                    type="h3"
+                    ariaLabel="Основной бренд места"
+                  />
+                </div>
+              </header>
+            )}
 
-            <div className="flex flex-row items-center gap-2 h-[20px]">
-              <Badge height={18} width={18} aria-hidden="true" />
-              <span className="text-base font-semibold">{item.brand}</span>
-            </div>
+            {item.contentType && (
+              <div className={styles.infoRow}>
+                <FieldLabel text="Тип ролика:" />
+                <FieldValue
+                  text={`${item.contentType}`}
+                  ariaLabel={`Тип размещаемого ролика в ${item.brand}`}
+                />
+              </div>
+            )}
 
-            <div className="flex flex-row items-center gap-2 h-[20px]">
-              <MapPin height={18} width={18} aria-hidden="true" />
-              <address className="not-italic text-base font-semibold">
-                {item.address}
-              </address>
+            {item.adress && (
+              <div className={styles.infoRow}>
+                <FieldLabel text="Адрес:" />
+                <FieldValue
+                  text={`${item.adress.city}, ${item.adress.street},
+                ${item.adress.streetHouse}`}
+                  type="address"
+                  ariaLabel={`Адрес размещения ${item.brand}`}
+                />
+              </div>
+            )}
+
+            {/*
+          TODO: раскомментить когда появятся роли *для сотрудников* 
+          {item.article && (
+            <div className={styles.infoRow}>
+              <label className={styles.labelSmall}>Артикул:</label>
+              <span className={styles.article} aria-label="Артикул товара">
+                {item.article}
+              </span>
             </div>
+          )} */}
           </section>
         </div>
       </CardMobile>
