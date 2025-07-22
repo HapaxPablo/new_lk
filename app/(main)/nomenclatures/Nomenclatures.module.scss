@@ -1,0 +1,18 @@
+.gridWrapper {
+  display: grid;
+  gap: 0.75rem;
+  margin-bottom: 2rem;
+
+  // Мобильные устройства (по умолчанию)
+  grid-template-columns: 1fr;
+
+  // Планшеты (768px и выше)
+  @media (min-width: 768px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  // Десктоп (1024px и выше)
+  @media (min-width: 1280px) {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}

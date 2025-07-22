@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button/Button'
 import { mockNomenclatureResponse } from '@/lib/mock/nomenclatureItem'
 import { getToken } from '@/lib/token/getToken'
 import { INomenclatureItem } from '@/types/nomenclature'
+import styles from './Nomenclatures.module.scss'
 
 interface NomenclaturesPageProps {
   searchParams: {
@@ -60,7 +61,7 @@ export default async function NomenclaturesPage({
     const total = mockNomenclatureResponse.total
 
     // console.log('INomenclatureResponse', data)
-    // console.log('NomenclatureList length:', data.length)
+    console.log('NomenclatureList length:', data.length)
 
     return (
       <div className="container mx-auto px-4 py-8">
@@ -79,7 +80,7 @@ export default async function NomenclaturesPage({
             По атриклу
           </Button>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3 mb-8">
+        <div className={styles.gridWrapper}>
           {data?.length ? (
             <>
               <NomenclatureWrapper nomenclatureData={data} />
