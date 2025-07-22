@@ -1,6 +1,9 @@
 import { CardDesktop } from '@/components/ui/card/desktop/CardDesktop'
+import { FieldLabel } from '@/components/ui/fields/fieldLabel/FieldLabel'
+import { FieldValue } from '@/components/ui/fields/fieldValue/FeildValue'
 import { INomenclatureItem } from '@/types/nomenclature'
 import Image from 'next/image'
+import styles from './NomenclatureItemDesktop.module.scss'
 
 interface NomenclatureCardProps {
   item: INomenclatureItem
@@ -14,15 +17,12 @@ export const NomenclatureItemDesktop: React.FC<NomenclatureCardProps> = ({
   return (
     <article className={`${className}`}>
       <CardDesktop>
-        <figure className="h-full flex flex-col items-center justify-center gap-1.5">
-          {item.outside && (
-            <div
-              className="w-full"
-              style={{ aspectRatio: '3/2', position: 'relative' }}
-            >
+        <figure className={styles.figure}>
+          {item.outSidePhotoURL && (
+            <div className={styles.outsideImageWrapper}>
               <Image
-                src={item.outside}
-                alt={`Фасад магазина ${item.name}`}
+                src={item.outSidePhotoURL}
+                alt={`Фасад магазина ${item.brand}`}
                 fill
                 style={{ objectFit: 'contain' }}
                 sizes="(max-width: 600px) 100vw, 600px"
@@ -30,54 +30,75 @@ export const NomenclatureItemDesktop: React.FC<NomenclatureCardProps> = ({
               />
             </div>
           )}
-          <div
-            className="w-2/5"
-            style={{ aspectRatio: '2/1', position: 'relative' }}
-          >
-            <Image
-              src={item.logotype}
-              alt={`Логотип бренда ${item.brand}`}
-              fill
-              style={{ objectFit: 'contain' }}
-              sizes="(max-width: 240px) 100vw, 240px"
-              loading="lazy"
-            />
-          </div>
-        </figure>
-        <section className="flex flex-col gap-1.5 w-full h-full">
-          <header className="flex flex-row items-center gap-2 h-[20px]">
-            <div className="flex flex-row items-center gap-2 h-[20px] text-nowrap">
-              {/* <Badge height={18} width={18} aria-hidden="true" /> */}
-              <label className=" text-gray-400">Бренд:</label>
-              <h3 className="text-base font-semibold">{item.brand}</h3>
+          {item.logotypeURL && (
+            <div className={styles.logotypeImageWrapper}>
+              <Image
+                src={item.logotypeURL}
+                alt={`Логотип бренда ${item.brand}`}
+                fill
+                style={{ objectFit: 'contain' }}
+                sizes="(max-width: 240px) 100vw, 240px"
+                loading="lazy"
+              />
             </div>
-          </header>
+          )}
+        </figure>
+        <section className={styles.infoSection}>
+          {item.legalEntity && (
+            <div className={styles.infoRow}>
+              <FieldLabel text="Юр. лицо:" />
+              <FieldValue
+                text={`${item.legalEntity}`.trim()}
+                type="h3"
+                ariaLabel={`Юр лицо ${item.brand}`}
+              />
+            </div>
+          )}
+          {(item.brand || item.typeOfPlace) && (
+            <header className={styles.header}>
+              <div className={styles.header}>
+                <FieldLabel text="Бренд:" />
+                <FieldValue
+                  text={`${item.typeOfPlace} ${item.brand}`.trim()}
+                  type="h3"
+                  ariaLabel="Основной бренд места"
+                />
+              </div>
+            </header>
+          )}
 
-          <div className="flex flex-row items-center gap-2 h-[20px] text-nowrap">
-            {/* <UserRound height={18} width={18} aria-hidden="true" /> */}
-            <label className=" text-gray-400">Название:</label>
-            <h3 className="text-base font-semibold">
-              {item.ownerPlaces ?? `${item.name.slice(0, 25)}...`}
-            </h3>
-          </div>
+          {item.contentType && (
+            <div className={styles.infoRow}>
+              <FieldLabel text="Тип ролика:" />
+              <FieldValue
+                text={`${item.contentType}`}
+                ariaLabel={`Тип размещаемого ролика в ${item.brand}`}
+              />
+            </div>
+          )}
 
-          <div className="flex flex-row items-center gap-2 h-[20px] text-nowrap">
-            {/* <MapPin height={18} width={18} aria-hidden="true" /> */}
-            <label className=" text-gray-400">Адрес:</label>
-            <address className="not-italic text-base font-semibold">
-              {item.address}
-            </address>
-          </div>
-          <div className="flex flex-row items-center gap-2 h-[20px] text-nowrap">
-            {/* <MapPin height={18} width={18} aria-hidden="true" /> */}
-            <label className="text-xs text-gray-400">Артикул:</label>
-            <span
-              className="not-italic text-xs text-gray-400"
-              aria-label="Артикул товара"
-            >
-              {item.article}
-            </span>
-          </div>
+          {item.adress && (
+            <div className={styles.infoRow}>
+              <FieldLabel text="Адрес:" />
+              <FieldValue
+                text={`${item.adress.city}, ${item.adress.street},
+                ${item.adress.streetHouse}`}
+                type="address"
+                ariaLabel={`Адрес размещения ${item.brand}`}
+              />
+            </div>
+          )}
+
+          {/*
+          TODO: раскомментить когда появятся роли *для сотрудников* 
+          {item.article && (
+            <div className={styles.infoRow}>
+              <label className={styles.labelSmall}>Артикул:</label>
+              <span className={styles.article} aria-label="Артикул товара">
+                {item.article}
+              </span>
+            </div>
+          )} */}
         </section>
       </CardDesktop>
     </article>

@@ -1,0 +1,51 @@
+.figure {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.outsideImageWrapper {
+  width: 100%;
+  aspect-ratio: 3/2;
+  position: relative;
+}
+
+.logotypeImageWrapper {
+  width: 40%;
+  aspect-ratio: 2/1;
+  position: relative;
+}
+
+.infoSection {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  width: 100%;
+  height: 100%;
+}
+
+.header {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 0.5rem;
+  height: 20px;
+  text-wrap: balance;
+}
+
+.infoRow {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 0.5rem;
+  height: 20px;
+  white-space: nowrap;
+}
+
+.labelSmall {
+  font-size: 0.75rem;
+  color: #9ca3af;
+}

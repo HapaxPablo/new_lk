@@ -3,7 +3,9 @@
 import { INomenclatureItem } from '@/types/nomenclature'
 import dynamic from 'next/dynamic'
 import { useMediaQuery } from 'usehooks-ts'
-import { Loader } from '../ui/loader/Loader'
+import { CardDesktop } from '../ui/card/desktop/CardDesktop'
+import { CardMobile } from '../ui/card/mobile/CardMobile'
+import Loading from '../ui/loading/Loading'
 
 interface NomenclatureCardProps {
   nomenclatureData: INomenclatureItem[]
@@ -16,7 +18,14 @@ const NomenclatureCardMobile = dynamic(
     import('./card/mobile/NomenclatureItemMobile').then((mod) => ({
       default: mod.NomenclatureItemMobile,
     })),
-  { ssr: false, loading: () => <Loader /> }
+  {
+    ssr: false,
+    loading: () => (
+      <CardMobile>
+        <Loading />
+      </CardMobile>
+    ),
+  }
 )
 
 const NomenclatureCardDesktop = dynamic(
@@ -24,7 +33,14 @@ const NomenclatureCardDesktop = dynamic(
     import('./card/desktop/NomenclatureItemDesktop').then((mod) => ({
       default: mod.NomenclatureItemDesktop,
     })),
-  { ssr: false, loading: () => <Loader /> }
+  {
+    ssr: false,
+    loading: () => (
+      <CardDesktop>
+        <Loading />
+      </CardDesktop>
+    ),
+  }
 )
 
 export const NomenclatureWrapper = ({
