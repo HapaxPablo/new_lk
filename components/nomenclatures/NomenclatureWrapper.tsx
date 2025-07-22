@@ -3,38 +3,49 @@
 import { INomenclatureItem } from '@/types/nomenclature'
 import dynamic from 'next/dynamic'
 import { useMediaQuery } from 'usehooks-ts'
+import { Loader } from '../ui/loader/Loader'
 
 interface NomenclatureCardProps {
-  item: INomenclatureItem
+  nomenclatureData: INomenclatureItem[]
   className?: string
   children?: React.ReactNode
 }
 
 const NomenclatureCardMobile = dynamic(
   () =>
-    import('./card/mobile/CardMobile').then((mod) => ({
-      default: mod.CardMobile,
+    import('./card/mobile/NomenclatureItemMobile').then((mod) => ({
+      default: mod.NomenclatureItemMobile,
     })),
-  { ssr: false, loading: () => <div>Loading...</div> }
+  { ssr: false, loading: () => <Loader /> }
 )
 
 const NomenclatureCardDesktop = dynamic(
   () =>
-    import('./card/desktop/CardDesktop').then((mod) => ({
-      default: mod.CardDesktop,
+    import('./card/desktop/NomenclatureItemDesktop').then((mod) => ({
+      default: mod.NomenclatureItemDesktop,
     })),
-  { ssr: false, loading: () => <div>Loading...</div> }
+  { ssr: false, loading: () => <Loader /> }
 )
 
-export const NomenclatureWrapper = ({ item }: NomenclatureCardProps) => {
+export const NomenclatureWrapper = ({
+  nomenclatureData,
+}: NomenclatureCardProps) => {
   const isDesktop = useMediaQuery('(min-width: 768px)')
 
   return (
     <>
       {isDesktop ? (
-        <NomenclatureCardDesktop />
+        <>
+          {nomenclatureData.map((item, key) => (
+            <NomenclatureCardDesktop item={item} key={key} />
+          ))}
+        </>
       ) : (
-        <NomenclatureCardMobile item={item} />
+        <>
+          {nomenclatureData.map((item, key) => (
+            <NomenclatureCardMobile item={item} key={key} />
+          ))}
+        </>
       )}
     </>
   )

@@ -5,6 +5,6 @@ export function getClientAccessToken() {
       .find((row) => row.startsWith('xrmcCookie='))
       ?.split('=')[1] || null
 
-  console.log('xrmcCookie server', token)
+  console.log('xrmcCookie client', token)
   return token
 }
