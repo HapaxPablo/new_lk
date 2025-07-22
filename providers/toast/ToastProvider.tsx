@@ -5,15 +5,15 @@ import { ReactNode } from 'react'
 import { Theme, ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 
-export interface NotificationProviderProps {
+export interface ToastProviderProps {
   children: ReactNode
   theme?: Theme
 }
 
-export const NotificationProvider = ({
+export const ToastProvider = ({
   children,
   theme = 'colored',
-}: NotificationProviderProps) => {
+}: ToastProviderProps) => {
   return (
     <>
       {children}

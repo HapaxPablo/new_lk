@@ -3,12 +3,12 @@
 import type { ToastOptions } from 'react-toastify'
 import { toast } from 'react-toastify'
 
-export type NotificationType = 'success' | 'error' | 'info' | 'warning'
+export type TToastType = 'success' | 'error' | 'info' | 'warning'
 
-export const useNotification = () => {
-  const showNotification = (
+export const useToast = () => {
+  const showToast = (
     text: string,
-    type: NotificationType = 'success',
+    type: TToastType = 'success',
     options?: ToastOptions
   ) => {
     toast[type](text, {
@@ -22,5 +22,5 @@ export const useNotification = () => {
       ...options,
     })
   }
-  return { showNotification }
+  return { showToast }
 }

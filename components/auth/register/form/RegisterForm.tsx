@@ -1,6 +1,6 @@
 'use client'
 
-import { useNotification } from '@/hooks/useNotification'
+import { useToast } from '@/hooks/useToast'
 import { useState } from 'react'
 import ConfirmRegistratrionForm from '../confirmRegistratrionForm/ConfirmRegistratrionForm'
 import styles from './RegisterForm.module.scss'
@@ -9,7 +9,7 @@ import RegisterFormFields from './RegisterFormFields'
 export function RegisterFormDesktop() {
   const [canConfirm, setCanConfritm] = useState<boolean>(false)
   const [email, setEmail] = useState<string>('')
-  const { showNotification } = useNotification()
+  const { showToast } = useToast()
 
   return (
     <div className={styles.container}>
@@ -17,7 +17,7 @@ export function RegisterFormDesktop() {
         <RegisterFormFields
           setEmail={setEmail}
           setCanConfirm={setCanConfritm}
-          showNotification={showNotification}
+          showToast={showToast}
         />
       ) : (
         <ConfirmRegistratrionForm email={email} />
