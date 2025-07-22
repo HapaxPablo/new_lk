@@ -1,0 +1,10 @@
+.cardMobile {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 12px;
+  border-radius: var(--radius-lg);
+  background-color: var(--color-white);
+  height: 100%;
+  width: 100%;
+}

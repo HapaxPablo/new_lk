@@ -16,8 +16,8 @@ class HttpClient1CServer {
     data?: any,
     isFile: boolean = false
   ): Promise<T> {
-    const token = getToken()
-    console.log('token', token)
+    const token = await getToken()
+    console.log('token httpServer', token)
 
     // console.log('request.cookies', request.cookies)
     if (!token) {
