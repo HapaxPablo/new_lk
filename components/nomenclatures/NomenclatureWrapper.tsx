@@ -5,7 +5,7 @@ import dynamic from 'next/dynamic'
 import { useMediaQuery } from 'usehooks-ts'
 import { CardDesktop } from '../ui/card/desktop/CardDesktop'
 import { CardMobile } from '../ui/card/mobile/CardMobile'
-import Loading from '../ui/loading/Loading'
+import LoaderSkeleton from '../ui/loader/LoaderSkeleton'
 
 interface NomenclatureCardProps {
   nomenclatureData: INomenclatureItem[]
@@ -22,7 +22,7 @@ const NomenclatureCardMobile = dynamic(
     ssr: false,
     loading: () => (
       <CardMobile>
-        <Loading />
+        <LoaderSkeleton />
       </CardMobile>
     ),
   }
@@ -37,7 +37,7 @@ const NomenclatureCardDesktop = dynamic(
     ssr: false,
     loading: () => (
       <CardDesktop>
-        <Loading />
+        <LoaderSkeleton />
       </CardDesktop>
     ),
   }
