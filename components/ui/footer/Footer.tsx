@@ -16,8 +16,8 @@ export default function Footer() {
       itemType="https://schema.org/Organization"
     >
       <div className={styles.footer__container}>
-        {/* SEO-информация о компании */}
         <meta itemProp="name" content="ООО АРЭМСИ 24" />
+        <meta itemProp="brand" content="RMC" />
         <meta itemProp="email" content="info@krasrm.com" />
         <meta itemProp="telephone" content="+78005005050" />
 
