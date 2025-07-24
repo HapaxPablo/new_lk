@@ -1,10 +1,14 @@
 .cardMobile {
   display: flex;
-  flex-direction: column;
-  gap: 8px;
-  padding: 12px;
-  border-radius: var(--radius-lg);
+  flex-direction: row-reverse;
+  // border-radius: var(--radius-lg);
   background-color: var(--color-white);
   height: 100%;
   width: 100%;
+
+  @media (min-width: 1280px) {
+    &:hover {
+      transform: scale(107%) translateY(-8px);
+    }
+  }
 }

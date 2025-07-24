@@ -144,7 +144,6 @@ body {
     --text-5xl: 3rem;
   }
 }
-
 /* Компоненты */
 .layout {
   display: flex;

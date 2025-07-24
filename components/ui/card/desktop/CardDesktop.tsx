@@ -9,9 +9,9 @@ export const CardDesktop: React.FC<CardDesktopProps> = ({
   className = '',
   children,
 }) => (
-  <div
-    className={`rounded-lg shadow-sm hover:shadow-lg transition-shadow ${className} ${styles.cardMobile}`}
+  <article
+    className={`shadow-sm hover:shadow-lg transition-shadow ${className} ${styles.cardMobile}`}
   >
     {children}
-  </div>
+  </article>
 )
