@@ -144,7 +144,6 @@ body {
     --text-5xl: 3rem;
   }
 }
-
 /* Компоненты */
 .layout {
   display: flex;
@@ -156,7 +155,7 @@ body {
 
 .content {
   flex: 1;
-  padding: 0.2rem;
+  padding: 0;
   overflow-y: auto;
   scroll-behavior: smooth;
 

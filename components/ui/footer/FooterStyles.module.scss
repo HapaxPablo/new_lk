@@ -1,0 +1,103 @@
+.footer {
+  background-color: var(--primary-color);
+  color: var(--second-text-color-light);
+  padding: 1.5rem 2rem;
+  font-size: 0.875rem;
+
+  &__container {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+    align-items: center;
+  }
+
+  &__brand {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  &__logo {
+    transition: opacity 0.2s;
+    
+    &:hover {
+      opacity: 0.8;
+    }
+  }
+
+  &__copyright {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    opacity: 0.8;
+  }
+
+  &__legal {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    opacity: 0.8;
+  }
+
+  &__contacts {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  &__contact {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  &__link {
+    transition: color 0.2s;
+    
+    &:hover {
+      color: var(--accent-color);
+      text-decoration: underline;
+    }
+  }
+ &__address {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    background: none;
+    border: none;
+    color: inherit;
+    cursor: pointer;
+    padding: 0;
+    font: inherit;
+    text-align: left;
+    transition: color 0.2s;
+
+    &:hover {
+      color: var(--accent-color);
+      text-decoration: underline;
+    }
+  }
+  &__build {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    opacity: 0.6;
+    font-family: monospace;
+  }
+
+  @media (max-width: 768px) {
+    padding: 1rem;
+    
+    &__container {
+      grid-template-columns: 1fr;
+      gap: 1rem;
+    }
+  }
+}

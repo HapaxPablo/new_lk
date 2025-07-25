@@ -1,12 +1,9 @@
 import { NomenclatureWrapper } from '@/components/nomenclatures/NomenclatureWrapper'
 import { Pagination } from '@/components/pagination/Pagination'
-import { SearchForm } from '@/components/search-form/SearchForm'
 import { Button } from '@/components/ui/button/Button'
 import { mockNomenclatureResponse } from '@/lib/mock/nomenclatureItem'
 import { getToken } from '@/lib/token/getToken'
 import { INomenclatureItem } from '@/types/nomenclature'
-import styles from './Nomenclatures.module.scss'
-
 interface NomenclaturesPageProps {
   searchParams: {
     limit?: string
@@ -66,8 +63,6 @@ export default async function NomenclaturesPage({
     return (
       <div className="container mx-auto px-4 py-8">
         <h1 className="text-2xl font-bold mb-6">Номенклатура</h1>
-
-        <SearchForm initialSearch={search} className="mb-6" />
         {/* TODO: потом убрать */}
         <div className="flex flex-row gap-2 mb-2">
           <Button variant="default" type="button" className="text-nowrap">
@@ -80,15 +75,12 @@ export default async function NomenclaturesPage({
             По атриклу
           </Button>
         </div>
-        <div className={styles.gridWrapper}>
-          {data?.length ? (
-            <>
-              <NomenclatureWrapper nomenclatureData={data} />
-            </>
-          ) : (
-            <div>Nothing</div>
-          )}
-        </div>
+
+        {data?.length ? (
+          <NomenclatureWrapper nomenclatureData={data} />
+        ) : (
+          <div>Nothing</div> //TODO: придумать страницу ошибки и обработку ошибки нет данных
+        )}
 
         <Pagination limit={limit} offset={offset} total={total} />
       </div>

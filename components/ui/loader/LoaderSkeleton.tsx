@@ -1,4 +1,4 @@
-export default function Loading() {
+export default function LoaderSkeleton() {
   return (
     <div className="container mx-auto p-4">
       <div className="animate-pulse">
