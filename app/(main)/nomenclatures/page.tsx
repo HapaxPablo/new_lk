@@ -4,11 +4,66 @@ import { Button } from '@/components/ui/button/Button'
 import { mockNomenclatureResponse } from '@/lib/mock/nomenclatureItem'
 import { getToken } from '@/lib/token/getToken'
 import { INomenclatureItem } from '@/types/nomenclature'
+import { Metadata } from 'next'
 interface NomenclaturesPageProps {
   searchParams: {
     limit?: string
     offset?: string
     searchValue?: string
+  }
+}
+export async function generateMetadata({
+  searchParams,
+}: NomenclaturesPageProps): Promise<Metadata> {
+  const search = searchParams.searchValue || ''
+
+  return {
+    title: search
+      ? `Поиск: "${search}" | Каталог номенклатуры`
+      : 'Каталог номенклатуры | RMC',
+    description: search
+      ? `Результаты поиска по запросу "${search}" в каталоге номенклатуры`
+      : 'Просмотрите наш полный каталог номенклатуры. Найдите нужные товары и материалы.',
+    keywords: search
+      ? [
+          `поиск ${search}`,
+          'номенклатура',
+          'каталог',
+          'места размещения рекламы',
+          ...search.split(' '),
+        ]
+      : [
+          'номенклатура',
+          'каталог',
+          'товары',
+          'материалы',
+          'места размещения рекламы',
+        ],
+    openGraph: {
+      title: search
+        ? `Поиск: "${search}" | Каталог номенклатуры`
+        : 'Каталог номенклатуры | RMC',
+      description: search
+        ? `Результаты поиска по запросу "${search}" в каталоге номенклатуры`
+        : 'Просмотрите наш полный каталог номенклатуры и , мест размещения рекламы',
+      url: search
+        ? `https://lk.krasrm.com/nomenclatures?searchValue=${encodeURIComponent(search)}`
+        : //TODO вынести урл сайт в переменные использовать их
+          'https://lk.krasrm.com/nomenclatures',
+      siteName: 'RMC',
+      images: [
+        {
+          url: 'https://lk.krasrm.com/og-logo.jpg',
+          width: 1200,
+          height: 630,
+        },
+      ],
+      locale: 'ru_RU',
+      type: 'website',
+    },
+    alternates: {
+      canonical: 'https://lk.krasrm.com/nomenclatures',
+    },
   }
 }
 

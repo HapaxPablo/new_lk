@@ -2,14 +2,17 @@ import styles from './CardDesktop.module.scss'
 
 interface CardDesktopProps {
   className?: string
+  onClick?: () => void
   children: React.ReactNode
 }
 
 export const CardDesktop: React.FC<CardDesktopProps> = ({
   className = '',
   children,
+  onClick
 }) => (
   <article
+  onClick={onClick}
     className={`shadow-sm hover:shadow-lg transition-shadow ${className} ${styles.cardMobile}`}
   >
     {children}
