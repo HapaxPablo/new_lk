@@ -1,5 +1,4 @@
 import { CardDesktop } from '@/components/ui/card/desktop/CardDesktop'
-import { FieldLabel } from '@/components/ui/fields/fieldLabel/FieldLabel'
 import { FieldValue } from '@/components/ui/fields/fieldValue/FeildValue'
 import { INomenclatureItem } from '@/types/nomenclature'
 import Image from 'next/image'
@@ -47,7 +46,7 @@ export const NomenclatureItemDesktop: React.FC<NomenclatureCardProps> = ({
             )}
             {item.legalEntity && (
               <div className={styles.infoRow}>
-                <FieldLabel text="Юр. лицо:" />
+                {/* <FieldLabel text="Юр. лицо:" /> */}
                 <FieldValue
                   text={`${item.legalEntity}`.trim()}
                   type="h3"
@@ -58,7 +57,7 @@ export const NomenclatureItemDesktop: React.FC<NomenclatureCardProps> = ({
             {(item.brand || item.typeOfPlace) && (
               <header className={styles.header}>
                 <div className={styles.header}>
-                  <FieldLabel text="Бренд:" />
+                  {/* <FieldLabel text="Бренд:" /> */}
                   <FieldValue
                     text={`${item.typeOfPlace} ${item.brand}`.trim()}
                     type="h3"
@@ -70,7 +69,7 @@ export const NomenclatureItemDesktop: React.FC<NomenclatureCardProps> = ({
 
             {item.contentType && (
               <div className={styles.infoRow}>
-                <FieldLabel text="Тип ролика:" />
+                {/* <FieldLabel text="Тип ролика:" /> */}
                 <FieldValue
                   text={`${item.contentType}`}
                   ariaLabel={`Тип размещаемого ролика в ${item.brand}`}
@@ -80,7 +79,7 @@ export const NomenclatureItemDesktop: React.FC<NomenclatureCardProps> = ({
 
             {item.adress && (
               <div className={styles.infoRow}>
-                <FieldLabel text="Адрес:" />
+                {/* <FieldLabel text="Адрес:" /> */}
                 <FieldValue
                   text={`${item.adress.city}, ${item.adress.street},
                 ${item.adress.streetHouse}`}
