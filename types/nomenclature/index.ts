@@ -2,7 +2,7 @@ type ContentType = 'Аудио' | 'Видео' | 'Аудио+Видео'
 
 export interface INomenclatureItem {
   brand?: string
-  adress?: {
+  address?: {
     federalDistrict: string
     city: string
     district: string
@@ -12,7 +12,7 @@ export interface INomenclatureItem {
   logotypeURL?: string
   outSidePhotoURL?: string //мб в будущем будет массив уролов
   legalEntity?: string
-  article?: string
+  article: string
   id: string
   contentType?: string //тип контента аудио, видео или аудио+видео
   typeOfPlace?: string //тип места "Строительные, отделочные материалы, мебель", Торговый центр, Аптека и тд

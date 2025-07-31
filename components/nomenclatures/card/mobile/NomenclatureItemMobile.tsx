@@ -90,12 +90,12 @@ export const NomenclatureItemMobile: React.FC<NomenclatureCardProps> = ({
               </div>
             )}
 
-            {item.adress && (
+            {item.address && (
               <div className={styles.infoRow}>
                 <FieldLabel text="Адрес:" />
                 <FieldValue
-                  text={`${item.adress.city}, ${item.adress.street},
-                ${item.adress.streetHouse}`}
+                  text={`${item.address.city}, ${item.address.street},
+                ${item.address.streetHouse}`}
                   type="address"
                   ariaLabel={`Адрес размещения ${item.brand}`}
                 />

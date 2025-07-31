@@ -3,6 +3,8 @@ import { FieldValue } from '@/components/ui/fields/fieldValue/FeildValue'
 import { INomenclatureItem } from '@/types/nomenclature'
 import Image from 'next/image'
 import styles from './NomenclatureItemDesktop.module.scss'
+import { useRouter } from 'next/navigation'
+
 
 interface NomenclatureCardProps {
   item: INomenclatureItem[]
@@ -13,10 +15,16 @@ export const NomenclatureItemDesktop: React.FC<NomenclatureCardProps> = ({
   item,
   className = '',
 }) => {
+  const router = useRouter()
+  	const handleClickCard = (article: string) => {
+		// Переход на страницу с расшифровкой
+		router.push(`nomenclatures/${article}`)
+	}
+
   return (
     <>
       {item.map((item, key) => (
-        <CardDesktop key={key} className={`${className}`}>
+        <CardDesktop onClick={() => handleClickCard(item.article)} key={key} className={`${className}`}>
           <figure className={styles.figure}>
             {item.outSidePhotoURL && (
               <div className={styles.outsideImageWrapper}>
@@ -77,12 +85,12 @@ export const NomenclatureItemDesktop: React.FC<NomenclatureCardProps> = ({
               </div>
             )}
 
-            {item.adress && (
+            {item.address && (
               <div className={styles.infoRow}>
                 {/* <FieldLabel text="Адрес:" /> */}
                 <FieldValue
-                  text={`${item.adress.city}, ${item.adress.street},
-                ${item.adress.streetHouse}`}
+                  text={`${item.address.city}, ${item.address.street},
+                ${item.address.streetHouse}`}
                   type="address"
                   ariaLabel={`Адрес размещения ${item.brand}`}
                 />
