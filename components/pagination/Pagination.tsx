@@ -1,55 +1,62 @@
 'use client'
-//TODO данный компонент так же нужно сделать переиспользуемым по аналогии с поиском
-// href должен быть динамически изменяемым в зависимости от маршрута api
-import Link from 'next/link'
-import { useSearchParams } from 'next/navigation'
+import { useState } from 'react'
+import { usePathname, useSearchParams, useRouter } from 'next/navigation'
+import { Button } from '@/components/ui/button/Button'
+import { ChevronLeft, ChevronRight } from 'lucide-react'
 
 interface PaginationProps {
   total: number
   limit: number
-  offset: number
+  page: number
 }
 
-export function Pagination({ total, limit, offset }: PaginationProps) {
+export function Pagination({ total, limit, page }: PaginationProps) {
   const searchParams = useSearchParams()
-  const currentPage = Math.floor(offset / limit) + 1
+  const pathName = usePathname()
+  const router = useRouter()
+  const currentPage = Number(page) || 1
   const totalPages = Math.ceil(total / limit)
 
-  const createQueryString = (newOffset: number) => {
+  const [isLoading, setIsLoading] = useState(false)
+
+  const handlePageChange = async (newPage: number) => {
+    setIsLoading(true)
     const params = new URLSearchParams(searchParams.toString())
-    params.set('offset', newOffset.toString())
-    return params.toString()
+    params.set('page', newPage.toString())
+    await router.push(`${pathName}?${params.toString()}`)
+    setIsLoading(false)
   }
+
+  const isFirstPage = currentPage <= 1
+  const isLastPage = currentPage >= totalPages
 
   return (
     <div className="flex justify-between items-center mt-8">
-      <Link
-        href={`/nomenclatures?${createQueryString(Math.max(0, offset - limit))}`}
-        className={`px-4 py-2 rounded ${
-          offset === 0
-            ? 'bg-gray-300 cursor-not-allowed text-gray-500'
-            : 'bg-blue-500 text-white hover:bg-blue-600'
-        } transition-colors`}
-        aria-disabled={offset === 0}
+      <Button
+        variant="primary"
+        onClick={() => handlePageChange(currentPage - 1)}
+        disabled={isFirstPage || isLoading}
+        isLoading={isLoading && !isFirstPage}
+        className="p-2 md:px-4 md:py-2 rounded-md" 
+        aria-label="Предыдущая страница"
       >
-        Назад
-      </Link>
-
+        <span className="hidden md:inline">Назад</span>
+        <ChevronLeft className="md:hidden h-5 w-5" />
+      </Button>
       <span className="text-gray-700">
-        Страница {currentPage} из {totalPages} (Всего: {total})
+        Страница {currentPage} из {totalPages} (Всего : {total})
       </span>
-
-      <Link
-        href={`/nomenclatures?${createQueryString(offset + limit)}`}
-        className={`px-4 py-2 rounded ${
-          offset + limit >= total
-            ? 'bg-gray-300 cursor-not-allowed text-gray-500'
-            : 'bg-blue-500 text-white hover:bg-blue-600'
-        } transition-colors`}
-        aria-disabled={offset + limit >= total}
+      <Button
+        variant="primary"
+        onClick={() => handlePageChange(currentPage + 1)}
+        disabled={isLastPage || isLoading}
+        isLoading={isLoading && !isLastPage}
+        className="p-2 md:px-4 md:py-2 rounded-md" 
+        aria-label="Следующая страница"
       >
-        Вперед
-      </Link>
+        <span className="hidden md:inline">Вперед</span>
+        <ChevronRight className="md:hidden h-5 w-5" />{' '}
+      </Button>
     </div>
   )
 }
