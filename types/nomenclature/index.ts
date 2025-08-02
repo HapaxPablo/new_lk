@@ -1,5 +1,6 @@
 type ContentType = 'Аудио' | 'Видео' | 'Аудио+Видео'
 
+//TODO доработать интерфейс номенклатуры согласно тз и схеме с апи
 export interface INomenclatureItem {
   brand?: string
   address?: {
@@ -19,14 +20,14 @@ export interface INomenclatureItem {
 }
 
 export interface INomenclatureResponse {
-  nomenclatureList: INomenclatureItem[]
-  total?: number
-  limit?: number
-  offset?: number
+  results: INomenclatureItem[]
+  count: number
+  next: number
+  previous: number
 }
 
 export interface INomenclatureQueryParams {
   limit?: number
-  offset?: number
+  page?: number
   searchValue?: string
 }

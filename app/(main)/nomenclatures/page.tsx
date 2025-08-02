@@ -3,12 +3,12 @@ import { Pagination } from '@/components/pagination/Pagination'
 import { Button } from '@/components/ui/button/Button'
 import { mockNomenclatureResponse } from '@/lib/mock/nomenclatureItem'
 import { getToken } from '@/lib/token/getToken'
-import { INomenclatureItem } from '@/types/nomenclature'
+import { INomenclatureItem, INomenclatureResponse } from '@/types/nomenclature'
 import { Metadata } from 'next'
 interface NomenclaturesPageProps {
   searchParams: {
     limit?: string
-    offset?: string
+    page?: string
     searchValue?: string
   }
 }
@@ -53,7 +53,7 @@ export async function generateMetadata({
       siteName: 'RMC',
       images: [
         {
-          url: 'https://lk.krasrm.com/og-logo.jpg',
+          url: 'https://krasrm.com/og-logo.jpg',
           width: 1200,
           height: 630,
         },
@@ -62,7 +62,7 @@ export async function generateMetadata({
       type: 'website',
     },
     alternates: {
-      canonical: 'https://lk.krasrm.com/nomenclatures',
+      canonical: 'https://krasrm.com/nomenclatures',
     },
   }
 }
@@ -73,7 +73,7 @@ export default async function NomenclaturesPage({
   // Получаем параметры с await
   const params = await searchParams
   const limit = Number(params.limit) || 24
-  const offset = Number(params.offset) || 0
+  const page = Number(params.page) || 1
   const search = params.searchValue || ''
   const token = await getToken()
   console.log('token nomen', token)
@@ -82,43 +82,31 @@ export default async function NomenclaturesPage({
     // Формируем URL для API
     const url = new URL('/api/nomenclatures/', 'http://localhost:3000')
     url.searchParams.set('limit', String(limit))
-    url.searchParams.set('offset', String(offset))
+    url.searchParams.set('page', String(page))
     url.searchParams.set('searchValue', search)
 
     // Делаем запрос к API
-    // const response = await fetch(url.toString(), {
-    //   next: { tags: ['nomenclatures'] },
-    //   credentials: 'include',
-    //   headers: {
-    //     Authorization: `xrmcCookie${token}`,
-    //     Cookie: `xrmcCookie=${token}`,
-    //   },
-    // })
+    const response = await fetch(url.toString(), {
+      next: { tags: ['nomenclatures'] },
+      credentials: 'include',
+      headers: {
+        Authorization: `xrmcCookie${token}`,
+        Cookie: `xrmcCookie=${token}`,
+      },
+    })
 
-    // if (!response.ok) {
-    //   const errorData = await response
-    //   console.log('errorData', errorData)
-    //   // throw new Error(errorData.error || 'Failed to fetch data')
-    // }
+    if (!response.ok) {
+      const errorData = response
+      throw new Error(errorData.statusText|| 'Failed to fetch data')
+    }
+    const data: INomenclatureResponse = await response.json()
 
-    // const data: INomenclatureItem[] = await response.json()
-
-    // Используем мок-данные вместо fetch
-    const start = offset
-    const end = offset + limit
-    const data: INomenclatureItem[] = mockNomenclatureResponse.items.slice(
-      start,
-      end
-    )
-    const total = mockNomenclatureResponse.total
-
-    // console.log('INomenclatureResponse', data)
-    console.log('NomenclatureList length:', data.length)
-
+    console.log('INomenclatureResponse', data)
     return (
-      <div className="container mx-auto px-4 py-8">
+      <div className="container mx-auto px-1 py-2">
         <h1 className="text-2xl font-bold mb-6">Места размещения рекламы</h1>
-        {/* TODO: потом убрать */}
+        {/* TODO: доработать компонент с быстрыи настройками, в метод получения номенклатур добавить
+        параметры для сортировок */}
         <div className="flex flex-row gap-2 mb-2">
           <Button variant="default" type="button" className="text-nowrap">
             По бренду
@@ -127,17 +115,17 @@ export default async function NomenclaturesPage({
             По адресу
           </Button>
           <Button variant="default" type="button" className="text-nowrap">
-            По атриклу
+            По артикулу
           </Button>
         </div>
 
-        {data?.length ? (
-          <NomenclatureWrapper nomenclatureData={data} />
+        {data?.results?.length ? (
+          <NomenclatureWrapper nomenclatureData={data.results} />
         ) : (
           <div>Nothing</div> //TODO: придумать страницу ошибки и обработку ошибки нет данных
         )}
 
-        <Pagination limit={limit} offset={offset} total={total} />
+        <Pagination limit={limit} page={page} total={data.count} />
       </div>
     )
   } catch (error) {

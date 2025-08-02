@@ -33,7 +33,14 @@ export default function Footer() {
               alt="RMC Logo"
               width={120}
               height={24}
+              style={{
+                width: '100%', 
+                height: 'auto',
+                aspectRatio: '120/24',
+              }}
               priority
+              title="логотип-rmc"
+              aria-label="logo"
               itemProp="logo"
             />
           </Link>

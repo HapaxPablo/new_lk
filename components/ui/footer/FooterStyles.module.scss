@@ -21,7 +21,7 @@
 
   &__logo {
     transition: opacity 0.2s;
-    
+
     &:hover {
       opacity: 0.8;
     }
@@ -59,13 +59,14 @@
 
   &__link {
     transition: color 0.2s;
-    
+
     &:hover {
       color: var(--accent-color);
       text-decoration: underline;
     }
   }
- &__address {
+
+  &__address {
     display: inline-flex;
     align-items: center;
     gap: 0.25rem;
@@ -83,6 +84,7 @@
       text-decoration: underline;
     }
   }
+
   &__build {
     display: flex;
     align-items: center;
@@ -94,7 +96,7 @@
 
   @media (max-width: 768px) {
     padding: 1rem;
-    
+
     &__container {
       grid-template-columns: 1fr;
       gap: 1rem;
