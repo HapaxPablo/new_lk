@@ -1,8 +1,6 @@
 'use client'
-
 import { INomenclatureItem } from '@/types/nomenclature'
 import dynamic from 'next/dynamic'
-import { CardDesktop } from '../ui/card/desktop/CardDesktop'
 import LoaderSkeleton from '../ui/loader/LoaderSkeleton'
 import styles from './NomenclatureWrapper.module.scss'
 interface NomenclatureCardProps {
@@ -11,10 +9,10 @@ interface NomenclatureCardProps {
   children?: React.ReactNode
 }
 
-const NomenclatureCardDesktop = dynamic(
+const NomenclatureCards = dynamic(
   () =>
-    import('./card/desktop/NomenclatureItemDesktop').then((mod) => ({
-      default: mod.NomenclatureItemDesktop,
+    import('./card/NomenclatureItems').then((mod) => ({
+      default: mod.NomenclatureItems,
     })),
   {
     ssr: true,
@@ -25,9 +23,10 @@ const NomenclatureCardDesktop = dynamic(
 export const NomenclatureWrapper = ({
   nomenclatureData,
 }: NomenclatureCardProps) => {
+    console.log('NomenclatureList length:', nomenclatureData)
   return (
     <div className={styles.gridWrapper}>
-      <NomenclatureCardDesktop item={nomenclatureData} />
+      <NomenclatureCards item={nomenclatureData} />
     </div>
   )
 }
