@@ -1,14 +1,79 @@
 .cardMobile {
   display: flex;
   flex-direction: row-reverse;
-  // border-radius: var(--radius-lg);
+  border-radius: 4px;
+  overflow: hidden;
+  border: 1px solid var(--border-color-light);
   background-color: var(--color-white);
   height: 100%;
   width: 100%;
+  box-shadow: var(--shadow-lg);
+  transition: all;
 
   @media (min-width: 1280px) {
     &:hover {
-      transform: scale(107%) translateY(-8px);
+      transform: scale(102%) translateY(-4px);
     }
   }
+}
+.figure {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0;
+  width: 35%;
+  padding: 0;
+  margin: 0;
+}
+
+.outsideImageWrapper {
+  width: 100%;
+  clip-path: polygon(15% 0%, 100% 0, 100% 100%, 0% 100%);
+  height: 100%;
+  position: relative !important;
+}
+
+.logotypeImageWrapper {
+  width: 100%;
+  aspect-ratio: 6 / 1; // можно варьировать по факту
+  position: relative;
+  @media (max-width: 1024px) {
+    position: sticky;
+    aspect-ratio: 10 / 1;
+  }
+}
+
+.infoSection {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  width: 75%;
+  padding: 1rem;
+  box-sizing: border-box;
+  align-items: center;
+  justify-content: center;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  height: 20px;
+  /* text-wrap: balance; - это экспериментальная штука, лучше убрать или заменить */
+  white-space: nowrap;
+  font-weight: 600;
+}
+
+.infoRow {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  height: 20px;
+  white-space: nowrap;
+  font-size: 0.9rem;
+}
+
+.labelSmall {
+  font-size: 0.75rem;
+  color: #9ca3af;
 }

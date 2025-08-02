@@ -1,6 +1,6 @@
 import { CardMobile } from '@/components/ui/card/mobile/CardMobile'
 import { FieldLabel } from '@/components/ui/fields/fieldLabel/FieldLabel'
-import { FieldValue } from '@/components/ui/fields/fieldValue/FeildValue'
+import { FieldValue } from '@/components/ui/fields/fieldValue/FieldValue'
 import { INomenclatureItem } from '@/types/nomenclature'
 import Image from 'next/image'
 import React from 'react'

@@ -117,7 +117,7 @@ export default async function NomenclaturesPage({
 
     return (
       <div className="container mx-auto px-4 py-8">
-        <h1 className="text-2xl font-bold mb-6">Номенклатура</h1>
+        <h1 className="text-2xl font-bold mb-6">Места размещения рекламы</h1>
         {/* TODO: потом убрать */}
         <div className="flex flex-row gap-2 mb-2">
           <Button variant="default" type="button" className="text-nowrap">

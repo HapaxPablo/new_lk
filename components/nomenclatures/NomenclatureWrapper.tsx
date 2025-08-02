@@ -17,12 +17,8 @@ const NomenclatureCardDesktop = dynamic(
       default: mod.NomenclatureItemDesktop,
     })),
   {
-    ssr: false,
-    loading: () => (
-      <CardDesktop>
-        <LoaderSkeleton />
-      </CardDesktop>
-    ),
+    ssr: true,
+    loading: () => <LoaderSkeleton />,
   }
 )
 
