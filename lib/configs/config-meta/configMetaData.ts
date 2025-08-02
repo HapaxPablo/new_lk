@@ -2,6 +2,10 @@ export const metaDataConfigLayout = {
   title: 'RMC',
   description: 'Описание  сайта для SEO',
   keywords: ['ключевое слово 1', 'ключевое слово 2', 'ключевое слово 3'],
+  icons: {
+    icon: '/favicon.ico', // или '/favicon-32x32.png'
+    apple: '/apple-touch-icon.png',
+  },
   openGraph: {
     title: 'Название для соцсетей',
     description: 'Описание для соцсетей',
@@ -27,7 +31,7 @@ export const metaDataConfigLayout = {
       iopageindex: false,
     },
   },
-   verification: {
+  verification: {
     google: 'google',
     yandex: 'yandex',
     other: {

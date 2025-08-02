@@ -29,7 +29,7 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       styles.button,
       styles[`button${variant.charAt(0).toUpperCase() + variant.slice(1)}`],
       fullWidth ? styles.buttonFullWidth : '',
-      className
+      className,
     ].join(' ')
 
     return (
