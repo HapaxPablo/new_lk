@@ -1,9 +1,8 @@
 import { NomenclatureWrapper } from '@/components/nomenclatures/NomenclatureWrapper'
 import { Pagination } from '@/components/pagination/Pagination'
-import { Button } from '@/components/ui/button/Button'
-import { mockNomenclatureResponse } from '@/lib/mock/nomenclatureItem'
+import Toolbar from '@/components/toolbar/Toolbar'
 import { getToken } from '@/lib/token/getToken'
-import { INomenclatureItem, INomenclatureResponse } from '@/types/nomenclature'
+import { INomenclatureResponse } from '@/types/nomenclature'
 import { Metadata } from 'next'
 interface NomenclaturesPageProps {
   searchParams: {
@@ -97,7 +96,7 @@ export default async function NomenclaturesPage({
 
     if (!response.ok) {
       const errorData = response
-      throw new Error(errorData.statusText|| 'Failed to fetch data')
+      throw new Error(errorData.statusText || 'Failed to fetch data')
     }
     const data: INomenclatureResponse = await response.json()
 
@@ -105,19 +104,8 @@ export default async function NomenclaturesPage({
     return (
       <div className="container mx-auto px-1 py-2">
         <h1 className="text-2xl font-bold mb-6">Места размещения рекламы</h1>
-        {/* TODO: доработать компонент с быстрыи настройками, в метод получения номенклатур добавить
-        параметры для сортировок */}
-        <div className="flex flex-row gap-2 mb-2">
-          <Button variant="default" type="button" className="text-nowrap">
-            По бренду
-          </Button>
-          <Button variant="default" type="button" className="text-nowrap">
-            По адресу
-          </Button>
-          <Button variant="default" type="button" className="text-nowrap">
-            По артикулу
-          </Button>
-        </div>
+        
+        <Toolbar totalItems={data.count} currentLimit={limit} />
 
         {data?.results?.length ? (
           <NomenclatureWrapper nomenclatureData={data.results} />

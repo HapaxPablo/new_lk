@@ -7,7 +7,7 @@
   background-color: var(--color-white);
   height: 100%;
   width: 100%;
-  box-shadow: var(--shadow-lg);
+  box-shadow: var(--shadow-md);
   transition: all;
 
   @media (min-width: 1280px) {
@@ -35,7 +35,7 @@
 
 .logotypeImageWrapper {
   width: 100%;
-  aspect-ratio: 6 / 1; // можно варьировать по факту
+  aspect-ratio: 6 / 1;
   position: relative;
   @media (max-width: 1024px) {
     position: sticky;
@@ -59,7 +59,6 @@
   align-items: center;
   gap: 0.5rem;
   height: 20px;
-  /* text-wrap: balance; - это экспериментальная штука, лучше убрать или заменить */
   white-space: nowrap;
   font-weight: 600;
 }
