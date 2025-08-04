@@ -94,6 +94,8 @@ export default async function NomenclaturesPage({
       },
     })
 
+    console.log('response nomen:', await response.json())
+
     if (!response.ok) {
       const errorData = response
       throw new Error(errorData.statusText || 'Failed to fetch data')
