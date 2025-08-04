@@ -8,13 +8,13 @@ interface NomenclaturesPageProps {
   searchParams: {
     limit?: string
     page?: string
-    searchValue?: string
+    name?: string
   }
 }
 export async function generateMetadata({
   searchParams,
 }: NomenclaturesPageProps): Promise<Metadata> {
-  const search = searchParams.searchValue || ''
+  const search = searchParams.name || ''
 
   return {
     title: search
@@ -73,7 +73,7 @@ export default async function NomenclaturesPage({
   const params = await searchParams
   const limit = Number(params.limit) || 24
   const page = Number(params.page) || 1
-  const search = params.searchValue || ''
+  const search = params.name || ''
   const token = await getToken()
   console.log('token nomen', token)
 
@@ -82,7 +82,7 @@ export default async function NomenclaturesPage({
     const url = new URL('/api/nomenclatures/', 'http://localhost:3000')
     url.searchParams.set('limit', String(limit))
     url.searchParams.set('page', String(page))
-    url.searchParams.set('searchValue', search)
+    url.searchParams.set('name', search)
 
     // Делаем запрос к API
     const response = await fetch(url.toString(), {

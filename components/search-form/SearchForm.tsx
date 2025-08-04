@@ -1,8 +1,8 @@
 'use client'
 //TODO нужно сделать стили под десктоп и мобилу, текущие стили для наглядности
-import { useRouter, usePathname, useSearchParams } from 'next/navigation'
-import { useDebounceCallback } from 'usehooks-ts'
+import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { useCallback, useEffect, useRef } from 'react'
+import { useDebounceCallback } from 'usehooks-ts'
 import { Button } from '../ui/button/Button'
 
 interface SearchFormProps {
@@ -65,7 +65,7 @@ interface SearchFormProps {
 export function SearchForm({
   initialSearch = '',
   placeholder = 'Поиск...',
-  searchParamName = 'searchValue',
+  searchParamName = 'name',
   className = '',
   debounceDelay = 800,
   hideButton = false,
