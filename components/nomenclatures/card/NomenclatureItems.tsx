@@ -1,8 +1,5 @@
 import { CardDesktop } from '@/components/ui/card/desktop/CardDesktop'
-import { FieldValue } from '@/components/ui/fields/fieldValue/FieldValue'
 import { INomenclatureItem } from '@/types/nomenclature'
-import Image from 'next/image'
-import styles from './NomenclatureItem.module.scss'
 import { useRouter } from 'next/navigation'
 
 interface NomenclatureCardProps {
@@ -15,16 +12,16 @@ export const NomenclatureItems: React.FC<NomenclatureCardProps> = ({
   className = '',
 }) => {
   const router = useRouter()
-  const handleClickCard = (article: string) => {
+  const handleClickCard = (id: string) => {
     // Переход на страницу с расшифровкой
-    router.push(`nomenclatures/${article}`)
+    router.push(`nomenclatures/${id}`)
   }
 
   return (
     <>
       {item.map((item, key) => (
         <CardDesktop
-          onClick={() => handleClickCard(item.article)}
+          onClick={() => handleClickCard(item.id)}
           key={key}
           className={`${className}`}
           item={item}

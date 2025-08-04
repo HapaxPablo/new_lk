@@ -94,8 +94,6 @@ export default async function NomenclaturesPage({
       },
     })
 
-    console.log('response nomen:', await response.json())
-
     if (!response.ok) {
       const errorData = response
       throw new Error(errorData.statusText || 'Failed to fetch data')
@@ -106,10 +104,10 @@ export default async function NomenclaturesPage({
     return (
       <div className="container mx-auto px-1 py-2">
         <h1 className="text-2xl font-bold mb-6">Места размещения рекламы</h1>
-        
+
         <Toolbar totalItems={data.count} currentLimit={limit} />
 
-        {data?.results?.length ? (
+        {data.results.length > 0 ? (
           <NomenclatureWrapper nomenclatureData={data.results} />
         ) : (
           <div>Nothing</div> //TODO: придумать страницу ошибки и обработку ошибки нет данных
