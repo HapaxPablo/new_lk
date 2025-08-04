@@ -3,7 +3,7 @@
   flex-direction: column;
   gap: 1.5rem;
   margin-bottom: 1rem;
-  background: var(--background);
+  background: var(--primary-color);
   padding: 0.5rem;
   border-radius: 0.2rem;
   box-shadow: var(--shadow-md);
@@ -39,12 +39,12 @@
     z-index: 100;
     opacity: 0.9;
   }
-
 }
 
 .icon {
   transition: color 0.2s ease;
-  color: #64748b;
+  // color: #64748b;
+  color: var(--background);
 
   &:hover {
     color: var(--main-text-color);
@@ -95,7 +95,8 @@
 .totalItems {
   margin-right: auto;
   font-size: 0.875rem;
-  color: #4a5568;
+  // color: #4a5568;
+  color: var(--background);
 }
 
 .filtersPanel {

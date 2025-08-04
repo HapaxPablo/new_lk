@@ -1,8 +1,8 @@
+import '@/styles/index.css'
 import { INomenclatureItem } from '@/types/nomenclature'
 import Image from 'next/image'
-import styles from './CardDesktop.module.scss'
-import '@/styles/index.css'
 import { FieldValue } from '../../fields/fieldValue/FieldValue'
+import styles from './CardDesktop.module.scss'
 interface CardDesktopProps {
   className?: string
   onClick?: () => void
@@ -18,10 +18,10 @@ export const CardDesktop: React.FC<CardDesktopProps> = ({
 }) => (
   <article onClick={onClick} className={`${className} ${styles.cardMobile}`}>
     <figure className={styles.figure}>
-      {item.outSidePhotoURL && (
+      {item.exterior.length > 0 && (
         <div className={styles.outsideImageWrapper}>
           <Image
-            src={item.outSidePhotoURL}
+            src={item.exterior[0].source}
             alt={`Фасад магазина ${item.brand}`}
             fill
             sizes="(max-width: 600px) 100vw, 600px"
@@ -32,7 +32,7 @@ export const CardDesktop: React.FC<CardDesktopProps> = ({
     </figure>
 
     <section className={styles.infoSection}>
-      {item.logotypeURL && (
+      {/* {item.logotypeURL && (
         <div className={styles.logotypeImageWrapper}>
           <Image
             src={item.logotypeURL}
@@ -43,7 +43,7 @@ export const CardDesktop: React.FC<CardDesktopProps> = ({
             loading="lazy"
           />
         </div>
-      )}
+      )} */}
       {item.legalEntity && (
         <div className={styles.infoRow}>
           {/* <FieldLabel text="Юр. лицо:" /> */}
@@ -82,7 +82,7 @@ export const CardDesktop: React.FC<CardDesktopProps> = ({
           {/* <FieldLabel text="Адрес:" /> */}
           <FieldValue
             text={`${item.address.city}, ${item.address.street},
-                ${item.address.streetHouse}`}
+                ${item.address.street_house}`}
             type="address"
             ariaLabel={`Адрес размещения ${item.brand}`}
           />
