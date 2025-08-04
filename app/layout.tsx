@@ -4,7 +4,7 @@ import { metaDataConfigLayout } from '@/lib/configs/config-meta/configMetaData'
 import { AuthProvider } from '@/providers/auth-provider/AuthProvider'
 import { ModalProvider } from '@/providers/modal/ModalProvider'
 import { ToastProvider } from '@/providers/toast/ToastProvider'
-import '@/styles/global.css'
+import '@/styles/index.css'
 import type { Metadata } from 'next'
 import localFont from 'next/font/local'
 

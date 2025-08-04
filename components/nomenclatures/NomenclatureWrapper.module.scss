@@ -12,7 +12,7 @@
 
   // Десктоп (1024px и выше)
   @media (min-width: 1280px) {
-    gap: 3rem;
-    grid-template-columns: repeat(3, 1fr);
+    gap: 2rem;
+    grid-template-columns: repeat(4, 1fr);
   }
 }

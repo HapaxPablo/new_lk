@@ -1,13 +1,13 @@
 import Link from 'next/link'
 import styles from './FooterStyles.module.scss'
 import Image from 'next/image'
-import { Mail, Phone, Terminal, Cpu, GitCommit } from 'lucide-react'
+import { Mail, Phone, Terminal, Cpu } from 'lucide-react'
 import MapLink from './MapLink'
+import ScrollButton from '../button/ScrollButton'
 
 export default function Footer() {
   const currentYear = new Date().getFullYear()
-  const buildDate =
-    process.env.NEXT_PUBLIC_BUILD_DATE || new Date().toISOString().split('T')[0]
+  const buildDate = process.env.NEXT_PUBLIC_BUILD_DATE
 
   return (
     <footer
@@ -33,16 +33,21 @@ export default function Footer() {
               alt="RMC Logo"
               width={120}
               height={24}
+              style={{
+                width: '100%',
+                height: 'auto',
+                aspectRatio: '120/24',
+              }}
               priority
+              title="логотип-rmc"
+              aria-label="logo"
               itemProp="logo"
             />
           </Link>
 
           <div className={styles.footer__copyright}>
             <Terminal size={14} />
-            <span>
-              © 2022-{currentYear} RMC Technologies | All Rights Reserved
-            </span>
+            <span>© 2022-{currentYear} RMC Technologies</span>
           </div>
         </div>
 
@@ -84,8 +89,9 @@ export default function Footer() {
         </div>
 
         <div className={styles.footer__build}>
-          <GitCommit size={14} />
-          <span>Build: {buildDate}</span>
+          {/* <GitCommit size={14} />
+          <span>Build: {buildDate}</span> */}
+          <ScrollButton />
         </div>
       </div>
     </footer>

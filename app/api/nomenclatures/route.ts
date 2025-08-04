@@ -17,7 +17,7 @@ export async function GET(request: NextRequest) {
 
     const queryParams: INomenclatureQueryParams = {
       limit: Number(searchParams.get('limit')) || 10,
-      offset: Number(searchParams.get('offset')) || 0,
+      page: Number(searchParams.get('page')) || 1,
       searchValue: searchParams.get('searchValue') || undefined,
     }
 
@@ -25,9 +25,9 @@ export async function GET(request: NextRequest) {
     const response = await HttpClient1C.server(
       request
     ).get<INomenclatureResponse>(
-      `getNomenclatureList?${new URLSearchParams({
+      `api/nomenclatures/?${new URLSearchParams({
         limit: String(queryParams.limit),
-        offset: String(queryParams.offset),
+        page: String(queryParams.page),
         ...(queryParams.searchValue && { searchValue: queryParams.searchValue }),
       })}`
     )
