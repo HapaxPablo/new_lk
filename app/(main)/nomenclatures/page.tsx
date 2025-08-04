@@ -5,16 +5,17 @@ import { getToken } from '@/lib/token/getToken'
 import { INomenclatureResponse } from '@/types/nomenclature'
 import { Metadata } from 'next'
 interface NomenclaturesPageProps {
-  searchParams: {
+  searchParams: Promise<{
     limit?: string
     page?: string
-    searchValue?: string
-  }
+    name?: string
+  }>
 }
-export async function generateMetadata({
-  searchParams,
-}: NomenclaturesPageProps): Promise<Metadata> {
-  const search = searchParams.searchValue || ''
+export async function generateMetadata(
+  props: NomenclaturesPageProps
+): Promise<Metadata> {
+  const searchParams = await props.searchParams
+  const search = searchParams.name || ''
 
   return {
     title: search
@@ -66,14 +67,13 @@ export async function generateMetadata({
   }
 }
 
-export default async function NomenclaturesPage({
-  searchParams,
-}: NomenclaturesPageProps) {
+export default async function NomenclaturesPage(props: NomenclaturesPageProps) {
+  const searchParams = await props.searchParams
   // Получаем параметры с await
   const params = await searchParams
   const limit = Number(params.limit) || 24
   const page = Number(params.page) || 1
-  const search = params.searchValue || ''
+  const search = params.name || ''
   const token = await getToken()
   console.log('token nomen', token)
 
@@ -82,11 +82,13 @@ export default async function NomenclaturesPage({
     const url = new URL('/api/nomenclatures/', 'http://localhost:3000')
     url.searchParams.set('limit', String(limit))
     url.searchParams.set('page', String(page))
-    url.searchParams.set('searchValue', search)
+    url.searchParams.set('name', search)
+
+    console.log('url', url.toString())
 
     // Делаем запрос к API
     const response = await fetch(url.toString(), {
-      next: { tags: ['nomenclatures'] },
+      // next: { tags: ['nomenclatures'] },
       credentials: 'include',
       headers: {
         Authorization: `xrmcCookie${token}`,
@@ -104,15 +106,12 @@ export default async function NomenclaturesPage({
     return (
       <div className="container mx-auto px-1 py-2">
         <h1 className="text-2xl font-bold mb-6">Места размещения рекламы</h1>
-
         <Toolbar totalItems={data.count} currentLimit={limit} />
-
         {data.results.length > 0 ? (
           <NomenclatureWrapper nomenclatureData={data.results} />
         ) : (
           <div>Nothing</div> //TODO: придумать страницу ошибки и обработку ошибки нет данных
         )}
-
         <Pagination limit={limit} page={page} total={data.count} />
       </div>
     )
