@@ -51,5 +51,5 @@ export interface INomenclatureResponse {
 export interface INomenclatureQueryParams {
   limit?: number
   page?: number
-  searchValue?: string
+  name?: string
 }

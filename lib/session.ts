@@ -29,7 +29,7 @@ export async function getSession() {
   if (typeof window === 'undefined') {
     // Серверный код
     try {
-      const cookieStore = cookies()
+      const cookieStore = await cookies()
       return await getIronSession<IronSessionData>(await cookieStore, sessionOptions)
     } catch (e) {
       console.error('Failed to get session from cookies:', e)
@@ -66,7 +66,7 @@ export async function getClientSession() {
 
 // Для Server Components и Server Actions
 export async function getServerSession() {
-  const cookieStore = cookies()
+  const cookieStore = await cookies()
   return await getIronSession<IronSessionData>(await cookieStore, sessionOptions)
 }
 
