@@ -47,7 +47,7 @@ class HttpClient1CServer {
     const config: RequestInit = {
       method,
       headers,
-      credentials: 'include',
+      credentials: isPublicEndpoint ? 'omit' : 'include',
     }
 
     if (data) {

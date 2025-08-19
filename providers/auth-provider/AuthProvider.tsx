@@ -2,7 +2,7 @@
 
 import { useToast } from '@/hooks/useToast'
 import { AuthResponse } from '@/types/auth'
-import { useRouter } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
 import { createContext, ReactNode, useContext, useEffect, useState } from 'react'
 
 type AuthContextType = {
@@ -27,6 +27,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [error, setError] = useState<string | null>(null)
   const [blockTime, setBlockTime] = useState<number | null>(null)
   const router = useRouter()
+  const url = usePathname()
   const { showToast } = useToast()
   console.log(isAuthenticated)
 
@@ -43,7 +44,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           const result = await response.json()
           setIsAuthenticated(result.isAuthenticated)
 
-          if (!result.isAuthenticated) {
+          if (!result.isAuthenticated && url !== '/nomenclatures') {
             await logout()
             // console.log('сделать проверку токена в 1с');
 
