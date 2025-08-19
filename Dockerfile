@@ -1,8 +1,8 @@
-# Install dependencies only when needed 
+# Install dependencies only when needed
 FROM node:20-alpine AS deps
 WORKDIR /app
 COPY package.json package-lock.json ./
-RUN npm ci
+RUN npm ci --legacy-peer-deps
 
 # Build Next.js app
 FROM node:20-alpine AS builder
