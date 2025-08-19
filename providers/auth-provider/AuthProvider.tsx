@@ -3,7 +3,7 @@
 import { useToast } from '@/hooks/useToast'
 import { AuthResponse } from '@/types/auth'
 import { useRouter } from 'next/navigation'
-import { createContext, ReactNode, useContext, useState } from 'react'
+import { createContext, ReactNode, useContext, useEffect, useState } from 'react'
 
 type AuthContextType = {
   isAuthenticated: boolean
@@ -30,39 +30,40 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const { showToast } = useToast()
   console.log(isAuthenticated)
 
-  // useEffect(() => {
-  //   const checkAuth = async () => {
-  //     try {
-  //       const response = await fetch('/api/auth/check', {
-  //         credentials: 'include',
-  //         // cache: 'no-store',
-  //       })
+  useEffect(() => {
+    const checkAuth = async () => {
+      try {
+        const response = await fetch('/api/auth/check', {
+          method: 'POST',
+          credentials: 'include',
+          // cache: 'no-store',
+        })
 
-  //       if (response.ok) {
-  //         const result = await response.json()
-  //         setIsAuthenticated(result.isAuthenticated)
+        if (response.ok) {
+          const result = await response.json()
+          setIsAuthenticated(result.isAuthenticated)
 
-  //         if (!result.isAuthenticated) {
-  //           // await logout()
-  //           console.log('сделать проверку токена в 1с');
+          if (!result.isAuthenticated) {
+            await logout()
+            // console.log('сделать проверку токена в 1с');
 
-  //         }
-  //       } else {
-  //         setIsAuthenticated(false)
-  //       }
-  //     } catch (err) {
-  //       console.error('Auth check failed:', err)
-  //       setIsAuthenticated(false)
-  //     }
-  //   }
+          }
+        } else {
+          setIsAuthenticated(false)
+        }
+      } catch (err) {
+        console.error('Auth check failed:', err)
+        setIsAuthenticated(false)
+      }
+    }
 
-  //   checkAuth()
-  // }, [])
+    checkAuth()
+  }, [])
 
   const login = async (
     email: string,
     password: string
-  ): Promise<LoginResponse> => {
+  ): Promise<any> => {
     try {
       const response = await fetch('/api/auth/login', {
         method: 'POST',
@@ -76,40 +77,45 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const data: AuthResponse = await response.json()
 
       if (!response.ok) {
-        throw new Error(data.message || 'Ошибка авторизации')
+        // throw new Error(data.message || 'Ошибка авторизации')
+        throw new Error('Ошибка авторизации')
+
       }
 
-      if (data.isAuthorized) {
+      if (data.access) {
         setIsAuthenticated(true)
         setError(null)
         setBlockTime(null)
-        router.push('/nomenclatures')
+        router.push('/nomenclatures?page=1&limit=24')
         return {
           success: true,
           data,
         }
-      } else if (!data.isAuthorized && !data.emailIsExit) {
-        showToast(`${data.message}`, 'error')
-        router.push('/registration')
+      } else if (!data.access) {
+        // showToast(`${data.message}`, 'error')
+        showToast(`err`, 'error')
+
+        // router.push('/registration')
         return { success: false }
-      } else {
-        if (data.timeout) {
-          setBlockTime(data.timeout)
-          setError(data.message || 'Ошибка авторизации')
-          return {
-            success: false,
-            message: `Аккаунт заблокирован до ${new Date(data.timeout * 1000).toLocaleTimeString()}`,
-            blockTime: data.timeout,
-            data,
-          }
-        }
-        setError(data.message || 'Ошибка авторизации')
-        return {
-          success: false,
-          message: data.message,
-          data,
-        }
       }
+      // else {
+      //   if (data.timeout) {
+      //     setBlockTime(data.timeout)
+      //     setError(data.message || 'Ошибка авторизации')
+      //     return {
+      //       success: false,
+      //       message: `Аккаунт заблокирован до ${new Date(data.timeout * 1000).toLocaleTimeString()}`,
+      //       blockTime: data.timeout,
+      //       data,
+      //     }
+      //   }
+      //   setError(data.message || 'Ошибка авторизации')
+      //   return {
+      //     success: false,
+      //     message: data.message,
+      //     data,
+      //   }
+      // }
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Неизвестная ошибка'
       setError(message)

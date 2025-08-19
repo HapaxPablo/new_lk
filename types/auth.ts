@@ -1,11 +1,11 @@
 export interface AuthResponse {
-  isAuthorized: boolean
-  emailIsExit: boolean
-  message: string
-  role: string
-  xrmcCookie: {
-    accessToken: string
-    refreshToken: string
-  }
-  timeout: number
+  // isAuthorized: boolean
+  // emailIsExit: boolean
+  // message: string
+  // role: string
+  // xrmcCookie: {
+  access: string
+  refresh: string
+  // }
+  // timeout: number
 }

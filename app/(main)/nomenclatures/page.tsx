@@ -26,19 +26,19 @@ export async function generateMetadata(
       : 'Просмотрите наш полный каталог номенклатуры. Найдите нужные товары и материалы.',
     keywords: search
       ? [
-          `поиск ${search}`,
-          'номенклатура',
-          'каталог',
-          'места размещения рекламы',
-          ...search.split(' '),
-        ]
+        `поиск ${search}`,
+        'номенклатура',
+        'каталог',
+        'места размещения рекламы',
+        ...search.split(' '),
+      ]
       : [
-          'номенклатура',
-          'каталог',
-          'товары',
-          'материалы',
-          'места размещения рекламы',
-        ],
+        'номенклатура',
+        'каталог',
+        'товары',
+        'материалы',
+        'места размещения рекламы',
+      ],
     openGraph: {
       title: search
         ? `Поиск: "${search}" | Каталог номенклатуры`
@@ -49,7 +49,7 @@ export async function generateMetadata(
       url: search
         ? `https://lk.krasrm.com/nomenclatures?searchValue=${encodeURIComponent(search)}`
         : //TODO вынести урл сайт в переменные использовать их
-          'https://lk.krasrm.com/nomenclatures',
+        'https://lk.krasrm.com/nomenclatures',
       siteName: 'RMC',
       images: [
         {
@@ -88,12 +88,11 @@ export default async function NomenclaturesPage(props: NomenclaturesPageProps) {
 
     // Делаем запрос к API
     const response = await fetch(url.toString(), {
-      // next: { tags: ['nomenclatures'] },
+      next: { tags: ['nomenclatures'] },
       credentials: 'include',
-      headers: {
-        Authorization: `xrmcCookie${token}`,
-        Cookie: `xrmcCookie=${token}`,
-      },
+      // headers: {
+      //   Authorization: `access_token ${token ?? ''}`,
+      // },
     })
 
     if (!response.ok) {

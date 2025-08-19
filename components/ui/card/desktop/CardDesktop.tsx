@@ -32,18 +32,18 @@ export const CardDesktop: React.FC<CardDesktopProps> = ({
     </figure>
 
     <section className={styles.infoSection}>
-      {/* {item.logotypeURL && (
+      {item.brand && item.brand.logo && item.brand.logo !== "" ? (
         <div className={styles.logotypeImageWrapper}>
           <Image
-            src={item.logotypeURL}
-            alt={`Логотип бренда ${item.brand}`}
+            src={item.brand.logo}
+            alt={`Логотип бренда ${item.brand.name}`}
             fill
             style={{ objectFit: 'contain' }}
             sizes="(max-width: 320px) 100vw, 320px"
             loading="lazy"
           />
         </div>
-      )} */}
+      ) : null}
       {item.legalEntity && (
         <div className={styles.infoRow}>
           {/* <FieldLabel text="Юр. лицо:" /> */}
@@ -54,18 +54,28 @@ export const CardDesktop: React.FC<CardDesktopProps> = ({
           />
         </div>
       )}
-      {(item.brand || item.typeOfPlace) && (
-        <header className={styles.header}>
-          <div className={styles.header}>
-            {/* <FieldLabel text="Бренд:" /> */}
-            <FieldValue
-              text={`${item.typeOfPlace} ${item.brand}`.trim()}
-              type="h3"
-              ariaLabel="Основной бренд места"
-            />
-          </div>
-        </header>
-      )}
+      {/* {(item.brand || item.typeOfPlace) && ( */}
+      <header className={styles.header}>
+        <div className={styles.header}>
+          {/* <FieldLabel text="Бренд:" /> */}
+          <FieldValue
+            text={
+              <>
+                {item.typeOfPlace ? item.typeOfPlace : <span className="text-red-500">Тип места нет</span>}
+                {" "}
+                {item.brand ? (
+                  item.brand.name
+                ) : (
+                  <span className="text-red-500">Бренда нет</span>
+                )}
+              </>
+            }
+            type="h3"
+            ariaLabel="Основной бренд места"
+          />
+        </div>
+      </header>
+      {/* )} */}
 
       {item.contentType && (
         <div className={styles.infoRow}>
@@ -90,7 +100,7 @@ export const CardDesktop: React.FC<CardDesktopProps> = ({
       )}
 
       {/*
-          TODO: раскомментить когда появятся роли *для сотрудников* 
+          TODO: раскомментить когда появятся роли *для сотрудников*
           {item.article && (
             <div className={styles.infoRow}>
               <label className={styles.labelSmall}>Артикул:</label>

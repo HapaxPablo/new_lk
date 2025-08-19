@@ -1,7 +1,8 @@
-//TODO разработать начальную страницу, внести предложение Антону сделать лендинг визитку главной 
+//TODO разработать начальную страницу, внести предложение Антону сделать лендинг визитку главной
 // страницей с наполнением рекламными возможностями, например видеороликами с рекламных мест
 // о работе о услугах и т.д. маркетологи и дизайнеры могут лучше обозначить задачи и наполнение
 import { SearchForm } from '@/components/search-form/SearchForm'
+import Slider from '@/components/slider/Slider'
 import { Loader } from '@/components/ui/loader/Loader'
 import { Suspense } from 'react'
 
@@ -35,6 +36,7 @@ export default function Home() {
       </div>
       <div className="w-full h-full p-2">
       </div>
+      <Slider />
     </div>
   )
 }

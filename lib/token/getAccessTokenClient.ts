@@ -2,9 +2,9 @@ export function getClientAccessToken() {
   const token =
     document.cookie
       .split('; ')
-      .find((row) => row.startsWith('xrmcCookie='))
+      .find((row) => row.startsWith('access_token '))
       ?.split('=')[1] || null
 
-  console.log('xrmcCookie client', token)
+  console.log('access_token client', token)
   return token
 }

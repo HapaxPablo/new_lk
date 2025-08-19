@@ -1,7 +1,7 @@
 import styles from './FieldValue.module.scss'
 
 interface FieldValueProps {
-  text: string
+  text: string | React.ReactNode
   className?: string
   itemProp?: string
   ariaLabel?: string

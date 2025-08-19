@@ -19,30 +19,41 @@ class HttpClient1CServer {
     const token = await getToken()
     console.log('token httpServer', token)
 
+    // Проверяем, является ли эндпоинт публичным (GET запрос к nomenclatures)
+    const isPublicEndpoint =
+      method === 'GET' && endpoint.includes('api/nomenclatures')
+
     // console.log('request.cookies', request.cookies)
-    if (!token) {
+    if (!token && !isPublicEndpoint) {
       throw new Error('Authentication required')
     }
-    
-    const headers: Record<string, string> = {
-      Authorization: `xrmcCookie=${token}`,
-      Cookie: `xrmcCookie=${token}`,
+
+    // const headers: Record<string, string> = {
+    //   Authorization: `access_token ${token ?? ''}`,
+    //   Cookie: `access_token ${token ?? ''}`,
+    // }
+
+    const headers: Record<string, string> = {}
+
+    if (token) {
+      headers['Authorization'] = `access_token ${token}`
+      headers['Cookie'] = `access_token ${token}`
     }
-    
+
     if (!isFile) {
       headers['Content-Type'] = 'application/json'
     }
-    
+
     const config: RequestInit = {
       method,
       headers,
       credentials: 'include',
     }
-    
+
     if (data) {
       config.body = isFile ? data : JSON.stringify(data)
     }
-    
+    console.log('headers:', headers)
     console.log('fullUrl:', `${this.baseUrl}${endpoint}`, config)
     const response = await fetch(`${this.baseUrl}${endpoint}`, config)
 
