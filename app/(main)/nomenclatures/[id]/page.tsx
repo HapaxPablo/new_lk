@@ -1,3 +1,5 @@
+'use client'
+
 import {
   ArticleDiv,
   Description,
@@ -8,7 +10,7 @@ import {
 import Slider from '@/components/slider/Slider'
 import { Wrench, Radio, Megaphone, MapPin } from 'lucide-react'
 
-const page = async () => {
+const page = () => {
   return (
     <div className="flex flex-row gap-1 p-4  w-full h-full">
       <div className="flex flex-col gap-2 w-2/5 h-auto">
