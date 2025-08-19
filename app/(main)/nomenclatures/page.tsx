@@ -79,7 +79,7 @@ export default async function NomenclaturesPage(props: NomenclaturesPageProps) {
 
   try {
     // Формируем URL для API
-    const url = new URL('/api/nomenclatures/', 'http://localhost:3000')
+    const url = new URL('/api/nomenclatures/', 'https://test.lk.krasrm.com')
     url.searchParams.set('limit', String(limit))
     url.searchParams.set('page', String(page))
     url.searchParams.set('name', search)
