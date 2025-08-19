@@ -54,7 +54,7 @@ export default function RootLayout({
               <div className="layout">
                 <Header />
                 <main className="content">{children} <Footer /></main>
-               
+
               </div>
             </AuthProvider>
           </ToastProvider>

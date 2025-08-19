@@ -7,12 +7,23 @@ const nextConfig: NextConfig = {
     API_1C_URL: process.env.API_1C_URL,
     SECRET_COOKIE_PASSWORD: process.env.SECRET_COOKIE_PASSWORD,
   },
+
   async headers() {
     return [
       {
         source: '/api/:path*',
         headers: [{ key: 'Access-Control-Allow-Origin', value: '*' }],
       },
+      // {
+      //   source: '/:path*',
+      //   headers: [
+      //     {
+      //       key: 'Content-Security-Policy',
+      //       value:
+      //         "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://api-maps.yandex.ru https://yastatic.net; connect-src 'self' https://api-maps.yandex.ru https://api.thecatapi.com https://yastatic.net; img-src 'self' data: https://*.maps.yandex.net https://api-maps.yandex.ru https://cdn2.thecatapi.com; style-src 'self' 'unsafe-inline' https://api-maps.yandex.ru https://yastatic.net; font-src 'self' data:;",
+      //     },
+      //   ],
+      // },
     ]
   },
   typescript: {
@@ -41,6 +52,20 @@ const nextConfig: NextConfig = {
         protocol: 'https',
         hostname: 'cdn2.thecatapi.com',
       },
+      {
+        protocol: 'https',
+        hostname: 'api.thecatapi.com/v1/breeds',
+      },
+      {
+        protocol: 'https',
+        hostname: 'api-maps.yandex.ru',
+      },
+    ],
+    domains: [
+      'test.lk.krasrm.com',
+      'cdn.example.com',
+      'api-maps.yandex.ru',
+      'api.thecatapi.com/v1/breeds',
     ],
     formats: ['image/avif', 'image/webp'],
   },

@@ -9,7 +9,8 @@ const page = async () => {
   return (
     <div className="flex flex-row gap-1 p-12  w-full h-screen">
       <div className="flex flex-col gap-2 w-2/5 h-full">
-        <div className="w-full bg-amber-400 rounded-md shadow-sm hover:shadow-md transition-shadow overflow-hidden">
+        <div className="w-full rounded-md shadow-sm hover:shadow-md transition-shadow overflow-hidden">
+
           <Slider width="100%" height="100%" autoPlay={true} autoPlayTime={1500} />
         </div>
         <div className="w-full h-full">
