@@ -13,7 +13,7 @@ export async function POST(request: NextRequest) {
       })
     }
 
-    const apiUrl = `${process.env.API_1C_URL}authorizeUser`
+    const apiUrl = `${process.env.API_1C_URL}auth/jwt/create/`
     const response = await fetch(apiUrl, {
       method: 'POST',
       headers: {
@@ -29,11 +29,11 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(data)
     }
 
-    if (data.isAuthorized && data.xrmcCookie) {
+    if (data.refresh && data.access) {
       const res = NextResponse.json(data)
       res.cookies.set({
-        name: 'xrmcCookie',
-        value: data.xrmcCookie.accessToken,
+        name: 'access_token',
+        value: data.access,
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
         sameSite: 'lax',

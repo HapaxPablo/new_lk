@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@hookform/resolvers": "^5.1.1",
+    "@pbe/react-yandex-maps": "^1.2.5",
     "@types/react-toastify": "^4.0.2",
     "@types/validator": "^13.15.2",
     "iron-session": "^8.0.4",

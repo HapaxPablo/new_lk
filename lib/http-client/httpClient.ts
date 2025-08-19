@@ -27,8 +27,8 @@ class HttpClient1CClient {
     }
 
     const headers: Record<string, string> = {
-      Authorization: `Bearer ${token}`,
-      Cookie: `xrmcCookie=${token}`,
+      Authorization: `access_token ${token}`,
+      Cookie: `access_token ${token}`,
     }
 
     if (!isFile) {

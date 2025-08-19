@@ -69,6 +69,10 @@
   --text-5xl: 3rem;
 }
 
+hr.solid {
+  border-top: 2px solid #e0e6ef;
+}
+
 body {
   color: var(--main-text-color);
   background-color: var(--background);

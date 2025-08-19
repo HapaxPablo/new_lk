@@ -19,7 +19,29 @@ const nextConfig: NextConfig = {
     ignoreBuildErrors: true,
   },
   images: {
-    domains: ['test.lk.krasrm.com', 'cdn.example.com', 'api1.krasrm.com'],
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'test.lk.krasrm.com',
+      },
+      {
+        protocol: 'https',
+        hostname: 'cdn.example.com',
+      },
+      {
+        protocol: 'https',
+        hostname: 'api1.krasrm.com',
+      },
+      {
+        protocol: 'http',
+        hostname: '192.168.0.61',
+        pathname: '/local-media/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'cdn2.thecatapi.com',
+      },
+    ],
     formats: ['image/avif', 'image/webp'],
   },
   output: 'standalone',

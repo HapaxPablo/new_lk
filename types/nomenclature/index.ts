@@ -32,7 +32,11 @@ export interface INomenclatureItem {
   status: number
   last_answer: string
   version: string
-  brand: string
+  brand: {
+    id: string
+    name: string
+    logo: string
+  }
   exterior: { source: string }[]
   address: IAdressNomenclature
   legalEntity: string

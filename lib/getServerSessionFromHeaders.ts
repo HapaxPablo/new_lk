@@ -1,27 +1,43 @@
-import { NextRequest } from 'next/server'
+import { cookies } from 'next/headers'
+import { headers as getHeaders } from 'next/headers'
 
 type SessionUser = {
-  xrmcCookie: string
+  access_token: string
+  user_id?: string
 }
 
 type ServerSession = {
-  user: SessionUser
-  token: string
-} | null
+  user: SessionUser | null
+}
 
-export function getServerSessionFromHeaders(
-  request: NextRequest
-): ServerSession {
-  const token =
-    request.headers.get('X-XRMC-Cookie') ??
-    request.cookies.get('xrmcCookie')?.value
+export async function getServerSessionFromHeaders(): Promise<ServerSession> {
+  const cookieStore = await cookies()
+  const headersList = getHeaders()
 
-  if (!token) return null
+  // Получаем токен из куки
+  const token = cookieStore.get('access_token')?.value
 
-  return {
-    token,
-    user: {
-      xrmcCookie: token,
-    },
+  if (!token) {
+    return {
+      user: null,
+    }
+  }
+
+  try {
+    // Декодируем JWT токен
+    const [, payload] = token.split('.')
+    const decodedPayload = JSON.parse(Buffer.from(payload, 'base64').toString())
+
+    return {
+      user: {
+        access_token: token,
+        user_id: decodedPayload.user_id,
+      },
+    }
+  } catch (error) {
+    console.error('Error parsing session token:', error)
+    return {
+      user: null,
+    }
   }
 }

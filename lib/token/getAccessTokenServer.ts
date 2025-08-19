@@ -1,10 +1,28 @@
 'use server'
 
 import { cookies } from 'next/headers'
+import { headers } from 'next/headers'
 
 export async function getServerAccessToken() {
-  const cookieStore = await cookies()
-  const xrmcCookie = cookieStore.get('xrmcCookie')?.value
-  console.log('xrmcCookie server', xrmcCookie)
-  return xrmcCookie || null
+  try {
+    const cookieStore = await cookies()
+    const headersList = await headers()
+
+    // Пробуем получить токен из куки
+    let access_token = cookieStore.get('access_token')?.value
+
+    // Если токена нет в куки, пробуем получить из заголовка Authorization
+    if (!access_token) {
+      const authHeader = headersList.get('Authorization')
+      if (authHeader?.startsWith('access_token ')) {
+        access_token = authHeader.substring(12) // длина "access_token " = 12
+      }
+    }
+
+    console.log('access_token server', access_token)
+    return access_token || null
+  } catch (error) {
+    console.error('Error getting access token:', error)
+    return null
+  }
 }
