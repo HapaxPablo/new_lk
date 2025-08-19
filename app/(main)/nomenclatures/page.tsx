@@ -88,8 +88,8 @@ export default async function NomenclaturesPage(props: NomenclaturesPageProps) {
 
     // Делаем запрос к API
     const response = await fetch(url.toString(), {
-      next: { tags: ['nomenclatures'] },
-      credentials: 'include',
+      // next: { tags: ['nomenclatures'] },
+      // credentials: 'include',
       // headers: {
       //   Authorization: `access_token ${token ?? ''}`,
       // },
