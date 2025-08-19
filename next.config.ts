@@ -14,16 +14,16 @@ const nextConfig: NextConfig = {
         source: '/api/:path*',
         headers: [{ key: 'Access-Control-Allow-Origin', value: '*' }],
       },
-      // {
-      //   source: '/:path*',
-      //   headers: [
-      //     {
-      //       key: 'Content-Security-Policy',
-      //       value:
-      //         "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://api-maps.yandex.ru https://yastatic.net; connect-src 'self' https://api-maps.yandex.ru https://api.thecatapi.com https://yastatic.net; img-src 'self' data: https://*.maps.yandex.net https://api-maps.yandex.ru https://cdn2.thecatapi.com; style-src 'self' 'unsafe-inline' https://api-maps.yandex.ru https://yastatic.net; font-src 'self' data:;",
-      //     },
-      //   ],
-      // },
+      {
+        source: '/:path*',
+        headers: [
+          {
+            key: 'Content-Security-Policy',
+            value:
+              "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://api-maps.yandex.ru https://yastatic.net; connect-src 'self' https://api-maps.yandex.ru https://api.thecatapi.com https://yastatic.net; img-src 'self' data: https://*.maps.yandex.net https://api-maps.yandex.ru https://cdn2.thecatapi.com; style-src 'self' 'unsafe-inline' https://api-maps.yandex.ru https://yastatic.net; font-src 'self' data:;",
+          },
+        ],
+      },
     ]
   },
   typescript: {
