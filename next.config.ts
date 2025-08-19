@@ -19,8 +19,16 @@ const nextConfig: NextConfig = {
         headers: [
           {
             key: 'Content-Security-Policy',
-            value:
-              "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://api-maps.yandex.ru https://yastatic.net; connect-src 'self' https://api-maps.yandex.ru https://api.thecatapi.com https://yastatic.net; img-src 'self' data: https://*.maps.yandex.net https://api-maps.yandex.ru https://cdn2.thecatapi.com; style-src 'self' 'unsafe-inline' https://api-maps.yandex.ru https://yastatic.net; font-src 'self' data:;",
+            value: `
+        default-src 'self';
+        script-src 'self' 'unsafe-inline' 'unsafe-eval' https://api-maps.yandex.ru https://yastatic.net;
+        connect-src 'self' https://api-maps.yandex.ru https://api.thecatapi.com https://yastatic.net;
+        img-src 'self' data: blob: https://*.maps.yandex.net https://api-maps.yandex.ru https://cdn2.thecatapi.com https://yandex.ru;
+        style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://yastatic.net;
+        font-src 'self' data: https://fonts.gstatic.com;
+      `
+              .replace(/\s{2,}/g, ' ')
+              .trim(),
           },
         ],
       },
@@ -54,7 +62,7 @@ const nextConfig: NextConfig = {
       },
       {
         protocol: 'https',
-        hostname: 'api.thecatapi.com/v1/breeds',
+        hostname: 'api.thecatapi.com',
       },
       {
         protocol: 'https',
@@ -65,7 +73,7 @@ const nextConfig: NextConfig = {
       'test.lk.krasrm.com',
       'cdn.example.com',
       'api-maps.yandex.ru',
-      'api.thecatapi.com/v1/breeds',
+      'api.thecatapi.com',
     ],
     formats: ['image/avif', 'image/webp'],
   },
