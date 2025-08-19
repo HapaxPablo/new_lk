@@ -16,8 +16,8 @@ interface ISliderItem {
 interface ISliderProps {
   autoPlay: boolean
   autoPlayTime: number
-  width: string | number
-  height: string | number
+  width?: string | number
+  height?: string | number
   items?: ISliderItem[]
 }
 
@@ -30,32 +30,6 @@ interface ISliderContext {
 }
 
 export const SliderContext = createContext<ISliderContext>({} as ISliderContext)
-
-/**
- * Get cats pictures
- * @param {number} length
- * @returns {Promise<ISliderItem[]>}
- */
-export const getImages = (length = 10): Promise<ISliderItem[]> => {
-  return fetch(`https://api.thecatapi.com/v1/breeds`)
-    .then((response) => response.json())
-    .then((response) => {
-      const images: ISliderItem[] = []
-      response.forEach((c: any) => {
-        const title = c?.description
-        // Используем reference_image_id для получения изображения
-        const imageId = c?.reference_image_id
-        const url = imageId
-          ? `https://cdn2.thecatapi.com/images/${imageId}.jpg`
-          : null
-
-        if (url) {
-          images.push({ id: c?.id, src: url, alt: title })
-        }
-      })
-      return images.slice(0, length)
-    })
-}
 
 // console.log(await getImages())
 
@@ -76,8 +50,8 @@ const Slider = function ({
         setItems(propItems)
       } else {
         try {
-          const images = await getImages()
-          setItems(images)
+          //   const images = await getImages()
+          setItems([])
         } catch (error) {
           console.error('Failed to load images:', error)
         }
@@ -144,15 +118,8 @@ const Slider = function ({
 
   if (items.length === 0) {
     return (
-      <div
-        style={{ width: width, height: height }}
-        className={styles.sliderLoading}
-      >
-        <div className={styles.sliderSkeleton}>
-          <span className="text-red-900 text-xl semibold relative z-10 top-[0] left-[0]">
-            Для просмотра слайдера нужен VPN
-          </span>
-        </div>
+      <div style={{ width: width, height: height }}>
+        <LoaderSkeleton />
       </div>
     )
   }

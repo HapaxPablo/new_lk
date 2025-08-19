@@ -14,13 +14,8 @@ const page = () => {
   return (
     <div className="flex flex-row gap-1 p-4  w-full h-full">
       <div className="flex flex-col gap-2 w-2/5 h-auto">
-        <div className="w-full h-[45%] rounded-md shadow-sm hover:shadow-md transition-shadow overflow-hidden">
-          <Slider
-            width="100%"
-            height="100%"
-            autoPlay={true}
-            autoPlayTime={1500}
-          />
+        <div className="w-full  rounded-md shadow-sm hover:shadow-md transition-shadow overflow-hidden">
+          <Slider autoPlay={true} autoPlayTime={1500} />
         </div>
         <div className="w-full h-auto">
           <Description />
