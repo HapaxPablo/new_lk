@@ -159,7 +159,7 @@ const FiltersPanel = ({ isOpen, onClose }: FiltersPanelProps): JSX.Element => {
                 onChange={handleSaveSettingChange}
                 className={styles.toggleInput}
               />
-              <span className={styles.toggleSlider}></span>
+              <span className={styles.toggleSlider}/>
               <span className={styles.toggleText}>
                 {savePermanently
                   ? 'Сохранять постоянно'

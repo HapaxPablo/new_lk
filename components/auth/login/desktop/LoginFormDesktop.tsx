@@ -9,6 +9,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
+import { Eye, EyeOff } from 'lucide-react'
 import styles from './LoginDesktop.module.scss'
 
 export function LoginFormDesktop() {
@@ -23,6 +24,7 @@ export function LoginFormDesktop() {
   const { login, error, blockTime, isAuthenticated } = useAuth()
   const [isLoading, setIsLoading] = useState(false)
   const [countdown, setCountdown] = useState<string | null>(null)
+  const [showPassword, setShowPassword] = useState(false)
 
   useEffect(() => {
     if (blockTime) {
@@ -43,6 +45,10 @@ export function LoginFormDesktop() {
     setIsLoading(true)
     await login(data.email, data.password)
     setIsLoading(false)
+  }
+
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword)
   }
 
   return (
@@ -71,13 +77,28 @@ export function LoginFormDesktop() {
           {errors.email && (
             <span className={styles.errorText}>{errors.email.message}</span>
           )}
-          <input
-            {...register('password')}
-            type="password"
-            required
-            placeholder="Пароль"
-            className={errors.password ? styles.inputError : styles.input_check}
-          />
+          
+          <div className={styles.passwordWrapper}>
+            <input
+              {...register('password')}
+              type={showPassword ? 'text' : 'password'}
+              required
+              placeholder="Пароль"
+              className={errors.password ? styles.inputError : styles.input}
+            />
+            <button
+              type="button"
+              onClick={togglePasswordVisibility}
+              className={styles.passwordToggle}
+            >
+              {showPassword ? (
+                <EyeOff size={20} className={styles.eyeIcon} />
+              ) : (
+                <Eye size={20} className={styles.eyeIcon} />
+              )}
+            </button>
+          </div>
+          
           {errors.password && (
             <span className={styles.errorText}>{errors.password.message}</span>
           )}
@@ -87,7 +108,7 @@ export function LoginFormDesktop() {
           )}
 
           <Link href="/" className={styles.forgotPassword}>
-            Забыл пароль
+            Забыли пароль?
           </Link>
         </div>
         <Button type="submit" variant="primary" isLoading={isLoading} fullWidth>
@@ -107,8 +128,6 @@ export function LoginFormDesktop() {
       <div className={styles.imgWrapper}>
         <div className={styles.img} />
       </div>
-
-      {/* делал для теста<Image src="/wall.jpg" fill className="h-auto w-auto -z-1" alt="wall" /> */}
     </div>
   )
 }
