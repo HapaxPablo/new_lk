@@ -16,7 +16,7 @@ export const CardDesktop: React.FC<CardDesktopProps> = ({
   children,
   onClick,
 }) => (
-  <article onClick={onClick} className={`${className} ${styles.cardMobile}`}>
+  <article onClick={onClick} className={`${className} ${styles.card}`}>
     <figure className={styles.figure}>
       {item.exterior.length > 0 && (
         <div className={styles.outsideImageWrapper}>
