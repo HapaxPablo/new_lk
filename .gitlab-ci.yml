@@ -18,7 +18,7 @@ build_test:
   script:
     - docker info # Проверка подключения к Docker
     - docker system prune -a -f
-    - docker build --build-arg API_1C_URL="$API_1C_URL" --build-arg CRYPTO_SECRET_KEY="$CRYPTO_SECRET_KEY" --build-arg CRYPTO_IV="$CRYPTO_IV" --build-arg SECRET_COOKIE_PASSWORD="$SECRET_COOKIE_PASSWORD" -t registry.krasrm.com/pahapasha11/new-lk .
+    - docker build --build-arg API_1C_URL="$API_1C_URL" --build-arg CRYPTO_SECRET_KEY="$CRYPTO_SECRET_KEY" --build-arg CRYPTO_IV="$CRYPTO_IV" --build-arg SECRET_COOKIE_PASSWORD="$SECRET_COOKIE_PASSWORD" -t $CI_REGISTRY_IMAGE:latest .
 
 push_test:
   image: docker:stable
@@ -26,8 +26,8 @@ push_test:
   only:
     - test
   script:
-    - docker login registry.krasrm.com -u $DOCKER_USER -p $DOCKER_TOKEN
-    - docker push registry.krasrm.com/pahapasha11/new-lk
+    - docker login $CI_REGISTRY -u $DOCKER_USER -p $DOCKER_TOKEN
+    - docker push $CI_REGISTRY_IMAGE:latest
 
 deploy_test:
   image: alpine:latest
@@ -40,7 +40,7 @@ deploy_test:
     - apk update && apk add openssh-client
   script:
     # 1. Docker login
-    - $SSH_CMD "echo $DOCKER_TOKEN | docker login registry.krasrm.com -u $DOCKER_USER --password-stdin"
+    - $SSH_CMD "echo $DOCKER_TOKEN | docker login $CI_REGISTRY -u $DOCKER_USER --password-stdin"
 
     # 2. Pull образа
     - $SSH_CMD "docker pull $DOCKER_IMAGE_NAME"
