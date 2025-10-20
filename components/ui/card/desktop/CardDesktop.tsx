@@ -48,7 +48,7 @@ export const CardDesktop: React.FC<CardDesktopProps> = ({
         <div className={styles.infoRow}>
           {/* <FieldLabel text="Юр. лицо:" /> */}
           <FieldValue
-            text={`${item.legalEntity}`.trim()}
+            text={`${item.name}`.trim()}
             type="h3"
             ariaLabel={`Юр лицо ${item.brand}`}
           />
