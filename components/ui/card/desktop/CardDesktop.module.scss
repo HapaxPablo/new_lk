@@ -17,6 +17,7 @@
     }
   }
 }
+
 .figure {
   display: flex;
   flex-direction: column;
@@ -35,13 +36,18 @@
 }
 
 .logotypeImageWrapper {
-  width: 100%;
-  aspect-ratio: 6 / 1;
+  width: 150px;
+  height: auto;
   position: relative;
+  // aspect-ratio: 16 / 9;
+
   @media (max-width: 1024px) {
-    position: sticky;
-    aspect-ratio: 10 / 1;
+    position: relative;
+    // aspect-ratio: 16 / 9;
   }
+}
+.image {
+
 }
 
 .infoSection {
@@ -57,6 +63,7 @@
 
 .header {
   display: flex;
+  flex-direction: column;
   align-items: center;
   gap: 0.5rem;
   height: 20px;

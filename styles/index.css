@@ -74,18 +74,6 @@ hr.solid {
   border-top: 2px solid #e0e6ef;
 }
 
-body {
-  color: var(--main-text-color);
-  background-color: var(--background);
-  font-family: 'Montserrat', sans-serif;
-  display: block;
-  box-sizing: border-box;
-  font-weight: 500;
-  height: 100vh;
-  margin: 0;
-  line-height: 1.5;
-  font-size: var(--text-base);
-}
 
 /* Медиа-запросы для адаптивной типографики */
 @media (max-width: 480px) {
@@ -149,34 +137,64 @@ body {
     --text-5xl: 3rem;
   }
 }
-/* Компоненты */
+
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  color: var(--main-text-color);
+  background-color: var(--background);
+  font-family: 'Montserrat', sans-serif;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  font-weight: 500;
+  line-height: 1.5;
+  font-size: var(--text-base);
+}
+
+/* Основная структура layout */
 .layout {
   display: flex;
   flex-direction: column;
-  width: 100vw;
-  height: 100%;
-  max-width: 100%;
+  min-height: 100vh; /* Используем min-height вместо height */
+  width: 100%;
 }
 
+/* Контент занимает всё доступное пространство */
 .content {
-  flex: 1;
+  flex: 1 0 auto; /* Растягивается, занимая всё свободное пространство */
   padding: 0;
-  overflow-y: auto;
-  scroll-behavior: smooth;
-
-  &::-webkit-scrollbar {
-    width: 8px;
-  }
-
-  &::-webkit-scrollbar-track {
-    background: var(--background-secondary);
-  }
-
-  &::-webkit-scrollbar-thumb {
-    background-color: var(--border-color);
-    border-radius: 4px;
-  }
+  width: 100%;
 }
+
+/* Хедер и футер остаются на своих местах */
+header {
+  flex-shrink: 0; /* Не сжимается */
+}
+
+footer {
+  flex-shrink: 0; /* Не сжимается */
+}
+
+/* Стили для скроллбара контента */
+.content::-webkit-scrollbar {
+  width: 8px;
+}
+
+.content::-webkit-scrollbar-track {
+  background: var(--background-secondary);
+}
+
+.content::-webkit-scrollbar-thumb {
+  background-color: var(--border-color);
+  border-radius: 4px;
+}
+
+
 
 /* Базовые стили для интерактивных элементов */
 a,

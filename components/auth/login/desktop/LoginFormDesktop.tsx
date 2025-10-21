@@ -77,7 +77,7 @@ export function LoginFormDesktop() {
           {errors.email && (
             <span className={styles.errorText}>{errors.email.message}</span>
           )}
-          
+
           <div className={styles.passwordWrapper}>
             <input
               {...register('password')}
@@ -98,7 +98,7 @@ export function LoginFormDesktop() {
               )}
             </button>
           </div>
-          
+
           {errors.password && (
             <span className={styles.errorText}>{errors.password.message}</span>
           )}

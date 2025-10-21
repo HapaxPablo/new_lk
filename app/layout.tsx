@@ -53,8 +53,8 @@ export default function RootLayout({
             <AuthProvider>
               <div className="layout">
                 <Header />
-                <main className="content">{children} <Footer /></main>
-
+                <main className="content">{children}</main>
+                <Footer />
               </div>
             </AuthProvider>
           </ToastProvider>
