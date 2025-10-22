@@ -1,15 +1,15 @@
 'use client'
 
 import dynamic from 'next/dynamic'
-import { useMediaQuery } from 'usehooks-ts'
+// import { useMediaQuery } from 'usehooks-ts'
 
-const LoginFormMobile = dynamic(
-  () =>
-    import('./mobile/LoginFormMobile').then((mod) => ({
-      default: mod.LoginFormMobile,
-    })),
-  { ssr: false, loading: () => <div>Loading...</div> }
-)
+// const LoginFormMobile = dynamic(
+//   () =>
+//     import('./mobile/LoginFormMobile').then((mod) => ({
+//       default: mod.LoginFormMobile,
+//     })),
+//   { ssr: false, loading: () => <div>Loading...</div> }
+// )
 
 const LoginFormDesktop = dynamic(
   () =>
@@ -20,7 +20,7 @@ const LoginFormDesktop = dynamic(
 )
 
 export const LoginWrapper = () => {
-  const isDesktop = useMediaQuery('(min-width: 768px)')
-
-  return <>{isDesktop ? <LoginFormDesktop /> : <LoginFormMobile />}</>
+  // const isDesktop = useMediaQuery('(min-width: 768px)')
+return <LoginFormDesktop /> 
+  // return <>{isDesktop ? <LoginFormDesktop /> : <LoginFormMobile />}</>
 }

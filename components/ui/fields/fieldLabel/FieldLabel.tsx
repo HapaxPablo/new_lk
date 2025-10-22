@@ -14,7 +14,8 @@ export const FieldLabel: React.FC<FieldLabelProps> = ({
 }) => {
   const props: any = { className, 'aria-label': ariaLabel }
   return (
-    <label className={`${styles.label} ${className}`} aria-label={ariaLabel}>
+    <label {...props} className={`${styles.label} ${className}`} aria-label={ariaLabel}>
+      
       {text}
     </label>
   )

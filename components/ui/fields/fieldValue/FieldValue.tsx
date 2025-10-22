@@ -23,6 +23,7 @@ export const FieldValue: React.FC<FieldValueProps> = ({
   const props: any = { className, 'aria-label': ariaLabel }
   return (
     <Tag
+    {...props}
       className={`${styles.value} ${className}`}
       itemProp={itemProp}
       aria-label={ariaLabel}

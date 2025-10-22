@@ -15,7 +15,19 @@ import {
   getStorageSettings,
 } from '@/utils/storage'
 import styles from './FiltersPanel.module.scss'
+import dynamic from 'next/dynamic'
+import LoaderSkeleton from '@/components/ui/loader/LoaderSkeleton'
 
+const BrandSelect = dynamic(
+  () =>
+    import('../filter-panels/brand-select/BrandSelect').then((mod) => ({
+      default: mod.BrandSelect,
+    })),
+  {
+    ssr: false,
+    loading: () => <LoaderSkeleton />,
+  }
+)
 interface FiltersPanelProps {
   isOpen: boolean
   onClose: () => void
@@ -84,6 +96,8 @@ const FiltersPanel = ({ isOpen, onClose }: FiltersPanelProps): JSX.Element => {
     }
 
     params.set('page', '1')
+    console.log('PARAMSFILTERPANELS', params.toString())
+
     router.push(`${pathname}?${params.toString()}`)
 
     // Обновляем текущие фильтры
@@ -125,7 +139,9 @@ const FiltersPanel = ({ isOpen, onClose }: FiltersPanelProps): JSX.Element => {
   const getCurrentValue = (key: string): string => {
     return searchParams.get(key) || currentFilters[key] || ''
   }
-
+  const handleBrandChange = (brandId: string) => {
+    handleFilterChange('brand_name', brandId)
+  }
   return (
     <>
       <div
@@ -150,7 +166,6 @@ const FiltersPanel = ({ isOpen, onClose }: FiltersPanelProps): JSX.Element => {
         </div>
 
         <div className={styles.panelContent}>
-
           <div className={styles.saveToggle}>
             <label className={styles.toggleLabel}>
               <input
@@ -159,7 +174,7 @@ const FiltersPanel = ({ isOpen, onClose }: FiltersPanelProps): JSX.Element => {
                 onChange={handleSaveSettingChange}
                 className={styles.toggleInput}
               />
-              <span className={styles.toggleSlider}></span>
+              <span className={styles.toggleSlider} />
               <span className={styles.toggleText}>
                 {savePermanently
                   ? 'Сохранять постоянно'
@@ -175,16 +190,11 @@ const FiltersPanel = ({ isOpen, onClose }: FiltersPanelProps): JSX.Element => {
 
           <div className={styles.filterGroup}>
             <label className={styles.filterLabel}>Бренд</label>
-            <select
-              className={styles.filterSelect}
-              onChange={(e) => handleFilterChange('brand', e.target.value)}
-              value={getCurrentValue('brand')}
-            >
-              <option value="">Все бренды</option>
-              <option value="brand1">Бренд 1</option>
-              <option value="brand2">Бренд 2</option>
-              <option value="brand3">Бренд 3</option>
-            </select>
+            <BrandSelect
+              value={getCurrentValue('brand_name')}
+              onChange={handleBrandChange}
+              placeholder="Поиск по ID, названию или коду ..."
+            />
           </div>
 
           <div className={styles.filterGroup}>

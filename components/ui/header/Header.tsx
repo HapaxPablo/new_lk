@@ -11,7 +11,7 @@ import { SearchForm } from '@/components/search-form/SearchForm'
 
 export default function Header() {
   return (
-    <div className={styles.header}>
+    <header className={styles.header}>
       <div className={styles.wrapper_menu}>
         <Link
           className={styles.header__logo_wrapper}
@@ -47,6 +47,6 @@ export default function Header() {
         что то с Уведомления
       </div>
     </ModalWrapper>
-    </div>
+    </header>
   )
 }

@@ -9,6 +9,7 @@ interface NomenclaturesPageProps {
     limit?: string
     page?: string
     name?: string
+    brand_name?: string
   }>
 }
 export async function generateMetadata(
@@ -69,39 +70,37 @@ export async function generateMetadata(
 
 export default async function NomenclaturesPage(props: NomenclaturesPageProps) {
   const searchParams = await props.searchParams
-  // Получаем параметры с await
   const params = await searchParams
   const limit = Number(params.limit) || 24
   const page = Number(params.page) || 1
   const search = params.name || ''
-  const token = await getToken()
-  console.log('token nomen', token)
+  const brand_name = params.brand_name || ''
+  
+  console.log('Page params:', { limit, page, search, brand_name })
 
   try {
     // Формируем URL для API
-    const url = new URL('/api/nomenclatures/', 'https://test.lk.krasrm.com')
+    const url = new URL('/api/nomenclatures/', process.env.API_1C_URL)
     url.searchParams.set('limit', String(limit))
     url.searchParams.set('page', String(page))
-    url.searchParams.set('name', search)
+    if (search) url.searchParams.set('name', search)
+    if (brand_name) url.searchParams.set('brand_name', brand_name)
 
-    console.log('url', url.toString())
+    console.log('Making request to:', url.toString())
 
-    // Делаем запрос к API
-    const response = await fetch(url.toString(), {
-      // next: { tags: ['nomenclatures'] },
-      // credentials: 'include',
-      // headers: {
-      //   Authorization: `access_token ${token ?? ''}`,
-      // },
-    })
+    const response = await fetch(url.toString())
 
     if (!response.ok) {
-      const errorData = response
-      throw new Error(errorData.statusText || 'Failed to fetch data')
+      const errorText = await response.text()
+      console.error('API error:', response.status, errorText)
+      throw new Error(`Failed to fetch data: ${response.status}`)
     }
-    const data: INomenclatureResponse = await response.json()
 
-    console.log('INomenclatureResponse', data)
+    const data: INomenclatureResponse = await response.json()
+    console.log('API response received, count:', data.count)
+    console.log('Filtered by brand_name:', brand_name)
+    console.log('First item:', data.results[0])
+
     return (
       <div className="container mx-auto px-1 py-2">
         <h1 className="text-2xl font-bold mb-6">Места размещения рекламы</h1>
@@ -109,7 +108,16 @@ export default async function NomenclaturesPage(props: NomenclaturesPageProps) {
         {data.results.length > 0 ? (
           <NomenclatureWrapper nomenclatureData={data.results} />
         ) : (
-          <div>Nothing</div> //TODO: придумать страницу ошибки и обработку ошибки нет данных
+          <div className="text-center py-8">
+            <p className="text-gray-500">
+              {brand_name ? 'Нет номенклатур для выбранного бренда' : 'Номенклатуры не найдены'}
+            </p>
+            {brand_name && (
+              <p className="text-sm text-gray-400 mt-2">
+                Бренд: {brand_name}
+              </p>
+            )}
+          </div>
         )}
         <Pagination limit={limit} page={page} total={data.count} />
       </div>

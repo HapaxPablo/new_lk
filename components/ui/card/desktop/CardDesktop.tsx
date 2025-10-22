@@ -32,14 +32,14 @@ export const CardDesktop: React.FC<CardDesktopProps> = ({
     </figure>
 
     <section className={styles.infoSection}>
-      {item.brand && item.brand.logo && item.brand.logo !== "" ? (
+      {item.brand && item.brand.logotype && item.brand.logotype !== '' ? (
         <div className={styles.logotypeImageWrapper}>
           <Image
-            src={item.brand.logo}
+            src={item.brand.logotype}
             alt={`Логотип бренда ${item.brand.name}`}
-            fill
-            style={{ objectFit: 'contain' }}
-            sizes="(max-width: 320px) 100vw, 320px"
+            className={styles.image}
+            width={250}
+            height={100}
             loading="lazy"
           />
         </div>
@@ -61,8 +61,11 @@ export const CardDesktop: React.FC<CardDesktopProps> = ({
           <FieldValue
             text={
               <>
-                {item.typeOfPlace ? item.typeOfPlace : <span className="text-red-500">Тип места нет</span>}
-                {" "}
+                {item.typeOfPlace ? (
+                  item.typeOfPlace
+                ) : (
+                  <span className="text-red-500">Тип места нет</span>
+                )}{' '}
                 {item.brand ? (
                   item.brand.name
                 ) : (
@@ -83,6 +86,17 @@ export const CardDesktop: React.FC<CardDesktopProps> = ({
           <FieldValue
             text={`${item.contentType}`}
             ariaLabel={`Тип размещаемого ролика в ${item.brand}`}
+          />
+        </div>
+      )}
+      {item.pricePerMonth && (
+        <div className={styles.infoRow}>
+          {/* <FieldLabel text="Тип ролика:" /> */}
+          <FieldValue
+            title="прайс"
+            type="span"
+            text={`Прайс: ${item.pricePerMonth}`}
+            ariaLabel={`Стоимость ${item.brand}`}
           />
         </div>
       )}

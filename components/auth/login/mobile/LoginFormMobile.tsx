@@ -10,6 +10,7 @@ import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import styles from './LoginMobile.module.scss'
 import { Button } from '@/components/ui/button/Button'
+import { Eye, EyeOff } from 'lucide-react'
 
 export function LoginFormMobile() {
   const {
@@ -23,6 +24,7 @@ export function LoginFormMobile() {
   const { login, error, blockTime, isAuthenticated } = useAuth()
   const [isLoading, setIsLoading] = useState(false)
   const [countdown, setCountdown] = useState<string | null>(null)
+  const [showPassword, setShowPassword] = useState(false)
 
   useEffect(() => {
     if (blockTime) {
@@ -45,6 +47,10 @@ export function LoginFormMobile() {
     setIsLoading(false)
   }
 
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword)
+  }
+
   return (
     <div className={styles.wrapper}>
       <div className={styles.wrapper_logo}>
@@ -65,18 +71,33 @@ export function LoginFormMobile() {
             type="email"
             required
             placeholder="Почта"
-            className={errors.email ? styles.inputError : ''}
+            className={errors.email ? styles.inputError : styles.input}
           />
           {errors.email && (
             <span className={styles.errorText}>{errors.email.message}</span>
           )}
-          <input
-            {...register('password')}
-            type="password"
-            required
-            placeholder="Пароль"
-            className={errors.password ? styles.inputError : ''}
-          />
+
+          <div className={styles.passwordWrapper}>
+            <input
+              {...register('password')}
+              type={showPassword ? 'text' : 'password'}
+              required
+              placeholder="Пароль"
+              className={errors.password ? styles.inputError : styles.input}
+            />
+            <button
+              type="button"
+              onClick={togglePasswordVisibility}
+              className={styles.passwordToggle}
+            >
+              {showPassword ? (
+                <EyeOff size={20} className={styles.eyeIcon} />
+              ) : (
+                <Eye size={20} className={styles.eyeIcon} />
+              )}
+            </button>
+          </div>
+
           {errors.password && (
             <span className={styles.errorText}>{errors.password.message}</span>
           )}
@@ -86,7 +107,7 @@ export function LoginFormMobile() {
           )}
 
           <Link href="/" className={styles.forgotPasswordLink}>
-            Забыл пароль
+            Забыли пароль?
           </Link>
           <Button
             type="submit"
