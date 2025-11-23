@@ -1,7 +1,7 @@
 import { NomenclatureWrapper } from '@/components/nomenclatures/NomenclatureWrapper'
 import { Pagination } from '@/components/pagination/Pagination'
 import Toolbar from '@/components/toolbar/Toolbar'
-import { getToken } from '@/lib/token/getToken'
+import { generateNomenclaturesListMetadata } from '@/lib/configs/config-meta/nomenclatures'
 import { INomenclatureResponse } from '@/types/nomenclature'
 import { Metadata } from 'next'
 interface NomenclaturesPageProps {
@@ -18,55 +18,12 @@ export async function generateMetadata(
 ): Promise<Metadata> {
   const searchParams = await props.searchParams
   const search = searchParams.name || ''
+  const brand_name = searchParams.brand_name || ''
 
-  return {
-    title: search
-      ? `Поиск: "${search}" | Каталог номенклатуры`
-      : 'Каталог номенклатуры | RMC',
-    description: search
-      ? `Результаты поиска по запросу "${search}" в каталоге номенклатуры`
-      : 'Просмотрите наш полный каталог номенклатуры. Найдите нужные товары и материалы.',
-    keywords: search
-      ? [
-        `поиск ${search}`,
-        'номенклатура',
-        'каталог',
-        'места размещения рекламы',
-        ...search.split(' '),
-      ]
-      : [
-        'номенклатура',
-        'каталог',
-        'товары',
-        'материалы',
-        'места размещения рекламы',
-      ],
-    openGraph: {
-      title: search
-        ? `Поиск: "${search}" | Каталог номенклатуры`
-        : 'Каталог номенклатуры | RMC',
-      description: search
-        ? `Результаты поиска по запросу "${search}" в каталоге номенклатуры`
-        : 'Просмотрите наш полный каталог номенклатуры и , мест размещения рекламы',
-      url: search
-        ? `https://lk.krasrm.com/nomenclatures?searchValue=${encodeURIComponent(search)}`
-        : //TODO вынести урл сайт в переменные использовать их
-        'https://lk.krasrm.com/nomenclatures',
-      siteName: 'RMC',
-      images: [
-        {
-          url: 'https://krasrm.com/og-logo.jpg',
-          width: 1200,
-          height: 630,
-        },
-      ],
-      locale: 'ru_RU',
-      type: 'website',
-    },
-    alternates: {
-      canonical: 'https://krasrm.com/nomenclatures',
-    },
-  }
+  return generateNomenclaturesListMetadata({
+    search,
+    brand_name,
+  })
 }
 
 export default async function NomenclaturesPage(props: NomenclaturesPageProps) {
@@ -76,8 +33,8 @@ export default async function NomenclaturesPage(props: NomenclaturesPageProps) {
   const page = Number(params.page) || 1
   const search = params.name || ''
   const brand_name = params.brand_name || ''
-  const brand_id= params.brand_id || ''
-  
+  const brand_id = params.brand_id || ''
+
   // console.log('Page params:', { limit, page, search, brand_name, brand_id })
 
   try {
@@ -102,7 +59,7 @@ export default async function NomenclaturesPage(props: NomenclaturesPageProps) {
     const data: INomenclatureResponse = await response.json()
     // console.log('API response received, count:', data.count)
     // console.log('Filtered by brand_name:', brand_name)
-    // console.log('First item:', data.results[0])
+    console.log('First item:', data.results[0])
 
     return (
       <div className="container mx-auto px-1 py-2">
@@ -113,12 +70,12 @@ export default async function NomenclaturesPage(props: NomenclaturesPageProps) {
         ) : (
           <div className="text-center py-8">
             <p className="text-gray-500">
-              {brand_name ? 'Нет номенклатур для выбранного бренда' : 'Номенклатуры не найдены'}
+              {brand_name
+                ? 'Нет номенклатур для выбранного бренда'
+                : 'Номенклатуры не найдены'}
             </p>
             {brand_name && (
-              <p className="text-sm text-gray-400 mt-2">
-                Бренд: {brand_name}
-              </p>
+              <p className="text-sm text-gray-400 mt-2">Бренд: {brand_name}</p>
             )}
           </div>
         )}
