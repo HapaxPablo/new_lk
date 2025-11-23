@@ -23,7 +23,7 @@ const NomenclatureCards = dynamic(
 export const NomenclatureWrapper = ({
   nomenclatureData,
 }: NomenclatureCardProps) => {
-  console.log('NomenclatureList length:', nomenclatureData)
+  // console.log('NomenclatureList length:', nomenclatureData)
   return (
     <div className={styles.gridWrapper}>
       <NomenclatureCards item={nomenclatureData} />

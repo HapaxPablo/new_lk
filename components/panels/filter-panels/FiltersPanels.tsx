@@ -1,8 +1,5 @@
 'use client'
-//TODO доработать, сделать переиспользуемые компоненты для самих фильтров
-// тип select, input-search, input-range  и др.
-// сделать настраиваемым содержание фильтров в зависимости от урл
-import { JSX, useEffect, useRef, useState } from 'react'
+import { JSX, useEffect, useRef, useState, useCallback } from 'react'
 import { usePathname, useSearchParams, useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button/Button'
 import { X } from 'lucide-react'
@@ -28,6 +25,7 @@ const BrandSelect = dynamic(
     loading: () => <LoaderSkeleton />,
   }
 )
+
 interface FiltersPanelProps {
   isOpen: boolean
   onClose: () => void
@@ -39,6 +37,7 @@ const FiltersPanel = ({ isOpen, onClose }: FiltersPanelProps): JSX.Element => {
   const searchParams = useSearchParams()
   const panelRef = useRef<HTMLDivElement>(null)
   const overlayRef = useRef<HTMLDivElement>(null)
+  const brandSelectRef = useRef<{ handleClearAll: () => void }>(null)
 
   const [currentFilters, setCurrentFilters] = useState<ISavedFilters>({})
   const [savePermanently, setSavePermanently] = useState<boolean>(false)
@@ -134,14 +133,21 @@ const FiltersPanel = ({ isOpen, onClose }: FiltersPanelProps): JSX.Element => {
     // Очищаем состояние и хранилища
     setCurrentFilters({})
     clearFiltersFromStorage()
+
+    // Очищаем бренды
+    if (brandSelectRef.current) {
+      brandSelectRef.current.handleClearAll()
+    }
   }
 
   const getCurrentValue = (key: string): string => {
     return searchParams.get(key) || currentFilters[key] || ''
   }
+
   const handleBrandChange = (brandId: string) => {
-    handleFilterChange('brand_name', brandId)
+    handleFilterChange('brand_id', brandId)
   }
+
   return (
     <>
       <div
@@ -191,7 +197,8 @@ const FiltersPanel = ({ isOpen, onClose }: FiltersPanelProps): JSX.Element => {
           <div className={styles.filterGroup}>
             <label className={styles.filterLabel}>Бренд</label>
             <BrandSelect
-              value={getCurrentValue('brand_name')}
+              ref={brandSelectRef}
+              value={getCurrentValue('brand_id')}
               onChange={handleBrandChange}
               placeholder="Поиск по ID, названию или коду ..."
             />

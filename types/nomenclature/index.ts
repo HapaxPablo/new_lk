@@ -68,4 +68,7 @@ export interface INomenclatureQueryParams {
   page?: number
   name?: string
   brand_name?: string
+  brand_id?: string
 }
+
+

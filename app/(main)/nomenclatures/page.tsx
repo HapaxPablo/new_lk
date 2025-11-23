@@ -10,6 +10,7 @@ interface NomenclaturesPageProps {
     page?: string
     name?: string
     brand_name?: string
+    brand_id?: string
   }>
 }
 export async function generateMetadata(
@@ -75,8 +76,9 @@ export default async function NomenclaturesPage(props: NomenclaturesPageProps) {
   const page = Number(params.page) || 1
   const search = params.name || ''
   const brand_name = params.brand_name || ''
+  const brand_id= params.brand_id || ''
   
-  console.log('Page params:', { limit, page, search, brand_name })
+  // console.log('Page params:', { limit, page, search, brand_name, brand_id })
 
   try {
     // Формируем URL для API
@@ -85,8 +87,9 @@ export default async function NomenclaturesPage(props: NomenclaturesPageProps) {
     url.searchParams.set('page', String(page))
     if (search) url.searchParams.set('name', search)
     if (brand_name) url.searchParams.set('brand_name', brand_name)
+    if (brand_id) url.searchParams.set('brand_id', brand_id)
 
-    console.log('Making request to:', url.toString())
+    // console.log('Making request to:', url.toString())
 
     const response = await fetch(url.toString())
 
@@ -97,9 +100,9 @@ export default async function NomenclaturesPage(props: NomenclaturesPageProps) {
     }
 
     const data: INomenclatureResponse = await response.json()
-    console.log('API response received, count:', data.count)
-    console.log('Filtered by brand_name:', brand_name)
-    console.log('First item:', data.results[0])
+    // console.log('API response received, count:', data.count)
+    // console.log('Filtered by brand_name:', brand_name)
+    // console.log('First item:', data.results[0])
 
     return (
       <div className="container mx-auto px-1 py-2">
