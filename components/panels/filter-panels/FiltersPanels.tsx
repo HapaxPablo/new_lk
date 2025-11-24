@@ -26,6 +26,17 @@ const BrandSelect = dynamic(
   }
 )
 
+const CaSelect = dynamic(
+  () =>
+    import('../filter-panels/ca-select/CaSelect').then((mod) => ({
+      default: mod.CaSelect,
+    })),
+  {
+    ssr: false,
+    loading: () => <LoaderSkeleton />,
+  }
+)
+
 interface FiltersPanelProps {
   isOpen: boolean
   onClose: () => void
@@ -38,6 +49,7 @@ const FiltersPanel = ({ isOpen, onClose }: FiltersPanelProps): JSX.Element => {
   const panelRef = useRef<HTMLDivElement>(null)
   const overlayRef = useRef<HTMLDivElement>(null)
   const brandSelectRef = useRef<{ handleClearAll: () => void }>(null)
+  const counterpartySelectRef = useRef<{ handleClearAll: () => void }>(null)
 
   const [currentFilters, setCurrentFilters] = useState<ISavedFilters>({})
   const [savePermanently, setSavePermanently] = useState<boolean>(false)
@@ -148,6 +160,10 @@ const FiltersPanel = ({ isOpen, onClose }: FiltersPanelProps): JSX.Element => {
     handleFilterChange('brand_id', brandId)
   }
 
+    const handleCaChange = (counterpartyId: string) => {
+    handleFilterChange('counterparty_id', counterpartyId)
+  }
+
   return (
     <>
       <div
@@ -201,6 +217,17 @@ const FiltersPanel = ({ isOpen, onClose }: FiltersPanelProps): JSX.Element => {
               value={getCurrentValue('brand_id')}
               onChange={handleBrandChange}
               placeholder="Поиск по ID, названию или коду ..."
+            />
+          </div>
+
+           {/* Фильтр по контрагентам */}
+          <div className={styles.filterGroup}>
+            <label className={styles.filterLabel}>Контрагент</label>
+            <CaSelect
+              ref={counterpartySelectRef}
+              value={getCurrentValue('counterparty_id')}
+              onChange={handleCaChange}
+              placeholder="Поиск контрагентов ..."
             />
           </div>
 
