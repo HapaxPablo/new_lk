@@ -12,7 +12,7 @@ export const NomenclatureItems: React.FC<NomenclatureCardProps> = ({
   className = '',
 }) => {
   const router = useRouter()
-  const handleClickCard = (id: string) => {
+  const handleClickCard = (id: string, code1c: string) => {
     // Переход на страницу с расшифровкой
     router.push(`nomenclatures/${id}`)
   }
@@ -21,7 +21,7 @@ export const NomenclatureItems: React.FC<NomenclatureCardProps> = ({
     <>
       {item.map((item, key) => (
         <CardDesktop
-          onClick={() => handleClickCard(item.id)}
+          onClick={() => handleClickCard(item.id, item.code1c)}
           key={key}
           className={`${className}`}
           item={item}

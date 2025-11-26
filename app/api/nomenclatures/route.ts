@@ -18,6 +18,7 @@ export async function GET(request: NextRequest) {
       page: Number(searchParams.get('page')) || 1,
       name: searchParams.get('name') || undefined,
       brand_name: searchParams.get('brand_name') || undefined,
+      brand_id: searchParams.get('brand_id') || undefined,
     }
 
     console.log('Query params received:', queryParams)

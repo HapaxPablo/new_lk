@@ -1,4 +1,4 @@
-.brandSelect {
+.counterpartySelect {
   position: relative;
   width: 100%;
 }
@@ -28,16 +28,11 @@
     color: #6b7280;
     cursor: not-allowed;
   }
-
-  &[readonly] {
-    background-color: #f9fafb;
-    cursor: default;
-  }
 }
 
 .clearButton {
   position: absolute;
-  right: 30px;
+  right: 8px;
   background: none;
   border: none;
   font-size: 18px;
@@ -52,9 +47,7 @@
 
 .loader {
   position: absolute;
-  right: 8px;
-  top: 50%;
-  transform: translateY(-50%);
+  right: 30px;
 }
 
 .spinner {
@@ -70,7 +63,6 @@
   0% {
     transform: rotate(0deg);
   }
-
   100% {
     transform: rotate(360deg);
   }
@@ -105,7 +97,7 @@
 }
 
 .dropdown {
-  // position: absolute;
+  position: absolute;
   top: 100%;
   left: 0;
   right: 0;
@@ -175,11 +167,37 @@
 }
 
 .optionsHeader {
-  padding: 8px 16px 12px;
+  padding: 12px 16px;
+  border-bottom: 1px solid #f3f4f6;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #f9fafb;
+}
+
+.headerInfo {
   font-size: 12px;
   color: #6b7280;
-  border-bottom: 1px solid #f3f4f6;
-  margin-bottom: 4px;
+}
+
+.headerActions {
+  display: flex;
+  gap: 8px;
+}
+
+.selectAllButton,
+.clearAllButton {
+  padding: 4px 8px;
+  border: 1px solid #d1d5db;
+  border-radius: 4px;
+  background: white;
+  font-size: 11px;
+  cursor: pointer;
+  color: #374151;
+  
+  &:hover {
+    background-color: #f3f4f6;
+  }
 }
 
 .option {
@@ -250,64 +268,23 @@
   }
 }
 
-.brandInfo {
+.counterpartyInfo {
   flex: 1;
 }
 
-.brandName {
+.counterpartyName {
   font-weight: 600;
   font-size: 14px;
   margin-bottom: 4px;
   color: #1f2937;
 }
 
-.brandDetails {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
+.counterpartyCode1c {
   font-size: 12px;
   color: #6b7280;
-}
-
-.brandId,
-.brandCode1c,
-.brandCreated {
   font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
   background: #f3f4f6;
   padding: 2px 6px;
   border-radius: 4px;
-  font-size: 11px;
-}
-.optionsHeader {
-  padding: 12px 16px;
-  border-bottom: 1px solid #f3f4f6;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background-color: #f9fafb;
-}
-
-.headerInfo {
-  font-size: 12px;
-  color: #6b7280;
-}
-
-.headerActions {
-  display: flex;
-  gap: 8px;
-}
-
-.selectAllButton,
-.clearAllButton {
-  padding: 4px 8px;
-  border: 1px solid #d1d5db;
-  border-radius: 4px;
-  background: white;
-  font-size: 11px;
-  cursor: pointer;
-  color: #374151;
-  
-  &:hover {
-    background-color: #f3f4f6;
-  }
+  display: inline-block;
 }

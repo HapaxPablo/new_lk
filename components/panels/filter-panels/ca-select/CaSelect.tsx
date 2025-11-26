@@ -9,44 +9,52 @@ import {
   useImperativeHandle,
 } from 'react'
 import { useDebounce } from '@/hooks/useDebounce'
-import { IBrand } from '@/types/nomenclature'
-import styles from './BrandSelect.module.scss'
 import { useClickOutside } from '@/hooks/useClickOutside'
+import { ICounterparty } from '@/types/counterparty'
+import styles from './CaStyles.module.css'
 
-interface BrandSelectProps {
-  value: string // строка с ID брендов через запятую
-  onChange: (brandIds: string) => void // передаем строку с ID через запятую
+interface CounterpartySelectProps {
+  value: string // строка с ID контрагентов через запятую
+  onChange: (counterpartyIds: string) => void // передаем строку с ID через запятую
   placeholder?: string
   disabled?: boolean
 }
 
-export const BrandSelect = forwardRef(
+export const CaSelect = forwardRef(
   (
     {
       value,
       onChange,
-      placeholder = 'Выберите бренды',
+      placeholder = 'Выберите контрагентов',
       disabled = false,
-    }: BrandSelectProps,
+    }: CounterpartySelectProps,
     ref
   ) => {
-    const [brands, setBrands] = useState<IBrand[]>([])
+    const [counterparties, setCounterparties] = useState<ICounterparty[]>([])
     const [searchTerm, setSearchTerm] = useState('')
     const [loading, setLoading] = useState(false)
     const [isOpen, setIsOpen] = useState(false)
-    const [selectedBrandIds, setSelectedBrandIds] = useState<string[]>([])
+    const [selectedCounterpartyIds, setSelectedCounterpartyIds] = useState<
+      string[]
+    >([])
     const [error, setError] = useState<string | null>(null)
 
     const dropdownRef = useRef<HTMLDivElement>(null)
     const debouncedSearchTerm = useDebounce(searchTerm, 500)
+
+    // Функция для скрытия ошибки
+    const hideError = useCallback(() => {
+      setError(null)
+    }, [])
 
     // Используем хук для закрытия при клике вне элемента
     useClickOutside(
       [dropdownRef],
       () => {
         setIsOpen(false)
+        hideError() // Скрываем ошибку при клике вне компонента
       },
-      isOpen, // Включаем хук только когда dropdown открыт
+      isOpen,
       true
     )
 
@@ -54,13 +62,13 @@ export const BrandSelect = forwardRef(
     useEffect(() => {
       if (value) {
         const ids = value.split(',').filter((id) => id.trim() !== '')
-        setSelectedBrandIds(ids)
+        setSelectedCounterpartyIds(ids)
       } else {
-        setSelectedBrandIds([])
+        setSelectedCounterpartyIds([])
       }
     }, [value])
 
-    const loadBrands = useCallback(async (search: string = '') => {
+    const loadCounterparties = useCallback(async (search: string = '') => {
       setLoading(true)
       setError(null)
 
@@ -75,35 +83,35 @@ export const BrandSelect = forwardRef(
         params.set('page', '1')
         params.set('is_deleted', 'false')
 
-        const response = await fetch(`/api/brands?${params.toString()}`)
+        const response = await fetch(`/api/counterparties?${params.toString()}`)
 
         if (!response.ok) {
           throw new Error(`Ошибка загрузки: ${response.status}`)
         }
 
         const data = await response.json()
-        console.log('Загружены бренды:', data.results || data)
-        setBrands(data.results || data)
+        console.log('Загружены контрагенты:', data.results || data)
+        setCounterparties(data.results || data)
       } catch (error: any) {
-        console.error('Ошибка загрузки брендов:', error)
-        setError(error.message || 'Не удалось загрузить бренды')
-        setBrands([])
+        console.error('Ошибка загрузки контрагентов:', error)
+        setError(error.message || 'Не удалось загрузить контрагентов')
+        setCounterparties([])
       } finally {
         setLoading(false)
       }
     }, [])
 
     useEffect(() => {
-      if (!isOpen || brands.length > 0) return
-      console.log('Загрузка брендов при открытии')
-      loadBrands('')
+      if (!isOpen || counterparties.length > 0) return
+      console.log('Загрузка контрагентов при открытии')
+      loadCounterparties('')
     }, [isOpen])
 
-    // Загрузка брендов при поиске
+    // Загрузка контрагентов при поиске
     useEffect(() => {
       if (!isOpen) return
-      console.log('Поиск брендов:', debouncedSearchTerm)
-      loadBrands(debouncedSearchTerm)
+      console.log('Поиск контрагентов:', debouncedSearchTerm)
+      loadCounterparties(debouncedSearchTerm)
     }, [debouncedSearchTerm, isOpen])
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -111,60 +119,78 @@ export const BrandSelect = forwardRef(
       setSearchTerm(newSearchTerm)
     }
 
-    const handleBrandToggle = (brand: IBrand) => {
-      const isSelected = selectedBrandIds.includes(brand.id)
-      let newSelectedBrands: string[]
+    const handleCounterpartyToggle = (counterparty: ICounterparty) => {
+      const isSelected = selectedCounterpartyIds.includes(counterparty.id)
+      let newSelectedCounterparties: string[]
 
       if (isSelected) {
-        // Убираем бренд из выбранных
-        newSelectedBrands = selectedBrandIds.filter((id) => id !== brand.id)
+        // Убираем контрагента из выбранных
+        newSelectedCounterparties = selectedCounterpartyIds.filter(
+          (id) => id !== counterparty.id
+        )
       } else {
-        // Добавляем бренд к выбранным
-        newSelectedBrands = [...selectedBrandIds, brand.id]
+        // Добавляем контрагента к выбранным
+        newSelectedCounterparties = [
+          ...selectedCounterpartyIds,
+          counterparty.id,
+        ]
       }
 
-      setSelectedBrandIds(newSelectedBrands)
+      setSelectedCounterpartyIds(newSelectedCounterparties)
 
       // Формируем строку с ID через запятую и передаем в onChange
-      const brandIdsString = newSelectedBrands.join(',')
-      onChange(brandIdsString)
+      const counterpartyIdsString = newSelectedCounterparties.join(',')
+      onChange(counterpartyIdsString)
+
+      // Выводим в консоль информацию о выбранных контрагентах
+      const selectedCounterpartiesInfo = newSelectedCounterparties.map((id) => {
+        const counterpartyInfo = counterparties.find((c) => c.id === id)
+        return { id, name: counterpartyInfo?.name || 'Unknown' }
+      })
+      console.log('Выбранные контрагенты:', selectedCounterpartiesInfo)
     }
 
     const handleInputFocus = () => {
       console.log('Фокус на поле ввода')
       setIsOpen(true)
 
-      if (brands.length === 0 && !loading) {
-        loadBrands('')
+      if (counterparties.length === 0 && !loading) {
+        loadCounterparties('')
       }
     }
 
     const handleRetry = () => {
       console.log('Повторная попытка загрузки')
       setError(null)
-      loadBrands(searchTerm)
+      loadCounterparties(searchTerm)
     }
 
     const handleClear = () => {
       setSearchTerm('')
-      setSelectedBrandIds([])
+      setSelectedCounterpartyIds([])
       onChange('')
       setError(null)
 
       if (isOpen) {
-        loadBrands('')
+        loadCounterparties('')
       }
     }
 
     const handleSelectAll = () => {
-      const allBrandIds = brands.map((brand) => brand.id)
-      setSelectedBrandIds(allBrandIds)
-      const brandIdsString = allBrandIds.join(',')
-      onChange(brandIdsString)
+      const allCounterpartyIds = counterparties.map(
+        (counterparty) => counterparty.id
+      )
+      setSelectedCounterpartyIds(allCounterpartyIds)
+      const counterpartyIdsString = allCounterpartyIds.join(',')
+      onChange(counterpartyIdsString)
+      console.log(
+        'Выбраны все контрагенты:',
+        counterparties.map((c) => ({ id: c.id, name: c.name }))
+      )
     }
 
     const handleClearAll = () => {
-      setSelectedBrandIds([])
+      setSelectedCounterpartyIds([])
       setSearchTerm('')
       onChange('')
     }
@@ -174,17 +200,17 @@ export const BrandSelect = forwardRef(
       handleClearAll,
     }))
 
-    // Отображаем бренды в зависимости от поискового запроса
-    const displayedBrands = brands
+    // Отображаем контрагентов в зависимости от поискового запроса
+    const displayedCounterparties = counterparties
 
-    // Текст для плейсхолдера с количеством выбранных брендов
+    // Текст для плейсхолдера с количеством выбранных контрагентов
     const placeholderText =
-      selectedBrandIds.length > 0
-        ? `Выбрано брендов: ${selectedBrandIds.length}`
+      selectedCounterpartyIds.length > 0
+        ? `Выбрано контрагентов: ${selectedCounterpartyIds.length}`
         : placeholder
 
     return (
-      <div className={styles.brandSelect} ref={dropdownRef}>
+      <div className={styles.counterpartySelect} ref={dropdownRef}>
         <div className={styles.inputWrapper}>
           <input
             type="text"
@@ -231,34 +257,24 @@ export const BrandSelect = forwardRef(
               <div className={styles.loading}>
                 <div className={styles.loadingSpinner}></div>
                 {searchTerm
-                  ? `Поиск брендов "${searchTerm}"...`
-                  : 'Загрузка брендов...'}
+                  ? `Поиск контрагентов "${searchTerm}"...`
+                  : 'Загрузка контрагентов...'}
               </div>
-            ) : error ? (
-              <div className={styles.errorState}>
-                <div>Не удалось загрузить бренды</div>
-                <button
-                  onClick={handleRetry}
-                  className={styles.retryButtonSmall}
-                >
-                  Попробовать снова
-                </button>
-              </div>
-            ) : displayedBrands.length === 0 ? (
+            ) : displayedCounterparties.length === 0 ? (
               <div className={styles.noResults}>
                 {searchTerm
-                  ? `Бренды по запросу "${searchTerm}" не найдены`
-                  : 'Нет доступных брендов'}
+                  ? `Контрагенты по запросу "${searchTerm}" не найдены`
+                  : 'Нет доступных контрагентов'}
               </div>
             ) : (
               <div className={styles.options}>
                 <div className={styles.optionsHeader}>
                   <div className={styles.headerInfo}>
                     {searchTerm
-                      ? `Найдено брендов: ${displayedBrands.length} по запросу "${searchTerm}"`
-                      : `Всего брендов: ${displayedBrands.length}`}
-                    {selectedBrandIds.length > 0 &&
-                      ` • Выбрано: ${selectedBrandIds.length}`}
+                      ? `Найдено контрагентов: ${displayedCounterparties.length} по запросу "${searchTerm}"`
+                      : `Всего контрагентов: ${displayedCounterparties.length}`}
+                    {selectedCounterpartyIds.length > 0 &&
+                      ` • Выбрано: ${selectedCounterpartyIds.length}`}
                   </div>
                   <div className={styles.headerActions}>
                     <button
@@ -278,16 +294,18 @@ export const BrandSelect = forwardRef(
                   </div>
                 </div>
 
-                {displayedBrands.map((brand) => {
-                  const isSelected = selectedBrandIds.includes(brand.id)
+                {displayedCounterparties.map((counterparty) => {
+                  const isSelected = selectedCounterpartyIds.includes(
+                    counterparty.id
+                  )
 
                   return (
                     <div
-                      key={brand.id}
+                      key={counterparty.id}
                       className={`${styles.option} ${
                         isSelected ? styles.selected : ''
                       }`}
-                      onClick={() => handleBrandToggle(brand)}
+                      onClick={() => handleCounterpartyToggle(counterparty)}
                     >
                       {/* Кастомный чекбокс с галочкой */}
                       <div className={styles.checkbox}>
@@ -300,8 +318,15 @@ export const BrandSelect = forwardRef(
                         <span className={styles.checkboxCheckmark} />
                       </div>
 
-                      <div className={styles.brandInfo}>
-                        <div className={styles.brandName}>{brand.name}</div>
+                      <div className={styles.counterpartyInfo}>
+                        <div className={styles.counterpartyName}>
+                          {counterparty.name}
+                        </div>
+                        {counterparty.code1c && (
+                          <div className={styles.counterpartyCode1c}>
+                            1C: {counterparty.code1c}
+                          </div>
+                        )}
                       </div>
                     </div>
                   )
@@ -314,5 +339,3 @@ export const BrandSelect = forwardRef(
     )
   }
 )
-
-BrandSelect.displayName = 'BrandSelect'

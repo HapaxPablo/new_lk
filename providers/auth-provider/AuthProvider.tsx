@@ -29,7 +29,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const router = useRouter()
   const url = usePathname()
   const { showToast } = useToast()
-  console.log(isAuthenticated)
+  // console.log(isAuthenticated)
 
   useEffect(() => {
     const checkAuth = async () => {
