@@ -15,6 +15,7 @@ import {
   generateNomenclatureStructuredData,
   generateNotFoundMetadata,
 } from '@/lib/configs/config-meta/nomenclatures'
+import Script from 'next/script'
 
 interface NomenclatureDetailPageProps {
   params: Promise<{
@@ -22,12 +23,14 @@ interface NomenclatureDetailPageProps {
   }>
 }
 
-async function getNomenclatureById(id: string): Promise<INomenclatureDetailsItem | null> {
+async function getNomenclatureById(
+  id: string
+): Promise<INomenclatureDetailsItem | null> {
   try {
     if (!process.env.API_1C_URL) {
       throw new Error('API_1C_URL environment variable is not defined')
     }
-    
+
     const baseUrl = new URL('api/nomenclatures/', process.env.API_1C_URL)
     const finalUrl = new URL(`${id}/`, baseUrl)
 
@@ -38,9 +41,9 @@ async function getNomenclatureById(id: string): Promise<INomenclatureDetailsItem
       cache: 'no-store',
       headers: {
         'Content-Type': 'application/json',
-        'Accept': 'application/json',
+        Accept: 'application/json',
       },
-      next: { revalidate: 0 }
+      next: { revalidate: 0 },
     })
 
     if (!response.ok) {
@@ -58,7 +61,7 @@ async function getNomenclatureById(id: string): Promise<INomenclatureDetailsItem
       message: error,
       id: id,
       environment: process.env.NODE_ENV,
-      apiUrl: process.env.API_1C_URL
+      apiUrl: process.env.API_1C_URL,
     })
     return null
   }
@@ -125,9 +128,13 @@ export default async function NomenclatureDetailPage(
   return (
     <>
       {/* JSON-LD structured data для SEO */}
-      <script
+      <Script
+        id={`structured-data-${id}`}
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(structuredData),
+        }}
+        strategy="afterInteractive"
       />
 
       <div className="flex flex-row gap-1 p-4 w-full h-full">
