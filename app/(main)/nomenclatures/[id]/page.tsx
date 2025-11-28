@@ -22,26 +22,44 @@ interface NomenclatureDetailPageProps {
   }>
 }
 
-async function getNomenclatureById(
-  id: string
-): Promise<INomenclatureDetailsItem | null> {
+async function getNomenclatureById(id: string): Promise<INomenclatureDetailsItem | null> {
   try {
-     const url = new URL('/api/nomenclatures/', process.env.API_1C_URL)
-    const response = await fetch(`${url}/${id}`, {
-      cache: 'no-store', // или 'force-cache'
+    if (!process.env.API_1C_URL) {
+      throw new Error('API_1C_URL environment variable is not defined')
+    }
+    
+    const baseUrl = new URL('api/nomenclatures/', process.env.API_1C_URL)
+    const finalUrl = new URL(`${id}/`, baseUrl)
+
+    console.log(`Fetching nomenclature from: ${finalUrl.toString()}`)
+
+    const response = await fetch(finalUrl.toString(), {
+      method: 'GET',
+      cache: 'no-store',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+      },
+      next: { revalidate: 0 }
     })
 
     if (!response.ok) {
+      console.error(`API responded with status: ${response.status}`)
       if (response.status === 404) {
         return null
       }
-      throw new Error(`Failed to fetch nomenclature: ${response.status}`)
+      throw new Error(`HTTP error! status: ${response.status}`)
     }
 
     const data = await response.json()
     return data
   } catch (error) {
-    console.error('Error fetching nomenclature:', error)
+    console.error('Error fetching nomenclature:', {
+      message: error,
+      id: id,
+      environment: process.env.NODE_ENV,
+      apiUrl: process.env.API_1C_URL
+    })
     return null
   }
 }
