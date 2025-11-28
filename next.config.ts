@@ -12,31 +12,49 @@ const nextConfig: NextConfig = {
     return [
       {
         source: '/api/:path*',
-        headers: [{ key: 'Access-Control-Allow-Origin', value: '*' }],
+        headers: [
+          { 
+            key: 'Access-Control-Allow-Origin', 
+            value: '*' 
+          },
+          {
+            key: 'Access-Control-Allow-Methods',
+            value: 'GET, POST, PUT, DELETE, OPTIONS'
+          },
+          {
+            key: 'Access-Control-Allow-Headers',
+            value: 'Content-Type, Authorization'
+          }
+        ],
       },
       {
+        // Применяем ко всем страницам
         source: '/:path*',
         headers: [
           {
             key: 'Content-Security-Policy',
             value: `
-        default-src 'self';
-        script-src 'self' 'unsafe-inline' 'unsafe-eval' https://api-maps.yandex.ru https://yastatic.net;
-        connect-src 'self' https://api-maps.yandex.ru https://api.thecatapi.com https://yastatic.net;
-        img-src 'self' data: blob: https://*.maps.yandex.net https://api-maps.yandex.ru https://cdn2.thecatapi.com https://yandex.ru;
-        style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://yastatic.net;
-        font-src 'self' data: https://fonts.gstatic.com;
-      `
-              .replace(/\s{2,}/g, ' ')
-              .trim(),
+              default-src 'self';
+              script-src 'self' 'unsafe-inline' 'unsafe-eval' https://api-maps.yandex.ru https://yastatic.net;
+              style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://yastatic.net;
+              img-src 'self' data: blob: https://*.maps.yandex.net https://api-maps.yandex.ru https://cdn2.thecatapi.com https://yandex.ru;
+              font-src 'self' data: https://fonts.gstatic.com;
+              connect-src 'self' https://api-maps.yandex.ru https://api.thecatapi.com https://yastatic.net;
+              frame-src 'none';
+              object-src 'none';
+              base-uri 'self';
+              form-action 'self';
+            `.replace(/\s+/g, ' ').trim()
           },
         ],
       },
     ]
   },
+
   typescript: {
     ignoreBuildErrors: true,
   },
+
   images: {
     remotePatterns: [
       {
@@ -75,7 +93,6 @@ const nextConfig: NextConfig = {
       'api-maps.yandex.ru',
       'cdn2.thecatapi.com',
       'api.thecatapi.com',
-      'api-maps.yandex.ru',
       'yastatic.net',
       'fonts.gstatic.com',
       'yandex.ru',
@@ -83,6 +100,7 @@ const nextConfig: NextConfig = {
     ],
     formats: ['image/avif', 'image/webp'],
   },
+
   output: 'standalone',
 }
 
