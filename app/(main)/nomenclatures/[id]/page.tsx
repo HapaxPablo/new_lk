@@ -26,8 +26,8 @@ async function getNomenclatureById(
   id: string
 ): Promise<INomenclatureDetailsItem | null> {
   try {
-    const baseUrl = process.env.NEXTAUTH_URL || 'http://localhost:3000'
-    const response = await fetch(`${baseUrl}/api/nomenclatures/${id}`, {
+     const url = new URL('/api/nomenclatures/', process.env.API_1C_URL)
+    const response = await fetch(`${url}/${id}`, {
       cache: 'no-store', // или 'force-cache'
     })
 
