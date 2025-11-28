@@ -187,7 +187,7 @@ export default async function NomenclatureDetailPage(
 
             <div
               className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full"
-              style={{ gridTemplateRows: 'repeat(2, 1fr)' }}
+              // style={{ gridTemplateRows: 'repeat(2, 1fr)' }}
             >
               <ResponsibleCard
                 label="Бренд радио"
