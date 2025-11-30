@@ -8,7 +8,7 @@
   font-size: 0.875rem;
   font-weight: 500;
   line-height: 1.25rem;
-  transition: all 0.15s ease-in-out;
+  transition: all 0.2s ease-in-out;
   cursor: pointer;
   user-select: none;
   border: 1px solid transparent;
@@ -19,10 +19,10 @@
     pointer-events: none;
   }
 
-  &:focus {
-    outline: none;
-    box-shadow: 0 0 0 2px var(--focus-ring);
-  }
+  // &:focus {
+  //   outline: none;
+  //   box-shadow: 0 0 0 2px var(--focus-ring);
+  // }
 
   // Варианты кнопок
   &Primary {
@@ -91,6 +91,54 @@
     }
   }
 
+  &Add {
+    background-color: transparent;
+    color: var(--main-color);
+    border-color: var(--main-color);
+
+    &:hover {
+      background-color: var(--main-color);
+      color: white;
+    }
+
+    &:active {
+      background-color: var(--main-color);
+      color: white;
+    }
+  }
+
+  &Detail {
+    background-color: transparent;
+    color: var(--primary-color);
+    border-color: var(--primary-color);
+
+    &:hover {
+      background-color: var(--primary-color);
+      color: white;
+    }
+
+    &:active {
+      background-color: var(--primary-color);
+      color: white;
+    }
+  }
+
+  &Navigate {
+    background-color: transparent;
+    color: var(--main-color);
+    border-color: var(--main-color);
+
+    &:hover {
+      background-color: var(--main-color);
+      color: white;
+    }
+
+    &:active {
+      background-color: var(--main-color);
+      color: white;
+    }
+  }
+
   // Модификаторы
   &FullWidth {
     width: 100%;
@@ -107,6 +155,7 @@
   from {
     transform: rotate(0deg);
   }
+
   to {
     transform: rotate(360deg);
   }
