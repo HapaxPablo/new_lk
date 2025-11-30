@@ -59,7 +59,7 @@ export default async function NomenclaturesPage(props: NomenclaturesPageProps) {
     const data: INomenclatureResponse = await response.json()
     // console.log('API response received, count:', data.count)
     // console.log('Filtered by brand_name:', brand_name)
-    console.log('First item:', data.results[0])
+    console.log('First item:', data.results)
 
     return (
       <div className="container mx-auto px-1 py-2">

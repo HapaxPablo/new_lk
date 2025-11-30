@@ -1,4 +1,4 @@
-import { CardDesktop } from '@/components/ui/card/desktop/CardDesktop'
+import { CardNomenclature } from '@/components/ui/card/CardNomenclature'
 import { INomenclatureItem } from '@/types/nomenclature'
 import { useRouter } from 'next/navigation'
 
@@ -20,7 +20,7 @@ export const NomenclatureItems: React.FC<NomenclatureCardProps> = ({
   return (
     <>
       {item.map((item, key) => (
-        <CardDesktop
+        <CardNomenclature
           onClick={() => handleClickCard(item.id, item.code1c)}
           key={key}
           className={`${className}`}

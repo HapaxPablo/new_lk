@@ -26,7 +26,7 @@ interface ISliderContext {
   changeSlide: (direction?: number) => void
   slidesCount: number
   slideNumber: number
-  items: ISliderItem[]
+  items: any[]
 }
 
 export const SliderContext = createContext<ISliderContext>({} as ISliderContext)

@@ -8,7 +8,14 @@ export async function middleware(request: NextRequest) {
   // ✅ Маршруты авторизации
   const authRoutes = ['/login', '/registration']
   const isAuthRoute = authRoutes.some((route) => pathname.startsWith(route))
+  // перенаправляем на номенклатуру при входе по корню
+  if (request.nextUrl.pathname === '/') {
+    // Создаем новый URL с сохранением query параметров
+    const newUrl = new URL('/nomenclatures', request.url)
+    newUrl.search = request.nextUrl.search // Сохраняем query параметры
 
+    return NextResponse.redirect(newUrl)
+  }
   if (isAuthRoute && session.user) {
     return NextResponse.redirect(new URL('/nomenclatures', request.url))
   }
