@@ -13,7 +13,7 @@
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 1.5rem;
+  gap: 1rem;
 }
 
 .tooltipContainer {
@@ -109,6 +109,10 @@
   display: flex;
   flex-wrap: wrap;
   gap: 0.5rem;
+}
+.searchForm{
+  flex: 1;
+  background: var(--background);
 }
 
 /* Адаптация для планшетов */

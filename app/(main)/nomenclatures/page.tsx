@@ -63,7 +63,7 @@ export default async function NomenclaturesPage(props: NomenclaturesPageProps) {
 
     return (
       <div className="container mx-auto px-1 py-2">
-        <h1 className="text-2xl font-bold mb-6">Места размещения рекламы</h1>
+        <h1 className="text-center text-2xl font-bold mb-1">Места размещения рекламы</h1>
         <Toolbar totalItems={data.count} currentLimit={limit} />
         {data.results.length > 0 ? (
           <NomenclatureWrapper nomenclatureData={data.results} />
@@ -79,7 +79,7 @@ export default async function NomenclaturesPage(props: NomenclaturesPageProps) {
             )}
           </div>
         )}
-        <Pagination limit={limit} page={page} total={data.count} />
+        {data.results.length > 20 && <Pagination limit={limit} page={page} total={data.count} />}
       </div>
     )
   } catch (error) {

@@ -5,6 +5,7 @@ import { ArrowDownWideNarrow, ListChecks, Settings } from 'lucide-react'
 import { useClickOutside } from '@/hooks/useClickOutside'
 import styles from './Toolbar.module.scss'
 import FiltersPanel from '../panels/filter-panels/FiltersPanels'
+import { SearchForm } from '../search-form/SearchForm'
 
 interface ToolbarProps {
   totalItems: number
@@ -73,7 +74,7 @@ const Toolbar = ({ totalItems, currentLimit }: ToolbarProps): JSX.Element => {
         <div className={styles.mainPanel}>
           {/* Общее количество */}
           <div className={styles.totalItems}>Всего: {totalItems}</div>
-
+          <SearchForm hideButton className={styles.searchForm} />
           {/* Кнопка настроек/фильтров */}
           <div className={styles.tooltipContainer} data-tooltip="Фильтры">
             <Settings
