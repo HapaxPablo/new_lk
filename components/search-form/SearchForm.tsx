@@ -1,9 +1,9 @@
 'use client'
-//TODO нужно сделать стили под десктоп и мобилу, текущие стили для наглядности
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
-import { useCallback, useEffect, useRef } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { useDebounceCallback } from 'usehooks-ts'
 import { Button } from '../ui/button/Button'
+import { X } from 'lucide-react'
 
 interface SearchFormProps {
   /**
@@ -53,6 +53,12 @@ interface SearchFormProps {
    * @default ''
    */
   buttonClassName?: string
+
+  /**
+   * Дополнительные CSS-классы для инпута
+   * @default ''
+   */
+  inputClassName?: string
 }
 
 /**
@@ -61,6 +67,7 @@ interface SearchFormProps {
  * - Ручного поиска по кнопке/Enter
  * - Синхронизации с URL-параметрами
  * - Кастомизации внешнего вида
+ * - Кнопки очистки инпута
  */
 export function SearchForm({
   initialSearch = '',
@@ -71,11 +78,13 @@ export function SearchForm({
   hideButton = false,
   buttonText = 'Найти',
   buttonClassName = '',
+  inputClassName = '',
 }: SearchFormProps) {
   const router = useRouter()
   const pathname = usePathname()
   const searchParams = useSearchParams()
   const inputRef = useRef<HTMLInputElement>(null)
+  const [inputValue, setInputValue] = useState(initialSearch)
 
   // Создаем debounce-функцию для обработки ввода
   const debouncedSearch = useDebounceCallback((value: string) => {
@@ -86,7 +95,7 @@ export function SearchForm({
     } else {
       params.delete(searchParamName)
     }
-    // params.delete('offset') // Сбрасываем пагинацию
+    params.delete('page') // Сбрасываем пагинацию
     router.push(`${pathname}?${params.toString()}`)
   }, debounceDelay)
 
@@ -106,32 +115,84 @@ export function SearchForm({
 
   // Обработчик изменения инпута
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    debouncedSearch(e.target.value)
+    const value = e.target.value
+    setInputValue(value)
+    debouncedSearch(value)
   }
 
-  // Синхронизация initialSearch с input при изменении извне
-  useEffect(() => {
-    if (inputRef.current && initialSearch !== inputRef.current.value) {
-      inputRef.current.value = initialSearch
+  // Обработчик очистки инпута
+  const handleClearInput = useCallback(() => {
+    setInputValue('')
+    
+    // Фокусируемся на инпуте после очистки
+    if (inputRef.current) {
+      inputRef.current.focus()
     }
+    
+    // Отменяем отложенный debounce-запрос и сразу очищаем
+    debouncedSearch.cancel()
+    
+    const params = new URLSearchParams(searchParams.toString())
+    params.delete(searchParamName)
+    params.delete('page') // Сбрасываем пагинацию
+    
+    router.push(`${pathname}?${params.toString()}`)
+  }, [debouncedSearch, searchParamName, pathname, router, searchParams])
+
+  // Синхронизация initialSearch с состоянием при изменении извне
+  useEffect(() => {
+    setInputValue(initialSearch)
   }, [initialSearch])
+
+  // Обработчик нажатия клавиши Escape
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && document.activeElement === inputRef.current) {
+        handleClearInput()
+      }
+    }
+
+    document.addEventListener('keydown', handleKeyDown)
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown)
+    }
+  }, [handleClearInput])
 
   return (
     <form
       onSubmit={handleSubmit}
       className={`flex ${className} ${hideButton ? 'rounded' : ''}`}
     >
-      <input
-        ref={inputRef}
-        type="text"
-        name={searchParamName}
-        placeholder={placeholder}
-        defaultValue={initialSearch}
-        onChange={handleInputChange}
-        className={`px-4 py-2 border ${hideButton ? 'rounded' : 'rounded-l'} flex-grow focus:outline-none focus:ring-2 focus:ring-blue-300`}
-      />
+      <div className={`relative flex-grow`}>
+        <input
+          ref={inputRef}
+          type="text"
+          name={searchParamName}
+          placeholder={placeholder}
+          value={inputValue}
+          onChange={handleInputChange}
+          className={`w-full px-4 py-2 border ${hideButton ? 'rounded' : 'rounded-l'} ${inputClassName} focus:outline-none focus:ring-2 focus:ring-blue-300 pr-10`}
+        />
+        
+        {/* Кнопка очистки */}
+        {inputValue && (
+          <button
+            type="button"
+            onClick={handleClearInput}
+            className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 focus:outline-none"
+            aria-label="Очистить поиск"
+          >
+            <X size={18} />
+          </button>
+        )}
+      </div>
+      
       {!hideButton && (
-        <Button type="submit" variant="default" className={buttonClassName}>
+        <Button 
+          type="submit" 
+          variant="default" 
+          className={`rounded-l-none ${buttonClassName}`}
+        >
           {buttonText}
         </Button>
       )}
