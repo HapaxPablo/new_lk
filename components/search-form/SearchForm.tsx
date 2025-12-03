@@ -131,7 +131,7 @@ export function SearchForm({
         className={`px-4 py-2 border ${hideButton ? 'rounded' : 'rounded-l'} flex-grow focus:outline-none focus:ring-2 focus:ring-blue-300`}
       />
       {!hideButton && (
-        <Button type="submit" variant="primary" className={buttonClassName}>
+        <Button type="submit" variant="default" className={buttonClassName}>
           {buttonText}
         </Button>
       )}
