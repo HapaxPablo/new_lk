@@ -1,3 +1,4 @@
+'use client'
 interface LoaderSkeletonProps {
   className?: string
 }

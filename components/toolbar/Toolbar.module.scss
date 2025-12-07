@@ -110,21 +110,24 @@
   flex-wrap: wrap;
   gap: 0.5rem;
 }
-.searchForm{
+
+.searchForm {
   flex: 1;
   background: var(--background);
 }
 
-/* Адаптация для планшетов */
 @media (min-width: 768px) {
   .mainPanel {
     gap: 2rem;
   }
 }
 
-/* Адаптация для десктоп */
 @media (min-width: 1024px) {
   .mainPanel {
     flex-wrap: nowrap;
+  }
+
+  .tooltipContainer[data-tooltip="Фильтры"] {
+    display: none;
   }
 }

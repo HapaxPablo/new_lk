@@ -1,3 +1,4 @@
+'use client'
 export interface ISavedFilters {
   brand?: string
   status?: string

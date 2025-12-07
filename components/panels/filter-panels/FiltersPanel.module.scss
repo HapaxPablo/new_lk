@@ -17,20 +17,53 @@
 }
 
 .panel {
-  position: fixed;
-  top: 0;
-  left: -340px;
-  width: 340px;
-  height: 100vh;
   background: var(--background);
-  z-index: 1000;
-  box-shadow: 2px 0 8px rgba(0, 0, 0, 0.15);
-  transition: left 0.3s ease;
   display: flex;
   flex-direction: column;
+  height: 100%;
 
-  &.panelOpen {
-    left: 0;
+  // Мобильная версия
+  &:not(.desktopPanel) {
+    position: fixed;
+    top: 0;
+    left: -340px;
+    width: 340px;
+    height: 100vh;
+    z-index: 1000;
+    box-shadow: 2px 0 8px rgba(0, 0, 0, 0.15);
+    transition: left 0.3s ease;
+
+    &.panelOpen {
+      left: 0;
+    }
+  }
+
+  // Десктопная версия
+  &.desktopPanel {
+    width: 380px;
+    min-width: 340px;
+    border-right: 1px solid var(--border-color-light);
+    padding: 1rem;
+    border-radius: 0.375rem;
+    box-shadow: var(--shadow-sm);
+    overflow-y: auto;
+
+    .panelHeader {
+      padding: 0.75rem 0;
+      border-bottom: none;
+
+      h3 {
+        font-size: 1.1rem;
+      }
+    }
+
+    .closeButton {
+      display: none;
+    }
+
+    .panelContent {
+      padding: 0;
+    }
   }
 }
 
@@ -40,7 +73,6 @@
   align-items: center;
   padding: 1rem;
   border-bottom: 1px solid var(--border-color-light);
-  background: var(--background);
 
   h3 {
     margin: 0;
@@ -108,7 +140,6 @@
 .toggleInput {
   display: none;
 
-  // Стили для состояния false (сессия)
   &:not(:checked)+.toggleSlider {
     background-color: var(--background);
     border: 1px solid var(--primary-color-light);
@@ -121,7 +152,6 @@
     transition: all 0.4s ease;
   }
 
-  // Стили для состояния true (постоянно)
   &:checked+.toggleSlider {
     background-color: var(--primary-color-light);
     border: 1px solid white;
@@ -174,9 +204,15 @@
   cursor: not-allowed;
 }
 
+// Мобильная адаптация
+@media (max-width: 1023px) {
+  .panel.desktopPanel {
+    display: none !important;
+  }
+}
 
 @media (max-width: 480px) {
-  .panel {
+  .panel:not(.desktopPanel) {
     width: 100%;
     left: -100%;
   }

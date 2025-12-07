@@ -1,5 +1,6 @@
 'use client'
-import { JSX, useEffect, useRef, useState, useCallback } from 'react'
+
+import { JSX, useEffect, useRef, useState } from 'react'
 import { usePathname, useSearchParams, useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button/Button'
 import { X } from 'lucide-react'
@@ -38,8 +39,8 @@ const CaSelect = dynamic(
 )
 
 interface FiltersPanelProps {
-  isOpen: boolean
-  onClose: () => void
+  isOpen?: boolean
+  onClose?: () => void
 }
 
 const FiltersPanel = ({ isOpen, onClose }: FiltersPanelProps): JSX.Element => {
@@ -55,39 +56,39 @@ const FiltersPanel = ({ isOpen, onClose }: FiltersPanelProps): JSX.Element => {
   const [savePermanently, setSavePermanently] = useState<boolean>(false)
   const [isSettingsLoaded, setIsSettingsLoaded] = useState<boolean>(false)
 
-  // Загружаем настройки и фильтры при монтировании
   useEffect(() => {
     const loadSettingsAndFilters = () => {
-      // Загружаем настройки
       const settings = getStorageSettings()
       const permanent = settings?.savePermanently ?? false
       setSavePermanently(permanent)
 
-      // Загружаем фильтры согласно настройкам
       const savedFilters = getFiltersFromStorage(permanent)
       if (savedFilters) {
         setCurrentFilters(savedFilters)
 
-        // Применяем сохраненные фильтры к URL
-        const params = new URLSearchParams()
-        Object.entries(savedFilters).forEach(([key, value]) => {
-          if (value) {
-            params.set(key, value)
-          }
-        })
-        router.push(`${pathname}?${params.toString()}`)
+        // Применяем сохраненные фильтры к URL только если панель не всегда открыта (не десктоп)
+        if (onClose) {
+          const params = new URLSearchParams()
+          Object.entries(savedFilters).forEach(([key, value]) => {
+            if (value) {
+              params.set(key, value)
+            }
+          })
+          router.push(`${pathname}?${params.toString()}`)
+        }
       }
 
       setIsSettingsLoaded(true)
     }
 
     loadSettingsAndFilters()
-  }, [pathname, router])
+  }, [pathname, router, onClose])
 
-  useClickOutside([panelRef], onClose, isOpen)
+  // Используем клик вовне только если есть функция onClose (мобильная версия)
+  useClickOutside([panelRef], onClose!!, !!onClose && isOpen)
 
   useEffect(() => {
-    if (isOpen) {
+    if (isOpen && onClose) {
       document.body.style.overflow = 'hidden'
     } else {
       document.body.style.overflow = 'unset'
@@ -95,7 +96,7 @@ const FiltersPanel = ({ isOpen, onClose }: FiltersPanelProps): JSX.Element => {
     return () => {
       document.body.style.overflow = 'unset'
     }
-  }, [isOpen])
+  }, [isOpen, onClose])
 
   const handleFilterChange = (filterKey: string, value: string): void => {
     const params = new URLSearchParams(searchParams.toString())
@@ -111,7 +112,6 @@ const FiltersPanel = ({ isOpen, onClose }: FiltersPanelProps): JSX.Element => {
 
     router.push(`${pathname}?${params.toString()}`)
 
-    // Обновляем текущие фильтры
     const newFilters = { ...currentFilters }
     if (value) {
       newFilters[filterKey] = value
@@ -121,7 +121,6 @@ const FiltersPanel = ({ isOpen, onClose }: FiltersPanelProps): JSX.Element => {
 
     setCurrentFilters(newFilters)
 
-    // Сохраняем только если настройки загружены
     if (isSettingsLoaded) {
       saveFiltersToStorage(newFilters, savePermanently)
     }
@@ -131,22 +130,18 @@ const FiltersPanel = ({ isOpen, onClose }: FiltersPanelProps): JSX.Element => {
     const newValue = !savePermanently
     setSavePermanently(newValue)
 
-    // Сохраняем фильтры с новыми настройками
     if (Object.keys(currentFilters).length > 0) {
       saveFiltersToStorage(currentFilters, newValue)
     }
   }
 
   const handleResetFilters = (): void => {
-    // Очищаем URL параметры
     const params = new URLSearchParams()
     router.push(`${pathname}?${params.toString()}`)
 
-    // Очищаем состояние и хранилища
     setCurrentFilters({})
     clearFiltersFromStorage()
 
-    // Очищаем бренды
     if (brandSelectRef.current) {
       brandSelectRef.current.handleClearAll()
     }
@@ -160,32 +155,45 @@ const FiltersPanel = ({ isOpen, onClose }: FiltersPanelProps): JSX.Element => {
     handleFilterChange('brand_id', brandId)
   }
 
-    const handleCaChange = (counterpartyId: string) => {
+  const handleCaChange = (counterpartyId: string) => {
     handleFilterChange('counterparty_id', counterpartyId)
   }
 
   return (
     <>
-      <div
-        ref={overlayRef}
-        className={`${styles.overlay} ${isOpen ? styles.overlayOpen : ''}`}
-        onClick={onClose}
-      />
+      {/* Overlay только для мобильной версии (когда есть onClose) */}
+      {onClose && (
+        <div
+          ref={overlayRef}
+          className={`${styles.overlay} ${isOpen ? styles.overlayOpen : ''}`}
+          onClick={onClose}
+        />
+      )}
 
       <div
         ref={panelRef}
-        className={`${styles.panel} ${isOpen ? styles.panelOpen : ''}`}
+        className={`${styles.panel} ${isOpen ? styles.panelOpen : ''} ${
+          !onClose ? styles.desktopPanel : ''
+        }`}
       >
-        <div className={styles.panelHeader}>
-          <h3>Фильтры</h3>
-          <Button
-            variant="default"
-            onClick={onClose}
-            className={styles.closeButton}
-          >
-            <X size={20} />
-          </Button>
-        </div>
+        {onClose && (
+          <div className={styles.panelHeader}>
+            <h3>Фильтры</h3>
+            <Button
+              variant="default"
+              onClick={onClose}
+              className={styles.closeButton}
+            >
+              <X size={20} />
+            </Button>
+          </div>
+        )}
+
+        {!onClose && (
+          <div className={styles.panelHeader}>
+            <h3>Фильтры</h3>
+          </div>
+        )}
 
         <div className={styles.panelContent}>
           <div className={styles.saveToggle}>
@@ -220,7 +228,6 @@ const FiltersPanel = ({ isOpen, onClose }: FiltersPanelProps): JSX.Element => {
             />
           </div>
 
-           {/* Фильтр по контрагентам */}
           <div className={styles.filterGroup}>
             <label className={styles.filterLabel}>Контрагент</label>
             <CaSelect

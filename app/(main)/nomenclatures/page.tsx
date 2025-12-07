@@ -1,5 +1,4 @@
 import { NomenclatureWrapper } from '@/components/nomenclatures/NomenclatureWrapper'
-import { Pagination } from '@/components/pagination/Pagination'
 import Toolbar from '@/components/toolbar/Toolbar'
 import { generateNomenclaturesListMetadata } from '@/lib/configs/config-meta/nomenclatures'
 import { INomenclatureResponse } from '@/types/nomenclature'
@@ -62,24 +61,45 @@ export default async function NomenclaturesPage(props: NomenclaturesPageProps) {
     console.log('First item:', data.results)
 
     return (
-      <div className="container mx-auto px-1 py-2">
-        <h1 className="text-center text-2xl font-bold mb-1">Места размещения рекламы</h1>
+      <div className="flex flex-col h-full w-full p-1 gap-2">
+        <h1 className="text-center text-2xl font-bold flex-shrink-0">
+          Места размещения рекламы
+        </h1>
         <Toolbar totalItems={data.count} currentLimit={limit} />
-        {data.results.length > 0 ? (
-          <NomenclatureWrapper nomenclatureData={data.results} />
-        ) : (
-          <div className="text-center py-8">
-            <p className="text-gray-500">
-              {brand_name
-                ? 'Нет номенклатур для выбранного бренда'
-                : 'Номенклатуры не найдены'}
-            </p>
-            {brand_name && (
-              <p className="text-sm text-gray-400 mt-2">Бренд: {brand_name}</p>
-            )}
-          </div>
-        )}
-        {data.results.length > 20 && <Pagination limit={limit} page={page} total={data.count} />}
+
+        <div className="flex-grow min-h-0 overflow-hidden">
+          {' '}
+          {/* Контейнер для контента с ограничением высоты */}
+          {data.results.length > 0 ? (
+            <div className="h-full">
+              <NomenclatureWrapper
+                nomenclatureData={data.results}
+                limit={limit}
+                page={page}
+                count={data.count}
+              />
+            </div>
+          ) : (
+            <div className="text-center py-8 h-full flex flex-col justify-center">
+              <p className="text-gray-500">
+                {brand_name
+                  ? 'Нет номенклатур для выбранного бренда'
+                  : 'Номенклатуры не найдены'}
+              </p>
+              {brand_name && (
+                <p className="text-sm text-gray-400 mt-2">
+                  Бренд: {brand_name}
+                </p>
+              )}
+            </div>
+          )}
+        </div>
+
+        {/* {data.results.length > 20 && (
+        <div className="flex-shrink-0">
+          <Pagination limit={limit} page={page} total={data.count} />
+        </div>
+      )} */}
       </div>
     )
   } catch (error) {

@@ -1,8 +1,9 @@
 'use client'
-import { useState } from 'react'
+
 import { usePathname, useSearchParams, useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button/Button'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
+import { useState } from 'react'
 
 interface PaginationProps {
   total: number
@@ -31,13 +32,13 @@ export function Pagination({ total, limit, page }: PaginationProps) {
   const isLastPage = currentPage >= totalPages
 
   return (
-    <div className="flex justify-between items-center mt-8">
+    <div className="flex justify-between items-center">
       <Button
         variant="primary"
         onClick={() => handlePageChange(currentPage - 1)}
         disabled={isFirstPage || isLoading}
         isLoading={isLoading && !isFirstPage}
-        className="p-2 md:px-4 md:py-2 rounded-md" 
+        className="p-2 md:px-4 md:py-2 rounded-md"
         aria-label="Предыдущая страница"
       >
         <span className="hidden md:inline">Назад</span>
@@ -51,7 +52,7 @@ export function Pagination({ total, limit, page }: PaginationProps) {
         onClick={() => handlePageChange(currentPage + 1)}
         disabled={isLastPage || isLoading}
         isLoading={isLoading && !isLastPage}
-        className="p-2 md:px-4 md:py-2 rounded-md" 
+        className="p-2 md:px-4 md:py-2 rounded-md"
         aria-label="Следующая страница"
       >
         <span className="hidden md:inline">Вперед</span>

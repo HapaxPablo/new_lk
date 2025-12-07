@@ -1,17 +1,31 @@
 'use client'
 
 import { ArrowBigUp } from 'lucide-react'
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef, RefObject } from 'react'
 import styles from './ScrollButton.module.scss'
 
-const ScrollButton = () => {
+interface ScrollButtonProps {
+  scrollContainerRef: RefObject<HTMLElement | null>
+  showAfterScroll?: number
+  position?: 'bottom-right' | 'bottom-left' | 'top-right' | 'top-left'
+  size?: 'sm' | 'md' | 'lg'
+  className?: string
+}
+
+const ScrollButton = ({
+  scrollContainerRef,
+  showAfterScroll = 300,
+  position = 'bottom-right',
+  size = 'md',
+  className = '',
+}: ScrollButtonProps) => {
   const [isVisible, setIsVisible] = useState(false)
   const [showTooltip, setShowTooltip] = useState(false)
+  const buttonRef = useRef<HTMLDivElement>(null)
 
   const scrollToTop = () => {
-    const contentElement = document.querySelector('.content')
-    if (contentElement) {
-      contentElement.scrollTo({
+    if (scrollContainerRef.current) {
+      scrollContainerRef.current.scrollTo({
         top: 0,
         behavior: 'smooth',
       })
@@ -19,32 +33,56 @@ const ScrollButton = () => {
   }
 
   useEffect(() => {
-    const contentElement = document.querySelector('.content')
-    if (!contentElement) return
+    const container = scrollContainerRef.current
+    if (!container) return
 
-    const toggleVisibility = () => {
-      setIsVisible(contentElement.scrollTop > 300)
+    const handleScroll = () => {
+      const { scrollTop } = container
+      setIsVisible(scrollTop > showAfterScroll)
     }
 
-    contentElement.addEventListener('scroll', toggleVisibility)
-    return () => contentElement.removeEventListener('scroll', toggleVisibility)
-  }, [])
+    container.addEventListener('scroll', handleScroll)
+
+    handleScroll()
+
+    return () => {
+      container.removeEventListener('scroll', handleScroll)
+    }
+  }, [scrollContainerRef, showAfterScroll])
 
   if (!isVisible) return null
 
-  return (
-    <div className={styles.buttonContainer}>
-      <button
-        onClick={scrollToTop}
-        className={styles.scrollToTop}
-        aria-label="Перейти в начало страницы"
-        onMouseEnter={() => setShowTooltip(true)}
-        onMouseLeave={() => setShowTooltip(false)}
-      >
-        <ArrowBigUp size={36} style={{ margin: '8px' }} />
-      </button>
+  const positionClasses = {
+    'bottom-right': styles.bottomRight,
+    'bottom-left': styles.bottomLeft,
+    'top-right': styles.topRight,
+    'top-left': styles.topLeft,
+  }
 
-      {showTooltip && <div className={styles.tooltip}>Наверх</div>}
+  const sizeClasses = {
+    sm: styles.sizeSm,
+    md: styles.sizeMd,
+    lg: styles.sizeLg,
+  }
+
+  return (
+    <div
+      ref={buttonRef}
+      className={`${styles.buttonWrapper} ${positionClasses[position]} ${className}`}
+    >
+      <div className={styles.buttonContainer}>
+        <button
+          onClick={scrollToTop}
+          className={`${styles.scrollToTop} ${sizeClasses[size]}`}
+          aria-label="Перейти в начало страницы"
+          onMouseEnter={() => setShowTooltip(true)}
+          onMouseLeave={() => setShowTooltip(false)}
+        >
+          <ArrowBigUp className={styles.icon} />
+        </button>
+
+        {showTooltip && <div className={styles.tooltip}>Наверх</div>}
+      </div>
     </div>
   )
 }

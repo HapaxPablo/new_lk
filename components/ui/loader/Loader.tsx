@@ -35,13 +35,15 @@ export const Loader: React.FC<LoaderProps> = ({
   const variantClass = VARIANT_CLASSES[variant]
 
   return (
-    <div
-      className={`${styles.loader} ${sizeClass} ${variantClass} ${className}`}
-      style={style}
-      aria-label="Loading"
-      role="status"
-    >
-      <span className="sr-only">Loading...</span>
+    <div className={styles.overlay_loading}>
+      <div
+        className={`${styles.loader} ${sizeClass} ${variantClass} ${className}`}
+        style={style}
+        aria-label="Loading"
+        role="status"
+      >
+        <span className="sr-only">Loading...</span>
+      </div>
     </div>
   )
 }

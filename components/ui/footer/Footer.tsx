@@ -1,13 +1,12 @@
 import Link from 'next/link'
 import styles from './FooterStyles.module.scss'
 import Image from 'next/image'
-import { Mail, Phone, Terminal, Cpu } from 'lucide-react'
+import { Mail, Phone, Terminal } from 'lucide-react'
 import MapLink from './MapLink'
-import ScrollButton from '../button/ScrollButton'
 
 export default function Footer() {
   const currentYear = new Date().getFullYear()
-  const buildDate = process.env.NEXT_PUBLIC_BUILD_DATE
+  // const buildDate = process.env.NEXT_PUBLIC_BUILD_DATE
 
   return (
     <footer
@@ -33,11 +32,7 @@ export default function Footer() {
               alt="RMC Logo"
               width={120}
               height={24}
-              style={{
-                width: '100%',
-                height: 'auto',
-                aspectRatio: '120/24',
-              }}
+              className={styles.footer__logoImage}
               priority
               title="логотип-rmc"
               aria-label="logo"
@@ -57,7 +52,7 @@ export default function Footer() {
           itemScope
           itemType="https://schema.org/PostalAddress"
         >
-          <Cpu size={14} />
+          {/* <Cpu size={14} /> */}
           <span itemProp="name">ООО "АРЭМСИ 24"</span>
           <MapLink />
         </div>
@@ -86,12 +81,6 @@ export default function Footer() {
               8 800 500 50 50
             </a>
           </div>
-        </div>
-
-        <div className={styles.footer__build}>
-          {/* <GitCommit size={14} />
-          <span>Build: {buildDate}</span> */}
-          <ScrollButton />
         </div>
       </div>
     </footer>

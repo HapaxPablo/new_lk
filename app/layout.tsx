@@ -4,9 +4,9 @@ import { metaDataConfigLayout } from '@/lib/configs/config-meta/configMetaData'
 import { AuthProvider } from '@/providers/auth-provider/AuthProvider'
 import { ModalProvider } from '@/providers/modal/ModalProvider'
 import { ToastProvider } from '@/providers/toast/ToastProvider'
-import '@/styles/index.css'
 import type { Metadata } from 'next'
 import localFont from 'next/font/local'
+import '@/styles/index.css'
 
 const montserrat = localFont({
   src: [
@@ -53,7 +53,7 @@ export default function RootLayout({
             <AuthProvider>
               <div className="layout">
                 <Header />
-                <main className="content">{children}</main>
+                <main className="content">{children} </main>
                 <Footer />
               </div>
             </AuthProvider>

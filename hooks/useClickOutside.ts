@@ -1,3 +1,4 @@
+'use client'
 import { useEffect, RefObject } from 'react'
 
 type ClickOutsideRef = RefObject<HTMLElement | null>
