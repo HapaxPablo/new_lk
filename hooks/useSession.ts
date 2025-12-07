@@ -1,4 +1,3 @@
-/* клиентский хук для авторизации */
 'use client'
 
 import { useEffect, useState } from 'react'

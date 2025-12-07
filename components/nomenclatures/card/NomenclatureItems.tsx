@@ -1,7 +1,7 @@
 import { CardNomenclature } from '@/components/ui/card/CardNomenclature'
 import { INomenclatureItem } from '@/types/nomenclature'
 import { useRouter } from 'next/navigation'
-
+import styles from './NomenclatureItem.module.scss'
 interface NomenclatureCardProps {
   item: INomenclatureItem[]
   className?: string
@@ -18,7 +18,7 @@ export const NomenclatureItems: React.FC<NomenclatureCardProps> = ({
   }
 
   return (
-    <>
+    <div className={styles.cardGrid}>
       {item.map((item, key) => (
         <CardNomenclature
           onClick={() => handleClickCard(item.id, item.code1c)}
@@ -27,6 +27,6 @@ export const NomenclatureItems: React.FC<NomenclatureCardProps> = ({
           item={item}
         />
       ))}
-    </>
+    </div>
   )
 }

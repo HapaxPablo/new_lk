@@ -74,7 +74,6 @@ hr.solid {
   border-top: 2px solid #e0e6ef;
 }
 
-
 /* Медиа-запросы для адаптивной типографики */
 @media (max-width: 480px) {
   :root {
@@ -142,6 +141,7 @@ html, body {
   height: 100%;
   margin: 0;
   padding: 0;
+  overflow: hidden; /* Убираем скролл у всей страницы */
 }
 
 body {
@@ -160,25 +160,26 @@ body {
 .layout {
   display: flex;
   flex-direction: column;
-  min-height: 100vh; /* Используем min-height вместо height */
+  height: 100vh; /* Используем 100vh */
   width: 100%;
+  overflow: hidden;
 }
 
 /* Контент занимает всё доступное пространство */
 .content {
-  flex: 1 0 auto; /* Растягивается, занимая всё свободное пространство */
-  padding: 0;
+  flex: 1; /* Занимает всё свободное пространство */
+  display: flex;
+  flex-direction: column;
+  min-height: 0; /* Критически важно для flex-контейнеров с overflow */
+  overflow: hidden; /* Скрываем overflow на уровне контента */
   width: 100%;
 }
 
 /* Хедер и футер остаются на своих местах */
-header {
-  flex-shrink: 0; /* Не сжимается */
+header, footer {
+  flex-shrink: 0; /* Не сжимаются */
 }
 
-footer {
-  flex-shrink: 0; /* Не сжимается */
-}
 
 /* Стили для скроллбара контента */
 .content::-webkit-scrollbar {
@@ -193,8 +194,6 @@ footer {
   background-color: var(--border-color);
   border-radius: 4px;
 }
-
-
 
 /* Базовые стили для интерактивных элементов */
 a,

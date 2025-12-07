@@ -1,3 +1,4 @@
+'use client'
 import { OrganizationForm } from '@/types/olf'
 import { useEffect, useState } from 'react'
 
