@@ -41,12 +41,12 @@ export default function Header() {
       <ModalWrapper id="search" title="Поиск">
         <SearchForm hideButton />
       </ModalWrapper>
-       <ModalWrapper id="notifications" title="Уведомления">
-      <div className="notifications-content">
-        {/* TODO добавить компонент с уведомлениями */}
-        что то с Уведомления
-      </div>
-    </ModalWrapper>
+      <ModalWrapper id="notifications" title="Уведомления">
+        <div className="notifications-content">
+          {/* TODO добавить компонент с уведомлениями */}
+          что то с Уведомления
+        </div>
+      </ModalWrapper>
     </header>
   )
 }

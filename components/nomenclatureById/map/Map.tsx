@@ -1,35 +1,19 @@
 'use client'
 
 import { useState } from 'react'
-import { MapContainer, TileLayer, Marker, Popup, ZoomControl } from 'react-leaflet'
-import 'leaflet/dist/leaflet.css'
 import { Button } from '@/components/ui/button/Button'
-import L from 'leaflet'
-
-// Фикс для иконок в Leaflet
-delete (L.Icon.Default.prototype as any)._getIconUrl
-L.Icon.Default.mergeOptions({
-  iconRetinaUrl: '/leaflet/images/marker-icon-2x.png',
-  iconUrl: '/leaflet/images/marker-icon.png',
-  shadowUrl: '/leaflet/images/marker-shadow.png',
-})
 
 interface MapProps {
   lng: number
   lat: number
   className?: string
+  address?: string
 }
 
-export function MapPlacement({ className, lat, lng }: MapProps) {
+export function MapPlacement({ className, lat, lng, address }: MapProps) {
   const [showMap, setShowMap] = useState(false)
 
-  // Создаем кастомную иконку
-  const customIcon = new L.Icon({
-    iconUrl: '/marker.png', // Ваш маркер
-    iconSize: [32, 32],
-    iconAnchor: [16, 32],
-    popupAnchor: [0, -32],
-  })
+  const yandexMapUrl = `https://yandex.ru/map-widget/v1/?ll=${lng},${lat}&z=17&l=map&pt=${lng},${lat},pm2rdl`
 
   return (
     <>
@@ -49,24 +33,16 @@ export function MapPlacement({ className, lat, lng }: MapProps) {
             Скрыть карту
           </Button>
           
-          <MapContainer
-            center={[lat, lng]}
-            zoom={17}
-            scrollWheelZoom={true}
-            style={{ height: '400px', width: '100%', borderRadius: '8px' }}
-            zoomControl={false}
-          >
-            <TileLayer
-              attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-              url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+          <div className="relative w-full h-[400px] rounded-lg overflow-hidden">
+            <iframe
+              src={yandexMapUrl}
+              width="100%"
+              height="100%"
+              style={{ border: 'none' }}
+              allowFullScreen
+              title="Яндекс Карта"
             />
-            <ZoomControl position="topright" />
-            <Marker position={[lat, lng]} icon={customIcon}>
-              <Popup>
-                Муниципальное образование
-              </Popup>
-            </Marker>
-          </MapContainer>
+          </div>
         </div>
       )}
     </>
