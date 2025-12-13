@@ -156,6 +156,10 @@ body {
   font-size: var(--text-base);
 }
 
+h1{
+  font-size: 24px;
+}
+
 /* Основная структура layout */
 .layout {
   display: flex;

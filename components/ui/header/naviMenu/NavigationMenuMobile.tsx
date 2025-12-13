@@ -26,7 +26,6 @@ const NavigationMenuMobile = () => {
           {NAV_ITEMS.map((item) => (item.path === pathname ? item.title : ''))}
         </span>
       </div>
-      {/* Оверлей */}
       <div
         className={`${styles.menuOverlay} ${isOpen ? styles.open : ''}`}
         onClick={toggleMenu}
@@ -36,20 +35,34 @@ const NavigationMenuMobile = () => {
         className={`${styles.link_wrapper} ${isOpen ? styles.open : ''}`}
       >
         {isOpen && (
-          <span onClick={toggleMenu} className={styles.wrapper_close_button}>
-            <X size={36} />
-          </span>
+          <div className={styles.mobile_header}>
+            <span className={styles.mobile_title}>Меню</span>
+            <button
+              onClick={toggleMenu}
+              className={styles.close_button}
+              aria-label="Закрыть меню"
+            >
+              <X size={24} />
+            </button>
+          </div>
         )}
         {NAV_ITEMS.map((item) => (
           <Link
             key={item.path}
             href={item.path}
-            title={item.title}
+            onClick={toggleMenu}
             className={`${styles.link_item} ${
               pathname === item.path ? styles.active : ''
             }`}
           >
-            {item.title}
+            <div className={styles.link_content}>
+              {item.icon && (
+                <div className={styles.icon_container}>
+                  <item.icon size={20} />
+                </div>
+              )}
+              <span className={styles.link_text}>{item.title}</span>
+            </div>
           </Link>
         ))}
       </nav>
