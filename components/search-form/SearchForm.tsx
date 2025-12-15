@@ -72,7 +72,7 @@ interface SearchFormProps {
 export function SearchForm({
   initialSearch = '',
   placeholder = 'Поиск...',
-  searchParamName = 'name',
+  searchParamName = 'search',
   className = '',
   debounceDelay = 800,
   hideButton = false,
@@ -123,19 +123,19 @@ export function SearchForm({
   // Обработчик очистки инпута
   const handleClearInput = useCallback(() => {
     setInputValue('')
-    
+
     // Фокусируемся на инпуте после очистки
     if (inputRef.current) {
       inputRef.current.focus()
     }
-    
+
     // Отменяем отложенный debounce-запрос и сразу очищаем
     debouncedSearch.cancel()
-    
+
     const params = new URLSearchParams(searchParams.toString())
     params.delete(searchParamName)
     params.delete('page') // Сбрасываем пагинацию
-    
+
     router.push(`${pathname}?${params.toString()}`)
   }, [debouncedSearch, searchParamName, pathname, router, searchParams])
 
@@ -173,7 +173,7 @@ export function SearchForm({
           onChange={handleInputChange}
           className={`w-full px-4 py-2 border ${hideButton ? 'rounded' : 'rounded-l'} ${inputClassName} focus:outline-none focus:ring-2 focus:ring-blue-300 pr-10`}
         />
-        
+
         {/* Кнопка очистки */}
         {inputValue && (
           <button
@@ -186,11 +186,11 @@ export function SearchForm({
           </button>
         )}
       </div>
-      
+
       {!hideButton && (
-        <Button 
-          type="submit" 
-          variant="default" 
+        <Button
+          type="submit"
+          variant="default"
           className={`rounded-l-none ${buttonClassName}`}
         >
           {buttonText}

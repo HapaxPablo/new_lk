@@ -7,7 +7,7 @@ interface NomenclaturesPageProps {
   searchParams: Promise<{
     limit?: string
     page?: string
-    name?: string
+    search?: string
     brand_name?: string
     brand_id?: string
   }>
@@ -16,7 +16,7 @@ export async function generateMetadata(
   props: NomenclaturesPageProps
 ): Promise<Metadata> {
   const searchParams = await props.searchParams
-  const search = searchParams.name || ''
+  const search = searchParams.search || ''
   const brand_name = searchParams.brand_name || ''
 
   return generateNomenclaturesListMetadata({
@@ -30,7 +30,7 @@ export default async function NomenclaturesPage(props: NomenclaturesPageProps) {
   const params = await searchParams
   const limit = Number(params.limit) || 24
   const page = Number(params.page) || 1
-  const search = params.name || ''
+  const search = params.search || ''
   const brand_name = params.brand_name || ''
   const brand_id = params.brand_id || ''
 
