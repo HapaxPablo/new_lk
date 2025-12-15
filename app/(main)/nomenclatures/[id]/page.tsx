@@ -168,11 +168,10 @@ export default async function NomenclatureDetailPage(
                 {typeOfPlace}
               </span>
               <span
-                className={`px-2 py-1 rounded ${
-                  isDeviceOnline(nomenclature)
+                className={`px-2 py-1 rounded ${isDeviceOnline(nomenclature)
                     ? 'bg-green-100 text-green-800'
                     : 'bg-red-100 text-red-800'
-                }`}
+                  }`}
               >
                 {isDeviceOnline(nomenclature) ? 'Онлайн' : 'Офлайн'}
               </span>
@@ -187,7 +186,7 @@ export default async function NomenclatureDetailPage(
 
             <div
               className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full"
-              // style={{ gridTemplateRows: 'repeat(2, 1fr)' }}
+            // style={{ gridTemplateRows: 'repeat(2, 1fr)' }}
             >
               <ResponsibleCard
                 label="Бренд радио"
@@ -198,7 +197,7 @@ export default async function NomenclatureDetailPage(
               <ResponsibleCard
                 label="Техника"
                 icon={<Wrench size={16} />}
-                data={hw_info.model || 'Не указано'}
+                data={hw_info?.model || 'Не указано'}
                 color="bg-green-100"
               />
               <ResponsibleCard
@@ -229,8 +228,8 @@ export default async function NomenclatureDetailPage(
             <MapPlacement
               lat={56.011152}
               lng={92.814753}
-              // name={main_info.name}
-              // address={nomenclature.address}
+            // name={main_info.name}
+            // address={nomenclature.address}
             />
           </div>
 
