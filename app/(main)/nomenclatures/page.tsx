@@ -41,7 +41,7 @@ export default async function NomenclaturesPage(props: NomenclaturesPageProps) {
     const url = new URL('/api/nomenclatures/', process.env.API_1C_URL)
     url.searchParams.set('limit', String(limit))
     url.searchParams.set('page', String(page))
-    if (search) url.searchParams.set('name', search)
+    if (search) url.searchParams.set('search', search)
     if (brand_name) url.searchParams.set('brand_name', brand_name)
     if (brand_id) url.searchParams.set('brand_id', brand_id)
 

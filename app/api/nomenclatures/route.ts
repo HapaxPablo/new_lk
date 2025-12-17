@@ -16,7 +16,7 @@ export async function GET(request: NextRequest) {
     const queryParams: INomenclatureQueryParams = {
       limit: Number(searchParams.get('limit')) || 24,
       page: Number(searchParams.get('page')) || 1,
-      name: searchParams.get('name') || undefined,
+      search: searchParams.get('search') || undefined,
       brand_name: searchParams.get('brand_name') || undefined,
       brand_id: searchParams.get('brand_id') || undefined,
     }
@@ -30,8 +30,8 @@ export async function GET(request: NextRequest) {
     }
 
     // Добавляем параметры фильтрации если они есть
-    if (queryParams.name) {
-      paramsFor1C.name = queryParams.name
+    if (queryParams.search) {
+      paramsFor1C.search = queryParams.search
     }
     if (queryParams.brand_name) {
       paramsFor1C.brand_name = queryParams.brand_name
