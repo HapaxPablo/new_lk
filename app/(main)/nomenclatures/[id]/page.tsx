@@ -16,6 +16,8 @@ import {
   generateNotFoundMetadata,
 } from '@/lib/configs/config-meta/nomenclatures'
 import Script from 'next/script'
+import { DeviceStatusBadge } from '@/components/ui/device/DeviceStatusBadge'
+import { TStatusType } from '@/types/nomenclature/status'
 
 interface NomenclatureDetailPageProps {
   params: Promise<{
@@ -167,14 +169,11 @@ export default async function NomenclatureDetailPage(
               <span className="bg-green-100 text-green-800 px-2 py-1 rounded">
                 {typeOfPlace}
               </span>
-              <span
-                className={`px-2 py-1 rounded ${isDeviceOnline(nomenclature)
-                    ? 'bg-green-100 text-green-800'
-                    : 'bg-red-100 text-red-800'
-                  }`}
-              >
-                {isDeviceOnline(nomenclature) ? 'Онлайн' : 'Офлайн'}
-              </span>
+              {}
+              <DeviceStatusBadge
+                status={nomenclature.main_info.status as TStatusType}
+                size="md"
+              />
             </div>
           </div>
 
@@ -186,7 +185,7 @@ export default async function NomenclatureDetailPage(
 
             <div
               className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full"
-            // style={{ gridTemplateRows: 'repeat(2, 1fr)' }}
+              // style={{ gridTemplateRows: 'repeat(2, 1fr)' }}
             >
               <ResponsibleCard
                 label="Бренд радио"
@@ -203,7 +202,7 @@ export default async function NomenclatureDetailPage(
               <ResponsibleCard
                 label="Реклама"
                 icon={<Megaphone size={16} />}
-                data={legalEntity || 'Не указано'}
+                data={legalEntity?.name || 'Не указано'}
                 color="bg-blue-100"
               />
               <ResponsibleCard
@@ -228,8 +227,8 @@ export default async function NomenclatureDetailPage(
             <MapPlacement
               lat={56.011152}
               lng={92.814753}
-            // name={main_info.name}
-            // address={nomenclature.address}
+              // name={main_info.name}
+              // address={nomenclature.address}
             />
           </div>
 

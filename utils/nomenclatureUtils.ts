@@ -22,14 +22,6 @@ export const getMainImage = (
 };
 
 /**
- * Функция для проверки статуса устройства
- */
-export const isDeviceOnline = (nomenclature: INomenclatureDetailsItem): boolean => {
-  // Предположим, что статус 0 означает онлайн, 1 - офлайн доработать позже
-  return nomenclature.main_info.status === 0;
-};
-
-/**
  * Функция для форматирования цены
  */
 export const formatPrice = (price: string): string => {

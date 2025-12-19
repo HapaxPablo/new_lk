@@ -21,7 +21,7 @@ export function Description({ nomenclature }: DescriptionProps) {
   // Деструктурируем с значениями по умолчанию
   const {
     article = 0,
-    legalEntity = '',
+    legalEntity = {id: '', name: ''},
     brand,
     contentType = '',
     typeOfPlace = '',
@@ -56,7 +56,7 @@ export function Description({ nomenclature }: DescriptionProps) {
     <div className="h-full p-6 bg-white rounded-md shadow-sm hover:shadow-md transition-shadow gap-4 flex flex-col items-start justify-between">
       <NmcFragment text={displayData.article} type="Артикул" />
       <NmcFragment text={displayData.operator} type="Оператор" />
-      <NmcFragment text={displayData.legalEntity} type="Юр. Лицо" />
+      <NmcFragment text={displayData.legalEntity.name} type="Юр. Лицо" />
       <NmcFragment text={displayData.brand} type="Бренд" />
       <NmcFragment text={displayData.typesOfMedia} type="Типы носителей" />
       <NmcFragment text={displayData.typePlace} type="Место" />
