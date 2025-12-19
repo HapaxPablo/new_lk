@@ -173,6 +173,7 @@ export default async function NomenclatureDetailPage(
               <DeviceStatusBadge
                 status={nomenclature.main_info.status as TStatusType}
                 size="md"
+                answer={nomenclature.main_info?.last_answer}
               />
             </div>
           </div>

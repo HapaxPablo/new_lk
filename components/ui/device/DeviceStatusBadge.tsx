@@ -1,22 +1,23 @@
 'use client'
 
 import { useState } from 'react'
-import { getStatusConfig, STATUS_MAP, TStatusType } from '@/types/nomenclature/status'
+import { getStatusConfig, TStatusType } from '@/types/nomenclature/status'
 
 interface DeviceStatusBadgeProps {
   status: TStatusType
+  answer: string
   className?: string
   size?: 'sm' | 'md' | 'lg'
 }
 
 export function DeviceStatusBadge({
   status,
+  answer,
   className = '',
   size = 'md',
 }: DeviceStatusBadgeProps) {
   const [showTooltip, setShowTooltip] = useState(false)
-  const config =  getStatusConfig(status)
-
+  const config = getStatusConfig(status)
 
   const sizeClasses = {
     sm: 'text-xs px-2 py-1',
@@ -52,10 +53,8 @@ export function DeviceStatusBadge({
       </div>
 
       {showTooltip && config.description && (
-        <div
-          className={tooltipClasses}
-        >
-          {config.description}
+        <div className={tooltipClasses}>
+          {config.description}-{answer === null ? 'нет данных' : answer}
         </div>
       )}
     </div>
