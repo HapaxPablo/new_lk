@@ -1,3 +1,5 @@
+import { TStatusType } from './status'
+
 export interface IBrand {
   /** ИД бренда */
   id: string
@@ -12,7 +14,10 @@ export interface IBrand {
   /** Код из 1С */
   code1c?: string | null
 }
-
+export interface ILegalEntity {
+  id: string
+  name: string
+}
 export interface IBrandResponse {
   results: IBrand[]
 }
@@ -49,7 +54,7 @@ export interface INomenclatureItem {
   brand: IBrand
   exterior: { source: string }[]
   address: IAddressNomenclature
-  legalEntity: string
+  legalEntity: ILegalEntity
   contentType: ContentType
   typeOfPlace: string
   pricePerMonth: string
@@ -123,7 +128,7 @@ interface IMainInfo {
     full_name: string
   }
   timezone: string
-  status: number
+  status: TStatusType
   last_answer: string
   version: string
   created: string
@@ -150,7 +155,7 @@ export interface INomenclatureDetailsItem {
   interior: IImage[]
   exterior: IImage[]
   address: string | null
-  legalEntity: string
+  legalEntity: ILegalEntity
   contentType: string
   typeOfPlace: string
   pricePerMonth: string
@@ -192,4 +197,9 @@ export type TDaySettings = {
 export type TTimeInterval = {
   start: string
   end: string
+}
+type status = {
+  0: 'недоступен'
+  1: 'доступен 5 минут'
+  2: 'недоступен более 1 часа'
 }

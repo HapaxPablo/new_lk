@@ -41,7 +41,7 @@ export function generateNomenclatureStructuredData(
       {
         '@type': 'PropertyValue',
         name: 'Юридическое лицо',
-        value: nomenclature.legalEntity
+        value: nomenclature.legalEntity?.name
       }
     ]
   }
