@@ -45,7 +45,12 @@ export const NomenclatureWrapper = ({
 
       <div className={styles.contentContainer}>
         <div ref={cardsWrapperRef} className={styles.cardsWrapper}>
-          <NomenclatureCards item={nomenclatureData} />
+          {nomenclatureData.length <= 0 ? (
+            'Места размещения не найдены'
+          ) : (
+            <NomenclatureCards item={nomenclatureData} />
+          )}
+
           {nomenclatureData.length > 20 && (
             <div className={styles.paginationContainer}>
               <Pagination limit={limit!!} page={page!!} total={count!!} />

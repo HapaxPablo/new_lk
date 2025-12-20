@@ -15,6 +15,7 @@ import {
 import styles from './FiltersPanel.module.scss'
 import dynamic from 'next/dynamic'
 import LoaderSkeleton from '@/components/ui/loader/LoaderSkeleton'
+import StatusSelect from './status-select/StatusSelect'
 
 const BrandSelect = dynamic(
   () =>
@@ -51,6 +52,7 @@ const FiltersPanel = ({ isOpen, onClose }: FiltersPanelProps): JSX.Element => {
   const overlayRef = useRef<HTMLDivElement>(null)
   const brandSelectRef = useRef<{ handleClearAll: () => void }>(null)
   const counterpartySelectRef = useRef<{ handleClearAll: () => void }>(null)
+  const statusRef = useRef<{ handleClearAll: () => void }>(null)
 
   const [currentFilters, setCurrentFilters] = useState<ISavedFilters>({})
   const [savePermanently, setSavePermanently] = useState<boolean>(false)
@@ -82,7 +84,7 @@ const FiltersPanel = ({ isOpen, onClose }: FiltersPanelProps): JSX.Element => {
     }
 
     loadSettingsAndFilters()
-  }, [pathname, router, onClose])
+  }, [])
 
   // Используем клик вовне только если есть функция onClose (мобильная версия)
   useClickOutside([panelRef], onClose!!, !!onClose && isOpen)
@@ -108,8 +110,6 @@ const FiltersPanel = ({ isOpen, onClose }: FiltersPanelProps): JSX.Element => {
     }
 
     params.set('page', '1')
-    console.log('PARAMSFILTERPANELS', params.toString())
-
     router.push(`${pathname}?${params.toString()}`)
 
     const newFilters = { ...currentFilters }
@@ -142,9 +142,15 @@ const FiltersPanel = ({ isOpen, onClose }: FiltersPanelProps): JSX.Element => {
     setCurrentFilters({})
     clearFiltersFromStorage()
 
-    if (brandSelectRef.current) {
-      brandSelectRef.current.handleClearAll()
-    }
+    // if (brandSelectRef.current) {
+    //   brandSelectRef.current.handleClearAll()
+    // }
+    // if (statusRef.current) {
+    //   statusRef.current.handleClearAll()
+    // }
+    // if (counterpartySelectRef.current) {
+    //   counterpartySelectRef.current.handleClearAll()
+    // }
   }
 
   const getCurrentValue = (key: string): string => {
@@ -157,6 +163,9 @@ const FiltersPanel = ({ isOpen, onClose }: FiltersPanelProps): JSX.Element => {
 
   const handleCaChange = (counterpartyId: string) => {
     handleFilterChange('counterparty_id', counterpartyId)
+  }
+  const handleStatusChange = (status: string) => {
+    handleFilterChange('status', status)
   }
 
   return (
@@ -239,16 +248,14 @@ const FiltersPanel = ({ isOpen, onClose }: FiltersPanelProps): JSX.Element => {
           </div>
 
           <div className={styles.filterGroup}>
-            <label className={styles.filterLabel}>Статус</label>
-            <select
-              className={styles.filterSelect}
-              onChange={(e) => handleFilterChange('status', e.target.value)}
+            <label htmlFor='status-select' id="status-label" className={styles.filterLabel}>Статус устройства</label>
+            <StatusSelect
+              id="status-select" 
+              ref={statusRef}
               value={getCurrentValue('status')}
-            >
-              <option value="">Все статусы</option>
-              <option value="active">Активный</option>
-              <option value="inactive">Неактивный</option>
-            </select>
+              onChange={handleStatusChange}
+              placeholder="Выберите статус ..."
+            />
           </div>
 
           <div className={styles.filterGroup}>

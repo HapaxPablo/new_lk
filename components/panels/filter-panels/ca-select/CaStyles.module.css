@@ -63,6 +63,7 @@
   0% {
     transform: rotate(0deg);
   }
+
   100% {
     transform: rotate(360deg);
   }
@@ -97,17 +98,17 @@
 }
 
 .dropdown {
-  position: absolute;
+  /* position: absolute;
   top: 100%;
   left: 0;
-  right: 0;
+  right: 0; */
   background: white;
   border: 1px solid #e5e7eb;
   border-radius: 6px;
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
   z-index: 50;
-  max-height: 400px;
-  overflow-y: auto;
+  /* max-height: 300px; */
+  /* overflow-y: auto; */
   margin-top: 4px;
 }
 
@@ -164,6 +165,8 @@
 
 .options {
   padding: 8px 0;
+  max-height: 100%;
+  overflow: hidden;
 }
 
 .optionsHeader {
@@ -173,6 +176,7 @@
   justify-content: space-between;
   align-items: center;
   background-color: #f9fafb;
+  max-height: fit-content;
 }
 
 .headerInfo {
@@ -194,10 +198,15 @@
   font-size: 11px;
   cursor: pointer;
   color: #374151;
-  
+
   &:hover {
     background-color: #f3f4f6;
   }
+}
+
+.wrapper_option {
+  max-height: 300px;
+  overflow: auto;
 }
 
 .option {
@@ -235,7 +244,7 @@
   opacity: 0;
   cursor: pointer;
 
-  &:checked + .checkboxCheckmark {
+  &:checked+.checkboxCheckmark {
     background-color: #3b82f6;
     border-color: #3b82f6;
 
