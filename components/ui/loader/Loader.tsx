@@ -42,7 +42,7 @@ export const Loader: React.FC<LoaderProps> = ({
         aria-label="Loading"
         role="status"
       >
-        <span className="sr-only">Loading...</span>
+        <span className="sr-only">Загрузка...</span>
       </div>
     </div>
   )
