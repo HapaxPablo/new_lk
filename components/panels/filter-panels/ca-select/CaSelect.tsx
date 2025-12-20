@@ -293,44 +293,45 @@ export const CaSelect = forwardRef(
                     </button>
                   </div>
                 </div>
+                <div className={styles.wrapper_option}>
+                  {displayedCounterparties.map((counterparty) => {
+                    const isSelected = selectedCounterpartyIds.includes(
+                      counterparty.id
+                    )
 
-                {displayedCounterparties.map((counterparty) => {
-                  const isSelected = selectedCounterpartyIds.includes(
-                    counterparty.id
-                  )
-
-                  return (
-                    <div
-                      key={counterparty.id}
-                      className={`${styles.option} ${
-                        isSelected ? styles.selected : ''
-                      }`}
-                      onClick={() => handleCounterpartyToggle(counterparty)}
-                    >
-                      {/* Кастомный чекбокс с галочкой */}
-                      <div className={styles.checkbox}>
-                        <input
-                          type="checkbox"
-                          checked={isSelected}
-                          readOnly
-                          className={styles.checkboxInput}
-                        />
-                        <span className={styles.checkboxCheckmark} />
-                      </div>
-
-                      <div className={styles.counterpartyInfo}>
-                        <div className={styles.counterpartyName}>
-                          {counterparty.name}
+                    return (
+                      <div
+                        key={counterparty.id}
+                        className={`${styles.option} ${
+                          isSelected ? styles.selected : ''
+                        }`}
+                        onClick={() => handleCounterpartyToggle(counterparty)}
+                      >
+                        {/* Кастомный чекбокс с галочкой */}
+                        <div className={styles.checkbox}>
+                          <input
+                            type="checkbox"
+                            checked={isSelected}
+                            readOnly
+                            className={styles.checkboxInput}
+                          />
+                          <span className={styles.checkboxCheckmark} />
                         </div>
-                        {counterparty.code1c && (
-                          <div className={styles.counterpartyCode1c}>
-                            1C: {counterparty.code1c}
+
+                        <div className={styles.counterpartyInfo}>
+                          <div className={styles.counterpartyName}>
+                            {counterparty.name}
                           </div>
-                        )}
+                          {counterparty.code1c && (
+                            <div className={styles.counterpartyCode1c}>
+                              1C: {counterparty.code1c}
+                            </div>
+                          )}
+                        </div>
                       </div>
-                    </div>
-                  )
-                })}
+                    )
+                  })}
+                </div>
               </div>
             )}
           </div>

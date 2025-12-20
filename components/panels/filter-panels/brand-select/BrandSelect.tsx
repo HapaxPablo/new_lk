@@ -14,8 +14,8 @@ import styles from './BrandSelect.module.scss'
 import { useClickOutside } from '@/hooks/useClickOutside'
 
 interface BrandSelectProps {
-  value: string // строка с ID брендов через запятую
-  onChange: (brandIds: string) => void // передаем строку с ID через запятую
+  value: string 
+  onChange: (brandIds: string) => void 
   placeholder?: string
   disabled?: boolean
 }
@@ -277,35 +277,36 @@ export const BrandSelect = forwardRef(
                     </button>
                   </div>
                 </div>
+                <div className={styles.wrapper_option}>
+                  {displayedBrands.map((brand) => {
+                    const isSelected = selectedBrandIds.includes(brand.id)
 
-                {displayedBrands.map((brand) => {
-                  const isSelected = selectedBrandIds.includes(brand.id)
+                    return (
+                      <div
+                        key={brand.id}
+                        className={`${styles.option} ${
+                          isSelected ? styles.selected : ''
+                        }`}
+                        onClick={() => handleBrandToggle(brand)}
+                      >
+                        {/* Кастомный чекбокс с галочкой */}
+                        <div className={styles.checkbox}>
+                          <input
+                            type="checkbox"
+                            checked={isSelected}
+                            readOnly
+                            className={styles.checkboxInput}
+                          />
+                          <span className={styles.checkboxCheckmark} />
+                        </div>
 
-                  return (
-                    <div
-                      key={brand.id}
-                      className={`${styles.option} ${
-                        isSelected ? styles.selected : ''
-                      }`}
-                      onClick={() => handleBrandToggle(brand)}
-                    >
-                      {/* Кастомный чекбокс с галочкой */}
-                      <div className={styles.checkbox}>
-                        <input
-                          type="checkbox"
-                          checked={isSelected}
-                          readOnly
-                          className={styles.checkboxInput}
-                        />
-                        <span className={styles.checkboxCheckmark} />
+                        <div className={styles.brandInfo}>
+                          <div className={styles.brandName}>{brand.name}</div>
+                        </div>
                       </div>
-
-                      <div className={styles.brandInfo}>
-                        <div className={styles.brandName}>{brand.name}</div>
-                      </div>
-                    </div>
-                  )
-                })}
+                    )
+                  })}
+                </div>
               </div>
             )}
           </div>

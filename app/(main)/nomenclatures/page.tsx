@@ -1,8 +1,31 @@
-import { NomenclatureWrapper } from '@/components/nomenclatures/NomenclatureWrapper'
-import Toolbar from '@/components/toolbar/Toolbar'
+import LoaderSkeleton from '@/components/ui/loader/LoaderSkeleton'
 import { generateNomenclaturesListMetadata } from '@/lib/configs/config-meta/nomenclatures'
 import { INomenclatureResponse } from '@/types/nomenclature'
 import { Metadata } from 'next'
+import dynamic from 'next/dynamic'
+
+const Toolbar = dynamic(
+  () =>
+    import('../../../components/toolbar/Toolbar').then((mod) => ({
+      default: mod.default,
+    })),
+  {
+    ssr: true,
+    loading: () => <LoaderSkeleton />,
+  }
+)
+const NomenclatureWrapper = dynamic(
+  () =>
+    import('../../../components/nomenclatures/NomenclatureWrapper').then(
+      (mod) => ({
+        default: mod.NomenclatureWrapper,
+      })
+    ),
+  {
+    ssr: true,
+    loading: () => <LoaderSkeleton />,
+  }
+)
 interface NomenclaturesPageProps {
   searchParams: Promise<{
     limit?: string
@@ -10,6 +33,7 @@ interface NomenclaturesPageProps {
     search?: string
     brand_name?: string
     brand_id?: string
+    status?: string
   }>
 }
 export async function generateMetadata(
@@ -33,6 +57,7 @@ export default async function NomenclaturesPage(props: NomenclaturesPageProps) {
   const search = params.search || ''
   const brand_name = params.brand_name || ''
   const brand_id = params.brand_id || ''
+  const status = params.status || ''
 
   // console.log('Page params:', { limit, page, search, brand_name, brand_id })
 
@@ -44,6 +69,7 @@ export default async function NomenclaturesPage(props: NomenclaturesPageProps) {
     if (search) url.searchParams.set('search', search)
     if (brand_name) url.searchParams.set('brand_name', brand_name)
     if (brand_id) url.searchParams.set('brand_id', brand_id)
+    if (status) url.searchParams.set('status', status)
 
     // console.log('Making request to:', url.toString())
 
@@ -58,7 +84,7 @@ export default async function NomenclaturesPage(props: NomenclaturesPageProps) {
     const data: INomenclatureResponse = await response.json()
     // console.log('API response received, count:', data.count)
     // console.log('Filtered by brand_name:', brand_name)
-    console.log('First item:', data.results)
+    // console.log('First item:', data.results)
 
     return (
       <div className="flex flex-col h-full w-full p-1 gap-2">
@@ -68,38 +94,15 @@ export default async function NomenclaturesPage(props: NomenclaturesPageProps) {
         <Toolbar totalItems={data.count} currentLimit={limit} />
 
         <div className="flex-grow min-h-0 overflow-hidden">
-          {' '}
-          {/* Контейнер для контента с ограничением высоты */}
-          {data.results.length > 0 ? (
-            <div className="h-full">
-              <NomenclatureWrapper
-                nomenclatureData={data.results}
-                limit={limit}
-                page={page}
-                count={data.count}
-              />
-            </div>
-          ) : (
-            <div className="text-center py-8 h-full flex flex-col justify-center">
-              <p className="text-gray-500">
-                {brand_name
-                  ? 'Нет номенклатур для выбранного бренда'
-                  : 'Номенклатуры не найдены'}
-              </p>
-              {brand_name && (
-                <p className="text-sm text-gray-400 mt-2">
-                  Бренд: {brand_name}
-                </p>
-              )}
-            </div>
-          )}
+          <div className="h-full">
+            <NomenclatureWrapper
+              nomenclatureData={data.results}
+              limit={limit}
+              page={page}
+              count={data.count}
+            />
+          </div>
         </div>
-
-        {/* {data.results.length > 20 && (
-        <div className="flex-shrink-0">
-          <Pagination limit={limit} page={page} total={data.count} />
-        </div>
-      )} */}
       </div>
     )
   } catch (error) {
