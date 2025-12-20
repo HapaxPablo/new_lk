@@ -84,7 +84,11 @@ export function SearchForm({
   const pathname = usePathname()
   const searchParams = useSearchParams()
   const inputRef = useRef<HTMLInputElement>(null)
-  const [inputValue, setInputValue] = useState(initialSearch)
+
+  const searchValue = searchParams.get('search')
+  console.log('search', searchValue);
+  
+  const [inputValue, setInputValue] = useState(searchValue ? searchValue : initialSearch )
 
   // Создаем debounce-функцию для обработки ввода
   const debouncedSearch = useDebounceCallback((value: string) => {
@@ -115,7 +119,7 @@ export function SearchForm({
 
   // Обработчик изменения инпута
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value
+    const value = e.target.value 
     setInputValue(value)
     debouncedSearch(value)
   }
@@ -140,9 +144,9 @@ export function SearchForm({
   }, [debouncedSearch, searchParamName, pathname, router, searchParams])
 
   // Синхронизация initialSearch с состоянием при изменении извне
-  useEffect(() => {
-    setInputValue(initialSearch)
-  }, [initialSearch])
+  // useEffect(() => {
+  //   setInputValue(initialSearch)
+  // }, [initialSearch])
 
   // Обработчик нажатия клавиши Escape
   useEffect(() => {
