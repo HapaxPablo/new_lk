@@ -38,7 +38,7 @@ export function MapPlacement({ className, lat, lng, address }: MapProps) {
               src={yandexMapUrl}
               width="100%"
               height="100%"
-              style={{ border: 'none' }}
+              // style={{ border: 'none' }}
               allowFullScreen
               title="Яндекс Карта"
             />
