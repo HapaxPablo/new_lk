@@ -1,6 +1,6 @@
 import Image from 'next/image'
 interface ErrorProps {
-  error: Error
+  error?: Error
 }
 
 export default function ErrorPage({ error }: ErrorProps) {
@@ -32,7 +32,7 @@ export default function ErrorPage({ error }: ErrorProps) {
           </p>
           {process.env.NODE_ENV === 'development' && (
             <pre className="text-xs text-left p-3 bg-gray-100 rounded overflow-auto">
-              {error.message}
+              {error ? error.message : ''}
             </pre>
           )}
         </div>
