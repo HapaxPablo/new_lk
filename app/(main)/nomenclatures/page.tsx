@@ -1,4 +1,3 @@
-import ErrorPage from '@/components/ui/error/ErrorPage'
 import LoaderSkeleton from '@/components/ui/loader/LoaderSkeleton'
 import { generateNomenclaturesListMetadata } from '@/lib/configs/config-meta/nomenclatures'
 import { INomenclatureResponse } from '@/types/nomenclature'
@@ -61,7 +60,7 @@ export default async function NomenclaturesPage(props: NomenclaturesPageProps) {
   const status = params.status || ''
 
   // console.log('Page params:', { limit, page, search, brand_name, brand_id })
-
+  try {
     const url = new URL('/api/nomenclatures/', process.env.API_1C_URL)
     url.searchParams.set('limit', String(limit))
     url.searchParams.set('page', String(page))
@@ -75,9 +74,9 @@ export default async function NomenclaturesPage(props: NomenclaturesPageProps) {
     const response = await fetch(url.toString())
 
     if (!response.ok) {
-      const error = new Error(`HTTP ${response.status}: ${response.statusText}`)
-      return <ErrorPage error={error}/>
+      throw new Error(`Ошибка ${response.status}: ${response.statusText}`)
     }
+
     const data: INomenclatureResponse = await response.json()
     return (
       <div className="flex flex-col h-full w-full p-1 gap-2">
@@ -98,5 +97,12 @@ export default async function NomenclaturesPage(props: NomenclaturesPageProps) {
         </div>
       </div>
     )
-
+  } catch (error) {
+    console.error('Error fetching nomenclatures:', error)
+    if (error instanceof Error) {
+      throw error
+    } else {
+      throw new Error('Произошла неизвестная ошибка')
+    }
+  }
 }
