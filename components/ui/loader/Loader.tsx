@@ -38,7 +38,7 @@ export const Loader: React.FC<LoaderProps> = ({
     <div className={styles.overlay_loading}>
       <div
         className={`${styles.loader} ${sizeClass} ${variantClass} ${className}`}
-        style={style}
+        // style={style}
         aria-label="Loading"
         role="status"
       >

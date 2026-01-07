@@ -22,7 +22,7 @@ export default function SlideImage({
         fill
         sizes="(max-width: 800px) 100vw, 800px"
         // loading="lazy"
-        style={{ objectFit: 'contain', objectPosition: 'center' }}
+        // style={{ objectFit: 'contain', objectPosition: 'center' }}
         priority
       />
     </div>

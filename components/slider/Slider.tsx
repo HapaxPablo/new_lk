@@ -118,15 +118,15 @@ const Slider = function ({
 
   if (items.length === 0) {
     return (
-      <div style={{ width: width, height: height }}>
+      // <div style={{ width: width, height: height }}>
         <LoaderSkeleton />
-      </div>
+      // {/* </div> */}
     )
   }
 
   return (
     <div
-      style={{ width, height }}
+      // style={{ width, height }}
       className={styles.slider}
       onTouchStart={handleTouchStart}
       onTouchMove={handleTouchMove}

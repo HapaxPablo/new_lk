@@ -13,18 +13,18 @@ const nextConfig: NextConfig = {
       {
         source: '/api/:path*',
         headers: [
-          { 
-            key: 'Access-Control-Allow-Origin', 
-            value: '*' 
+          {
+            key: 'Access-Control-Allow-Origin',
+            value: '*',
           },
           {
             key: 'Access-Control-Allow-Methods',
-            value: 'GET, POST, PUT, DELETE, OPTIONS'
+            value: 'GET, POST, PUT, DELETE, OPTIONS',
           },
           {
             key: 'Access-Control-Allow-Headers',
-            value: 'Content-Type, Authorization'
-          }
+            value: 'Content-Type, Authorization',
+          },
         ],
       },
       {
@@ -34,17 +34,20 @@ const nextConfig: NextConfig = {
           {
             key: 'Content-Security-Policy',
             value: `
-              default-src 'self' 'unsafe-inline' 'unsafe-eval';
-              script-src 'self' 'unsafe-inline' 'unsafe-eval' https://api-maps.yandex.ru https://yastatic.net;
-              style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://yastatic.net;
-              img-src 'self' data: blob: https://*.maps.yandex.net https://api-maps.yandex.ru https://cdn2.thecatapi.com https://yandex.ru;
-              font-src 'self' data: https://fonts.gstatic.com;
-              connect-src 'self' https://api-maps.yandex.ru https://api.thecatapi.com https://yastatic.net;
-              frame-src 'none';
-              object-src 'none';
-              base-uri 'self';
-              form-action 'self';
-            `.replace(/\s+/g, ' ').trim()
+    default-src 'self' 'unsafe-inline' 'unsafe-eval';
+    script-src 'self' 'unsafe-inline' 'unsafe-eval' https://api-maps.yandex.ru https://yastatic.net https://mc.yandex.ru;
+    style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://yastatic.net;
+    img-src 'self' data: blob: https://*.maps.yandex.net https://api-maps.yandex.ru https://cdn2.thecatapi.com https://yandex.ru https://mc.yandex.ru;
+    font-src 'self' data: https://fonts.gstatic.com;
+    connect-src 'self' https://api-maps.yandex.ru https://api.thecatapi.com https://yastatic.net https://mc.yandex.ru;
+    frame-src 'self' https://yandex.ru https://*.yandex.ru https://yandex.com https://*.yandex.com;
+    object-src 'none';
+    base-uri 'self';
+    form-action 'self';
+    media-src 'self';
+  `
+              .replace(/\s+/g, ' ')
+              .trim(),
           },
         ],
       },

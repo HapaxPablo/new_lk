@@ -10,10 +10,10 @@ export default function SlidesList() {
     return (
         <div
             className={styles.slider__list}
-            style={{
-                transform: `translateX(-${slideNumber * 100}%)`,
-                width: `${items.length * 10}%`
-            }}
+            // style={{
+            //     transform: `translateX(-${slideNumber * 100}%)`,
+            //     width: `${items.length * 10}%`
+            // }}
         >
             {items.map((slide, index) => (
                 slide.src && slide.src.trim() !== '' ? (
