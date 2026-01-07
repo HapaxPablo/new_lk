@@ -1,32 +1,34 @@
-'use client'
-
-import { useEffect } from 'react'
-import { AlertTriangle, RefreshCw } from 'lucide-react'
-import { Button } from '@/components/ui/button/Button'
-
+import Image from 'next/image'
 interface ErrorProps {
   error: Error
-  reset: () => void
 }
 
-export default function ErrorPage({ error, reset }: ErrorProps) {
-  useEffect(() => {
-    console.error('Global error:', error)
-  }, [error])
-
+export default function ErrorPage({ error }: ErrorProps) {
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center p-4">
+    <div className="h-full w-full flex flex-col items-center justify-center p-4 select-none">
       <div className="max-w-md w-full text-center space-y-6">
-        <div className="w-24 h-24 mx-auto bg-red-100 rounded-full flex items-center justify-center">
-          <AlertTriangle className="w-16 h-16 text-red-500" />
+        <div className="flex flex-row w-full justify-center items-center gap-0.5">
+          <Image
+            src="/alt-logo.svg"
+            alt="logo"
+            width={240}
+            height={80}
+            priority
+            className="w-60 h-20"
+          />
+          <div className="flex flex-col flex-wrap text-left uppercase font-bold">
+            <span>российская</span>
+            <span>мультимедийная</span>
+            <span>сеть</span>
+          </div>
         </div>
-        
         <div className="space-y-3">
           <h1 className="text-2xl font-bold text-gray-900">
-            Что-то пошло не так
+            Ведутся технические работы
           </h1>
           <p className="text-gray-600">
-            Произошла непредвиденная ошибка. Пожалуйста, попробуйте снова.
+            Извините, что-то пошло не так на нашей стороне. Мы работаем над
+            устранением проблемы.
           </p>
           {process.env.NODE_ENV === 'development' && (
             <pre className="text-xs text-left p-3 bg-gray-100 rounded overflow-auto">
@@ -34,22 +36,32 @@ export default function ErrorPage({ error, reset }: ErrorProps) {
             </pre>
           )}
         </div>
-        
-        <div className="flex flex-col sm:flex-row gap-3">
-          <Button
-            onClick={reset}
-            className="flex items-center justify-center gap-2"
-          >
-            <RefreshCw size={18} />
-            Попробовать снова
-          </Button>
-          
-          <Button
-            variant='default'
-            onClick={() => window.location.href = '/'}
-          >
-            На главную
-          </Button>
+
+        <div className="space-y-3">
+          <p className="">Обновите страницу или вернитесь на главную</p>
+          <div className="">
+            <p className="">При повторении ошибки свяжитесь с нами:</p>
+            <div className="">
+              <a
+                href="tel:+78002225938"
+                className="flex items-center justify-center gap-2"
+              >
+                <span className="">📞</span>
+                <span className="text-[var(--second-text-color)] hover:text-[var(--main-text-color)] transition-colors">
+                  +7 (800) 222-59-38
+                </span>
+              </a>
+              <a
+                href="mailto:info@krasrm.com"
+                className="flex items-center justify-center gap-2"
+              >
+                <span className="">✉️</span>
+                <span className="text-[var(--second-text-color)] hover:text-[var(--main-text-color)] transition-colors">
+                  info@krasrm.com
+                </span>
+              </a>
+            </div>
+          </div>
         </div>
       </div>
     </div>
