@@ -13,27 +13,27 @@ const montserrat = localFont({
     {
       path: '../public/font/Montserrat-Light.ttf',
       weight: '300',
-      style: 'normal',
+      // style: 'normal',
     },
     {
       path: '../public/font/Montserrat-Regular.ttf',
       weight: '400',
-      style: 'normal',
+      // style: 'normal',
     },
     {
       path: '../public/font/Montserrat-Medium.ttf',
       weight: '500',
-      style: 'normal',
+      // style: 'normal',
     },
     {
       path: '../public/font/Montserrat-SemiBold.ttf',
       weight: '600',
-      style: 'normal',
+      // style: 'normal',
     },
     {
       path: '../public/font/Montserrat-Bold.ttf',
       weight: '700',
-      style: 'normal',
+      // style: 'normal',
     },
   ],
 })
