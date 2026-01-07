@@ -5,7 +5,7 @@ import { AlertTriangle, RefreshCw } from 'lucide-react'
 import { Button } from '@/components/ui/button/Button'
 
 interface ErrorProps {
-  error: Error & { digest?: string }
+  error: Error
   reset: () => void
 }
 
