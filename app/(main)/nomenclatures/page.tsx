@@ -96,8 +96,9 @@ export default async function NomenclaturesPage(props: NomenclaturesPageProps) {
       }
 
       // Если это не HTML, выбрасываем ошибку
-      const error = new Error(`HTTP ${response.status}: ${response.statusText}`)
-      return <ErrorPage error={error} reset={reset} />
+      // const error = new Error(`HTTP ${response.status}: ${response.statusText}`)
+      // return <ErrorPage error={error} reset={reset} />
+      throw new Error(`HTTP ${response.status}: ${response.statusText}`)
     }
     const data: INomenclatureResponse = await response.json()
     return (
