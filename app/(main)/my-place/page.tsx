@@ -58,14 +58,7 @@ export default async function NomenclaturesPage(props: MyPlacePageProps) {
     // console.log('Filtered by brand_name:', brand_name)
     // console.log('First item:', data.results)
 
-    return (
-      <div className="flex flex-col h-full w-full p-1 gap-2">
-        <h1 className="text-center text-2xl font-bold flex-shrink-0">
-          Мои места
-        </h1>
-        <PageDevelop />
-      </div>
-    )
+    return <PageDevelop />
   } catch (error) {
     console.error('Error fetching nomenclatures:', error)
     return (
