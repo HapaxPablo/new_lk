@@ -60,16 +60,8 @@ export default async function NomenclaturesPage(props: NomenclaturesPageProps) {
   const brand_id = params.brand_id || ''
   const status = params.status || ''
 
-  const reset = () => {
-    // Функция для повторной попытки (в клиентском компоненте)
-    if (typeof window !== 'undefined') {
-      window.location.reload()
-    }
-  }
   // console.log('Page params:', { limit, page, search, brand_name, brand_id })
 
-  try {
-    // Формируем URL для API
     const url = new URL('/api/nomenclatures/', process.env.API_1C_URL)
     url.searchParams.set('limit', String(limit))
     url.searchParams.set('page', String(page))
@@ -83,22 +75,8 @@ export default async function NomenclaturesPage(props: NomenclaturesPageProps) {
     const response = await fetch(url.toString())
 
     if (!response.ok) {
-      // Получаем HTML от сервера
-      const htmlContent = await response.text()
-
-      // Проверяем, что это действительно HTML
-      if (
-        htmlContent.includes('<!DOCTYPE html>') ||
-        htmlContent.includes('<html')
-      ) {
-        // Просто отображаем HTML как есть
-        return <div dangerouslySetInnerHTML={{ __html: htmlContent }} />
-      }
-
-      // Если это не HTML, выбрасываем ошибку
-      // const error = new Error(`HTTP ${response.status}: ${response.statusText}`)
-      // return <ErrorPage error={error} reset={reset} />
-      throw new Error(`HTTP ${response.status}: ${response.statusText}`)
+      const error = new Error(`HTTP ${response.status}: ${response.statusText}`)
+      return <ErrorPage error={error}/>
     }
     const data: INomenclatureResponse = await response.json()
     return (
@@ -120,12 +98,5 @@ export default async function NomenclaturesPage(props: NomenclaturesPageProps) {
         </div>
       </div>
     )
-  } catch (error) {
-    console.error('Error fetching nomenclatures:', error)
 
-    // Создаем объект ошибки для ErrorPage
-    const errorObject =
-      error instanceof Error ? error : new Error('Произошла неизвестная ошибка')
-    return <ErrorPage error={errorObject} reset={reset} />
-  }
 }
