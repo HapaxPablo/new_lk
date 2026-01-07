@@ -6,7 +6,7 @@ import { usePathname } from 'next/navigation'
 
 const PageDevelop = () => {
   const path = usePathname()
-  console.log(path)
+  // console.log(path)
   const title = NAV_ITEMS.find((item) => item.path === path)?.title
   return (
     <div className="flex flex-col justify-center items-center w-full h-full text-center">
