@@ -4,14 +4,18 @@ import { SliderContext } from "../Slider";
 import styles from '../Slider.module.scss';
 import Slide from "./Slide";
 
-export default function SlidesList() {
+interface SlidesListProps {
+  dragOffset?: number;
+}
+
+export default function SlidesList({ dragOffset = 0 }: SlidesListProps) {
     const { slideNumber, images } = useContext(SliderContext);
 
     return (
         <div
             className={styles.slider__list}
             style={{
-                transform: `translateX(-${slideNumber * 100}%)`,
+                transform: `translateX(calc(-${slideNumber * 100}% + ${dragOffset}px))`,
             }}
         >
             {images.map((slide, index) => (

@@ -23,12 +23,11 @@
         height: 100%;
 
         img {
-          object-fit:cover;
+          object-fit: cover;
           object-position: center;
         }
       }
     }
-    
   }
 
   /* DOTS */
@@ -65,99 +64,140 @@
     }
   }
 
-&__arrows {
-  --arrow-color: white;
-  --arrow-hover-color: oklch(0.7 0.25 250);
-  --arrow-size: 24px;
+  &__arrows {
+    --arrow-color: white;
+    --arrow-hover-color: oklch(0.7 0.25 250);
+    --arrow-size: 24px;
 
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 0 16px;
-  z-index: 5;
-  pointer-events: none;
-
-  &__arrow {
-    height: 44px;
-    width: 44px;
-    pointer-events: auto;
-    background: rgba(255, 255, 255, 0.26);
-    border-radius: 50%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
     display: flex;
+    justify-content: space-between;
     align-items: center;
-    justify-content: center;
-    transition: all 0.3s ease;
-    border: 2px solid rgba(255, 255, 255, 0.3);
-    cursor: pointer;
-    color: white;
-    font-size: 20px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    padding: 0 16px;
+    z-index: 5;
+    pointer-events: none;
 
-    /* Стрелка через mask */
-    &::before {
-      content: '';
-      position: absolute;
-      width: var(--arrow-size);
-      height: var(--arrow-size);
-      background-color: var(--arrow-color);
-      mask-repeat: no-repeat;
-      mask-position: center;
-      mask-size: contain;
-      transition: background-color 0.3s ease;
-    }
-
-    &__left::before {
-      mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M13 18l-6-6 6-6'/%3E%3C/svg%3E");
-    }
-
-    &__right::before {
-      mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M11 18l6-6-6-6'/%3E%3C/svg%3E");
-    }
-
-    /* Изменение цвета при наведении */
-    &:hover:not(:disabled) {
-      background: rgba(0, 0, 0, 0.3);
-      transform: scale(1.15);
-      border-color: var(--focus-ring);
-      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
-
-      &::before {
-        background-color: var(--arrow-hover-color);
+    @media (max-width: 768px) {
+      // На мобильных всегда показываем стрелки
+      opacity: 1 !important;
+      .slider__arrows__arrow {
+        opacity: 0.9;
       }
     }
 
-    &:active:not(:disabled) {
-      transform: scale(1);
-    }
-
-    &:focus:not(:disabled) {
-      outline: 2px solid var(--focus-ring);
-      outline-offset: 2px;
-    }
-
-    /* Отключенное состояние */
-    &__disabled {
-      opacity: 0.4;
-      cursor: not-allowed;
-      background: rgba(0, 0, 0, 0.3);
+    &__arrow {
+      height: 44px;
+      width: 44px;
+      pointer-events: auto;
+      background: rgba(255, 255, 255, 0.26);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.3s ease;
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      cursor: pointer;
+      color: white;
+      font-size: 20px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+      opacity: 0;
+      transform: translateY(0);
       
-      &:hover {
-        background: rgba(0, 0, 0, 0.3);
+      @media (max-width: 768px) {
+        // На мобильных сразу видимые
+        opacity: 0.9;
         transform: none;
-        border-color: rgba(255, 255, 255, 0.3);
+      }
+
+      /* Стрелка через mask */
+      &::before {
+        content: '';
+        position: absolute;
+        width: var(--arrow-size);
+        height: var(--arrow-size);
+        background-color: var(--arrow-color);
+        mask-repeat: no-repeat;
+        mask-position: center;
+        mask-size: contain;
+        transition: background-color 0.3s ease;
+      }
+
+      &__left::before {
+        mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M13 18l-6-6 6-6'/%3E%3C/svg%3E");
+      }
+
+      &__right::before {
+        mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M11 18l6-6-6-6'/%3E%3C/svg%3E");
+      }
+
+      /* Анимация появления при наведении на слайдер */
+      .slider:hover & {
+        opacity: 0.9;
+        transform: translateY(0);
         
+        @media (max-width: 768px) {
+          opacity: 0.9;
+        }
+      }
+
+      /* Изменение цвета при наведении на саму стрелку */
+      &:hover:not(:disabled) {
+        opacity: 1;
+        background: rgba(0, 0, 0, 0.4);
+        transform: scale(1.15);
+        border-color: var(--focus-ring);
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+
         &::before {
-          background-color: var(--arrow-color);
+          background-color: var(--arrow-hover-color);
+        }
+      }
+
+      &:active:not(:disabled) {
+        transform: scale(1);
+      }
+
+      &:focus:not(:disabled) {
+        outline: 2px solid var(--focus-ring);
+        outline-offset: 2px;
+        opacity: 1;
+      }
+
+      /* Отключенное состояние */
+      &__disabled {
+        opacity: 0;
+        cursor: not-allowed;
+        background: rgba(0, 0, 0, 0.3);
+        
+        .slider:hover & {
+          opacity: 0.4;
+        }
+        
+        &:hover {
+          background: rgba(0, 0, 0, 0.3);
+          transform: none;
+          border-color: rgba(255, 255, 255, 0.3);
+          
+          &::before {
+            background-color: var(--arrow-color);
+          }
         }
       }
     }
   }
-}
+  
+  /* Стиль для мобильного свайпа */
+  &--swiping {
+    cursor: grab;
+    
+    .slider__list {
+      transition: none;
+    }
+  }
 }
 
 // Для скелетона

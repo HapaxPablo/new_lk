@@ -142,7 +142,7 @@ export default async function NomenclatureDetailPage(
       <div className="flex flex-col sm:flex-row gap-1 p-4 w-full h-full overflow-auto">
         <div className="flex flex-col gap-2 w-full sm:w-2/5 h-auto">
           {/* Слайдер с изображениями */}
-          <div className="w-full h-50 sm:h-70 rounded-md shadow-sm overflow-hidden">
+          <div className="w-full h-60 sm:h-70 rounded-md shadow-sm overflow-hidden">
             <Slider
               images={allImages}
               autoPlay={true}
