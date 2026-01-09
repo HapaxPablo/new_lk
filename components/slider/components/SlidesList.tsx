@@ -5,19 +5,24 @@ import styles from '../Slider.module.scss';
 import Slide from "./Slide";
 
 export default function SlidesList() {
-    const { slideNumber, items } = useContext(SliderContext);
+    const { slideNumber, images } = useContext(SliderContext);
 
     return (
         <div
             className={styles.slider__list}
-            // style={{
-            //     transform: `translateX(-${slideNumber * 100}%)`,
-            //     width: `${items.length * 10}%`
-            // }}
+            style={{
+                transform: `translateX(-${slideNumber * 100}%)`,
+            }}
         >
-            {items.map((slide, index) => (
-                slide.src && slide.src.trim() !== '' ? (
-                    <Slide key={index} data={{ url: slide.src, title: slide.alt || '' }} />
+            {images.map((slide, index) => (
+                slide.source && slide.source.trim() !== '' ? (
+                    <Slide 
+                        key={index} 
+                        data={{ 
+                            url: slide.source, 
+                            title: slide.source.split('/').pop() || `Изображение ${index + 1}` 
+                        }} 
+                    />
                 ) : null
             ))}
         </div>

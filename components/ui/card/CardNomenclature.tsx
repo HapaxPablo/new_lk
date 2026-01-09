@@ -50,7 +50,7 @@ export const CardNomenclature: React.FC<CardNomenclatureProps> = ({
 
   // Форматирование адреса
   const formattedAddress = address
-    ? `${address.city || ''} ${address.street || ''} ${address.street_house || ''}`.trim()
+    ? `${address.city.name || ''}, ${address.street.name || ''} ${address.house.number || ''}`.trim()
     : 'Адрес не указан'
 
   return (

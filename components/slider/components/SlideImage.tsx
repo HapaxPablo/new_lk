@@ -14,13 +14,15 @@ export default function SlideImage({
   if (!src || src.trim() === '') {
     return null
   }
+  console.log(src);
+  
   return (
     <div className={styles.slider__list__slide__image}>
       <Image
         src={src}
         alt={alt}
         fill
-        sizes="(max-width: 800px) 100vw, 800px"
+        // sizes="(max-width: 800px) 100vw, 800px"
         // loading="lazy"
         // style={{ objectFit: 'contain', objectPosition: 'center' }}
         priority

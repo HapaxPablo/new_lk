@@ -1,5 +1,7 @@
 .label {
   // font-weight: 600;
+  width: 100%;
+  text-align: left;
   color: oklch(0.7137 0.0192 261.32);
 
   @media (max-width: 768px) {

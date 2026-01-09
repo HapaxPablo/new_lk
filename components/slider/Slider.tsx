@@ -1,24 +1,19 @@
 'use client'
 
-import { createContext, useEffect, useState, use, useCallback } from 'react'
+import { createContext, useEffect, useState, useCallback } from 'react'
 import styles from './Slider.module.scss'
 import Arrows from './components/Controls/Arrows'
 import SlidesList from './components/SlidesList'
 import Dots from './components/Controls/Dots'
 import LoaderSkeleton from '../ui/loader/LoaderSkeleton'
-
-interface ISliderItem {
-  id?: string
-  src?: string | null
-  alt?: string
-}
+import { IImage } from '@/types/nomenclature'
 
 interface ISliderProps {
   autoPlay: boolean
   autoPlayTime: number
   width?: string | number
   height?: string | number
-  items?: ISliderItem[]
+  images?: IImage[]
 }
 
 interface ISliderContext {
@@ -26,39 +21,26 @@ interface ISliderContext {
   changeSlide: (direction?: number) => void
   slidesCount: number
   slideNumber: number
-  items: any[]
+  images: IImage[]
+  isFirstSlide: boolean
+  isLastSlide: boolean
 }
 
 export const SliderContext = createContext<ISliderContext>({} as ISliderContext)
 
-// console.log(await getImages())
-
 const Slider = function ({
-  width,
-  height,
+  width = '100%',
+  height = '100%',
   autoPlay,
   autoPlayTime,
-  items: propItems,
+  images = [],
 }: ISliderProps) {
-  const [items, setItems] = useState<ISliderItem[]>([])
+  const [items, setItems] = useState<IImage[]>(images)
   const [slide, setSlide] = useState(0)
   const [touchPosition, setTouchPosition] = useState<number | null>(null)
 
-  useEffect(() => {
-    const loadData = async () => {
-      if (propItems) {
-        setItems(propItems)
-      } else {
-        try {
-          //   const images = await getImages()
-          setItems([])
-        } catch (error) {
-          console.error('Failed to load images:', error)
-        }
-      }
-    }
-    loadData()
-  }, [propItems])
+  const isFirstSlide = slide === 0
+  const isLastSlide = slide === items.length - 1 || items.length === 0
 
   const changeSlide = useCallback(
     (direction = 1) => {
@@ -79,6 +61,7 @@ const Slider = function ({
 
   const goToSlide = useCallback(
     (number: number) => {
+      if (items.length === 0) return
       setSlide(number % items.length)
     },
     [items.length]
@@ -105,7 +88,13 @@ const Slider = function ({
   }
 
   useEffect(() => {
-    if (!autoPlay || items.length === 0) return
+    if (images) {
+      setItems(images)
+    }
+  }, [images])
+
+  useEffect(() => {
+    if (!autoPlay || items.length <= 1) return
 
     const interval = setInterval(() => {
       changeSlide(1)
@@ -114,19 +103,15 @@ const Slider = function ({
     return () => {
       clearInterval(interval)
     }
-  }, [items.length, autoPlay, autoPlayTime, changeSlide])
+  }, [items.length, autoPlay, autoPlayTime, changeSlide, slide])
 
   if (items.length === 0) {
-    return (
-      // <div style={{ width: width, height: height }}>
-        <LoaderSkeleton />
-      // {/* </div> */}
-    )
+    return <LoaderSkeleton />
   }
 
   return (
     <div
-      // style={{ width, height }}
+      style={{ width, height }}
       className={styles.slider}
       onTouchStart={handleTouchStart}
       onTouchMove={handleTouchMove}
@@ -137,7 +122,9 @@ const Slider = function ({
           changeSlide,
           slidesCount: items.length,
           slideNumber: slide,
-          items,
+          images: items,
+          isFirstSlide,
+          isLastSlide,
         }}
       >
         <Arrows />
@@ -146,13 +133,6 @@ const Slider = function ({
       </SliderContext.Provider>
     </div>
   )
-}
-
-Slider.defaultProps = {
-  autoPlay: false,
-  autoPlayTime: 5000,
-  width: '100%',
-  height: '100%',
 }
 
 export default Slider

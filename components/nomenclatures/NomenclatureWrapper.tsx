@@ -36,6 +36,7 @@ export const NomenclatureWrapper = ({
   count,
 }: NomenclatureCardProps) => {
   const cardsWrapperRef = useRef<HTMLDivElement>(null)
+console.log('NOMENCLATURE', nomenclatureData);
 
   return (
     <div className={styles.displayWrapper}>

@@ -93,7 +93,7 @@ export default async function NomenclatureDetailPage(
 
   // Загружаем данные номенклатуры через ваш API endpoint
   const nomenclature = await getNomenclatureById(id)
-  console.log('NOMENCL', nomenclature)
+  console.log('DETAILS', nomenclature)
 
   if (!nomenclature) {
     return (
@@ -139,29 +139,29 @@ export default async function NomenclatureDetailPage(
         strategy="afterInteractive"
       />
 
-      <div className="flex flex-row gap-1 p-4 w-full h-full">
-        <div className="flex flex-col gap-2 w-2/5 h-auto">
+      <div className="flex flex-col sm:flex-row gap-1 p-4 w-full h-full overflow-auto">
+        <div className="flex flex-col gap-2 w-full sm:w-2/5 h-auto">
           {/* Слайдер с изображениями */}
-          <div className="w-full rounded-md shadow-sm hover:shadow-md transition-shadow overflow-hidden">
+          <div className="w-full h-50 sm:h-70 rounded-md shadow-sm overflow-hidden">
             <Slider
-              // images={allImages.map(img => img.source)}
+              images={allImages}
               autoPlay={true}
-              autoPlayTime={1500}
+              autoPlayTime={15000}
             />
           </div>
 
           {/* Описание */}
-          <div className="w-full h-auto">
+          <div className="w-full h-full sm:h-2/3 ">
             <Description nomenclature={nomenclature} />
           </div>
         </div>
 
-        <div className="flex flex-col w-full bg-white overflow-y-auto rounded-md shadow-sm hover:shadow-md transition-shadow">
+        <div className="flex flex-col w-full sm:overflow-y-auto rounded-md shadow-xl">
           {/* Заголовок и основная информация */}
           <div className="p-4 border-b">
-            <h1 className="text-2xl font-bold text-[#1E3961] mb-2">
+            <span className="text-sm sm:text-2xl font-bold text-[#1E3961] mb-2">
               {main_info.name}
-            </h1>
+            </span>
             <div className="flex flex-wrap gap-4 text-sm text-gray-600">
               <span className="bg-blue-100 text-blue-800 px-2 py-1 rounded">
                 {contentType}
