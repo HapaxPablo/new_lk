@@ -6,7 +6,7 @@ export function NmcFragment({ text, type }: { text: string | number, type: strin
     return (
         <>
             {text && (
-                <div className='flex flex-row items-center gap-3'><FieldLabel text={type} ariaLabel={`${type} ${text}`} />
+                <div className='w-full h-full flex flex-col sm:flex-row items-center gap-0.5 sm:gap-2'><FieldLabel text={type} ariaLabel={`${type} ${text}`} />
                     <FieldValue
                         text={`${text}`.trim()}
                         type="span"

@@ -25,7 +25,7 @@ export function Description({ nomenclature }: DescriptionProps) {
     brand,
     contentType = '',
     typeOfPlace = '',
-    address = '',
+    address,
     main_info = {
       owner: { full_name: '' },
       name: ''
@@ -48,12 +48,12 @@ export function Description({ nomenclature }: DescriptionProps) {
     typesOfMedia: contentType || 'Не указан',
     typePlace: typeOfPlace || 'Не указано',
     typeContent: contentType || 'Не указан',
-    address: address || mainName || 'Не указан',
+    address: address || 'Не указан',
     contact: ownerName
   }
 
   return (
-    <div className="h-full p-6 bg-white rounded-md shadow-sm hover:shadow-md transition-shadow gap-4 flex flex-col items-start justify-between">
+    <div className="h-full p-2 rounded-md shadow-sm gap-2 flex flex-col sm:overflow-y-auto">
       <NmcFragment text={displayData.article} type="Артикул" />
       <NmcFragment text={displayData.operator} type="Оператор" />
       <NmcFragment text={displayData.legalEntity.name} type="Юр. Лицо" />
@@ -61,7 +61,7 @@ export function Description({ nomenclature }: DescriptionProps) {
       <NmcFragment text={displayData.typesOfMedia} type="Типы носителей" />
       <NmcFragment text={displayData.typePlace} type="Место" />
       <NmcFragment text={displayData.typeContent} type="Тип вещания" />
-      <NmcFragment text={displayData.address} type="Адрес" />
+      <NmcFragment text={displayData.address.full_address} type="Адрес" />
       <NmcFragment text={displayData.contact} type="Контактны" />
     </div>
   )

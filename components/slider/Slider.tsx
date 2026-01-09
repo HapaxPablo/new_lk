@@ -1,24 +1,19 @@
 'use client'
 
-import { createContext, useEffect, useState, use, useCallback } from 'react'
+import { createContext, useEffect, useState, useCallback, useRef } from 'react'
 import styles from './Slider.module.scss'
 import Arrows from './components/Controls/Arrows'
 import SlidesList from './components/SlidesList'
 import Dots from './components/Controls/Dots'
 import LoaderSkeleton from '../ui/loader/LoaderSkeleton'
-
-interface ISliderItem {
-  id?: string
-  src?: string | null
-  alt?: string
-}
+import { IImage } from '@/types/nomenclature'
 
 interface ISliderProps {
   autoPlay: boolean
   autoPlayTime: number
   width?: string | number
   height?: string | number
-  items?: ISliderItem[]
+  images?: IImage[]
 }
 
 interface ISliderContext {
@@ -26,39 +21,32 @@ interface ISliderContext {
   changeSlide: (direction?: number) => void
   slidesCount: number
   slideNumber: number
-  items: any[]
+  images: IImage[]
+  isFirstSlide: boolean
+  isLastSlide: boolean
 }
 
 export const SliderContext = createContext<ISliderContext>({} as ISliderContext)
 
-// console.log(await getImages())
-
 const Slider = function ({
-  width,
-  height,
+  width = '100%',
+  height = '100%',
   autoPlay,
   autoPlayTime,
-  items: propItems,
+  images = [],
 }: ISliderProps) {
-  const [items, setItems] = useState<ISliderItem[]>([])
+  const [items, setItems] = useState<IImage[]>(images)
   const [slide, setSlide] = useState(0)
-  const [touchPosition, setTouchPosition] = useState<number | null>(null)
+  const [touchStartX, setTouchStartX] = useState<number | null>(null)
+  const [touchEndX, setTouchEndX] = useState<number | null>(null)
+  const [isSwiping, setIsSwiping] = useState(false)
+  const [dragStartX, setDragStartX] = useState<number | null>(null)
+  const [dragOffset, setDragOffset] = useState(0)
+  const sliderRef = useRef<HTMLDivElement>(null)
 
-  useEffect(() => {
-    const loadData = async () => {
-      if (propItems) {
-        setItems(propItems)
-      } else {
-        try {
-          //   const images = await getImages()
-          setItems([])
-        } catch (error) {
-          console.error('Failed to load images:', error)
-        }
-      }
-    }
-    loadData()
-  }, [propItems])
+  const minSwipeDistance = 50 // минимальное расстояние для свайпа
+  const isFirstSlide = slide === 0
+  const isLastSlide = slide === items.length - 1 || items.length === 0
 
   const changeSlide = useCallback(
     (direction = 1) => {
@@ -79,57 +67,135 @@ const Slider = function ({
 
   const goToSlide = useCallback(
     (number: number) => {
+      if (items.length === 0) return
       setSlide(number % items.length)
     },
     [items.length]
   )
 
+  // Обработка начала касания/мыши
+  const handleDragStart = (e: React.MouseEvent | React.TouchEvent) => {
+    setIsSwiping(true)
+    const x = 'touches' in e ? e.touches[0].clientX : e.clientX
+    setDragStartX(x)
+    setDragOffset(0)
+  }
+
+  // Обработка перемещения
+  const handleDragMove = (e: React.MouseEvent | React.TouchEvent) => {
+    if (!isSwiping || dragStartX === null) return
+    
+    e.preventDefault()
+    const x = 'touches' in e ? e.touches[0].clientX : e.clientX
+    const offset = dragStartX - x
+    setDragOffset(offset)
+  }
+
+  // Обработка окончания касания/мыши
+  const handleDragEnd = () => {
+    setIsSwiping(false)
+    
+    if (Math.abs(dragOffset) > minSwipeDistance) {
+      if (dragOffset > 0) {
+        // Свайп влево -> следующий слайд
+        changeSlide(1)
+      } else {
+        // Свайп вправо -> предыдущий слайд
+        changeSlide(-1)
+      }
+    }
+    
+    setDragStartX(null)
+    setDragOffset(0)
+  }
+
+  // Обработка касания для мобильных
   const handleTouchStart = (e: React.TouchEvent) => {
-    const touchDown = e.touches[0].clientX
-    setTouchPosition(touchDown)
+    setTouchStartX(e.touches[0].clientX)
+    handleDragStart(e)
   }
 
   const handleTouchMove = (e: React.TouchEvent) => {
-    if (touchPosition === null) {
-      return
+    setTouchEndX(e.touches[0].clientX)
+    handleDragMove(e)
+  }
+
+  const handleTouchEnd = () => {
+    if (!touchStartX || !touchEndX) return
+    
+    const distance = touchStartX - touchEndX
+    const isLeftSwipe = distance > minSwipeDistance
+    const isRightSwipe = distance < -minSwipeDistance
+    
+    if (isLeftSwipe) {
+      changeSlide(1)
+    } else if (isRightSwipe) {
+      changeSlide(-1)
     }
+    
+    setTouchStartX(null)
+    setTouchEndX(null)
+    handleDragEnd()
+  }
 
-    const currentPosition = e.touches[0].clientX
-    const direction = touchPosition - currentPosition
+  // Обработка мыши для десктопа
+  const handleMouseDown = (e: React.MouseEvent) => {
+    handleDragStart(e)
+  }
 
-    if (Math.abs(direction) > 10) {
-      changeSlide(direction > 0 ? 1 : -1)
+  const handleMouseMove = (e: React.MouseEvent) => {
+    if (e.buttons !== 1) return // Проверяем, что левая кнопка мыши нажата
+    handleDragMove(e)
+  }
+
+  const handleMouseUp = () => {
+    handleDragEnd()
+  }
+
+  const handleMouseLeave = () => {
+    if (isSwiping) {
+      handleDragEnd()
     }
-
-    setTouchPosition(null)
   }
 
   useEffect(() => {
-    if (!autoPlay || items.length === 0) return
+    if (images) {
+      setItems(images)
+    }
+  }, [images])
+
+  useEffect(() => {
+    if (!autoPlay || items.length <= 1) return
 
     const interval = setInterval(() => {
-      changeSlide(1)
+      if (!isSwiping) { // Не автоплей при активном свайпе
+        changeSlide(1)
+      }
     }, autoPlayTime)
 
     return () => {
       clearInterval(interval)
     }
-  }, [items.length, autoPlay, autoPlayTime, changeSlide])
+  }, [items.length, autoPlay, autoPlayTime, changeSlide, slide, isSwiping])
 
   if (items.length === 0) {
-    return (
-      // <div style={{ width: width, height: height }}>
-        <LoaderSkeleton />
-      // {/* </div> */}
-    )
+    return <LoaderSkeleton />
   }
 
   return (
     <div
-      // style={{ width, height }}
-      className={styles.slider}
+      ref={sliderRef}
+      style={{ width, height }}
+      className={`${styles.slider} ${isSwiping ? styles['slider--swiping'] : ''}`}
+      // Мобильные события
       onTouchStart={handleTouchStart}
       onTouchMove={handleTouchMove}
+      onTouchEnd={handleTouchEnd}
+      // Десктоп события
+      onMouseDown={handleMouseDown}
+      onMouseMove={handleMouseMove}
+      onMouseUp={handleMouseUp}
+      onMouseLeave={handleMouseLeave}
     >
       <SliderContext.Provider
         value={{
@@ -137,22 +203,17 @@ const Slider = function ({
           changeSlide,
           slidesCount: items.length,
           slideNumber: slide,
-          items,
+          images: items,
+          isFirstSlide,
+          isLastSlide,
         }}
       >
         <Arrows />
-        <SlidesList />
+        <SlidesList dragOffset={dragOffset} />
         <Dots />
       </SliderContext.Provider>
     </div>
   )
-}
-
-Slider.defaultProps = {
-  autoPlay: false,
-  autoPlayTime: 5000,
-  width: '100%',
-  height: '100%',
 }
 
 export default Slider

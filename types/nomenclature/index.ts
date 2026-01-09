@@ -27,18 +27,63 @@ export type ContentType = 'Аудио' | 'Видео' | 'Аудио+Видео'
 
 // Интерфейс адреса номенклатуры
 export interface IAddressNomenclature {
-  index: string
-  country: string
-  city: string
-  locality: string
-  region: string
-  administrativeTerritory: string
+  id: string
+  country: {
+    id: string
+    name: string
+  }
+  federalDistrict: {
+    id: string
+    name: string
+    abbreviated_name: string
+    country: string
+  }
+  region: {
+    id: string
+    name: string
+    abbreviated_name: string
+    federal_district: string
+    type_region: string
+    timezone: string
+  }
+  city: {
+    id: string
+    name: string
+    region: string
+    locality_type: string
+    timezone: string
+  }
+  administrative_territory: {
+    id: string
+    name: string
+    city: string
+  }
+  administrative_unit: {
+    id: string
+    name: string
+    city: string
+    administrative_territory: string
+  }
+  street: {
+    id: string
+    name: string
+    city: string
+    street_type: string
+  }
+  house: {
+    id: string
+    number: string
+    street: string
+  }
+  building: {
+    id: string
+    number: string
+    house: string
+  }
   microdistrict: string
-  federalDistrict: string
-  street: string
-  street_house: string
-  building: string
+  index: string // почтовый индекс
   coordinates: string
+  full_address: string
 }
 
 // Интерфейс элемента номенклатуры
@@ -116,7 +161,7 @@ interface IHardwareInfo {
 }
 
 // Интерфейс для изображений
-interface IImage {
+export interface IImage {
   source: string
 }
 
@@ -154,7 +199,7 @@ export interface INomenclatureDetailsItem {
   brand: IBrand
   interior: IImage[]
   exterior: IImage[]
-  address: string | null
+  address: IAddressNomenclature
   legalEntity: ILegalEntity
   contentType: string
   typeOfPlace: string
