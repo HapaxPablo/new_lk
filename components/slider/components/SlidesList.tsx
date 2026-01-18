@@ -1,8 +1,10 @@
 'use client'
 import React, { useContext } from "react";
-import { SliderContext } from "../Slider";
+
 import styles from '../Slider.module.scss';
 import Slide from "./Slide";
+import { SliderContext } from "../SliderContext";
+
 
 interface SlidesListProps {
   dragOffset?: number;

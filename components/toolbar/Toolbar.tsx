@@ -36,8 +36,9 @@ const Toolbar = ({ totalItems, currentLimit }: ToolbarProps): JSX.Element => {
 
   const handleLimitChange = (limit: number): void => {
     const params = new URLSearchParams(searchParams.toString())
+    const currentPage = params.get('page')
     params.set('limit', limit.toString())
-    params.set('page', '1')
+    params.set('page', currentPage!!)
     router.push(`${pathname}?${params.toString()}`)
     setShowLimitOptions(false)
   }
@@ -146,6 +147,7 @@ const Toolbar = ({ totalItems, currentLimit }: ToolbarProps): JSX.Element => {
                     onClick={() => handleLimitChange(48)}
                   >
                     48
+                  
                   </div>
                   <div
                     className={`${styles.dropdownItem} ${

@@ -1,8 +1,7 @@
 'use client'
 import React, { useContext } from 'react'
-
+import { SliderContext } from '../../SliderContext'
 import styles from '../../Slider.module.scss'
-import { SliderContext } from '../../Slider'
 
 export default function Dots() {
   const { goToSlide, slidesCount, slideNumber } = useContext(SliderContext)

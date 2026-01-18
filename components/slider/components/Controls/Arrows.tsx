@@ -1,7 +1,8 @@
 'use client'
 import React, { useContext } from "react";
-import { SliderContext } from '../../Slider';
+
 import styles from '../../Slider.module.scss';
+import { SliderContext } from "../../SliderContext";
 
 export default function Arrows() {
     const { changeSlide, isFirstSlide, isLastSlide, images } = useContext(SliderContext);

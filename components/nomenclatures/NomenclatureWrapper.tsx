@@ -3,12 +3,24 @@
 import { INomenclatureItem } from '@/types/nomenclature'
 import dynamic from 'next/dynamic'
 import { useRef } from 'react'
-import { Pagination } from '../pagination/Pagination'
+// import { Pagination } from '../pagination/Pagination'
 import FiltersPanel from '../panels/filter-panels/FiltersPanels'
 import ScrollButton from '../ui/button/ScrollButton'
 import LoaderSkeleton from '../ui/loader/LoaderSkeleton'
 import styles from './NomenclatureWrapper.module.scss'
 
+const Pagination = dynamic(
+  () =>
+    import('../pagination/Pagination').then(
+      (mod) => ({
+        default: mod.Pagination,
+      })
+    ),
+  {
+    ssr: false,
+    loading: () => <LoaderSkeleton />,
+  }
+)
 interface NomenclatureCardProps {
   nomenclatureData: INomenclatureItem[]
   className?: string
@@ -36,7 +48,7 @@ export const NomenclatureWrapper = ({
   count,
 }: NomenclatureCardProps) => {
   const cardsWrapperRef = useRef<HTMLDivElement>(null)
-console.log('NOMENCLATURE', nomenclatureData);
+// console.log('NOMENCLATURE', nomenclatureData);
 
   return (
     <div className={styles.displayWrapper}>
@@ -52,9 +64,14 @@ console.log('NOMENCLATURE', nomenclatureData);
             <NomenclatureCards item={nomenclatureData} />
           )}
 
-          {nomenclatureData.length > 20 && (
+          {page!! >= 1 && (
             <div className={styles.paginationContainer}>
-              <Pagination limit={limit!!} page={page!!} total={count!!} />
+                       <Pagination 
+                    limit={limit!!} 
+                    page={page!!} 
+                    total={count!!}
+                    showPageNumbers={true}
+                  />
             </div>
           )}
 
@@ -69,3 +86,5 @@ console.log('NOMENCLATURE', nomenclatureData);
     </div>
   )
 }
+
+
