@@ -1,3 +1,4 @@
+
 import { INomenclatureItem } from '@/types/nomenclature'
 import Image from 'next/image'
 import { MapPin, Building, ImageOff, MapPinHouse, RussianRuble } from 'lucide-react'
@@ -50,7 +51,7 @@ export const CardNomenclature: React.FC<CardNomenclatureProps> = ({
 
   // Форматирование адреса
   const formattedAddress = address
-    ? `${address.city.name || ''}, ${address.street.name || ''} ${address.house.number || ''}`.trim()
+    ? `${address?.city?.name || ''}, ${address?.street?.name || ''} ${address?.house?.number || ''}`.trim()
     : 'Адрес не указан'
 
   return (

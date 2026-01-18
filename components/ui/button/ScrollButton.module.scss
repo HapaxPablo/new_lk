@@ -4,7 +4,7 @@
   pointer-events: none;
 
   &.bottomRight {
-    bottom: 3rem;
+    bottom: 0;
     right: 1rem;
   }
 
@@ -129,7 +129,7 @@
     &.bottomLeft,
     &.topRight,
     &.topLeft {
-      bottom: 2rem;
+      bottom: 0rem;
       right: 0.75rem;
     }
   }
@@ -162,7 +162,7 @@
     &.bottomLeft,
     &.topRight,
     &.topLeft {
-      bottom: 3rem;
+      bottom: 0rem;
       right: 1rem;
     }
   }

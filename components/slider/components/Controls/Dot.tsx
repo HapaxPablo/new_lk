@@ -1,6 +1,6 @@
 import React, { useContext } from "react";
-import { SliderContext } from "../../Slider";
 import styles from '../../Slider.module.scss';
+import { SliderContext } from "../../SliderContext";
 
 export default function Dot({ number }: { number: number }) {
     const { goToSlide, slideNumber } = useContext(SliderContext);

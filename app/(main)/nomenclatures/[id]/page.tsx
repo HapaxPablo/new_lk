@@ -5,7 +5,6 @@ import {
   ResponsibleCard,
   TabsWrapper,
 } from '@/components/nomenclatureById'
-import Slider from '@/components/slider/Slider'
 import { Wrench, Radio, Megaphone, MapPin } from 'lucide-react'
 import { INomenclatureDetailsItem } from '@/types/nomenclature'
 import { Metadata } from 'next'
@@ -18,7 +17,15 @@ import {
 import Script from 'next/script'
 import { DeviceStatusBadge } from '@/components/ui/device/DeviceStatusBadge'
 import { TStatusType } from '@/types/nomenclature/status'
+import dynamic from 'next/dynamic'
 
+
+const Slider = dynamic(() => import('@/components/slider/Slider'), {
+  ssr: true,
+  loading: () => (
+    <div className="w-full h-full min-h-[320px] bg-gray-100 rounded-md animate-pulse" />
+  ),
+})
 interface NomenclatureDetailPageProps {
   params: Promise<{
     id: string
