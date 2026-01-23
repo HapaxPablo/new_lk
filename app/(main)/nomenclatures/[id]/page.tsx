@@ -43,7 +43,7 @@ async function getNomenclatureById(
     const baseUrl = new URL('api/nomenclatures/', process.env.API_1C_URL)
     const finalUrl = new URL(`${id}/`, baseUrl)
 
-    console.log(`Fetching nomenclature from: ${finalUrl.toString()}`)
+    // console.log(`Fetching nomenclature from: ${finalUrl.toString()}`)
 
     const response = await fetch(finalUrl.toString(), {
       method: 'GET',
