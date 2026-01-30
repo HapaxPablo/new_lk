@@ -6,7 +6,8 @@ import styles from './ModalWrapper.module.scss'
 import { useModal } from '@/providers/modal/ModalProvider'
 
 interface ModalWrapperProps {
-  id: 'search' | 'notifications'
+  id: 'search' | 'notifications' | 'responsible_details'
+  keyId?: string // уникальный ключ для карточки
   title: string
   children: ReactNode
   className?: string
@@ -17,8 +18,9 @@ export function ModalWrapper({
   title,
   children,
   className = '',
+  keyId,
 }: ModalWrapperProps) {
-  const { isOpen, closeModal } = useModal(id)
+  const { isOpen, closeModal } = useModal(id, keyId)
 
   const handleOverlayClick = (e: React.MouseEvent<HTMLDivElement>) => {
     if (e.target === e.currentTarget) {

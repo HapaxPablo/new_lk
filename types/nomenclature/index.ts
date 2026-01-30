@@ -190,6 +190,13 @@ interface IWeekSettings {
   sun: IDaySettings
 }
 
+// Интерфейс для ответственных лиц
+export interface ResponsiblePerson {
+  id: string
+  full_name: string
+}
+type Responsible = Record<string, ResponsiblePerson>
+
 // Основной интерфейс для детальной информации о номенклатуре
 export interface INomenclatureDetailsItem {
   id: string
@@ -206,6 +213,7 @@ export interface INomenclatureDetailsItem {
   pricePerMonth: string
   code1c: string
   main_info: IMainInfo
+  responsible: Responsible
 }
 
 // Интерфейс для дней недели (можно использовать для перечисления)

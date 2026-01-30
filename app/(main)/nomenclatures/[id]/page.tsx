@@ -5,10 +5,17 @@ import {
   ResponsibleCard,
   TabsWrapper,
 } from '@/components/nomenclatureById'
-import { Wrench, Radio, Megaphone, MapPin } from 'lucide-react'
+import {
+  Wrench,
+  Radio,
+  Megaphone,
+  MapPin,
+  MapPinned,
+  BoomBox,
+  ToolCase,
+} from 'lucide-react'
 import { INomenclatureDetailsItem } from '@/types/nomenclature'
 import { Metadata } from 'next'
-import { formatPrice, isDeviceOnline } from '@/utils'
 import {
   generateNomenclatureMetadata,
   generateNomenclatureStructuredData,
@@ -18,7 +25,6 @@ import Script from 'next/script'
 import { DeviceStatusBadge } from '@/components/ui/device/DeviceStatusBadge'
 import { TStatusType } from '@/types/nomenclature/status'
 import dynamic from 'next/dynamic'
-
 
 const Slider = dynamic(() => import('@/components/slider/Slider'), {
   ssr: true,
@@ -126,10 +132,15 @@ export default async function NomenclatureDetailPage(
     typeOfPlace,
     legalEntity,
     hw_info,
+    responsible,
   } = nomenclature
 
   // Объединяем все изображения
   const allImages = [...exterior, ...interior]
+
+  const sliderItems = allImages.map((img) => ({
+    src: img.source,
+  }))
 
   // Генерируем structured data для SEO
   const structuredData = generateNomenclatureStructuredData(nomenclature, id)
@@ -150,11 +161,7 @@ export default async function NomenclatureDetailPage(
         <div className="flex flex-col gap-2 w-full sm:w-2/5 h-auto">
           {/* Слайдер с изображениями */}
           <div className="w-full h-60 sm:h-70 rounded-md shadow-sm overflow-hidden">
-            <Slider
-              images={allImages}
-              autoPlay={true}
-              autoPlayTime={15000}
-            />
+            <Slider images={allImages} autoPlay={true} autoPlayTime={15000} />
           </div>
 
           {/* Описание */}
@@ -192,33 +199,62 @@ export default async function NomenclatureDetailPage(
             </h2>
 
             <div
-              className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full"
+              className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full max-h-[160px] overflow-y-auto"
               // style={{ gridTemplateRows: 'repeat(2, 1fr)' }}
             >
-              <ResponsibleCard
-                label="Бренд радио"
-                icon={<Radio size={16} />}
-                data={brand?.name || 'Не указан'}
-                color="bg-purple-100"
-              />
-              <ResponsibleCard
-                label="Техника"
-                icon={<Wrench size={16} />}
-                data={hw_info?.model || 'Не указано'}
-                color="bg-green-100"
-              />
-              <ResponsibleCard
-                label="Реклама"
-                icon={<Megaphone size={16} />}
-                data={legalEntity?.name || 'Не указано'}
-                color="bg-blue-100"
-              />
-              <ResponsibleCard
-                label="Размещение"
-                icon={<MapPin size={16} />}
-                data={formatPrice(pricePerMonth)}
-                color="bg-red-100"
-              />
+              <div>
+                <h3 className="text-lg font-semibold text-[#1E3961]">
+                  Менеджеры
+                </h3>
+                <div className="flex flex-col gap-4">
+                  <ResponsibleCard
+                    label="Реклама"
+                    icon={<Radio size={16} />}
+                    id={responsible?.ad?.id}
+                    name={responsible?.ad?.full_name || 'Не указан'}
+                    color="bg-purple-100"
+                  />
+                  <ResponsibleCard
+                    label="Маркетинг размещения"
+                    icon={<MapPinned size={16} />}
+                    id={responsible?.placment_markentig?.id}
+                    name={
+                      responsible?.placment_markentig?.full_name || 'Не указано'
+                    }
+                    color="bg-green-100"
+                  />
+                </div>
+              </div>
+              <div>
+                <h3 className="text-lg font-semibold text-[#1E3961]">
+                  Тех. обслуживание
+                </h3>
+                <div className="flex flex-col gap-4">
+                  <ResponsibleCard
+                    label="Радио"
+                    icon={<BoomBox size={16} />}
+                    id={responsible?.radio?.id}
+                    name={responsible?.radio?.full_name || 'Не указано'}
+                    color="bg-[#ECEAE8]"
+                  />
+                  <ResponsibleCard
+                    label="Техник"
+                    icon={<ToolCase size={16} />}
+                    id={responsible?.technic?.id}
+                    name={responsible?.technic?.full_name || 'Не указано'}
+                    color="bg-[#ECEAE8]"
+                  />
+                  <ResponsibleCard
+                    label="Техник на адресе"
+                    icon={<ToolCase size={16} />}
+                    id={responsible?.technic_on_address?.id}
+                    name={
+                      responsible?.technic_on_address?.full_name || 'Не указано'
+                    }
+                    color="bg-[#ECEAE8]"
+                  />
+                </div>
+              </div>
             </div>
           </div>
 
