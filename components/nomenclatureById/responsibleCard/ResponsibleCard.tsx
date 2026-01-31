@@ -17,7 +17,7 @@ export function ResponsibleCard({
         <article
             className={`${styles.wrapper} shadow-sm hover:shadow-md transition-shadow ${color}`}
             aria-label={`Ответственный за ${label}`}
-            title={`Ответственный за ${label}`}
+            title={`${label}`}
         >
             <header className={styles.wrapper__header}>
                 {icon}

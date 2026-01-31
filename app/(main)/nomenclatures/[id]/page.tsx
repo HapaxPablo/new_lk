@@ -1,5 +1,4 @@
 import {
-  ArticleDiv,
   Description,
   MapPlacement,
   ResponsibleCard,
@@ -8,7 +7,7 @@ import {
 import { Wrench, Radio, Megaphone, MapPin } from 'lucide-react'
 import { INomenclatureDetailsItem } from '@/types/nomenclature'
 import { Metadata } from 'next'
-import { formatPrice, isDeviceOnline } from '@/utils'
+import { formatPrice } from '@/utils'
 import {
   generateNomenclatureMetadata,
   generateNomenclatureStructuredData,
@@ -18,7 +17,6 @@ import Script from 'next/script'
 import { DeviceStatusBadge } from '@/components/ui/device/DeviceStatusBadge'
 import { TStatusType } from '@/types/nomenclature/status'
 import dynamic from 'next/dynamic'
-
 
 const Slider = dynamic(() => import('@/components/slider/Slider'), {
   ssr: true,
@@ -125,7 +123,9 @@ export default async function NomenclatureDetailPage(
     contentType,
     typeOfPlace,
     legalEntity,
+    address,
     hw_info,
+    responsible,
   } = nomenclature
 
   // Объединяем все изображения
@@ -136,7 +136,6 @@ export default async function NomenclatureDetailPage(
 
   return (
     <>
-      {/* JSON-LD structured data для SEO */}
       <Script
         id={`structured-data-${id}`}
         type="application/ld+json"
@@ -150,11 +149,7 @@ export default async function NomenclatureDetailPage(
         <div className="flex flex-col gap-2 w-full sm:w-2/5 h-auto">
           {/* Слайдер с изображениями */}
           <div className="w-full h-60 sm:h-70 rounded-md shadow-sm overflow-hidden">
-            <Slider
-              images={allImages}
-              autoPlay={true}
-              autoPlayTime={15000}
-            />
+            <Slider images={allImages} autoPlay={true} autoPlayTime={15000} />
           </div>
 
           {/* Описание */}
@@ -186,19 +181,19 @@ export default async function NomenclatureDetailPage(
           </div>
 
           {/* Ответственные лица */}
-          <div className="flex flex-col gap-4 p-4">
-            <h2 className="text-xl font-semibold text-[#1E3961]">
+          <div className="p-4">
+            {/* <h2 className="text-xl font-semibold text-[#1E3961]">
               Ответственный
-            </h2>
+            </h2> */}
 
             <div
               className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full"
               // style={{ gridTemplateRows: 'repeat(2, 1fr)' }}
             >
               <ResponsibleCard
-                label="Бренд радио"
+                label="Ответственный за эфир"
                 icon={<Radio size={16} />}
-                data={brand?.name || 'Не указан'}
+                data={responsible.ad?.full_name || 'Не указан'}
                 color="bg-purple-100"
               />
               <ResponsibleCard
@@ -208,13 +203,13 @@ export default async function NomenclatureDetailPage(
                 color="bg-green-100"
               />
               <ResponsibleCard
-                label="Реклама"
+                label="Ответственный за размещение"
                 icon={<Megaphone size={16} />}
-                data={legalEntity?.name || 'Не указано'}
+                data={responsible.placement_marketing?.full_name || 'Не указан'}
                 color="bg-blue-100"
               />
               <ResponsibleCard
-                label="Размещение"
+                label="Стоимость размещения"
                 icon={<MapPin size={16} />}
                 data={formatPrice(pricePerMonth)}
                 color="bg-red-100"
@@ -230,11 +225,11 @@ export default async function NomenclatureDetailPage(
               <h2 className="text-xl font-semibold text-[#1E3961]">
                 Место вещания
               </h2>
-              <ArticleDiv article={String(article)} />
+              <span>{`${brand?.description || 'нет данных'} ${brand?.name || 'нет данных'}`}</span>
             </div>
             <MapPlacement
-              lat={56.011152}
-              lng={92.814753}
+              lat={address?.latitude ? Number(address.latitude) : 56.011152}
+              lng={address?.longitude ? Number(address.longitude) : 92.814753}
               // name={main_info.name}
               // address={nomenclature.address}
             />
@@ -242,10 +237,7 @@ export default async function NomenclatureDetailPage(
 
           <hr className="solid m-4" />
 
-          {/* Табы с дополнительной информацией */}
-          <TabsWrapper
-          // nomenclature={nomenclature}
-          />
+          <TabsWrapper item={nomenclature} />
         </div>
       </div>
     </>
