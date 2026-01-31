@@ -11,11 +11,9 @@ import styles from './NomenclatureWrapper.module.scss'
 
 const Pagination = dynamic(
   () =>
-    import('../pagination/Pagination').then(
-      (mod) => ({
-        default: mod.Pagination,
-      })
-    ),
+    import('../pagination/Pagination').then((mod) => ({
+      default: mod.Pagination,
+    })),
   {
     ssr: false,
     loading: () => <LoaderSkeleton />,
@@ -48,7 +46,7 @@ export const NomenclatureWrapper = ({
   count,
 }: NomenclatureCardProps) => {
   const cardsWrapperRef = useRef<HTMLDivElement>(null)
-// console.log('NOMENCLATURE', nomenclatureData);
+  // console.log('NOMENCLATURE', nomenclatureData);
 
   return (
     <div className={styles.displayWrapper}>
@@ -64,14 +62,14 @@ export const NomenclatureWrapper = ({
             <NomenclatureCards item={nomenclatureData} />
           )}
 
-          {page!! >= 1 && (
+          {page !== undefined && page >= 1 && (
             <div className={styles.paginationContainer}>
-                       <Pagination 
-                    limit={limit!!} 
-                    page={page!!} 
-                    total={count!!}
-                    showPageNumbers={true}
-                  />
+              <Pagination
+                limit={limit ?? 24}
+                page={page}
+                total={count ?? 0}
+                showPageNumbers={true}
+              />
             </div>
           )}
 
@@ -86,5 +84,3 @@ export const NomenclatureWrapper = ({
     </div>
   )
 }
-
-
