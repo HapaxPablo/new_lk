@@ -2,7 +2,7 @@ import { Mail, Phone } from 'lucide-react'
 import styles from './ContactItem.module.scss'
 import { JSX } from 'react'
 
-type ContactType = 'mail' | 'phone'
+type ContactType = any
 
 interface ContactItemProps {
   type: ContactType

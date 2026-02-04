@@ -105,7 +105,7 @@ export default async function NomenclatureDetailPage(
 
   // Загружаем данные номенклатуры через ваш API endpoint
   const nomenclature = await getNomenclatureById(id)
-  console.log('DETAILS', nomenclature)
+  // console.log('DETAILS', nomenclature)
 
   if (!nomenclature) {
     return (
@@ -235,14 +235,14 @@ export default async function NomenclatureDetailPage(
                     icon={<BoomBox size={16} />}
                     id={responsible?.radio?.id}
                     name={responsible?.radio?.full_name || 'Не указано'}
-                    color="bg-[#ECEAE8]"
+                    color="bg-gray-200"
                   />
                   <ResponsibleCard
                     label="Техник"
                     icon={<ToolCase size={16} />}
                     id={responsible?.technic?.id}
                     name={responsible?.technic?.full_name || 'Не указано'}
-                    color="bg-[#ECEAE8]"
+                    color="bg-gray-200"
                   />
                   <ResponsibleCard
                     label="Техник на адресе"
@@ -251,7 +251,7 @@ export default async function NomenclatureDetailPage(
                     name={
                       responsible?.technic_on_address?.full_name || 'Не указано'
                     }
-                    color="bg-[#ECEAE8]"
+                    color="bg-gray-200"
                   />
                 </div>
               </div>

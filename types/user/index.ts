@@ -1,8 +1,8 @@
-export interface IUserContacts {
+interface IAdditionalContactInfo {
   basic: boolean
   type?: string
-  vidmail?: string
   vidtel?: string
+  vidmail?: string
   meaning?: string
   ext?: string
   comment?: string
@@ -12,7 +12,7 @@ export interface IUserDetailsItem {
   id: string
   phone_number: string
   role: string
-  contacts: []
+  contacts: IAdditionalContactInfo[]
   code1c?: string
   created: string
   full_name?: {

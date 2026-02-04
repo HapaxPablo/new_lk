@@ -1,14 +1,14 @@
 'use client'
 
 import { X } from 'lucide-react'
-import { ReactNode, useEffect } from 'react'
+import { JSX, ReactNode, useEffect } from 'react'
 import styles from './ModalWrapper.module.scss'
 import { useModal } from '@/providers/modal/ModalProvider'
 
 interface ModalWrapperProps {
   id: 'search' | 'notifications' | 'responsible_details'
   keyId?: string // уникальный ключ для карточки
-  title: string
+  title?: JSX.Element | string
   children: ReactNode
   className?: string
 }
@@ -53,11 +53,11 @@ export function ModalWrapper({
         onClick={(e) => e.stopPropagation()}
       >
         <div className={styles.modalHeader}>
-          <h2 className={styles.modalTitle}>{title}</h2>
+          {title && <div className={styles.modalTitle}>{title}</div>}
           <button
             onClick={() => closeModal()}
             className={styles.closeButton}
-            aria-label={`Закрыть ${title}`}
+            aria-label={`Закрыть ${title || 'модальное окно'}`}
           >
             <X size={24} />
           </button>

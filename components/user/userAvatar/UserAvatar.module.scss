@@ -4,7 +4,7 @@
   height: 80px;
   border-radius: 12px;
   overflow: hidden;
-  background: #f3f4f6;
+  background: var(--background);
   flex-shrink: 0;
 
   &__image {
@@ -19,7 +19,7 @@
     align-items: center;
     justify-content: center;
     gap: 4px;
-    color: #9ca3af;
+    color: var(--second-text-color);
     font-size: 12px;
   }
 }
