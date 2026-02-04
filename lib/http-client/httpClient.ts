@@ -6,29 +6,31 @@ import { getToken } from '../token/getToken'
 
 class HttpClient1CClient {
   private baseUrl: string
+  private onLogout?: () => void
 
-  constructor() {
-    this.baseUrl = process.env.NEXT_PUBLIC_API_1C_URL || ''
+  constructor(token: string | null, onLogout?: () => void) {
+    this.baseUrl = ''
+    // this.baseUrl = process.env.NEXT_PUBLIC_API_1C_URL || '' локально не работает
+
+    this.onLogout = onLogout
   }
 
   private async request<T = any>(
     method: THttpMethod,
     endpoint: string,
     data?: any,
-    isFile: boolean = false
+    isFile = false
   ): Promise<T> {
-    const { isAuthenticated, logout } = useAuth()
     const token = getToken()
-    console.log('token', token)
-
-    if (!token || !isAuthenticated) {
-      await logout()
+    if (!token) {
+      this.onLogout?.()
       throw new Error('Authentication required')
     }
 
+    console.log('FETCH TO:', this.baseUrl + endpoint)
+
     const headers: Record<string, string> = {
       Authorization: `access_token ${token}`,
-      Cookie: `access_token ${token}`,
     }
 
     if (!isFile) {
@@ -48,41 +50,36 @@ class HttpClient1CClient {
     const response = await fetch(`${this.baseUrl}${endpoint}`, config)
 
     if (response.status === 401) {
-      await logout()
+      this.onLogout?.()
       throw new Error('Session expired')
     }
 
     if (!response.ok) {
       const error = await response.text()
-      throw new Error(`Request failed: ${error}`)
+      throw new Error(error)
     }
 
     return isFile ? (response.blob() as Promise<T>) : response.json()
   }
 
-  // GET запрос
-  async get<T = any>(endpoint: string): Promise<T> {
-    return this.request<T>('GET', endpoint)
+  get<T>(url: string) {
+    return this.request<T>('GET', url)
   }
 
-  // POST запрос
-  async post<T = any>(endpoint: string, data: any): Promise<T> {
-    return this.request<T>('POST', endpoint, data)
+  post<T>(url: string, data: any) {
+    return this.request<T>('POST', url, data)
   }
 
-  // PUT запрос
-  async put<T = any>(endpoint: string, data: any): Promise<T> {
-    return this.request<T>('PUT', endpoint, data)
+  put<T>(url: string, data: any) {
+    return this.request<T>('PUT', url, data)
   }
 
-  // PATCH запрос
-  async patch<T = any>(endpoint: string, data: any): Promise<T> {
-    return this.request<T>('PATCH', endpoint, data)
+  patch<T>(url: string, data: any) {
+    return this.request<T>('PATCH', url, data)
   }
 
-  // DELETE запрос
-  async delete<T = any>(endpoint: string): Promise<T> {
-    return this.request<T>('DELETE', endpoint)
+  delete<T>(url: string) {
+    return this.request<T>('DELETE', url)
   }
 
   // Загрузка файла
@@ -93,4 +90,8 @@ class HttpClient1CClient {
   }
 }
 
-export const httpClient1CClient = new HttpClient1CClient()
+export class HttpClient1C {
+  static client(token: string | null, logout?: () => void) {
+    return new HttpClient1CClient(token, logout)
+  }
+}

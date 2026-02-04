@@ -5,8 +5,8 @@ import NotFound from '@/app/not-found'
 import { UserAvatar } from './userAvatar/UserAvatar'
 import { ContactItem } from './ContactItem/ContactItem'
 import { useEffect, useState } from 'react'
-import { getToken } from '@/lib/token/getToken'
 import { UserInfoSkeleton } from '../ui/loader/UserInfoSkeleton'
+import { useHttpClient } from '@/hooks/useHttpClient'
 
 interface Props {
   userId: string
@@ -17,6 +17,7 @@ export default function UserInfoModalView({ userId }: Props) {
 
   const [userInfo, setUserInfo] = useState<IUserDetailsItem | null>(null)
   const [loading, setLoading] = useState<boolean>(true)
+  const client = useHttpClient()
 
   type ContactInfo = IUserDetailsItem['contacts']
 
@@ -31,19 +32,13 @@ export default function UserInfoModalView({ userId }: Props) {
   useEffect(() => {
     async function fetchUserInfo() {
       try {
-        const response = await fetch(`/api/users/${userId}`, {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-            Accept: 'application/json',
-            Authorization: `access_token ${await getToken()}`,
-          },
-        })
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`)
+        const response = await client.get<IUserDetailsItem>(
+          `/api/users/${userId}`
+        )
+        if (!response) {
+          throw new Error(`HTTP error! status: ${response}`)
         }
-        const data = await response.json()
-        setUserInfo(data)
+        setUserInfo(response)
         setLoading(false)
       } catch (error) {
         console.error('Error fetching user info:', error)
