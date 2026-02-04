@@ -1,0 +1,5 @@
+export { Tabs } from './Tabs'
+export { TabButton } from './TabButton'
+export { TabPanel } from './TabPanel'
+export { NamedTabs } from './NamedTabs'
+export type { TabItem } from './Tabs'

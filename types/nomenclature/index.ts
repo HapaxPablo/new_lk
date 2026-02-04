@@ -82,7 +82,8 @@ export interface IAddressNomenclature {
   }
   microdistrict: string
   index: string // почтовый индекс
-  coordinates: string
+  latitude: string
+  longitude: string
   full_address: string
 }
 
@@ -190,12 +191,20 @@ interface IWeekSettings {
   sun: IDaySettings
 }
 
-// Интерфейс для ответственных лиц
-export interface ResponsiblePerson {
+export interface IResponsiblePerson {
   id: string
   full_name: string
 }
-type Responsible = Record<string, ResponsiblePerson>
+export type ResponsiblePersonRole =
+  | 'ad'
+  | 'radio'
+  | 'technic'
+  | 'technic_on_address'
+  | 'placement_marketing'
+
+export type TResponsiblePersons = {
+  [role in ResponsiblePersonRole]?: IResponsiblePerson
+}
 
 // Основной интерфейс для детальной информации о номенклатуре
 export interface INomenclatureDetailsItem {
@@ -213,7 +222,11 @@ export interface INomenclatureDetailsItem {
   pricePerMonth: string
   code1c: string
   main_info: IMainInfo
-  responsible: Responsible
+  responsible: TResponsiblePersons
+  tenants: {
+    id: string
+    name: string
+  }[]
 }
 
 // Интерфейс для дней недели (можно использовать для перечисления)

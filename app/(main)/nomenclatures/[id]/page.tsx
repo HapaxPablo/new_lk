@@ -1,5 +1,4 @@
 import {
-  ArticleDiv,
   Description,
   MapPlacement,
   ResponsibleCard,
@@ -131,6 +130,7 @@ export default async function NomenclatureDetailPage(
     contentType,
     typeOfPlace,
     legalEntity,
+    address,
     hw_info,
     responsible,
   } = nomenclature
@@ -147,7 +147,6 @@ export default async function NomenclatureDetailPage(
 
   return (
     <>
-      {/* JSON-LD structured data для SEO */}
       <Script
         id={`structured-data-${id}`}
         type="application/ld+json"
@@ -193,10 +192,10 @@ export default async function NomenclatureDetailPage(
           </div>
 
           {/* Ответственные лица */}
-          <div className="flex flex-col gap-4 p-4">
-            <h2 className="text-xl font-semibold text-[#1E3961]">
+          <div className="p-4">
+            {/* <h2 className="text-xl font-semibold text-[#1E3961]">
               Ответственный
-            </h2>
+            </h2> */}
 
             <div
               className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full max-h-[160px] overflow-y-auto"
@@ -217,9 +216,10 @@ export default async function NomenclatureDetailPage(
                   <ResponsibleCard
                     label="Маркетинг размещения"
                     icon={<MapPinned size={16} />}
-                    id={responsible?.placment_markentig?.id}
+                    id={responsible?.placement_marketing?.id}
                     name={
-                      responsible?.placment_markentig?.full_name || 'Не указано'
+                      responsible?.placement_marketing?.full_name ||
+                      'Не указано'
                     }
                     color="bg-green-100"
                   />
@@ -266,11 +266,11 @@ export default async function NomenclatureDetailPage(
               <h2 className="text-xl font-semibold text-[#1E3961]">
                 Место вещания
               </h2>
-              <ArticleDiv article={String(article)} />
+              <span>{`${brand?.description || 'нет данных'} ${brand?.name || 'нет данных'}`}</span>
             </div>
             <MapPlacement
-              lat={56.011152}
-              lng={92.814753}
+              lat={address?.latitude ? Number(address.latitude) : 56.011152}
+              lng={address?.longitude ? Number(address.longitude) : 92.814753}
               // name={main_info.name}
               // address={nomenclature.address}
             />
@@ -278,10 +278,7 @@ export default async function NomenclatureDetailPage(
 
           <hr className="solid m-4" />
 
-          {/* Табы с дополнительной информацией */}
-          <TabsWrapper
-          // nomenclature={nomenclature}
-          />
+          <TabsWrapper item={nomenclature} />
         </div>
       </div>
     </>
