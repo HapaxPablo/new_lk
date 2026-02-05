@@ -1,6 +1,6 @@
 'use client'
 
-import { IUserDetailsItem } from '@/types/user'
+import { contactLabelArray, IUserDetailsItem } from '@/types/user'
 import NotFound from '@/app/not-found'
 import { UserAvatar } from './userAvatar/UserAvatar'
 import { ContactItem } from './ContactItem/ContactItem'
@@ -48,6 +48,7 @@ export default function UserInfoModalView({ userId }: Props) {
 
     fetchUserInfo()
   }, [userId])
+  console.log("res user:", userInfo)
 
   return (
     <>
@@ -62,7 +63,7 @@ export default function UserInfoModalView({ userId }: Props) {
               <div className="text-lg font-semibold">{fullName}</div>
 
               {userInfo?.phone_number && (
-                <ContactItem type="phone" value={userInfo.phone_number} />
+                <ContactItem type="phone" value={userInfo.phone_number} title="Телефон" />
               )}
             </div>
           </div>
@@ -83,10 +84,19 @@ export default function UserInfoModalView({ userId }: Props) {
                 (contact: ContactInfo[number], index: number) => (
                   <ContactItem
                     key={index}
-                    type={contact.type || 'other'}
+                    type={
+                      contactLabelArray.find(
+                        (item) => item.value === contact.type
+                      )?.value || 'other'
+                    }
+                    title={
+                      contactLabelArray.find(
+                        (item) => item.value === contact.type
+                      )?.label || 'other'
+                    }
                     value={contact.meaning || 'No contact info'}
                     meta={contact.ext}
-                    // comment={contact.comment}
+                  // comment={contact.comment}
                   />
                 )
               )}
