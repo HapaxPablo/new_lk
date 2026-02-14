@@ -155,7 +155,7 @@ export function Pagination({
           <strong>{totalPages}</strong>
         </span>
         <span className={styles.totalText}>
-          Всего: <strong>{total}</strong> мест размещения
+          Всего: <strong>{total}</strong>
         </span>
       </div>
     </div>

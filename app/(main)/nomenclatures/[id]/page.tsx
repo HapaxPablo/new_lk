@@ -7,6 +7,7 @@ import {
 import { Wrench, Radio, Megaphone, MapPin } from 'lucide-react'
 import { INomenclatureDetailsItem } from '@/types/nomenclature'
 import { Metadata } from 'next'
+import { cookies } from 'next/headers'
 import { formatPrice } from '@/utils'
 import {
   generateNomenclatureMetadata,
@@ -34,21 +35,21 @@ async function getNomenclatureById(
   id: string
 ): Promise<INomenclatureDetailsItem | null> {
   try {
-    if (!process.env.API_1C_URL) {
-      throw new Error('API_1C_URL environment variable is not defined')
-    }
+    const baseUrl = process.env.NEXT_PUBLIC_URL || 'http://localhost:3000'
+    const url = new URL(`/api/nomenclatures/${id}`, baseUrl)
 
-    const baseUrl = new URL('api/nomenclatures/', process.env.API_1C_URL)
-    const finalUrl = new URL(`${id}/`, baseUrl)
+    const cookieStore = await cookies()
+    const cookieHeader = cookieStore.toString()
 
     // console.log(`Fetching nomenclature from: ${finalUrl.toString()}`)
 
-    const response = await fetch(finalUrl.toString(), {
+    const response = await fetch(url.toString(), {
       method: 'GET',
       cache: 'no-store',
       headers: {
         'Content-Type': 'application/json',
         Accept: 'application/json',
+        Cookie: cookieHeader,
       },
       next: { revalidate: 0 },
     })
@@ -74,7 +75,7 @@ async function getNomenclatureById(
   }
 }
 
-// Генерация метаданных для SEO
+
 export async function generateMetadata(
   props: NomenclatureDetailPageProps
 ): Promise<Metadata> {
@@ -95,8 +96,6 @@ export default async function NomenclatureDetailPage(
 ) {
   const params = await props.params
   const { id } = params
-
-  // Загружаем данные номенклатуры через ваш API endpoint
   const nomenclature = await getNomenclatureById(id)
   console.log('DETAILS', nomenclature)
 
@@ -128,10 +127,9 @@ export default async function NomenclatureDetailPage(
     responsible,
   } = nomenclature
 
-  // Объединяем все изображения
+  
   const allImages = [...exterior, ...interior]
 
-  // Генерируем structured data для SEO
   const structuredData = generateNomenclatureStructuredData(nomenclature, id)
 
   return (
@@ -228,8 +226,16 @@ export default async function NomenclatureDetailPage(
               <span>{`${brand?.description || 'нет данных'} ${brand?.name || 'нет данных'}`}</span>
             </div>
             <MapPlacement
-              lat={address.coordinates?.latitude ? Number(address.coordinates.latitude) : 56.011152}
-              lng={address.coordinates?.longitude ? Number(address.coordinates.longitude) : 92.814753}
+              lat={
+                address.coordinates?.latitude
+                  ? Number(address.coordinates.latitude)
+                  : 56.011152
+              }
+              lng={
+                address.coordinates?.longitude
+                  ? Number(address.coordinates.longitude)
+                  : 92.814753
+              }
               // name={main_info.name}
               // address={nomenclature.address}
             />
