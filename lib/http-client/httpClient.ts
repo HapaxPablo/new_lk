@@ -1,8 +1,6 @@
 'use client'
-//tets
-import { useAuth } from '@/providers/auth-provider/AuthProvider'
+
 import { THttpMethod } from '@/types'
-import { getToken } from '../token/getToken'
 
 class HttpClient1CClient {
   private baseUrl: string
@@ -17,9 +15,12 @@ class HttpClient1CClient {
     data?: any,
     isFile: boolean = false
   ): Promise<T> {
-    const { isAuthenticated, logout } = useAuth()
-    const token = getToken()
-    console.log('token', token)
+    // Get token from cookie directly in client
+    const cookies = document.cookie.split('; ')
+    const tokenCookie = cookies.find((c) => c.startsWith('access_token='))
+    const token = tokenCookie ? tokenCookie.split('=')[1] : null
+
+    console.log('token client', token)
 
     // Проверяем, является ли эндпоинт публичным (GET запрос к nomenclatures, counterparties или promotions)
     const isPublicEndpoint =
@@ -27,16 +28,11 @@ class HttpClient1CClient {
       endpoint.includes('api/counterparties') ||
       endpoint.includes('api/promotions')
 
-    if (!token || !isAuthenticated) {
-      if (!isPublicEndpoint) {
-        await logout()
-        throw new Error('Authentication required')
-      }
-    }
+    const headers: Record<string, string> = {}
 
-    const headers: Record<string, string> = {
-      Authorization: `access_token ${token}`,
-      Cookie: `access_token ${token}`,
+    if (token) {
+      headers['Authorization'] = `Bearer ${token}`
+      headers['Cookie'] = `access_token=${token}`
     }
 
     if (!isFile) {
@@ -56,7 +52,8 @@ class HttpClient1CClient {
     const response = await fetch(`${this.baseUrl}${endpoint}`, config)
 
     if (response.status === 401) {
-      await logout()
+      // Clear auth state and redirect to login
+      window.location.href = '/login'
       throw new Error('Session expired')
     }
 

@@ -1,6 +1,5 @@
 import { THttpMethod } from '@/types'
 import { NextRequest } from 'next/server'
-import { getToken } from '../token/getToken'
 
 class HttpClient1CServer {
   private baseUrl: string
@@ -16,31 +15,29 @@ class HttpClient1CServer {
     data?: any,
     isFile: boolean = false
   ): Promise<T> {
-    const token = await getToken()
+    // Get token directly from request cookies
+    const token = request.cookies.get('access_token')?.value
     console.log('token httpServer', token)
 
     // Проверяем, является ли эндпоинт публичным (GET запрос к nomenclatures, counterparties или promotions)
     const isPublicEndpoint =
       method === 'GET' &&
-      (endpoint.includes('api/nomenclatures') ||
-        endpoint.includes('api/counterparties') ||
-        endpoint.includes('api/promotions'))
+      (endpoint.includes('nomenclatures') ||
+        endpoint.includes('counterparties') ||
+        endpoint.includes('promotions') ||
+         endpoint.includes('tasks') ||
+          endpoint.includes('media-plans')
+      )
 
-    // console.log('request.cookies', request.cookies)
     if (!token && !isPublicEndpoint) {
       throw new Error('Authentication required')
     }
 
-    // const headers: Record<string, string> = {
-    //   Authorization: `access_token ${token ?? ''}`,
-    //   Cookie: `access_token ${token ?? ''}`,
-    // }
-
     const headers: Record<string, string> = {}
 
     if (token) {
-      headers['Authorization'] = `access_token ${token}`
-      headers['Cookie'] = `access_token ${token}`
+      headers['Authorization'] = `Bearer ${token}`
+      headers['Cookie'] = `access_token=${token}`
     }
 
     if (!isFile) {
