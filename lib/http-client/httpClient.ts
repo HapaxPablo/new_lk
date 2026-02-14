@@ -21,9 +21,17 @@ class HttpClient1CClient {
     const token = getToken()
     console.log('token', token)
 
+    // Проверяем, является ли эндпоинт публичным (GET запрос к nomenclatures, counterparties или promotions)
+    const isPublicEndpoint =
+      endpoint.includes('api/nomenclatures') ||
+      endpoint.includes('api/counterparties') ||
+      endpoint.includes('api/promotions')
+
     if (!token || !isAuthenticated) {
-      await logout()
-      throw new Error('Authentication required')
+      if (!isPublicEndpoint) {
+        await logout()
+        throw new Error('Authentication required')
+      }
     }
 
     const headers: Record<string, string> = {

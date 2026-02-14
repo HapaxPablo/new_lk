@@ -19,9 +19,12 @@ class HttpClient1CServer {
     const token = await getToken()
     console.log('token httpServer', token)
 
-    // Проверяем, является ли эндпоинт публичным (GET запрос к nomenclatures)
+    // Проверяем, является ли эндпоинт публичным (GET запрос к nomenclatures, counterparties или promotions)
     const isPublicEndpoint =
-      method === 'GET' && endpoint.includes('api/nomenclatures')
+      method === 'GET' &&
+      (endpoint.includes('api/nomenclatures') ||
+        endpoint.includes('api/counterparties') ||
+        endpoint.includes('api/promotions'))
 
     // console.log('request.cookies', request.cookies)
     if (!token && !isPublicEndpoint) {
