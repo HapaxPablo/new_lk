@@ -228,8 +228,8 @@ export default async function NomenclatureDetailPage(
               <span>{`${brand?.description || 'нет данных'} ${brand?.name || 'нет данных'}`}</span>
             </div>
             <MapPlacement
-              lat={address?.latitude ? Number(address.latitude) : 56.011152}
-              lng={address?.longitude ? Number(address.longitude) : 92.814753}
+              lat={address.coordinates?.latitude ? Number(address.coordinates.latitude) : 56.011152}
+              lng={address.coordinates?.longitude ? Number(address.coordinates.longitude) : 92.814753}
               // name={main_info.name}
               // address={nomenclature.address}
             />
