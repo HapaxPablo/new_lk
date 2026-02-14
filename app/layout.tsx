@@ -1,9 +1,11 @@
 import Footer from '@/components/ui/footer/Footer'
 import Header from '@/components/ui/header/Header'
+import { TooltipModal } from '@/components/ui/tooltip/TooltipModal'
 import { metaDataConfigLayout } from '@/lib/configs/config-meta/configMetaData'
 import { AuthProvider } from '@/providers/auth-provider/AuthProvider'
 import { ModalProvider } from '@/providers/modal/ModalProvider'
 import { ToastProvider } from '@/providers/toast/ToastProvider'
+import { TooltipProvider } from '@/providers/tooltip/TooltipProvider'
 import type { Metadata } from 'next'
 import localFont from 'next/font/local'
 import '@/styles/index.css'
@@ -49,15 +51,18 @@ export default function RootLayout({
     <html lang="ru">
       <body className={`${montserrat.className} antialiased`}>
         <ModalProvider>
-          <ToastProvider>
-            <AuthProvider>
-              <div className="layout">
-                <Header />
-                <main className="content">{children} </main>
-                <Footer />
-              </div>
-            </AuthProvider>
-          </ToastProvider>
+          <TooltipProvider>
+            <ToastProvider>
+              <AuthProvider>
+                <div className="layout">
+                  <Header />
+                  <main className="content">{children} </main>
+                  <Footer />
+                </div>
+                <TooltipModal />
+              </AuthProvider>
+            </ToastProvider>
+          </TooltipProvider>
         </ModalProvider>
       </body>
     </html>

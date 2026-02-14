@@ -1,0 +1,161 @@
+.modalOverlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    padding: 1rem;
+}
+
+.modalContent {
+    background: var(--background);
+    border-radius: 0.5rem;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    max-width: 500px;
+    width: 100%;
+    max-height: 80vh;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+.modalHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem 1.5rem;
+    border-bottom: 1px solid var(--border-color, #e5e7eb);
+}
+
+.modalTitle {
+    font-size: var(--text-lg);
+    font-weight: 600;
+    color: var(--main-text-color);
+    margin: 0;
+}
+
+.closeButton {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    background: transparent;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    color: var(--second-text-color);
+    transition: all 0.2s ease;
+}
+
+.closeButton:hover {
+    background: var(--background-secondary);
+    color: var(--main-text-color);
+}
+
+.modalBody {
+    padding: 1.5rem;
+    overflow-y: auto;
+    flex: 1;
+}
+
+.loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    padding: 2rem;
+    color: var(--second-text-color);
+}
+
+.spinner {
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.error {
+    padding: 1rem;
+    background: var(--error-color-light, #fef2f2);
+    border: 1px solid var(--error-color, #fecaca);
+    border-radius: 0.5rem;
+    color: var(--error-color-dark, #991b1b);
+}
+
+.content {
+    width: 100%;
+}
+
+.defaultContent {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.field {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.fieldLabel {
+    font-size: var(--text-sm);
+    font-weight: 500;
+    color: var(--second-text-color);
+    
+}
+
+.fieldValue {
+    font-size: var(--text-base);
+    color: var(--main-text-color);
+    word-break: break-word;
+}
+
+.image {
+    max-width: 100%;
+    max-height: 150px;
+    object-fit: contain;
+    // border-radius: 0.25rem;
+    // border: 1px solid var(--border-color, #e5e7eb);
+}
+
+.noData {
+    text-align: center;
+    color: var(--second-text-color);
+    padding: 1rem;
+}
+
+// Мобильная адаптация
+@media (max-width: 768px) {
+    .modalContent {
+        max-height: 90vh;
+    }
+
+    .modalHeader {
+        padding: 0.75rem 1rem;
+    }
+
+    .modalTitle {
+        font-size: var(--text-base);
+    }
+
+    .modalBody {
+        padding: 1rem;
+    }
+}
