@@ -82,8 +82,11 @@ export interface IAddressNomenclature {
   }
   microdistrict: string
   index: string // почтовый индекс
-  latitude: string
-  longitude: string
+  coordinates: {
+    id: string
+    latitude: string
+    longitude: string
+  }
   full_address: string
 }
 
@@ -195,16 +198,16 @@ export interface IResponsiblePerson {
   id: string
   full_name: string
 }
-export type ResponsiblePersonRole = 
-  | 'ad' 
-  | 'radio' 
-  | 'technic' 
-  | 'technic_on_address' 
-  | 'placement_marketing' 
+export type ResponsiblePersonRole =
+  | 'ad'
+  | 'radio'
+  | 'technic'
+  | 'technic_on_address'
+  | 'placement_marketing'
 
 export type TResponsiblePersons = {
-  [role in ResponsiblePersonRole]?: IResponsiblePerson;
-};
+  [role in ResponsiblePersonRole]?: IResponsiblePerson
+}
 
 // Основной интерфейс для детальной информации о номенклатуре
 export interface INomenclatureDetailsItem {
