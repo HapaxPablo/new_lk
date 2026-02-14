@@ -1,9 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server'
-//TODO добавить метод проверки токена в 1с желательно сделать токен со сроком жизни
+
 export async function POST(request: NextRequest) {
   try {
     const token = request.cookies.get('access_token')?.value
     console.log('token checkAuth', token)
+
     if (!token) {
       return NextResponse.json({ isAuthenticated: false, status: 200 })
     }
@@ -14,7 +15,8 @@ export async function POST(request: NextRequest) {
       body: JSON.stringify({ token: token }),
       headers: {
         'Content-Type': 'application/json',
-        Cookie: `access_token ${token}`,
+        Authorization: `Bearer ${token}`,
+        Cookie: `access_token=${token}`,
         'User-Agent': request.headers.get('user-agent') || '',
       },
     })

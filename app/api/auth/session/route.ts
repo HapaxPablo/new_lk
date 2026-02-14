@@ -3,10 +3,21 @@ import { getRouteSession } from '@/lib/session'
 export const dynamic = 'force-dynamic'
 export async function GET(request: Request) {
   try {
-    // Создаем объекты request/response для iron-session
+    // Создаем объекты request/response для iron-session с куками из оригинального запроса
     const req = new NextRequest(request.url, {
-      headers: request.headers
+      headers: request.headers,
+      // Передаем куки из оригинального запроса
+      ...(request.headers.get('cookie') && {
+        credentials: 'include',
+      }),
     })
+
+    // Переносим куки из оригинального запроса
+    const cookieHeader = request.headers.get('cookie')
+    if (cookieHeader) {
+      req.headers.set('cookie', cookieHeader)
+    }
+
     const res = new NextResponse()
 
     // Получаем сессию
@@ -20,14 +31,12 @@ export async function GET(request: Request) {
     const userData = {
       id: session.user.id,
       name: session.user.name,
-      email: session.user.email
+      email: session.user.email,
     }
 
-    return new NextResponse(
-      JSON.stringify({ user: userData }),
-      { headers: res.headers }
-    )
-
+    return new NextResponse(JSON.stringify({ user: userData }), {
+      headers: res.headers,
+    })
   } catch (error) {
     console.error('Session error:', error)
     return NextResponse.json(
