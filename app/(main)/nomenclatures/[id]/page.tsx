@@ -4,6 +4,7 @@ import {
   ResponsibleCard,
   TabsWrapper,
 } from '@/components/nomenclatureById'
+import { BrandInfoTooltip } from '@/components/ui/tooltip/BrandInfoTooltip'
 import { Wrench, Radio, Megaphone, MapPin } from 'lucide-react'
 import { INomenclatureDetailsItem } from '@/types/nomenclature'
 import { Metadata } from 'next'
@@ -75,7 +76,6 @@ async function getNomenclatureById(
   }
 }
 
-
 export async function generateMetadata(
   props: NomenclatureDetailPageProps
 ): Promise<Metadata> {
@@ -127,7 +127,6 @@ export default async function NomenclatureDetailPage(
     responsible,
   } = nomenclature
 
-  
   const allImages = [...exterior, ...interior]
 
   const structuredData = generateNomenclatureStructuredData(nomenclature, id)
@@ -223,7 +222,7 @@ export default async function NomenclatureDetailPage(
               <h2 className="text-xl font-semibold text-[#1E3961]">
                 Место вещания
               </h2>
-              <span>{`${brand?.description || 'нет данных'} ${brand?.name || 'нет данных'}`}</span>
+              <BrandInfoTooltip brand={brand} />
             </div>
             <MapPlacement
               lat={

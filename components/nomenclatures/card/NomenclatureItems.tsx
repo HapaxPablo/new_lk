@@ -2,6 +2,7 @@ import { CardNomenclature } from '@/components/ui/card/CardNomenclature'
 import { INomenclatureItem } from '@/types/nomenclature'
 import { useRouter } from 'next/navigation'
 import styles from './NomenclatureItem.module.scss'
+
 interface NomenclatureCardProps {
   item: INomenclatureItem[]
   className?: string
