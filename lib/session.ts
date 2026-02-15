@@ -15,11 +15,11 @@ declare module 'iron-session' {
 
 export const sessionOptions = {
   password:
-    process.env.SESSION_SECRET || 'complex_password_at_least_32_characters', // В продакшене использовать env переменную
+    process.env.SESSION_SECRET || 'complex_password_at_least_32_characters',
   cookieName: '1c_auth_session',
   cookieOptions: {
     secure: process.env.NODE_ENV === 'production',
-    sameSite: 'lax' as const, // Changed from 'strict' to allow cross-origin requests to 1C API
+    sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
     httpOnly: true,
     maxAge: 60 * 60 * 24 * 7, // 1 неделя
   },

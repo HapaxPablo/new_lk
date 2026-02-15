@@ -33,7 +33,7 @@ class HttpClient1CServer {
         cookieName: '1c_auth_session',
         cookieOptions: {
           secure: process.env.NODE_ENV === 'production',
-          sameSite: 'lax' as const,
+          sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
           httpOnly: true,
           maxAge: 60 * 60 * 24 * 7,
         },
