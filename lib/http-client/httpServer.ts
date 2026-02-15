@@ -16,7 +16,16 @@ class HttpClient1CServer {
     data?: any,
     isFile: boolean = false
   ): Promise<T> {
-    const token = await getToken()
+    // First try to get token from request headers (forwarded by middleware from client)
+    // This is needed because cookies for domain test.lk.krasrm.com
+    // are not sent when making requests to different domain api1.krasrm.com
+    let token = request.headers.get('x-access-token')
+
+    // Fallback to cookie-based token if header not present
+    if (!token) {
+      token = await getToken()
+    }
+
     console.log('token httpServer', token)
 
     // Проверяем, является ли эндпоинт публичным (GET запрос к nomenclatures)
@@ -37,6 +46,7 @@ class HttpClient1CServer {
 
     if (token) {
       headers['Authorization'] = `access_token ${token}`
+      headers['x-access-token'] = token
       headers['Cookie'] = `access_token ${token}`
     }
 
@@ -119,4 +129,3 @@ class HttpClient1CServer {
 }
 
 export const httpClient1CServer = new HttpClient1CServer()
-
