@@ -5,22 +5,6 @@ export async function middleware(request: NextRequest) {
   const { session, response } = await getMiddlewareSession(request)
   const { pathname } = request.nextUrl
 
-  // Check all cookies from request
-  const allCookies = request.cookies.getAll()
-  console.log(
-    '[Middleware] All cookies from request:',
-    allCookies.map((c) => c.name)
-  )
-
-  console.log('[Middleware] Request cookies:', request.cookies.getAll())
-  console.log('[Middleware] Request headers:', {
-    cookie: request.headers.get('cookie'),
-    authorization: request.headers.get('authorization'),
-  })
-
-  // Проверка SSL
-  console.log('[Middleware] Protocol:', request.nextUrl.protocol)
-  console.log('[Middleware] Is HTTPS:', request.nextUrl.protocol === 'https:')
   // ✅ Маршруты авторизации
   const authRoutes = ['/login', '/registration']
   const isAuthRoute = authRoutes.some((route) => pathname.startsWith(route))
@@ -68,26 +52,11 @@ export async function middleware(request: NextRequest) {
     res.headers.set('X-XRMC-Cookie', session.user.xrmcCookie)
   }
 
-  // Получаем токен из куки
+  // Также передаём токен из куки в заголовки для 1C API (в формате как в Swagger: "access_token <token>")
   const token = request.cookies.get('access_token')?.value
-
-  // Устанавливаем токен в заголовки для передачи в API routes
   if (token) {
-    // Для Authorization заголовка (формат "access_token <token>")
     res.headers.set('Authorization', `access_token ${token}`)
-    // Также устанавливаем x-access-token для совместимости
-    res.headers.set('x-access-token', token)
-
-    // Также нужно модифицировать заголовки запроса
-    request.headers.set('Authorization', `access_token ${token}`)
-    request.headers.set('x-access-token', token)
   }
-
-  console.log('[Middleware] Token from cookie:', token ? 'present' : 'missing')
-  console.log(
-    '[Middleware] Setting x-access-token header:',
-    token ? 'yes' : 'no'
-  )
 
   return res
 }

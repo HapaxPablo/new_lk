@@ -31,11 +31,7 @@ class HttpClient1CClient {
     const headers: Record<string, string> = {}
 
     if (token) {
-      // Send token in custom header for external API authentication
-      // This is needed because cookies for domain test.lk.krasrm.com
-      // are not sent when making requests to different domain api1.krasrm.com
       headers['Authorization'] = `access_token ${token}`
-      headers['x-access-token'] = token
       headers['Cookie'] = `access_token=${token}`
     }
 
@@ -56,7 +52,7 @@ class HttpClient1CClient {
     const response = await fetch(`${this.baseUrl}${endpoint}`, config)
 
     if (response.status === 401) {
-      // Clear auth state and redirect to login
+
       window.location.href = '/login'
       throw new Error('Session expired')
     }
