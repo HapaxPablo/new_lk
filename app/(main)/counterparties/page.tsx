@@ -55,18 +55,26 @@ export default async function CounterpartiesPage(
   const search = params.search || ''
 
   try {
-    const baseUrl = process.env.NEXT_PUBLIC_URL || 'http://localhost:3000'
-    const url = new URL('/api/counterparties', baseUrl)
-    url.searchParams.set('limit', String(limit))
-    url.searchParams.set('page', String(page))
-    if (search) url.searchParams.set('search', search)
+    // Используем URL с правильным хостом для серверного компонента
+    const searchParamsObj = new URLSearchParams()
+    searchParamsObj.set('limit', String(limit))
+    searchParamsObj.set('page', String(page))
+    if (search) searchParamsObj.set('search', search)
 
     const cookieStore = await cookies()
     const cookieHeader = cookieStore.toString()
 
-    const response = await fetch(url.toString(), {
+    // Используем абсолютный URL с текущим хостом
+    const baseUrl = process.env.NEXT_PUBLIC_URL || 'http://localhost:3000'
+    const apiUrl = new URL(
+      `/api/counterparties?${searchParamsObj.toString()}`,
+      baseUrl
+    ).toString()
+
+    const response = await fetch(apiUrl, {
       headers: {
         Cookie: cookieHeader,
+        'Content-Type': 'application/json',
       },
       credentials: 'include',
     })
