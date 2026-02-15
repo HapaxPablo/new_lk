@@ -46,8 +46,16 @@ export async function middleware(request: NextRequest) {
 
   // ✅ В любом случае подставляем токен для внутренних API/SSR
   const res = NextResponse.next()
+
+  // Передаём xrmcCookie если есть
   if (session.user?.xrmcCookie) {
     res.headers.set('X-XRMC-Cookie', session.user.xrmcCookie)
+  }
+
+  // Также передаём токен из куки в заголовки для 1C API (в формате как в Swagger: "access_token <token>")
+  const token = request.cookies.get('access_token')?.value
+  if (token) {
+    res.headers.set('Authorization', `access_token ${token}`)
   }
 
   return res

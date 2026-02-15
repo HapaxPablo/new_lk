@@ -25,7 +25,7 @@ export async function POST(request: NextRequest) {
         value: data.xrmcCookie,
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
-        sameSite: 'lax',
+        sameSite: 'lax', // Changed to allow cross-origin requests to 1C API
         path: '/',
         maxAge: 60 * 60 * 24 * 7, // 7 дней (в секундах)
         expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 7), // 7 дней
