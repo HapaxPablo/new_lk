@@ -4,15 +4,15 @@ import { NextResponse, type NextRequest } from 'next/server'
 export async function middleware(request: NextRequest) {
   const { session, response } = await getMiddlewareSession(request)
   const { pathname } = request.nextUrl
-  console.log('Request cookies:', request.cookies.getAll());
+  console.log('Request cookies:', request.cookies.getAll())
   console.log('Request headers:', {
     cookie: request.headers.get('cookie'),
     authorization: request.headers.get('authorization'),
-  });
-  
+  })
+
   // Проверка SSL
-  console.log('Protocol:', request.nextUrl.protocol);
-  console.log('Is HTTPS:', request.nextUrl.protocol === 'https:');
+  console.log('Protocol:', request.nextUrl.protocol)
+  console.log('Is HTTPS:', request.nextUrl.protocol === 'https:')
   // ✅ Маршруты авторизации
   const authRoutes = ['/login', '/registration']
   const isAuthRoute = authRoutes.some((route) => pathname.startsWith(route))
@@ -64,6 +64,15 @@ export async function middleware(request: NextRequest) {
   const token = request.cookies.get('access_token')?.value
   if (token) {
     res.headers.set('Authorization', `access_token ${token}`)
+  }
+
+  // Forward x-access-token header from client request to external API
+  // This is needed because cookies for domain test.lk.krasrm.com
+  // are not sent when making requests to different domain api1.krasrm.com
+  const clientToken = request.headers.get('x-access-token')
+  if (clientToken) {
+    res.headers.set('x-access-token', clientToken)
+    res.headers.set('Authorization', `access_token ${clientToken}`)
   }
 
   return res

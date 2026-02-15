@@ -31,8 +31,11 @@ class HttpClient1CClient {
     const headers: Record<string, string> = {}
 
     if (token) {
-      // Используем формат как в Swagger: "access_token <token>" вместо "Bearer <token>"
+      // Send token in custom header for external API authentication
+      // This is needed because cookies for domain test.lk.krasrm.com
+      // are not sent when making requests to different domain api1.krasrm.com
       headers['Authorization'] = `access_token ${token}`
+      headers['x-access-token'] = token
       headers['Cookie'] = `access_token=${token}`
     }
 
