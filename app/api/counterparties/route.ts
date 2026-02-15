@@ -5,16 +5,38 @@ import { NextRequest } from 'next/server'
 export const revalidate = 3600
 
 export async function GET(request: NextRequest) {
-  // DEBUG: Check incoming headers
+  // DEBUG: Check ALL incoming headers
+  const allHeaders: Record<string, string> = {}
+  request.headers.forEach((value, key) => {
+    allHeaders[key] = value
+  })
+  console.log(
+    '[Counterparties API] ALL headers:',
+    JSON.stringify(allHeaders, null, 2)
+  )
+
+  // Check cookies
+  const cookies: Record<string, string> = {}
+  request.cookies.getAll().forEach((cookie) => {
+    cookies[cookie.name] = cookie.value
+  })
+  console.log(
+    '[Counterparties API] ALL cookies:',
+    JSON.stringify(cookies, null, 2)
+  )
+
+  // Check for token in different places
   const xAccessToken = request.headers.get('x-access-token')
+  const authHeader = request.headers.get('Authorization')
+  const cookieToken = request.cookies.get('access_token')?.value
+
+  console.log('[Counterparties API] Token check:')
   console.log(
-    '[Counterparties API] x-access-token:',
-    xAccessToken ? 'present' : 'missing'
+    '  - x-access-token header:',
+    xAccessToken ? 'PRESENT' : 'MISSING'
   )
-  console.log(
-    '[Counterparties API] all headers:',
-    Object.fromEntries(request.headers.entries())
-  )
+  console.log('  - Authorization header:', authHeader ? 'PRESENT' : 'MISSING')
+  console.log('  - access_token cookie:', cookieToken ? 'PRESENT' : 'MISSING')
 
   try {
     const { searchParams } = new URL(request.url)
