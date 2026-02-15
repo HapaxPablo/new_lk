@@ -37,19 +37,21 @@ export function TooltipModal({ renderContent }: TooltipModalProps) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isTooltipOpen, tooltipData?.endpoint])
 
-  const loadData = async () => {
-    if (!tooltipData?.endpoint) return
+const loadData = async () => {
+  if (!tooltipData?.endpoint) return
 
-    setLoading(true)
-    setError(null)
+  setLoading(true)
+  setError(null)
 
-    try {
-      const baseUrl = process.env.NEXT_PUBLIC_URL || 'http://localhost:3000'
-      const url = `${baseUrl}${tooltipData.endpoint}`
+  try {
+    // В production используем относительный URL, в development можно и полный
+   const baseUrl = process.env.NEXT_PUBLIC_API_URL || ''
+    const url = baseUrl ? `${baseUrl}${tooltipData.endpoint}` : tooltipData.endpoint
 
-      const response = await fetch(url, {
-        credentials: 'include',
-      })
+    const response = await fetch(url, {
+      credentials: 'include',
+    })
+
 
       if (!response.ok) {
         throw new Error(`Ошибка ${response.status}: ${response.statusText}`)

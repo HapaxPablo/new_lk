@@ -9,7 +9,6 @@ import {
   Calendar,
   User,
   FileText,
-  Briefcase,
 } from 'lucide-react'
 
 interface CounterpartyDetailPageProps {
@@ -22,40 +21,40 @@ async function getCounterpartyById(
   id: string
 ): Promise<ICounterpartyDetails | null> {
   try {
-    const baseUrl = process.env.NEXT_PUBLIC_URL
-      ? `${process.env.NEXT_PUBLIC_URL}`
-      : `https://${process.env.API_1C_URL?.replace(/^https?:\/\//, '').split('/')[0] || 'localhost:3000'}`
-    const url = new URL(`/api/counterparties/${id}`, baseUrl)
-
     const cookieStore = await cookies()
-    const cookieHeader = cookieStore.toString()
-
-    // Get the access token from cookies to forward via header
     const accessToken = cookieStore.get('access_token')?.value
 
-    // Build headers - include both Cookie and x-access-token
-    const headers: Record<string, string> = {
-      'Content-Type': 'application/json',
-      Accept: 'application/json',
+    if (!accessToken) {
+      console.error('No access token found')
+      return null
     }
 
-    if (cookieHeader) {
-      headers['Cookie'] = cookieHeader
-    }
+    // Прямой запрос к 1C API
+    const apiUrl = `${process.env.API_1C_URL}api/counterparties/${id}`
+    
+    console.log('Direct request to 1C API:', apiUrl)
+    console.log('Token present:', !!accessToken)
+    console.log('Token (first 20 chars):', accessToken.substring(0, 20))
 
-    if (accessToken) {
-      headers['x-access-token'] = accessToken
-    }
-
-    const response = await fetch(url.toString(), {
+    const response = await fetch(apiUrl, {
       method: 'GET',
+      headers: {
+        'Authorization': `access_token ${accessToken}`, 
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+      },
       cache: 'no-store',
-      headers,
       next: { revalidate: 0 },
     })
 
+    console.log('1C API Response status:', response.status)
+
     if (!response.ok) {
-      console.error(`API responded with status: ${response.status}`)
+      console.error(`1C API responded with status: ${response.status}`)
+      
+      const errorText = await response.text()
+      console.error('Error response:', errorText)
+      
       if (response.status === 404) {
         return null
       }
@@ -63,12 +62,12 @@ async function getCounterpartyById(
     }
 
     const data = await response.json()
+    console.log('Successfully fetched counterparty:', data.id)
     return data
   } catch (error) {
-    console.error('Error fetching nomenclature:', {
-      message: error,
-      id: id,
-      environment: process.env.NODE_ENV,
+    console.error('Error fetching counterparty:', {
+      error: error instanceof Error ? error.message : error,
+      id,
       apiUrl: process.env.API_1C_URL,
     })
     return null
