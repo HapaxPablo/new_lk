@@ -36,37 +36,22 @@ async function getNomenclatureById(
   id: string
 ): Promise<INomenclatureDetailsItem | null> {
   try {
-    const baseUrl = process.env.NEXT_PUBLIC_URL
-      ? `${process.env.NEXT_PUBLIC_URL}`
-      : `https://${process.env.API_1C_URL?.replace(/^https?:\/\//, '').split('/')[0] || 'localhost:3000'}`
+    const baseUrl = process.env.NEXT_PUBLIC_URL || 'http://localhost:3000'
     const url = new URL(`/api/nomenclatures/${id}`, baseUrl)
 
     const cookieStore = await cookies()
     const cookieHeader = cookieStore.toString()
-
-    // Get the access token from cookies to forward via header
-    const accessToken = cookieStore.get('access_token')?.value
-
-    // Build headers - include both Cookie and x-access-token
-    const headers: Record<string, string> = {
-      'Content-Type': 'application/json',
-      Accept: 'application/json',
-    }
-
-    if (cookieHeader) {
-      headers['Cookie'] = cookieHeader
-    }
-
-    if (accessToken) {
-      headers['x-access-token'] = accessToken
-    }
 
     // console.log(`Fetching nomenclature from: ${finalUrl.toString()}`)
 
     const response = await fetch(url.toString(), {
       method: 'GET',
       cache: 'no-store',
-      headers,
+      headers: {
+        'Content-Type': 'application/json',
+        Accept: 'application/json',
+        Cookie: cookieHeader,
+      },
       next: { revalidate: 0 },
     })
 
