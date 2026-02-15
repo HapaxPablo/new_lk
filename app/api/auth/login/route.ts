@@ -31,22 +31,32 @@ export async function POST(request: NextRequest) {
 
     if (data.refresh && data.access) {
       const res = NextResponse.json(data)
+
+      // Determine cookie settings based on environment
+      const isProduction = process.env.NODE_ENV === 'production'
+
       res.cookies.set({
         name: 'access_token',
         value: data.access,
         httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: 'lax',
+        secure: isProduction,
+        sameSite: isProduction ? 'none' : 'lax', // 'none' for cross-origin in production
         path: '/',
         maxAge: 60 * 60 * 24 * 7, // 7 дней (в секундах)
         expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 7), // 7 дней
       })
-      console.log('res auth', res)
+
+      console.log('Login successful, cookie settings:', {
+        secure: isProduction,
+        sameSite: isProduction ? 'none' : 'lax',
+      })
+
       return res
     }
 
     return NextResponse.json(data)
   } catch (error) {
+    console.error('Login error:', error)
     return NextResponse.json({
       result: false,
       message: 'Внутренняя ошибка сервера',

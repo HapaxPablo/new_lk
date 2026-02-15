@@ -33,7 +33,7 @@ class HttpClient1CServer {
         cookieName: '1c_auth_session',
         cookieOptions: {
           secure: process.env.NODE_ENV === 'production',
-          sameSite: 'strict' as const,
+          sameSite: 'lax' as const,
           httpOnly: true,
           maxAge: 60 * 60 * 24 * 7,
         },
@@ -52,40 +52,46 @@ class HttpClient1CServer {
     data?: any,
     isFile: boolean = false
   ): Promise<T> {
-    // Get token directly from request cookies
-    const token = request.cookies.get('access_token')?.value
+    // Get token from cookies or from headers (set by middleware)
+    let token = request.cookies.get('access_token')?.value
+
+    // Also check if token was set by middleware in headers
+    if (!token) {
+      token = request.headers.get('Authorization')?.replace('Bearer ', '')
+    }
+
     console.log('token httpServer', token)
 
-    // Get xrmcCookie from session (required by 1C API)
+    // Get xrmcCookie from session (required by 1C API for some endpoints)
     const session = await this.getSessionData(request)
     const xrmcCookie = session?.user?.xrmcCookie
-    console.log('xrmcCookie httpServer', xrmcCookie)
+    console.log('xrmcCookie from session httpServer', xrmcCookie)
 
-    // Проверяем, является ли эндпоинт публичным (GET запрос к nomenclatures, counterparties или promotions)
-    // ПРИМЕЧАНИЕ: Внешний API (api1.krasrm.com) требует аутентификацию даже для этих эндпоинтов
-    const isPublicEndpoint =
-      method === 'GET' &&
-      (endpoint.includes('nomenclatures') ||
-        endpoint.includes('counterparties') ||
-        endpoint.includes('promotions') ||
-        endpoint.includes('tasks') ||
-        endpoint.includes('media-plans'))
+    // Also try to get xrmcCookie directly from browser cookies
+    const xrmcCookieFromBrowser = request.cookies.get('xrmcCookie')?.value
+    console.log('xrmcCookie from browser httpServer', xrmcCookieFromBrowser)
+
+    // Use whichever is available
+    const xrmcCookieValue = xrmcCookie || xrmcCookieFromBrowser
 
     const headers: Record<string, string> = {}
 
     if (token) {
-      headers['Authorization'] = `Bearer ${token}`
-      // Добавляем Cookie header - 1C API может требовать его
+      // Используем формат как в Swagger: "access_token <token>" вместо "Bearer <token>"
+      headers['Authorization'] = `access_token ${token}`
+      // Также добавляем в Cookie header
       headers['Cookie'] = `access_token=${token}`
     }
 
     // Добавляем User-Agent как в check/route.ts
     headers['User-Agent'] = request.headers.get('user-agent') || ''
 
-    // Пробуем добавить xrmcCookie если есть в cookie
-    const xrmcCookieValue = request.cookies.get('xrmcCookie')?.value
+    // Добавляем xrmcCookie если есть (критически важно для некоторых эндпоинтов 1C API)
     if (xrmcCookieValue) {
       headers['X-XRMC-Cookie'] = xrmcCookieValue
+      // Also add it to Cookie header
+      headers['Cookie'] =
+        (headers['Cookie'] || '') + `; xrmcCookie=${xrmcCookieValue}`
     }
 
     if (!isFile) {
@@ -102,7 +108,6 @@ class HttpClient1CServer {
       config.body = isFile ? data : JSON.stringify(data)
     } else if (method !== 'GET') {
       // Для не-GET запросов без данных, добавляем пустой объект
-      // Это может помочь с аутентификацией
       config.body = JSON.stringify({})
     }
     console.log('headers:', headers)
@@ -118,14 +123,12 @@ class HttpClient1CServer {
     )
 
     if (response.status === 401) {
-      // Если это публичный эндпоинт и токена нет/истек
-      if (isPublicEndpoint && !token) {
-        console.log('Public endpoint but no token, returning empty result')
-        // Для публичных эндпоинтов возвращаем пустой ответ
-        return [] as any
-      }
-
       // Если есть токен, возможно он истек - возвращаем ошибку сессии
+      console.log('401 Error - Token:', token ? 'present' : 'missing')
+      console.log(
+        '401 Error - xrmcCookie:',
+        xrmcCookieValue ? 'present' : 'missing'
+      )
       throw new Error('Session expired')
     }
 

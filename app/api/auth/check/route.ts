@@ -15,7 +15,8 @@ export async function POST(request: NextRequest) {
       body: JSON.stringify({ token: token }),
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`,
+        // Используем формат как в Swagger: "access_token <token>" вместо "Bearer <token>"
+        Authorization: `access_token ${token}`,
         Cookie: `access_token=${token}`,
         'User-Agent': request.headers.get('user-agent') || '',
       },

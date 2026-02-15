@@ -31,7 +31,8 @@ class HttpClient1CClient {
     const headers: Record<string, string> = {}
 
     if (token) {
-      headers['Authorization'] = `Bearer ${token}`
+      // Используем формат как в Swagger: "access_token <token>" вместо "Bearer <token>"
+      headers['Authorization'] = `access_token ${token}`
       headers['Cookie'] = `access_token=${token}`
     }
 
