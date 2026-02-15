@@ -36,21 +36,21 @@ async function getNomenclatureById(
   id: string
 ): Promise<INomenclatureDetailsItem | null> {
   try {
-    const baseUrl = process.env.NEXT_PUBLIC_URL || 'http://localhost:3000'
-    const url = new URL(`/api/nomenclatures/${id}`, baseUrl)
+    if (!process.env.API_1C_URL) {
+      throw new Error('API_1C_URL environment variable is not defined')
+    }
 
-    const cookieStore = await cookies()
-    const cookieHeader = cookieStore.toString()
+    const baseUrl = new URL('api/nomenclatures/', process.env.API_1C_URL)
+    const finalUrl = new URL(`${id}/`, baseUrl)
 
     // console.log(`Fetching nomenclature from: ${finalUrl.toString()}`)
 
-    const response = await fetch(url.toString(), {
+    const response = await fetch(finalUrl.toString(), {
       method: 'GET',
       cache: 'no-store',
       headers: {
         'Content-Type': 'application/json',
         Accept: 'application/json',
-        Cookie: cookieHeader,
       },
       next: { revalidate: 0 },
     })
@@ -75,6 +75,7 @@ async function getNomenclatureById(
     return null
   }
 }
+
 
 export async function generateMetadata(
   props: NomenclatureDetailPageProps

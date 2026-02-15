@@ -2,7 +2,6 @@ import LoaderSkeleton from '@/components/ui/loader/LoaderSkeleton'
 import { generateNomenclaturesListMetadata } from '@/lib/configs/config-meta/nomenclatures'
 import { INomenclatureResponse } from '@/types/nomenclature'
 import { Metadata } from 'next'
-import { cookies } from 'next/headers'
 import dynamic from 'next/dynamic'
 
 const Toolbar = dynamic(
@@ -62,8 +61,7 @@ export default async function NomenclaturesPage(props: NomenclaturesPageProps) {
 
   // console.log('Page params:', { limit, page, search, brand_name, brand_id })
   try {
-    const baseUrl = process.env.NEXT_PUBLIC_URL || 'http://localhost:3000'
-    const url = new URL('/api/nomenclatures', baseUrl)
+    const url = new URL('/api/nomenclatures/', process.env.API_1C_URL)
     url.searchParams.set('limit', String(limit))
     url.searchParams.set('page', String(page))
     if (search) url.searchParams.set('search', search)
@@ -71,15 +69,9 @@ export default async function NomenclaturesPage(props: NomenclaturesPageProps) {
     if (brand_id) url.searchParams.set('brand_id', brand_id)
     if (status) url.searchParams.set('status', status)
 
-    const cookieStore = await cookies()
-    const cookieHeader = cookieStore.toString()
+    // console.log('Making request to:', url.toString())
 
-    const response = await fetch(url.toString(), {
-      headers: {
-        Cookie: cookieHeader,
-      },
-      credentials: 'include',
-    })
+    const response = await fetch(url.toString())
 
     if (!response.ok) {
       throw new Error(`Ошибка ${response.status}: ${response.statusText}`)
