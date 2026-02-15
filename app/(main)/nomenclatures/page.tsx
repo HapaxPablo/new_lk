@@ -62,7 +62,9 @@ export default async function NomenclaturesPage(props: NomenclaturesPageProps) {
 
   // console.log('Page params:', { limit, page, search, brand_name, brand_id })
   try {
-    const baseUrl = process.env.NEXT_PUBLIC_URL || 'http://localhost:3000'
+    const baseUrl = process.env.NEXT_PUBLIC_URL
+      ? `${process.env.NEXT_PUBLIC_URL}`
+      : `https://${process.env.API_1C_URL?.replace(/^https?:\/\//, '').split('/')[0] || 'localhost:3000'}`
     const url = new URL('/api/nomenclatures', baseUrl)
     url.searchParams.set('limit', String(limit))
     url.searchParams.set('page', String(page))
@@ -74,10 +76,22 @@ export default async function NomenclaturesPage(props: NomenclaturesPageProps) {
     const cookieStore = await cookies()
     const cookieHeader = cookieStore.toString()
 
+    // Get the access token from cookies to forward via header
+    const accessToken = cookieStore.get('access_token')?.value
+
+    // Build headers - include both Cookie and x-access-token
+    const headers: Record<string, string> = {}
+
+    if (cookieHeader) {
+      headers['Cookie'] = cookieHeader
+    }
+
+    if (accessToken) {
+      headers['x-access-token'] = accessToken
+    }
+
     const response = await fetch(url.toString(), {
-      headers: {
-        Cookie: cookieHeader,
-      },
+      headers,
       credentials: 'include',
     })
 
