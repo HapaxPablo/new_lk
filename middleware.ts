@@ -70,9 +70,14 @@ export async function middleware(request: NextRequest) {
   // This is needed because cookies for domain test.lk.krasrm.com
   // are not sent when making requests to different domain api1.krasrm.com
   const clientToken = request.headers.get('x-access-token')
+  console.log(
+    '[Middleware] x-access-token from client:',
+    clientToken ? 'present' : 'missing'
+  )
   if (clientToken) {
     res.headers.set('x-access-token', clientToken)
     res.headers.set('Authorization', `access_token ${clientToken}`)
+    console.log('[Middleware] Set headers for response')
   }
 
   return res

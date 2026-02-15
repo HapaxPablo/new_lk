@@ -64,18 +64,52 @@ export default async function CounterpartiesPage(
     const cookieStore = await cookies()
     const cookieHeader = cookieStore.toString()
 
-    // Используем абсолютный URL с текущим хостом
-    const baseUrl = process.env.NEXT_PUBLIC_URL || 'http://localhost:3000'
+    // Get the access token from cookies to forward via header
+    const accessToken = cookieStore.get('access_token')?.value
+
+    // DEBUG - show all cookies
+    console.log(
+      '[CounterpartiesPage] All cookies:',
+      cookieStore.getAll().map((c) => c.name)
+    )
+    console.log('[CounterpartiesPage] accessToken present:', !!accessToken)
+    if (accessToken) {
+      console.log(
+        '[CounterpartiesPage] accessToken (first 20 chars):',
+        accessToken.substring(0, 20)
+      )
+    }
+    console.log('[CounterpartiesPage] cookieHeader:', cookieHeader)
+
+    // Use absolute URL with proper host detection
+    const baseUrl = process.env.NEXT_PUBLIC_URL
+      ? `${process.env.NEXT_PUBLIC_URL}`
+      : `https://${process.env.API_1C_URL?.replace(/^https?:\/\//, '').split('/')[0] || 'localhost:3000'}`
+
     const apiUrl = new URL(
       `/api/counterparties?${searchParamsObj.toString()}`,
       baseUrl
     ).toString()
 
+    console.log('[CounterpartiesPage] apiUrl:', apiUrl)
+
+    // Build headers - include both Cookie and x-access-token
+    const headers: Record<string, string> = {
+      'Content-Type': 'application/json',
+    }
+
+    if (cookieHeader) {
+      headers['Cookie'] = cookieHeader
+    }
+
+    if (accessToken) {
+      headers['x-access-token'] = accessToken
+    }
+
+    console.log('[CounterpartiesPage] headers:', headers)
+
     const response = await fetch(apiUrl, {
-      headers: {
-        Cookie: cookieHeader,
-        'Content-Type': 'application/json',
-      },
+      headers,
       credentials: 'include',
     })
 

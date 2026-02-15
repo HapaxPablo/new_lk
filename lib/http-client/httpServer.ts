@@ -16,17 +16,33 @@ class HttpClient1CServer {
     data?: any,
     isFile: boolean = false
   ): Promise<T> {
-    // First try to get token from request headers (forwarded by middleware from client)
+    // First try to get token from request headers (forwarded by client or middleware)
     // This is needed because cookies for domain test.lk.krasrm.com
     // are not sent when making requests to different domain api1.krasrm.com
     let token = request.headers.get('x-access-token')
 
-    // Fallback to cookie-based token if header not present
+    console.log(
+      '[httpServer] x-access-token from header:',
+      token ? 'present' : 'missing'
+    )
+
+    // Fallback: try to get from request cookies
     if (!token) {
-      token = await getToken()
+      token = request.cookies.get('access_token')?.value ?? null
+      console.log(
+        '[httpServer] token from request.cookies:',
+        token ? 'present' : 'missing'
+      )
     }
 
-    console.log('token httpServer', token)
+    // Last resort: use getToken (which uses await cookies())
+    if (!token) {
+      token = await getToken()
+      console.log(
+        '[httpServer] token from getToken():',
+        token ? 'present' : 'missing'
+      )
+    }
 
     // Проверяем, является ли эндпоинт публичным (GET запрос к nomenclatures)
     const isPublicEndpoint =

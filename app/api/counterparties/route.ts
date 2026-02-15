@@ -5,7 +5,16 @@ import { NextRequest } from 'next/server'
 export const revalidate = 3600
 
 export async function GET(request: NextRequest) {
-  // console.log('Counterparties API called with URL:', request.url)
+  // DEBUG: Check incoming headers
+  const xAccessToken = request.headers.get('x-access-token')
+  console.log(
+    '[Counterparties API] x-access-token:',
+    xAccessToken ? 'present' : 'missing'
+  )
+  console.log(
+    '[Counterparties API] all headers:',
+    Object.fromEntries(request.headers.entries())
+  )
 
   try {
     const { searchParams } = new URL(request.url)
