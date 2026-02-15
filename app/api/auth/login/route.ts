@@ -35,13 +35,20 @@ export async function POST(request: NextRequest) {
       // Determine cookie settings based on environment
       const isProduction = process.env.NODE_ENV === 'production'
 
+      // Получаем домен из запроса
+      const requestDomain = request.headers.get('host') || ''
+      // Убираем порт из домена
+      const domain = requestDomain.split(':')[0]
+
+      // Устанавливаем куку с правильными настройками для продакшена
       res.cookies.set({
         name: 'access_token',
         value: data.access,
         httpOnly: true,
         secure: isProduction,
-        sameSite: isProduction ? 'none' : 'lax', // 'none' for cross-origin in production
+        sameSite: isProduction ? 'none' : 'lax',
         path: '/',
+        domain: isProduction ? domain : undefined, // Явно указываем домен в продакшене
         maxAge: 60 * 60 * 24 * 7, // 7 дней (в секундах)
         expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 7), // 7 дней
       })
@@ -49,6 +56,7 @@ export async function POST(request: NextRequest) {
       console.log('Login successful, cookie settings:', {
         secure: isProduction,
         sameSite: isProduction ? 'none' : 'lax',
+        domain: isProduction ? domain : undefined,
       })
 
       return res
