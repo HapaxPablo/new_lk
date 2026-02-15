@@ -40,6 +40,13 @@ export async function POST(request: NextRequest) {
       // Убираем порт из домена
       const domain = requestDomain.split(':')[0]
 
+      console.log('[Login] Cookie settings:', {
+        isProduction,
+        domain,
+        tokenLength: data.access.length,
+        cookieName: 'access_token',
+      })
+
       // Устанавливаем куку с правильными настройками для продакшена
       res.cookies.set({
         name: 'access_token',
@@ -53,11 +60,10 @@ export async function POST(request: NextRequest) {
         expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 7), // 7 дней
       })
 
-      console.log('Login successful, cookie settings:', {
-        secure: isProduction,
-        sameSite: isProduction ? 'none' : 'lax',
-        domain: isProduction ? domain : undefined,
-      })
+      console.log(
+        '[Login] Cookie set successfully for domain:',
+        isProduction ? domain : 'localhost'
+      )
 
       return res
     }

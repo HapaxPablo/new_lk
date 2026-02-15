@@ -4,15 +4,23 @@ import { NextResponse, type NextRequest } from 'next/server'
 export async function middleware(request: NextRequest) {
   const { session, response } = await getMiddlewareSession(request)
   const { pathname } = request.nextUrl
-  console.log('Request cookies:', request.cookies.getAll())
-  console.log('Request headers:', {
+
+  // Check all cookies from request
+  const allCookies = request.cookies.getAll()
+  console.log(
+    '[Middleware] All cookies from request:',
+    allCookies.map((c) => c.name)
+  )
+
+  console.log('[Middleware] Request cookies:', request.cookies.getAll())
+  console.log('[Middleware] Request headers:', {
     cookie: request.headers.get('cookie'),
     authorization: request.headers.get('authorization'),
   })
 
   // Проверка SSL
-  console.log('Protocol:', request.nextUrl.protocol)
-  console.log('Is HTTPS:', request.nextUrl.protocol === 'https:')
+  console.log('[Middleware] Protocol:', request.nextUrl.protocol)
+  console.log('[Middleware] Is HTTPS:', request.nextUrl.protocol === 'https:')
   // ✅ Маршруты авторизации
   const authRoutes = ['/login', '/registration']
   const isAuthRoute = authRoutes.some((route) => pathname.startsWith(route))
@@ -60,25 +68,26 @@ export async function middleware(request: NextRequest) {
     res.headers.set('X-XRMC-Cookie', session.user.xrmcCookie)
   }
 
-  // Также передаём токен из куки в заголовки для 1C API (в формате как в Swagger: "access_token <token>")
+  // Получаем токен из куки
   const token = request.cookies.get('access_token')?.value
+
+  // Устанавливаем токен в заголовки для передачи в API routes
   if (token) {
+    // Для Authorization заголовка (формат "access_token <token>")
     res.headers.set('Authorization', `access_token ${token}`)
+    // Также устанавливаем x-access-token для совместимости
+    res.headers.set('x-access-token', token)
+
+    // Также нужно модифицировать заголовки запроса
+    request.headers.set('Authorization', `access_token ${token}`)
+    request.headers.set('x-access-token', token)
   }
 
-  // Forward x-access-token header from client request to external API
-  // This is needed because cookies for domain test.lk.krasrm.com
-  // are not sent when making requests to different domain api1.krasrm.com
-  const clientToken = request.headers.get('x-access-token')
+  console.log('[Middleware] Token from cookie:', token ? 'present' : 'missing')
   console.log(
-    '[Middleware] x-access-token from client:',
-    clientToken ? 'present' : 'missing'
+    '[Middleware] Setting x-access-token header:',
+    token ? 'yes' : 'no'
   )
-  if (clientToken) {
-    res.headers.set('x-access-token', clientToken)
-    res.headers.set('Authorization', `access_token ${clientToken}`)
-    console.log('[Middleware] Set headers for response')
-  }
 
   return res
 }
