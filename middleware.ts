@@ -4,7 +4,15 @@ import { NextResponse, type NextRequest } from 'next/server'
 export async function middleware(request: NextRequest) {
   const { session, response } = await getMiddlewareSession(request)
   const { pathname } = request.nextUrl
-
+  console.log('Request cookies:', request.cookies.getAll());
+  console.log('Request headers:', {
+    cookie: request.headers.get('cookie'),
+    authorization: request.headers.get('authorization'),
+  });
+  
+  // Проверка SSL
+  console.log('Protocol:', request.nextUrl.protocol);
+  console.log('Is HTTPS:', request.nextUrl.protocol === 'https:');
   // ✅ Маршруты авторизации
   const authRoutes = ['/login', '/registration']
   const isAuthRoute = authRoutes.some((route) => pathname.startsWith(route))
