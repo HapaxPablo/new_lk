@@ -6,10 +6,13 @@ import { useAuth } from '@/providers/auth-provider/AuthProvider'
 import { useMemo } from 'react'
 
 export function useHttpClient() {
-  const { logout } = useAuth()
+  const { logout, isAuthenticated } = useAuth()
   const token = getClientAccessToken()
 
   return useMemo(() => {
-    return HttpClient1C.client(token, logout)
-  }, [token, logout])
+    return {
+      client: HttpClient1C.client(token, logout),
+      isAuthenticated,
+    }
+  }, [token, logout, isAuthenticated])
 }

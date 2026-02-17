@@ -1,111 +1,47 @@
 'use client'
 
-import { contactLabelArray, IUserDetailsItem } from '@/types/user'
 import NotFound from '@/app/not-found'
-import { UserAvatar } from './userAvatar/UserAvatar'
-import { ContactItem } from './ContactItem/ContactItem'
-import { useEffect, useState } from 'react'
 import { UserInfoSkeleton } from '../ui/loader/UserInfoSkeleton'
-import { useHttpClient } from '@/hooks/useHttpClient'
+import { useFetchUserById } from '@/lib/api-client/useFetchUserById'
+import dynamic from 'next/dynamic'
+import { UserInfoContent } from './components/userInfoContent/UserInfoContent'
+
+const LoginForm = dynamic(
+  () =>
+    import('@/components/auth/login/mobile/LoginFormMobile').then((mod) => ({
+      default: mod.LoginFormMobile,
+    })),
+  { ssr: false, loading: () => <div>Loading...</div> }
+)
 
 interface Props {
   userId: string
 }
 
 export default function UserInfoModalView({ userId }: Props) {
+  console.log('prop userId:', userId)
+  const { error, isAuthenticated, isLoading, mutate, userInfo } =
+    useFetchUserById(userId)
+
   if (!userId) return <NotFound />
-
-  const [userInfo, setUserInfo] = useState<IUserDetailsItem | null>(null)
-  const [loading, setLoading] = useState<boolean>(true)
-  const client = useHttpClient()
-
-  type ContactInfo = IUserDetailsItem['contacts']
+  if (isLoading) return <UserInfoSkeleton />
+  if (!isAuthenticated)
+    return (
+      <div>
+        <LoginForm />
+        <div className="text-red-500 mt-2">Пользователь не авторизован.</div>
+      </div>
+    )
+  if (error) return <div className="text-red-500">Ошибка: {error}</div>
+  if (!userInfo) return <div>Пользователь не найден</div>
 
   const fullName = [
-    userInfo?.full_name?.last_name,
-    userInfo?.full_name?.first_name,
-    userInfo?.full_name?.middle_name,
+    userInfo.full_name?.last_name,
+    userInfo.full_name?.first_name,
+    userInfo.full_name?.middle_name,
   ]
     .filter(Boolean)
     .join(' ')
 
-  useEffect(() => {
-    async function fetchUserInfo() {
-      try {
-        const response = await client.get<IUserDetailsItem>(
-          `/api/users/${userId}`
-        )
-        if (!response) {
-          throw new Error(`HTTP error! status: ${response}`)
-        }
-        setUserInfo(response)
-        setLoading(false)
-      } catch (error) {
-        console.error('Error fetching user info:', error)
-        setLoading(false)
-      }
-    }
-
-    fetchUserInfo()
-  }, [userId])
-  console.log("res user:", userInfo)
-
-  return (
-    <>
-      {loading ? (
-        <UserInfoSkeleton />
-      ) : (
-        <div className="flex gap-4 items-start flex-col">
-          <div className="flex flex-row gap-3 w-full">
-            <UserAvatar src={userInfo?.full_name?.avatar} alt={fullName} />
-
-            <div className="flex-1 space-y-2">
-              <div className="text-lg font-semibold">{fullName}</div>
-
-              {userInfo?.phone_number && (
-                <ContactItem type="phone" value={userInfo.phone_number} title="Телефон" />
-              )}
-            </div>
-          </div>
-          <div
-            style={{
-              width: '100%',
-              borderBottom: '1px solid #eee',
-            }}
-          />
-          <div>
-            <h2 className="text-lg font-semibold">
-              Дополнительная контактная информация
-            </h2>
-          </div>
-          {userInfo?.contacts.length !== 0 ? (
-            <div>
-              {userInfo?.contacts?.map(
-                (contact: ContactInfo[number], index: number) => (
-                  <ContactItem
-                    key={index}
-                    type={
-                      contactLabelArray.find(
-                        (item) => item.value === contact.type
-                      )?.value || 'other'
-                    }
-                    title={
-                      contactLabelArray.find(
-                        (item) => item.value === contact.type
-                      )?.label || 'other'
-                    }
-                    value={contact.meaning || 'No contact info'}
-                    meta={contact.ext}
-                  // comment={contact.comment}
-                  />
-                )
-              )}
-            </div>
-          ) : (
-            <div>Нет доп. контактной информации</div>
-          )}
-        </div>
-      )}
-    </>
-  )
+  return <UserInfoContent userInfo={userInfo} fullName={fullName} />
 }

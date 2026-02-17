@@ -7,6 +7,7 @@ import { ToastProvider } from '@/providers/toast/ToastProvider'
 import type { Metadata } from 'next'
 import localFont from 'next/font/local'
 import '@/styles/index.css'
+import { SWRProvider } from '@/providers/swr/SwrProvider'
 
 const montserrat = localFont({
   src: [
@@ -48,17 +49,19 @@ export default function RootLayout({
   return (
     <html lang="ru">
       <body className={`${montserrat.className} antialiased`}>
-        <ModalProvider>
-          <ToastProvider>
-            <AuthProvider>
-              <div className="layout">
-                <Header />
-                <main className="content">{children} </main>
-                <Footer />
-              </div>
-            </AuthProvider>
-          </ToastProvider>
-        </ModalProvider>
+        <AuthProvider>
+          <ModalProvider>
+            <ToastProvider>
+              <SWRProvider>
+                <div className="layout">
+                  <Header />
+                  <main className="content">{children} </main>
+                  <Footer />
+                </div>
+              </SWRProvider>
+            </ToastProvider>
+          </ModalProvider>
+        </AuthProvider>
       </body>
     </html>
   )
