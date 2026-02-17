@@ -4,6 +4,8 @@ import { IPromotionDetails } from '@/types/promotion'
 import styles from './PromotionDetail.module.scss'
 import { InfoRow } from '@/components/ui/InfoRow'
 import { Tag, Hash, Calendar, Users, Image } from 'lucide-react'
+import { httpClient1CServer } from '@/lib/http-client/httpServer'
+import { notFound } from 'next/navigation'
 
 interface PromotionDetailPageProps {
   params: Promise<{
@@ -13,55 +15,37 @@ interface PromotionDetailPageProps {
 
 async function getPromotionById(id: string): Promise<IPromotionDetails | null> {
   try {
-    const baseUrl = process.env.NEXT_PUBLIC_URL
-      ? `${process.env.NEXT_PUBLIC_URL}`
-      : `https://${process.env.API_1C_URL?.replace(/^https?:\/\//, '').split('/')[0] || 'localhost:3000'}`
-    const url = new URL(`/api/promotions/${id}`, baseUrl)
-
     const cookieStore = await cookies()
-    const cookieHeader = cookieStore.toString()
 
-    // Get the access token from cookies to forward via header
-    const accessToken = cookieStore.get('access_token')?.value
+    // Получаем токен из cookies
+    const token = cookieStore.get('access_token')?.value
+    const xrmcCookie = cookieStore.get('xrmcCookie')?.value
 
-    // Build headers - include both Cookie and x-access-token
-    const headers: Record<string, string> = {
-      'Content-Type': 'application/json',
-      Accept: 'application/json',
+    if (!token) {
+      console.error('No access token found')
+      return null
     }
 
-    if (cookieHeader) {
-      headers['Cookie'] = cookieHeader
-    }
+    // Используем прямой метод с токеном
+    const data = await httpClient1CServer.get<IPromotionDetails>(
+      cookieStore,
+      `api/promotions/${id}/`
+    )
 
-    if (accessToken) {
-      headers['x-access-token'] = accessToken
-    }
-
-    const response = await fetch(url.toString(), {
-      method: 'GET',
-      cache: 'no-store',
-      headers,
-      next: { revalidate: 0 },
-    })
-
-    if (!response.ok) {
-      console.error(`API responded with status: ${response.status}`)
-      if (response.status === 404) {
-        return null
-      }
-      throw new Error(`HTTP error! status: ${response.status}`)
-    }
-
-    const data = await response.json()
     return data
   } catch (error) {
     console.error('Error fetching promotion:', {
-      message: error,
-      id: id,
+      error,
+      id,
       environment: process.env.NODE_ENV,
       apiUrl: process.env.API_1C_URL,
     })
+
+    // Если ошибка 404, возвращаем null
+    if (error instanceof Error && error.message.includes('404')) {
+      return null
+    }
+
     return null
   }
 }
@@ -69,20 +53,26 @@ async function getPromotionById(id: string): Promise<IPromotionDetails | null> {
 export async function generateMetadata(
   props: PromotionDetailPageProps
 ): Promise<Metadata> {
-  const params = await props.params
-  const { id } = params
+  try {
+    const params = await props.params
+    const { id } = params
 
-  const promotion = await getPromotionById(id)
+    const promotion = await getPromotionById(id)
 
-  if (!promotion) {
-    return {
-      title: 'Акция не найдена | Личный кабинет',
+    if (!promotion) {
+      return {
+        title: 'Акция не найдена | Личный кабинет',
+      }
     }
-  }
 
-  return {
-    title: `${promotion.main_info || 'Акция'} | Акции`,
-    description: `Детальная информация об акции`,
+    return {
+      title: `${promotion.main_info || 'Акция'} | Акции`,
+      description: `Детальная информация об акции`,
+    }
+  } catch (error) {
+    return {
+      title: 'Ошибка | Акции',
+    }
   }
 }
 
@@ -95,14 +85,7 @@ export default async function PromotionDetailPage(
   const promotion = await getPromotionById(id)
 
   if (!promotion) {
-    return (
-      <div className={styles.container}>
-        <div className={styles.notFoundCard}>
-          <h1 className={styles.notFoundTitle}>Акция не найдена</h1>
-          <p>Запрошенная акция с ID {id} не существует или была удалена.</p>
-        </div>
-      </div>
-    )
+    notFound() // Используем next/navigation для 404
   }
 
   const formattedDate = promotion.created

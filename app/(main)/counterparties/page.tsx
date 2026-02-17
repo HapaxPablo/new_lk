@@ -4,6 +4,7 @@ import { Metadata } from 'next'
 import { cookies } from 'next/headers'
 import dynamic from 'next/dynamic'
 import styles from './CounterpartiesPage.module.scss'
+import { httpClient1CServer } from '@/lib/http-client/httpServer'
 
 const Toolbar = dynamic(
   () =>
@@ -45,10 +46,9 @@ export async function generateMetadata(
   }
 }
 
-import { NextRequest } from 'next/server'
-import { httpClient1CServer } from '@/lib/http-client/httpServer'
-
-export default async function CounterpartiesPage(props: CounterpartiesPageProps) {
+export default async function CounterpartiesPage(
+  props: CounterpartiesPageProps
+) {
   const searchParams = await props.searchParams
   const limit = Number(searchParams.limit) || 150
   const page = Number(searchParams.page) || 1
@@ -56,22 +56,7 @@ export default async function CounterpartiesPage(props: CounterpartiesPageProps)
 
   try {
     const cookieStore = await cookies()
-    
-    // Создаем моковый NextRequest с кукам
-    const url = new URL('http://localhost')
-    const headers = new Headers()
-    headers.set('cookie', cookieStore.toString())
-    
-    const accessToken = cookieStore.get('access_token')?.value
-    if (accessToken) {
-      headers.set('authorization', `Bearer ${accessToken}`)
-    }
-    
-    const mockRequest = new NextRequest(url, {
-      headers,
-    })
 
-    // Прямой запрос к 1C API через HttpClient
     const queryString = new URLSearchParams({
       limit: String(limit),
       page: String(page),
@@ -79,10 +64,9 @@ export default async function CounterpartiesPage(props: CounterpartiesPageProps)
     }).toString()
 
     const data = await httpClient1CServer.get<ICounterpartyResponse>(
-      mockRequest,
+      cookieStore,
       `api/counterparties/?${queryString}`
     )
-
     return (
       <div className={styles.container}>
         <h1 className={styles.title}>Контрагенты</h1>

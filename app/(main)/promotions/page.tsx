@@ -1,29 +1,21 @@
+// app/promotions/page.tsx
 import LoaderSkeleton from '@/components/ui/loader/LoaderSkeleton'
 import { IPromotionResponse } from '@/types/promotion'
 import { Metadata } from 'next'
 import { cookies } from 'next/headers'
 import dynamic from 'next/dynamic'
+import { redirect } from 'next/navigation'
 import styles from './PromotionsPage.module.scss'
+import { httpClient1CServer } from '@/lib/http-client/httpServer'
 
 const Toolbar = dynamic(
-  () =>
-    import('../../../components/toolbar/Toolbar').then((mod) => ({
-      default: mod.default,
-    })),
-  {
-    ssr: true,
-    loading: () => <LoaderSkeleton />,
-  }
+  () => import('../../../components/toolbar/Toolbar').then((mod) => ({ default: mod.default })),
+  { ssr: true, loading: () => <LoaderSkeleton /> }
 )
+
 const PromotionsWrapper = dynamic(
-  () =>
-    import('../../../components/promotions/PromotionsWrapper').then((mod) => ({
-      default: mod.PromotionsWrapper,
-    })),
-  {
-    ssr: true,
-    loading: () => <LoaderSkeleton />,
-  }
+  () => import('../../../components/promotions/PromotionsWrapper').then((mod) => ({ default: mod.PromotionsWrapper })),
+  { ssr: true, loading: () => <LoaderSkeleton /> }
 )
 
 interface PromotionsPageProps {
@@ -34,9 +26,7 @@ interface PromotionsPageProps {
   }>
 }
 
-export async function generateMetadata(
-  props: PromotionsPageProps
-): Promise<Metadata> {
+export async function generateMetadata(): Promise<Metadata> {
   return {
     title: 'Акции | Личный кабинет',
     description: 'Список акций',
@@ -45,53 +35,35 @@ export async function generateMetadata(
 
 export default async function PromotionsPage(props: PromotionsPageProps) {
   const searchParams = await props.searchParams
-  const params = await searchParams
-  const limit = Number(params.limit) || 150
-  const page = Number(params.page) || 1
-  const search = params.search || ''
+  const limit = Number(searchParams.limit) || 150
+  const page = Number(searchParams.page) || 1
+  const search = searchParams.search || ''
 
   try {
-    const baseUrl = process.env.NEXT_PUBLIC_URL
-      ? `${process.env.NEXT_PUBLIC_URL}`
-      : `https://${process.env.API_1C_URL?.replace(/^https?:\/\//, '').split('/')[0] || 'localhost:3000'}`
-    const url = new URL('/api/promotions', baseUrl)
-    url.searchParams.set('limit', String(limit))
-    url.searchParams.set('page', String(page))
-    if (search) url.searchParams.set('search', search)
-
     const cookieStore = await cookies()
-    const cookieHeader = cookieStore.toString()
-
-    // Get the access token from cookies to forward via header
+    
+    // Проверяем наличие токена
     const accessToken = cookieStore.get('access_token')?.value
-
-    // Build headers - include both Cookie and x-access-token
-    const headers: Record<string, string> = {}
-
-    if (cookieHeader) {
-      headers['Cookie'] = cookieHeader
+    if (!accessToken) {
+      redirect('/login')
     }
 
-    if (accessToken) {
-      headers['x-access-token'] = accessToken
-    }
+    const queryString = new URLSearchParams({
+      limit: String(limit),
+      page: String(page),
+      ...(search && { search }),
+    }).toString()
 
-    const response = await fetch(url.toString(), {
-      headers,
-      credentials: 'include',
-    })
-    console.log('response', response)
+    // Прямой вызов httpClient1CServer с cookieStore
+    const data = await httpClient1CServer.get<IPromotionResponse>(
+      cookieStore,
+      `api/promotions/?${queryString}`
+    )
 
-    if (!response.ok) {
-      throw new Error(`Ошибка ${response.status}: ${response.statusText}`)
-    }
-
-    const data: IPromotionResponse = await response.json()
     return (
       <div className={styles.container}>
         <h1 className={styles.title}>Акции</h1>
         <Toolbar totalItems={data.count} currentLimit={limit} />
-
         <div className={styles.contentWrapper}>
           <div className={styles.content}>
             <PromotionsWrapper
@@ -106,10 +78,11 @@ export default async function PromotionsPage(props: PromotionsPageProps) {
     )
   } catch (error) {
     console.error('Error fetching promotions:', error)
-    if (error instanceof Error) {
-      throw error
-    } else {
-      throw new Error('Произошла неизвестная ошибка')
+    
+    if (error instanceof Error && error.message === 'Session expired') {
+      redirect('/login')
     }
+    
+    throw error
   }
 }
