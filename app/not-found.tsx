@@ -67,7 +67,7 @@ export default function NotFound() {
               Задачи
             </Link>
             <Link
-              href="/contractors"
+              href="/counterparties"
               className="text-blue-600 hover:text-blue-800 text-sm"
             >
               Контрагенты

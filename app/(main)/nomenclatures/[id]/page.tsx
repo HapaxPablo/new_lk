@@ -4,17 +4,11 @@ import {
   ResponsibleCard,
   TabsWrapper,
 } from '@/components/nomenclatureById'
-import {
-  Wrench,
-  Radio,
-  Megaphone,
-  MapPin,
-  MapPinned,
-  BoomBox,
-  ToolCase,
-} from 'lucide-react'
+import { BrandInfoTooltip } from '@/components/ui/tooltip/BrandInfoTooltip'
+import { Radio, MapPinned, BoomBox, ToolCase } from 'lucide-react'
 import { INomenclatureDetailsItem } from '@/types/nomenclature'
 import { Metadata } from 'next'
+
 import {
   generateNomenclatureMetadata,
   generateNomenclatureStructuredData,
@@ -81,7 +75,6 @@ async function getNomenclatureById(
   }
 }
 
-// Генерация метаданных для SEO
 export async function generateMetadata(
   props: NomenclatureDetailPageProps
 ): Promise<Metadata> {
@@ -102,8 +95,6 @@ export default async function NomenclatureDetailPage(
 ) {
   const params = await props.params
   const { id } = params
-
-  // Загружаем данные номенклатуры через ваш API endpoint
   const nomenclature = await getNomenclatureById(id)
   // console.log('DETAILS', nomenclature)
 
@@ -135,14 +126,8 @@ export default async function NomenclatureDetailPage(
     responsible,
   } = nomenclature
 
-  // Объединяем все изображения
   const allImages = [...exterior, ...interior]
 
-  const sliderItems = allImages.map((img) => ({
-    src: img.source,
-  }))
-
-  // Генерируем structured data для SEO
   const structuredData = generateNomenclatureStructuredData(nomenclature, id)
 
   return (
@@ -266,11 +251,19 @@ export default async function NomenclatureDetailPage(
               <h2 className="text-xl font-semibold text-[#1E3961]">
                 Место вещания
               </h2>
-              <span>{`${brand?.description || 'нет данных'} ${brand?.name || 'нет данных'}`}</span>
+              <BrandInfoTooltip brand={brand} />
             </div>
             <MapPlacement
-              lat={address?.latitude ? Number(address.latitude) : 56.011152}
-              lng={address?.longitude ? Number(address.longitude) : 92.814753}
+              lat={
+                address.coordinates?.latitude
+                  ? Number(address.coordinates.latitude)
+                  : 56.011152
+              }
+              lng={
+                address.coordinates?.longitude
+                  ? Number(address.coordinates.longitude)
+                  : 92.814753
+              }
               // name={main_info.name}
               // address={nomenclature.address}
             />

@@ -5,45 +5,64 @@ import { NextRequest } from 'next/server'
 export const revalidate = 3600
 
 export async function GET(request: NextRequest) {
-  console.log('Counterparties API called with URL:', request.url)
+  console.log('=== API Route Debug ===')
+  console.log('URL:', request.url)
+  console.log('Cookies:', request.cookies.getAll())
+  console.log('Headers:', {
+    authorization: request.headers.get('authorization'),
+    'x-access-token': request.headers.get('x-access-token'),
+    cookie: request.headers.get('cookie'),
+  })
 
   try {
     const { searchParams } = new URL(request.url)
 
     const queryParams = {
-      limit: Number(searchParams.get('limit')) || 150,
+      limit: Number(searchParams.get('limit')) || 24,
       page: Number(searchParams.get('page')) || 1,
-      name: searchParams.get('name') || undefined,
-      is_deleted: 'false',
+      search: searchParams.get('search') || undefined,
     }
-
-    console.log('Query params for counterparties:', queryParams)
 
     const paramsFor1C: Record<string, string> = {
       limit: String(queryParams.limit),
       page: String(queryParams.page),
-      is_deleted: queryParams.is_deleted,
     }
 
-    if (queryParams.name) {
-      paramsFor1C.name = queryParams.name
+    if (queryParams.search) {
+      paramsFor1C.search = queryParams.search
     }
 
     const queryString = new URLSearchParams(paramsFor1C).toString()
-    console.log('Making request to 1C API for counterparties with params:', paramsFor1C)
-
+    
     const response = await HttpClient1C.server(
       request
     ).get<ICounterpartyResponse>(`api/counterparties/?${queryString}`)
 
-    console.log('Response from 1C API for counterparties received, count:', response.count)
+    console.log('Response from 1C API received, count:', response.count)
+    
 
-    return Response.json(response)
+    return new Response(JSON.stringify(response), {
+      status: 200,
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    })
+    
   } catch (error: any) {
     console.error('Error in counterparties API:', error)
-    return Response.json(
-      { error: error.message },
-      { status: error.status || 500 }
-    )
+    
+    // Определяем статус ошибки
+    const status = error.message.includes('Session expired') ? 401 : 
+                  error.message.includes('Request failed') ? 502 : 500
+    
+    return new Response(JSON.stringify({ 
+      error: error.message,
+      details: error.toString()
+    }), {
+      status: status,
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    })
   }
 }

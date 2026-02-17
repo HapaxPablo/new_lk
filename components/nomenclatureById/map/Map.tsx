@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { Button } from '@/components/ui/button/Button'
+import styles from './Map.module.scss'
 
 interface MapProps {
   lng: number
@@ -13,7 +14,7 @@ interface MapProps {
 export function MapPlacement({ className, lat, lng, address }: MapProps) {
   const [showMap, setShowMap] = useState(false)
 
-  const yandexMapUrl = `https://yandex.ru/map-widget/v1/?ll=${lng},${lat}&z=17&l=map&pt=${lng},${lat},pm2rdl`
+  const yandexMapUrl = `https://yandex.ru/map-widget/v1/?ll=${lng},${lat}&z=17&l=map&pt=${lng},${lat},pm2rdl&scroll=false`
 
   return (
     <>
@@ -32,7 +33,7 @@ export function MapPlacement({ className, lat, lng, address }: MapProps) {
           >
             Скрыть карту
           </Button>
-          
+
           <div className="relative w-full h-[400px] rounded-lg overflow-hidden">
             <iframe
               src={yandexMapUrl}
@@ -40,6 +41,7 @@ export function MapPlacement({ className, lat, lng, address }: MapProps) {
               height="100%"
               style={{ border: 'none' }}
               allowFullScreen
+              className={styles['map-iframe']}
               title="Яндекс Карта"
             />
           </div>

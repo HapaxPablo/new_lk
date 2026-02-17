@@ -14,14 +14,15 @@ declare module 'iron-session' {
 }
 
 export const sessionOptions = {
-  password: process.env.SESSION_SECRET || 'complex_password_at_least_32_characters', // В продакшене использовать env переменную
+  password:
+    process.env.SESSION_SECRET || 'complex_password_at_least_32_characters',
   cookieName: '1c_auth_session',
   cookieOptions: {
     secure: process.env.NODE_ENV === 'production',
-    sameSite: 'strict' as const,
+    sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
     httpOnly: true,
-    maxAge: 60 * 60 * 24 * 7 // 1 неделя
-  }
+    maxAge: 60 * 60 * 24 * 7, // 1 неделя
+  },
 }
 
 // Универсальная функция для получения сессии
@@ -30,7 +31,10 @@ export async function getSession() {
     // Серверный код
     try {
       const cookieStore = await cookies()
-      return await getIronSession<IronSessionData>(await cookieStore, sessionOptions)
+      return await getIronSession<IronSessionData>(
+        await cookieStore,
+        sessionOptions
+      )
     } catch (e) {
       console.error('Failed to get session from cookies:', e)
       // Fallback для случаев, когда cookies() не доступен (например, в middleware)
@@ -53,7 +57,7 @@ export async function getClientSession() {
   try {
     const response = await fetch('/api/auth/session', {
       cache: 'no-store',
-      credentials: 'include'
+      credentials: 'include',
     })
 
     if (!response.ok) throw new Error('Failed to fetch session')
@@ -67,7 +71,10 @@ export async function getClientSession() {
 // Для Server Components и Server Actions
 export async function getServerSession() {
   const cookieStore = await cookies()
-  return await getIronSession<IronSessionData>(await cookieStore, sessionOptions)
+  return await getIronSession<IronSessionData>(
+    await cookieStore,
+    sessionOptions
+  )
 }
 
 // Для Route Handlers (app router)
@@ -78,6 +85,10 @@ export async function getRouteSession(req: NextRequest, res: NextResponse) {
 // Для middleware
 export async function getMiddlewareSession(req: NextRequest) {
   const res = new NextResponse()
-  const session = await getIronSession<IronSessionData>(req, res, sessionOptions)
+  const session = await getIronSession<IronSessionData>(
+    req,
+    res,
+    sessionOptions
+  )
   return { session, response: res }
 }

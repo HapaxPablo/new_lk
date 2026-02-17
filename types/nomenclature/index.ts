@@ -82,8 +82,11 @@ export interface IAddressNomenclature {
   }
   microdistrict: string
   index: string // почтовый индекс
-  latitude: string
-  longitude: string
+  coordinates: {
+    id: string
+    latitude: string
+    longitude: string
+  }
   full_address: string
 }
 
