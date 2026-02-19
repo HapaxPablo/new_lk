@@ -37,7 +37,13 @@ export function MapPlacement({ className, lat, lng, address }: MapProps) {
         })
 
         // Отключаем ВСЕ нежелательные поведения
-        map.behaviors.disable([
+        map.behaviors.disable(isMobile ? [
+          'drag', // перетаскивание
+          'scrollZoom', // зум колесом
+          'dblClickZoom', // зум двойным кликом
+          'multiTouch', // мультитач на мобильных - ВАЖНО!
+          'rightMouseButtonMagnifier',
+        ] : [
           // 'drag', // перетаскивание
           'scrollZoom', // зум колесом
           'dblClickZoom', // зум двойным кликом
