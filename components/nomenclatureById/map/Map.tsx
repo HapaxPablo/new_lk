@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { Button } from '@/components/ui/button/Button'
 import styles from './Map.module.scss'
+import { useMediaQuery } from 'usehooks-ts'
 
 interface MapProps {
   lng: number
@@ -13,8 +14,10 @@ interface MapProps {
 
 export function MapPlacement({ className, lat, lng, address }: MapProps) {
   const [showMap, setShowMap] = useState(false)
+  const isMobile = useMediaQuery('(max-width: 600px)')
 
-  const yandexMapUrl = `https://yandex.ru/map-widget/v1/?ll=${lng},${lat}&z=17&l=map&pt=${lng},${lat},pm2rdl&scroll=false`
+  const desktopUrl = `https://yandex.ru/map-widget/v1/?ll=${lng},${lat}&z=17&l=map&pt=${lng},${lat},pm2rdl&scroll=false`
+  const mobileUrl = `https://yandex.ru/map-widget/v1/?ll=${lng},${lat}&z=17&l=map&pt=${lng},${lat},pm2rdl&scroll=false&drag=false`
 
   return (
     <>
@@ -36,7 +39,7 @@ export function MapPlacement({ className, lat, lng, address }: MapProps) {
 
           <div className="relative w-full h-[400px] rounded-lg overflow-hidden">
             <iframe
-              src={yandexMapUrl}
+              src={isMobile ? mobileUrl : desktopUrl}
               width="100%"
               height="100%"
               style={{ border: 'none' }}
