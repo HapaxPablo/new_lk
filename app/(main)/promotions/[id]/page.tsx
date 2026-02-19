@@ -17,36 +17,30 @@ async function getPromotionById(id: string): Promise<IPromotionDetails | null> {
   try {
     const cookieStore = await cookies()
 
-    // Получаем токен из cookies
-    const token = cookieStore.get('access_token')?.value
-    const xrmcCookie = cookieStore.get('xrmcCookie')?.value
+    console.log('Fetching counterparty details for ID:', id)
 
-    if (!token) {
-      console.error('No access token found')
-      return null
-    }
-
-    // Используем прямой метод с токеном
+    // Правильный эндпоинт с ID в пути
     const data = await httpClient1CServer.get<IPromotionDetails>(
       cookieStore,
       `api/promotions/${id}/`
     )
 
+    // console.log('Counterparty data received:', data)
     return data
   } catch (error) {
-    console.error('Error fetching promotion:', {
-      error,
+    console.error('Error fetching counterparty:', {
+      error: error instanceof Error ? error.message : error,
       id,
-      environment: process.env.NODE_ENV,
       apiUrl: process.env.API_1C_URL,
     })
 
-    // Если ошибка 404, возвращаем null
+    // Если ошибка 404, возвращаем null для отображения 404 страницы
     if (error instanceof Error && error.message.includes('404')) {
       return null
     }
 
-    return null
+    // Пробрасываем ошибку дальше для обработки error.tsx
+    throw error
   }
 }
 
