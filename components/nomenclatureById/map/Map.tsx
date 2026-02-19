@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Button } from '@/components/ui/button/Button'
 import styles from './Map.module.scss'
 import { useMediaQuery } from 'usehooks-ts'
@@ -14,10 +14,57 @@ interface MapProps {
 
 export function MapPlacement({ className, lat, lng, address }: MapProps) {
   const [showMap, setShowMap] = useState(false)
+  const mapRef = useRef<HTMLDivElement>(null)
   const isMobile = useMediaQuery('(max-width: 600px)')
+  const [mapInstance, setMapInstance] = useState<any>(null)
 
-  const desktopUrl = `https://yandex.ru/map-widget/v1/?ll=${lng},${lat}&z=17&l=map&pt=${lng},${lat},pm2rdl&scroll=false`
-  const mobileUrl = `https://yandex.ru/map-widget/v1/?ll=${lng},${lat}&z=17&l=map&pt=${lng},${lat},pm2rdl&scroll=false&drag=false`
+  useEffect(() => {
+    if (!showMap || !mapRef.current || mapInstance) return
+
+    // Загружаем API
+    const script = document.createElement('script')
+    script.src = ''// TODO добавить ключ апи яндекс карт
+    script.async = true
+
+    script.onload = () => {
+      // @ts-ignore
+      ymaps.ready(() => {
+        // @ts-ignore
+        const map = new ymaps.Map(mapRef.current, {
+          center: [lat, lng],
+          zoom: 17,
+          controls: ['zoomControl'], // только кнопки зума
+        })
+
+        // Отключаем ВСЕ нежелательные поведения
+        map.behaviors.disable([
+          // 'drag', // перетаскивание
+          'scrollZoom', // зум колесом
+          'dblClickZoom', // зум двойным кликом
+          'multiTouch', // мультитач на мобильных - ВАЖНО!
+          'rightMouseButtonMagnifier',
+        ])
+
+        // Добавляем метку
+        // @ts-ignore
+        const placemark = new ymaps.Placemark([lat, lng], {
+          hintContent: address,
+          balloonContent: address,
+        })
+        map.geoObjects.add(placemark)
+
+        setMapInstance(map)
+      })
+    }
+
+    document.body.appendChild(script)
+
+    return () => {
+      if (mapInstance) {
+        mapInstance.destroy()
+      }
+    }
+  }, [showMap, lat, lng, address])
 
   return (
     <>
@@ -37,17 +84,10 @@ export function MapPlacement({ className, lat, lng, address }: MapProps) {
             Скрыть карту
           </Button>
 
-          <div className="relative w-full h-[400px] rounded-lg overflow-hidden">
-            <iframe
-              src={isMobile ? mobileUrl : desktopUrl}
-              width="100%"
-              height="100%"
-              style={{ border: 'none' }}
-              allowFullScreen
-              className={`${styles.map_iframe} ${isMobile ? styles.noTouch : ''}`}
-              title="Яндекс Карта"
-            />
-          </div>
+          <div
+            ref={mapRef}
+            className="w-full h-[400px] rounded-lg overflow-hidden"
+          />
         </div>
       )}
     </>
