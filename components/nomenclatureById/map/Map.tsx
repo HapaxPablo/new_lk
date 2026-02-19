@@ -44,7 +44,7 @@ export function MapPlacement({ className, lat, lng, address }: MapProps) {
               height="100%"
               style={{ border: 'none' }}
               allowFullScreen
-              className={styles['map-iframe']}
+              className={`${styles['map-iframe']} ${isMobile ? styles['map-iframe--no-touch'] : ''}`}
               title="Яндекс Карта"
             />
           </div>
