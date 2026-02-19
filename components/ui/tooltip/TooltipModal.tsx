@@ -12,7 +12,8 @@ interface TooltipModalProps {
 
 /**
  * Модальное окно для отображения подсказок.
- * Автоматически подписывается на контекст TooltipProvider.
+ * Использует API-прокси /api/tooltip с серверной авторизацией.
+ * Данные загружаются так же как в page.tsx через httpClient1CServer.
  */
 export function TooltipModal({ renderContent }: TooltipModalProps) {
   const { isTooltipOpen, tooltipData, closeTooltip } = useTooltip()
@@ -37,21 +38,20 @@ export function TooltipModal({ renderContent }: TooltipModalProps) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isTooltipOpen, tooltipData?.endpoint])
 
-const loadData = async () => {
-  if (!tooltipData?.endpoint) return
+  const loadData = async () => {
+    if (!tooltipData?.endpoint) return
 
-  setLoading(true)
-  setError(null)
+    setLoading(true)
+    setError(null)
 
-  try {
-    // В production используем относительный URL, в development можно и полный
-   const baseUrl = process.env.NEXT_PUBLIC_API_URL || ''
-    const url = baseUrl ? `${baseUrl}${tooltipData.endpoint}` : tooltipData.endpoint
+    try {
 
-    const response = await fetch(url, {
-      credentials: 'include',
-    })
+      const proxyUrl = `/api/tooltip?endpoint=${encodeURIComponent(tooltipData.endpoint)}`
+      console.log('Tooltip API URL:', proxyUrl)
 
+      const response = await fetch(proxyUrl, {
+        credentials: 'include',
+      })
 
       if (!response.ok) {
         throw new Error(`Ошибка ${response.status}: ${response.statusText}`)
@@ -141,8 +141,8 @@ const loadData = async () => {
  * Компонент для отображения данных по умолчанию
  */
 function DefaultContent({ data }: { data: any }) {
-    console.log(data);
-    
+  console.log(data)
+
   // Попробуем отобразить типичные поля
   const fields = [
     { key: 'name', label: 'Название' },
@@ -167,14 +167,13 @@ function DefaultContent({ data }: { data: any }) {
 
         if (field.isImage && typeof value === 'string') {
           displayValue = (
-                  <Image
-                src={value}
-                alt={`Изображение ${field.label || 'места'}`}
-                fill
-                className={styles.image}
-                sizes="80px"
-              />
-          
+            <Image
+              src={value}
+              alt={`Изображение ${field.label || 'места'}`}
+              fill
+              className={styles.image}
+              sizes="80px"
+            />
           )
         } else if (field.isDate && typeof value === 'string') {
           displayValue = new Date(value).toLocaleDateString('ru-RU', {

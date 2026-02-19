@@ -1,9 +1,13 @@
-.map-wrapper {
-  border: 1px solid #acacac;
+.map-iframe {
+   border: 1px solid #acacac;
   overflow: hidden;
   border-radius: 0.4rem;
 }
 
-// .map-iframe {
-//   pointer-events: none;
-// }
+.map-iframe--no-touch {
+  pointer-events: none;
+}
+
+.map-iframe--passive-touch {
+  touch-action: pan-y pinch-zoom; 
+}
