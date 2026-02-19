@@ -23,7 +23,7 @@ export function MapPlacement({ className, lat, lng, address }: MapProps) {
 
     // Загружаем API
     const script = document.createElement('script')
-    script.src = ''// TODO добавить ключ апи яндекс карт
+    script.src = 'https://api-maps.yandex.ru/2.1/?apikey=КЛЮЧ&lang=ru_RU'
     script.async = true
 
     script.onload = () => {
