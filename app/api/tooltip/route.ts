@@ -18,8 +18,7 @@ export async function GET(request: NextRequest) {
   }
 
   try {
-    // Получаем cookies так же как в page.tsx
-    const cookieStore = await cookies()
+    const cookieHeader = request.headers.get('cookie') || ''
 
     // Убираем начальный слеш если есть
     const cleanEndpoint = endpoint.startsWith('/')
@@ -28,8 +27,16 @@ export async function GET(request: NextRequest) {
 
     console.log('Tooltip API: fetching from', cleanEndpoint)
 
+    // Создаем mock RequestCookies для совместимости с httpClient1CServer
+    // Но передаем также и raw cookie header
+    const cookieStore = await cookies()
+
     // Используем серверный клиент с cookies
-    const response = await httpClient1CServer.get(cookieStore, cleanEndpoint)
+    const response = await httpClient1CServer.get(
+      cookieStore,
+      cleanEndpoint,
+      cookieHeader
+    )
 
     return Response.json(response)
   } catch (error: any) {
