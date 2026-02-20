@@ -60,6 +60,7 @@ export default function RootLayout({
                     <Header />
                     <main className="content">{children} </main>
                     <Footer />
+                    <TooltipModal />
                   </div>
                 </SWRProvider>
               </ToastProvider>
