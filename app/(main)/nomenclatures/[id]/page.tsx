@@ -5,11 +5,10 @@ import {
   TabsWrapper,
 } from '@/components/nomenclatureById'
 import { BrandInfoTooltip } from '@/components/ui/tooltip/BrandInfoTooltip'
-import { Wrench, Radio, Megaphone, MapPin } from 'lucide-react'
+import { Radio, MapPinned, BoomBox, ToolCase } from 'lucide-react'
 import { INomenclatureDetailsItem } from '@/types/nomenclature'
 import { Metadata } from 'next'
-import { cookies } from 'next/headers'
-import { formatPrice } from '@/utils'
+
 import {
   generateNomenclatureMetadata,
   generateNomenclatureStructuredData,
@@ -76,7 +75,6 @@ async function getNomenclatureById(
   }
 }
 
-
 export async function generateMetadata(
   props: NomenclatureDetailPageProps
 ): Promise<Metadata> {
@@ -98,7 +96,7 @@ export default async function NomenclatureDetailPage(
   const params = await props.params
   const { id } = params
   const nomenclature = await getNomenclatureById(id)
-  console.log('DETAILS', nomenclature)
+  // console.log('DETAILS', nomenclature)
 
   if (!nomenclature) {
     return (
@@ -185,33 +183,63 @@ export default async function NomenclatureDetailPage(
             </h2> */}
 
             <div
-              className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full"
+              className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full max-h-[160px] overflow-y-auto"
               // style={{ gridTemplateRows: 'repeat(2, 1fr)' }}
             >
-              <ResponsibleCard
-                label="Ответственный за эфир"
-                icon={<Radio size={16} />}
-                data={responsible.ad?.full_name || 'Не указан'}
-                color="bg-purple-100"
-              />
-              <ResponsibleCard
-                label="Техника"
-                icon={<Wrench size={16} />}
-                data={hw_info?.model || 'Не указано'}
-                color="bg-green-100"
-              />
-              <ResponsibleCard
-                label="Ответственный за размещение"
-                icon={<Megaphone size={16} />}
-                data={responsible.placement_marketing?.full_name || 'Не указан'}
-                color="bg-blue-100"
-              />
-              <ResponsibleCard
-                label="Стоимость размещения"
-                icon={<MapPin size={16} />}
-                data={formatPrice(pricePerMonth)}
-                color="bg-red-100"
-              />
+              <div>
+                <h3 className="text-lg font-semibold text-[#1E3961]">
+                  Менеджеры
+                </h3>
+                <div className="flex flex-col gap-4">
+                  <ResponsibleCard
+                    label="Реклама"
+                    icon={<Radio size={16} />}
+                    id={responsible?.ad?.id}
+                    name={responsible?.ad?.full_name || 'Не указан'}
+                    color="bg-purple-100"
+                  />
+                  <ResponsibleCard
+                    label="Маркетинг размещения"
+                    icon={<MapPinned size={16} />}
+                    id={responsible?.placement_marketing?.id}
+                    name={
+                      responsible?.placement_marketing?.full_name ||
+                      'Не указано'
+                    }
+                    color="bg-green-100"
+                  />
+                </div>
+              </div>
+              <div>
+                <h3 className="text-lg font-semibold text-[#1E3961]">
+                  Тех. обслуживание
+                </h3>
+                <div className="flex flex-col gap-4">
+                  <ResponsibleCard
+                    label="Радио"
+                    icon={<BoomBox size={16} />}
+                    id={responsible?.radio?.id}
+                    name={responsible?.radio?.full_name || 'Не указано'}
+                    color="bg-gray-200"
+                  />
+                  <ResponsibleCard
+                    label="Техник"
+                    icon={<ToolCase size={16} />}
+                    id={responsible?.technic?.id}
+                    name={responsible?.technic?.full_name || 'Не указано'}
+                    color="bg-gray-200"
+                  />
+                  <ResponsibleCard
+                    label="Техник на адресе"
+                    icon={<ToolCase size={16} />}
+                    id={responsible?.technic_on_address?.id}
+                    name={
+                      responsible?.technic_on_address?.full_name || 'Не указано'
+                    }
+                    color="bg-gray-200"
+                  />
+                </div>
+              </div>
             </div>
           </div>
 

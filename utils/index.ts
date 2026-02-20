@@ -1,6 +1,6 @@
 export {
   getDaySettings,
   getMainImage,
-  isDeviceOnline,
+  // isDeviceOnline,
   formatPrice,
 } from './nomenclatureUtils'

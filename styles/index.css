@@ -15,7 +15,7 @@
   --background: oklch(0.9755 0.0045 258.32);
   --background-secondary: oklch(77.649% 0.00885 271.308);
   --background-opacity: oklch(77.649% 0.00885 271.308 / 40%);
-  
+
   /* Основные цвета */
   --main-color: oklch(0.6546 0.1801 23.49);
   --main-color-light: oklch(0.7546 0.1501 23.49);
@@ -137,7 +137,8 @@ hr.solid {
   }
 }
 
-html, body {
+html,
+body {
   height: 100%;
   margin: 0;
   padding: 0;
@@ -156,7 +157,7 @@ body {
   font-size: var(--text-base);
 }
 
-h1{
+h1 {
   font-size: 24px;
 }
 
@@ -180,10 +181,10 @@ h1{
 }
 
 /* Хедер и футер остаются на своих местах */
-header, footer {
+header,
+footer {
   flex-shrink: 0; /* Не сжимаются */
 }
-
 
 /* Стили для скроллбара контента */
 .content::-webkit-scrollbar {

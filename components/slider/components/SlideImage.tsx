@@ -14,8 +14,8 @@ export default function SlideImage({
   if (!src || src.trim() === '') {
     return null
   }
-  console.log(src);
-  
+  // console.log(src);
+
   return (
     <div className={styles.slider__list__slide__image}>
       <Image
