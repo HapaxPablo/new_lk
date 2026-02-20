@@ -9,6 +9,7 @@ import { TooltipProvider } from '@/providers/tooltip/TooltipProvider'
 import type { Metadata } from 'next'
 import localFont from 'next/font/local'
 import '@/styles/index.css'
+import { SWRProvider } from '@/providers/swr/SwrProvider'
 
 const montserrat = localFont({
   src: [
@@ -50,20 +51,21 @@ export default function RootLayout({
   return (
     <html lang="ru">
       <body className={`${montserrat.className} antialiased`}>
-        <ModalProvider>
-          <TooltipProvider>
-            <ToastProvider>
-              <AuthProvider>
-                <div className="layout">
-                  <Header />
-                  <main className="content">{children} </main>
-                  <Footer />
-                </div>
-                <TooltipModal />
-              </AuthProvider>
-            </ToastProvider>
-          </TooltipProvider>
-        </ModalProvider>
+        <AuthProvider>
+          <ModalProvider>
+            <TooltipProvider>
+              <ToastProvider>
+                <SWRProvider>
+                  <div className="layout">
+                    <Header />
+                    <main className="content">{children} </main>
+                    <Footer />
+                  </div>
+                </SWRProvider>
+              </ToastProvider>
+            </TooltipProvider>
+          </ModalProvider>
+        </AuthProvider>
       </body>
     </html>
   )

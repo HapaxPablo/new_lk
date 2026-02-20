@@ -52,7 +52,6 @@ class HttpClient1CClient {
     const response = await fetch(`${this.baseUrl}${endpoint}`, config)
 
     if (response.status === 401) {
-
       window.location.href = '/login'
       throw new Error('Session expired')
     }

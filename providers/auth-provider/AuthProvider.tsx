@@ -3,7 +3,13 @@
 import { useToast } from '@/hooks/useToast'
 import { AuthResponse } from '@/types/auth'
 import { usePathname, useRouter } from 'next/navigation'
-import { createContext, ReactNode, useContext, useEffect, useState } from 'react'
+import {
+  createContext,
+  ReactNode,
+  useContext,
+  useEffect,
+  useState,
+} from 'react'
 
 type AuthContextType = {
   isAuthenticated: boolean
@@ -44,11 +50,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           const result = await response.json()
           setIsAuthenticated(result.isAuthenticated)
 
-          if (!result.isAuthenticated && url !== '/nomenclatures') {
-            await logout()
-            // console.log('сделать проверку токена в 1с');
-
-          }
+          // пока временно закоментил, нужно продумать логику поведения при неавторизованном пользователе
+          // if (!result.isAuthenticated && url !== '/nomenclatures') {
+          //   await logout()
+          //   // console.log('сделать проверку токена в 1с');
+          // }
         } else {
           setIsAuthenticated(false)
         }
@@ -61,10 +67,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     checkAuth()
   }, [])
 
-  const login = async (
-    email: string,
-    password: string
-  ): Promise<any> => {
+  const login = async (email: string, password: string): Promise<any> => {
     try {
       const response = await fetch('/api/auth/login', {
         method: 'POST',
@@ -80,14 +83,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       if (!response.ok) {
         // throw new Error(data.message || 'Ошибка авторизации')
         throw new Error('Ошибка авторизации')
-
       }
 
       if (data.access) {
         setIsAuthenticated(true)
         setError(null)
         setBlockTime(null)
-        router.push('/nomenclatures?page=1&limit=24')
+        // router.push('/nomenclatures?page=1&limit=24')
         return {
           success: true,
           data,
