@@ -227,12 +227,12 @@ export default async function NomenclatureDetailPage(
             </div>
             <MapPlacement
               lat={
-                address.coordinates?.latitude
+                address?.coordinates?.latitude
                   ? Number(address.coordinates.latitude)
                   : 56.011152
               }
               lng={
-                address.coordinates?.longitude
+                address?.coordinates?.longitude
                   ? Number(address.coordinates.longitude)
                   : 92.814753
               }
