@@ -11,7 +11,7 @@ export function useHttpClient() {
 
   return useMemo(() => {
     return {
-      client: HttpClient1C.client(token, logout),
+      client: HttpClient1C.client(),
       isAuthenticated,
     }
   }, [token, logout, isAuthenticated])
