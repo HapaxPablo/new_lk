@@ -12,8 +12,7 @@ interface TooltipModalProps {
 
 /**
  * Модальное окно для отображения подсказок.
- * Использует API-прокси /api/tooltip с серверной авторизацией.
- * Данные загружаются так же как в page.tsx через httpClient1CServer.
+ * Использует клиентский httpClient1CClient для запроса к 1С API напрямую.
  */
 export function TooltipModal({ renderContent }: TooltipModalProps) {
   const { isTooltipOpen, tooltipData, closeTooltip } = useTooltip()
@@ -45,16 +44,24 @@ export function TooltipModal({ renderContent }: TooltipModalProps) {
     setError(null)
 
     try {
-
+      // Используем API прокси /api/tooltip для запроса к 1С API через сервер
       const proxyUrl = `/api/tooltip?endpoint=${encodeURIComponent(tooltipData.endpoint)}`
-      console.log('Tooltip API URL:', proxyUrl)
 
       const response = await fetch(proxyUrl, {
         credentials: 'include',
       })
 
+      // Обработка ошибок авторизации
+      if (response.status === 401) {
+        setError('Сессия истекла. Пожалуйста, войдите снова.')
+        return
+      }
+
       if (!response.ok) {
-        throw new Error(`Ошибка ${response.status}: ${response.statusText}`)
+        const errorData = await response.json().catch(() => ({}))
+        throw new Error(
+          errorData.error || `Ошибка ${response.status}: ${response.statusText}`
+        )
       }
 
       const result = await response.json()

@@ -32,22 +32,16 @@ export async function POST(request: NextRequest) {
     if (data.refresh && data.access) {
       const res = NextResponse.json(data)
 
-      // Determine cookie settings based on environment
       const isProduction = process.env.NODE_ENV === 'production'
-
-      // Получаем домен из запроса
-      const requestDomain = request.headers.get('host') || ''
-      // Убираем порт из домена
-      const domain = requestDomain.split(':')[0]
 
       console.log('[Login] Cookie settings:', {
         isProduction,
-        domain,
         tokenLength: data.access.length,
         cookieName: 'access_token',
       })
 
       // Устанавливаем куку с правильными настройками для продакшена
+      // Не указываем domain явно - Next.js определит его автоматически
       res.cookies.set({
         name: 'access_token',
         value: data.access,
@@ -55,15 +49,11 @@ export async function POST(request: NextRequest) {
         secure: isProduction,
         sameSite: isProduction ? 'none' : 'lax',
         path: '/',
-        domain: isProduction ? domain : undefined, // Явно указываем домен в продакшене
         maxAge: 60 * 60 * 24 * 7, // 7 дней (в секундах)
         expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 7), // 7 дней
       })
 
-      console.log(
-        '[Login] Cookie set successfully for domain:',
-        isProduction ? domain : 'localhost'
-      )
+      console.log('[Login] Cookie set successfully')
 
       return res
     }
