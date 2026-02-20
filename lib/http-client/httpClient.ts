@@ -4,20 +4,16 @@ import { THttpMethod } from '@/types'
 
 class HttpClient1CClient {
   private baseUrl: string
-  private onLogout?: () => void
 
-  constructor(token: string | null, onLogout?: () => void) {
-    this.baseUrl = ''
-    // this.baseUrl = process.env.NEXT_PUBLIC_API_1C_URL || '' локально не работает
-
-    this.onLogout = onLogout
+  constructor() {
+    this.baseUrl = process.env.NEXT_PUBLIC_API_1C_URL || ''
   }
 
   private async request<T = any>(
     method: THttpMethod,
     endpoint: string,
     data?: any,
-    isFile = false
+    isFile: boolean = false
   ): Promise<T> {
     // Get token from cookie directly in client
     const cookies = document.cookie.split('; ')
@@ -62,30 +58,35 @@ class HttpClient1CClient {
 
     if (!response.ok) {
       const error = await response.text()
-      throw new Error(error)
+      throw new Error(`Request failed: ${error}`)
     }
 
     return isFile ? (response.blob() as Promise<T>) : response.json()
   }
 
-  get<T>(url: string) {
-    return this.request<T>('GET', url)
+  // GET запрос
+  async get<T = any>(endpoint: string): Promise<T> {
+    return this.request<T>('GET', endpoint)
   }
 
-  post<T>(url: string, data: any) {
-    return this.request<T>('POST', url, data)
+  // POST запрос
+  async post<T = any>(endpoint: string, data: any): Promise<T> {
+    return this.request<T>('POST', endpoint, data)
   }
 
-  put<T>(url: string, data: any) {
-    return this.request<T>('PUT', url, data)
+  // PUT запрос
+  async put<T = any>(endpoint: string, data: any): Promise<T> {
+    return this.request<T>('PUT', endpoint, data)
   }
 
-  patch<T>(url: string, data: any) {
-    return this.request<T>('PATCH', url, data)
+  // PATCH запрос
+  async patch<T = any>(endpoint: string, data: any): Promise<T> {
+    return this.request<T>('PATCH', endpoint, data)
   }
 
-  delete<T>(url: string) {
-    return this.request<T>('DELETE', url)
+  // DELETE запрос
+  async delete<T = any>(endpoint: string): Promise<T> {
+    return this.request<T>('DELETE', endpoint)
   }
 
   // Загрузка файла
@@ -96,8 +97,4 @@ class HttpClient1CClient {
   }
 }
 
-export class HttpClient1C {
-  static client(token: string | null, logout?: () => void) {
-    return new HttpClient1CClient(token, logout)
-  }
-}
+export const httpClient1CClient = new HttpClient1CClient()
