@@ -86,27 +86,59 @@ class HttpClient1CServer {
     }
   }
 
-  private async getAuthData(source: NextRequest | ReadonlyRequestCookies) {
+  private async getAuthData(
+    source: NextRequest | ReadonlyRequestCookies,
+    rawCookieHeader?: string
+  ) {
     let token: string | null
     let xrmcCookie: string | undefined
 
     if (source instanceof NextRequest) {
       // Извлекаем из NextRequest
-      token =
-        source.cookies.get('access_token')?.value ||
-        source.headers.get('Authorization')?.replace('Bearer ', '') ||
-        source.headers.get('x-access-token') ||
-        source.headers.get('access-token')
+      // Используем raw cookie header если передан, иначе из request.cookies
+      const cookieHeader = rawCookieHeader || source.headers.get('cookie') || ''
 
-      const session = await this.getSessionData(source)
-      xrmcCookie =
-        session?.user?.xrmcCookie || source.cookies.get('xrmcCookie')?.value
+      // Пробуем извлечь токен из заголовка напрямую
+      const tokenMatch = cookieHeader.match(/access_token=([^;]+)/)
+      token = tokenMatch ? tokenMatch[1] : null
+
+      const xrmcMatch = cookieHeader.match(/xrmcCookie=([^;]+)/)
+      xrmcCookie = xrmcMatch ? xrmcMatch[1] : undefined
+
+      // Если не нашли в заголовке, пробуем стандартный способ
+      if (!token) {
+        token =
+          source.cookies.get('access_token')?.value ||
+          source.headers.get('Authorization')?.replace('Bearer ', '') ||
+          source.headers.get('x-access-token') ||
+          source.headers.get('access-token')
+      }
+
+      if (!xrmcCookie) {
+        const session = await this.getSessionData(source)
+        xrmcCookie =
+          session?.user?.xrmcCookie || source.cookies.get('xrmcCookie')?.value
+      }
     } else {
       // Извлекаем из cookieStore
-      token = source.get('access_token')?.value!!
+      // Используем raw cookie header если передан
+      let tokenValue: string | null = null
 
-      const session = await this.getSessionFromCookies(source)
-      xrmcCookie = session?.user?.xrmcCookie || source.get('xrmcCookie')?.value
+      if (rawCookieHeader) {
+        const tokenMatch = rawCookieHeader.match(/access_token=([^;]+)/)
+        tokenValue = tokenMatch ? tokenMatch[1] : null
+
+        const xrmcMatch = rawCookieHeader.match(/xrmcCookie=([^;]+)/)
+        xrmcCookie = xrmcMatch ? xrmcMatch[1] : undefined
+      }
+
+      token = tokenValue || source.get('access_token')?.value || null
+
+      if (!xrmcCookie) {
+        const session = await this.getSessionFromCookies(source)
+        xrmcCookie =
+          session?.user?.xrmcCookie || source.get('xrmcCookie')?.value
+      }
     }
 
     return { token, xrmcCookie }
@@ -117,9 +149,13 @@ class HttpClient1CServer {
     method: THttpMethod,
     endpoint: string,
     data?: any,
-    isFile: boolean = false
+    isFile: boolean = false,
+    rawCookieHeader?: string
   ): Promise<T> {
-    const { token, xrmcCookie } = await this.getAuthData(source)
+    const { token, xrmcCookie } = await this.getAuthData(
+      source,
+      rawCookieHeader
+    )
 
     console.log('Auth data:', {
       token: token ? 'present' : 'missing',
@@ -210,50 +246,98 @@ class HttpClient1CServer {
 
   async get<T = any>(
     source: NextRequest | ReadonlyRequestCookies,
-    endpoint: string
+    endpoint: string,
+    rawCookieHeader?: string
   ): Promise<T> {
-    return this.request<T>(source, 'GET', endpoint)
+    return this.request<T>(
+      source,
+      'GET',
+      endpoint,
+      undefined,
+      false,
+      rawCookieHeader
+    )
   }
 
   async post<T = any>(
     source: NextRequest | ReadonlyRequestCookies,
     endpoint: string,
-    data?: any
+    data?: any,
+    rawCookieHeader?: string
   ): Promise<T> {
-    return this.request<T>(source, 'POST', endpoint, data)
+    return this.request<T>(
+      source,
+      'POST',
+      endpoint,
+      data,
+      false,
+      rawCookieHeader
+    )
   }
 
   async put<T = any>(
     source: NextRequest | ReadonlyRequestCookies,
     endpoint: string,
-    data?: any
+    data?: any,
+    rawCookieHeader?: string
   ): Promise<T> {
-    return this.request<T>(source, 'PUT', endpoint, data)
+    return this.request<T>(
+      source,
+      'PUT',
+      endpoint,
+      data,
+      false,
+      rawCookieHeader
+    )
   }
 
   async patch<T = any>(
     source: NextRequest | ReadonlyRequestCookies,
     endpoint: string,
-    data?: any
+    data?: any,
+    rawCookieHeader?: string
   ): Promise<T> {
-    return this.request<T>(source, 'PATCH', endpoint, data)
+    return this.request<T>(
+      source,
+      'PATCH',
+      endpoint,
+      data,
+      false,
+      rawCookieHeader
+    )
   }
 
   async delete<T = any>(
     source: NextRequest | ReadonlyRequestCookies,
-    endpoint: string
+    endpoint: string,
+    rawCookieHeader?: string
   ): Promise<T> {
-    return this.request<T>(source, 'DELETE', endpoint)
+    return this.request<T>(
+      source,
+      'DELETE',
+      endpoint,
+      undefined,
+      false,
+      rawCookieHeader
+    )
   }
 
   async upload<T = any>(
     source: NextRequest | ReadonlyRequestCookies,
     endpoint: string,
-    file: File
+    file: File,
+    rawCookieHeader?: string
   ): Promise<T> {
     const formData = new FormData()
     formData.append('file', file)
-    return this.request<T>(source, 'POST', endpoint, formData, true)
+    return this.request<T>(
+      source,
+      'POST',
+      endpoint,
+      formData,
+      true,
+      rawCookieHeader
+    )
   }
 }
 

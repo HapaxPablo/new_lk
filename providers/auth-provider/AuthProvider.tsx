@@ -50,11 +50,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           const result = await response.json()
           setIsAuthenticated(result.isAuthenticated)
 
-          // пока временно закоментил, нужно продумать логику поведения при неавторизованном пользователе
-          // if (!result.isAuthenticated && url !== '/nomenclatures') {
-          //   await logout()
-          //   // console.log('сделать проверку токена в 1с');
-          // }
+          if (!result.isAuthenticated && url !== '/nomenclatures') {
+            await logout()
+            // console.log('сделать проверку токена в 1с');
+          }
         } else {
           setIsAuthenticated(false)
         }
@@ -89,7 +88,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         setIsAuthenticated(true)
         setError(null)
         setBlockTime(null)
-        // router.push('/nomenclatures?page=1&limit=24')
+        if (typeof window !== 'undefined') {
+          window.location.href = '/nomenclatures?page=1&limit=24'
+        } else {
+          router.push('/nomenclatures?page=1&limit=24')
+        }
+
         return {
           success: true,
           data,

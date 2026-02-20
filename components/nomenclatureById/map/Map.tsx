@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react'
 import { Button } from '@/components/ui/button/Button'
-import styles from './Map.module.scss'
+// import styles from './Map.module.scss'
 import { useMediaQuery } from 'usehooks-ts'
 
 interface MapProps {
