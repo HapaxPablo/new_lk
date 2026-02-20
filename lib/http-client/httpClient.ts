@@ -98,3 +98,9 @@ class HttpClient1CClient {
 }
 
 export const httpClient1CClient = new HttpClient1CClient()
+
+export class HttpClient1C {
+  static client() {
+    return new HttpClient1CClient()
+  }
+}

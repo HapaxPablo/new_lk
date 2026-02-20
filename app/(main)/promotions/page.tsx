@@ -9,12 +9,18 @@ import styles from './PromotionsPage.module.scss'
 import { httpClient1CServer } from '@/lib/http-client/httpServer'
 
 const Toolbar = dynamic(
-  () => import('../../../components/toolbar/Toolbar').then((mod) => ({ default: mod.default })),
+  () =>
+    import('../../../components/toolbar/Toolbar').then((mod) => ({
+      default: mod.default,
+    })),
   { ssr: true, loading: () => <LoaderSkeleton /> }
 )
 
 const PromotionsWrapper = dynamic(
-  () => import('../../../components/promotions/PromotionsWrapper').then((mod) => ({ default: mod.PromotionsWrapper })),
+  () =>
+    import('../../../components/promotions/PromotionsWrapper').then((mod) => ({
+      default: mod.PromotionsWrapper,
+    })),
   { ssr: true, loading: () => <LoaderSkeleton /> }
 )
 
@@ -41,7 +47,7 @@ export default async function PromotionsPage(props: PromotionsPageProps) {
 
   try {
     const cookieStore = await cookies()
-    
+
     // Проверяем наличие токена
     const accessToken = cookieStore.get('access_token')?.value
     if (!accessToken) {
@@ -78,11 +84,11 @@ export default async function PromotionsPage(props: PromotionsPageProps) {
     )
   } catch (error) {
     console.error('Error fetching promotions:', error)
-    
+
     if (error instanceof Error && error.message === 'Session expired') {
       redirect('/login')
     }
-    
+
     throw error
   }
 }
