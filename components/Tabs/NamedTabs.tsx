@@ -25,7 +25,6 @@ interface NamedTabsProps {
 }
 
 export const NamedTabs = ({ item }: NamedTabsProps) => {
-
   if (!item) {
     return (
       <div
@@ -54,27 +53,27 @@ export const NamedTabs = ({ item }: NamedTabsProps) => {
       count: totalPhotos,
       content: <PhotosTabContent exterior={exterior} interior={interior} />,
     },
-    {
-      id: 'videos',
-      label: 'Ролики',
-      icon: <PlayCircle size={16} />,
-      count: 0,
-      content: <VideosTabContent />,
-    },
-    {
-      id: 'tasks',
-      label: 'Задачи',
-      icon: <CheckCircle size={16} />,
-      count: 0,
-      content: <TasksTabContent />,
-    },
-    {
-      id: 'media',
-      label: 'Медиапланы',
-      icon: <FileText size={16} />,
-      count: 0,
-      content: <MediaPlansTabContent />,
-    },
+    // {
+    //   id: 'videos',
+    //   label: 'Ролики',
+    //   icon: <PlayCircle size={16} />,
+    //   count: 0,
+    //   content: <VideosTabContent />,
+    // },
+    // {
+    //   id: 'tasks',
+    //   label: 'Задачи',
+    //   icon: <CheckCircle size={16} />,
+    //   count: 0,
+    //   content: <TasksTabContent />,
+    // },
+    // {
+    //   id: 'media',
+    //   label: 'Медиапланы',
+    //   icon: <FileText size={16} />,
+    //   count: 0,
+    //   content: <MediaPlansTabContent />,
+    // },
     {
       id: 'renters',
       label: 'Арендаторы',
