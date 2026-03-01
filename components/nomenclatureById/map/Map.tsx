@@ -13,13 +13,12 @@ interface MapProps {
 }
 
 export function MapPlacement({ className, lat, lng, address }: MapProps) {
-  const [showMap, setShowMap] = useState(false)
   const mapRef = useRef<HTMLDivElement>(null)
   const isMobile = useMediaQuery('(max-width: 600px)')
   const [mapInstance, setMapInstance] = useState<any>(null)
 
   useEffect(() => {
-    if (!showMap || !mapRef.current || mapInstance) return
+    if (!mapRef.current || mapInstance) return
 
     // Загружаем API
     const script = document.createElement('script')
@@ -37,19 +36,23 @@ export function MapPlacement({ className, lat, lng, address }: MapProps) {
         })
 
         // Отключаем ВСЕ нежелательные поведения
-        map.behaviors.disable(isMobile ? [
-          'drag', // перетаскивание
-          'scrollZoom', // зум колесом
-          'dblClickZoom', // зум двойным кликом
-          'multiTouch', // мультитач на мобильных - ВАЖНО!
-          'rightMouseButtonMagnifier',
-        ] : [
-          // 'drag', // перетаскивание
-          'scrollZoom', // зум колесом
-          'dblClickZoom', // зум двойным кликом
-          'multiTouch', // мультитач на мобильных - ВАЖНО!
-          'rightMouseButtonMagnifier',
-        ])
+        map.behaviors.disable(
+          isMobile
+            ? [
+                'drag', // перетаскивание
+                'scrollZoom', // зум колесом
+                'dblClickZoom', // зум двойным кликом
+                'multiTouch', // мультитач на мобильных - ВАЖНО!
+                'rightMouseButtonMagnifier',
+              ]
+            : [
+                // 'drag', // перетаскивание
+                'scrollZoom', // зум колесом
+                'dblClickZoom', // зум двойным кликом
+                'multiTouch', // мультитач на мобильных - ВАЖНО!
+                'rightMouseButtonMagnifier',
+              ]
+        )
 
         // Добавляем метку
         // @ts-ignore
@@ -70,32 +73,14 @@ export function MapPlacement({ className, lat, lng, address }: MapProps) {
         mapInstance.destroy()
       }
     }
-  }, [showMap, lat, lng, address])
+  }, [lat, lng, address])
 
   return (
-    <>
-      {!showMap ? (
-        <Button
-          onClick={() => setShowMap(true)}
-          className="p-2 bg-blue-500 text-white rounded w-full"
-        >
-          Показать карту
-        </Button>
-      ) : (
-        <div className="relative">
-          <Button
-            onClick={() => setShowMap(false)}
-            className="p-2 bg-blue-500 text-white rounded w-full mb-2"
-          >
-            Скрыть карту
-          </Button>
-
-          <div
-            ref={mapRef}
-            className="w-full h-[400px] rounded-lg overflow-hidden"
-          />
-        </div>
-      )}
-    </>
+    <div className="relative">
+      <div
+        ref={mapRef}
+        className="w-full h-[400px] rounded-lg overflow-hidden"
+      />
+    </div>
   )
 }

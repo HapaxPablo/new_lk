@@ -21,48 +21,63 @@ export function Description({ nomenclature }: DescriptionProps) {
   // Деструктурируем с значениями по умолчанию
   const {
     article = 0,
-    legalEntity = {id: '', name: ''},
+    legalEntity = { id: '', name: '' },
     brand,
     contentType = '',
     typeOfPlace = '',
     address,
     main_info = {
       owner: { full_name: '' },
-      name: ''
+      name: '',
     },
     hw_info = {
       model: '',
-      serial_number: ''
+      serial_number: '',
     },
-    pricePerMonth = '0'
+    pricePerMonth = '0',
   } = nomenclature
 
-  const ownerName = main_info?.owner?.full_name || 'Не указан'
+  const ownerName = main_info?.owner?.full_name || ''
   const mainName = main_info?.name || ''
 
   const displayData = {
-    article: article ? String(article) : 'Не указан',
+    article: article ? String(article) : '',
     operator: ownerName,
-    legalEntity: legalEntity || 'Не указано',
-    brand: brand?.name || 'Не указан',
-    typesOfMedia: contentType || 'Не указан',
-    typePlace: typeOfPlace || 'Не указано',
-    typeContent: contentType || 'Не указан',
-    address: address || 'Не указан',
-    contact: ownerName
+    legalEntity: legalEntity || '',
+    brand: brand?.name || '',
+    typesOfMedia: contentType || '',
+    typePlace: typeOfPlace || '',
+    typeContent: contentType || '',
+    address: address || '',
   }
 
   return (
     <div className="h-full p-2 rounded-md shadow-sm gap-2 flex flex-col sm:overflow-y-auto">
-      <NmcFragment text={displayData.article} type="Артикул" />
-      <NmcFragment text={displayData.operator} type="Оператор" />
-      <NmcFragment text={displayData.legalEntity.name} type="Юр. Лицо" />
-      <NmcFragment text={displayData.brand} type="Бренд" />
-      <NmcFragment text={displayData.typesOfMedia} type="Типы носителей" />
-      <NmcFragment text={displayData.typePlace} type="Место" />
-      <NmcFragment text={displayData.typeContent} type="Тип вещания" />
-      <NmcFragment text={displayData.address.full_address} type="Адрес" />
-      <NmcFragment text={displayData.contact} type="Контактны" />
+      {displayData.article && (
+        <NmcFragment text={displayData.article} type="Артикул" />
+      )}
+
+      {displayData.operator && (
+        <NmcFragment text={displayData.operator} type="Оператор" />
+      )}
+      {displayData.legalEntity && (
+        <NmcFragment text={displayData.legalEntity.name} type="Юр. Лицо" />
+      )}
+      {displayData.brand && (
+        <NmcFragment text={displayData.brand} type="Бренд" />
+      )}
+      {displayData.typesOfMedia && (
+        <NmcFragment text={displayData.typesOfMedia} type="Типы носителей" />
+      )}
+      {displayData.typePlace && (
+        <NmcFragment text={displayData.typePlace} type="Место" />
+      )}
+      {displayData.typeContent && (
+        <NmcFragment text={displayData.typeContent} type="Тип вещания" />
+      )}
+      {displayData.address && (
+        <NmcFragment text={displayData.address.full_address} type="Адрес" />
+      )}
     </div>
   )
 }

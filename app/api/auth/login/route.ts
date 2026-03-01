@@ -13,7 +13,7 @@ export async function POST(request: NextRequest) {
       })
     }
 
-    const apiUrl = `${process.env.API_1C_URL}auth/jwt/create/`
+    const apiUrl = `${process.env.API_1C_URL}/auth/jwt/create/`
     const response = await fetch(apiUrl, {
       method: 'POST',
       headers: {
