@@ -70,7 +70,13 @@ export const CardNomenclature: React.FC<CardNomenclatureProps> = ({
               />
             ) : (
               <div className={styles.imagePlaceholder}>
-                <ImageOff size={24} />
+                <Image
+                  src="/og-logo.jpg"
+                  alt="Логотип"
+                  width={200}
+                  height={100}
+                  className="object-contain"
+                />
               </div>
             )}
           </div>

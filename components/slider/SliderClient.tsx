@@ -309,7 +309,7 @@ const SliderClient = function ({
         ) : (
           <div className="w-full h-full flex items-center justify-center bg-gray-100">
             <Image
-              src="/logo.svg"
+              src="/og-logo.jpg"
               alt="Логотип"
               width={200}
               height={100}
