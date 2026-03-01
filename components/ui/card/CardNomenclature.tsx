@@ -1,7 +1,6 @@
-
 import { INomenclatureItem } from '@/types/nomenclature'
 import Image from 'next/image'
-import { MapPin, Building, ImageOff, MapPinHouse, RussianRuble } from 'lucide-react'
+import { MapPin, ImageOff, MapPinHouse, RussianRuble } from 'lucide-react'
 import styles from './CardNomenclature.module.scss'
 import { formatPrice } from '@/utils'
 import { useUniversalClick } from '@/hooks/useUniversalClick'
@@ -20,13 +19,7 @@ export const CardNomenclature: React.FC<CardNomenclatureProps> = ({
   onClick,
   codeMP = null, //TODO вынести из пропсов, взять в Item и изменить логику использования
 }) => {
-  const {
-    brand,
-    exterior,
-    typeOfPlace,
-    pricePerMonth,
-    address,
-  } = item
+  const { brand, exterior, typeOfPlace, pricePerMonth, address } = item
 
   // Получаем первое изображение для превью
   const mainImage = exterior?.[0]?.source
@@ -67,30 +60,32 @@ export const CardNomenclature: React.FC<CardNomenclatureProps> = ({
                 className={styles.image}
                 sizes="80px"
               />
+            ) : logoSrc ? (
+              <Image
+                src={logoSrc}
+                alt={`Логотип ${brand?.name}`}
+                fill
+                className={styles.image}
+                sizes="80px"
+              />
             ) : (
               <div className={styles.imagePlaceholder}>
                 <ImageOff size={24} />
-                <span>Нет изображения</span>
               </div>
             )}
           </div>
 
-          <div className={styles.logoWrapper}>
-            {logoSrc ? (
+          {logoSrc && mainImage && (
+            <div className={styles.logoWrapper}>
               <Image
                 src={logoSrc}
                 alt={`Логотип ${brand?.name}`}
                 fill
                 className={styles.logo}
                 sizes="80px"
-              />
-            ) : (
-              <div className={styles.logoPlaceholder}>
-                <Building size={16} />
-                <span>Нет лого</span>
-              </div>
-            )}
-          </div>
+              />{' '}
+            </div>
+          )}
         </div>
 
         <div className={styles.infoSection}>
@@ -123,7 +118,7 @@ export const CardNomenclature: React.FC<CardNomenclatureProps> = ({
       <div className={styles.actionsSection}>
         <Button
           className={styles.button}
-          variant='detail'
+          variant="detail"
           onClick={(e) => handleUniversalClick(onClick, e)}
         >
           Подробнее
@@ -132,7 +127,7 @@ export const CardNomenclature: React.FC<CardNomenclatureProps> = ({
         {codeMP ? (
           <Button
             className={styles.button}
-            variant='navigate'
+            variant="navigate"
             onClick={(e) => handleUniversalClick(handleMediaPlan, e)}
           >
             Перейти в медиаплан
@@ -140,7 +135,7 @@ export const CardNomenclature: React.FC<CardNomenclatureProps> = ({
         ) : (
           <Button
             className={styles.button}
-            variant='add'
+            variant="add"
             onClick={(e) => handleUniversalClick(handleAdd, e)}
           >
             Добавить
