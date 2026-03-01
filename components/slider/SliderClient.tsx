@@ -256,7 +256,7 @@ const SliderClient = function ({
               <div
                 key={actualIndex}
                 className={`${styles.thumbnails_img} ${
-                  isActive ? `${styles.thumbnails_img}--active` : ''
+                  isActive ? styles.thumbnails_img_active : ''
                 }`}
                 onClick={() => handleThumbnailClick(actualIndex)}
               >

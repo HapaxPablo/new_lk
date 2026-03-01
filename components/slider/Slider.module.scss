@@ -76,13 +76,6 @@
     height: 77px;
     flex-shrink: 0;
 
-    &--active {
-        outline: 3px solid var(--primary-color);
-
-        box-shadow: 0 0 8px rgba(30, 64, 116, 0.4);
-        transition: all 0.2s ease-in-out;
-    }
-
     @media (max-width: 768px) {
         height: calc(100% - 4px);
         width: 77px;
@@ -94,6 +87,14 @@
         border-radius: 0.375rem;
     }
 
+}
+
+.thumbnails_img_active {
+    outline: 3px solid var(--primary-color) !important;
+    outline-offset: 0;
+    box-shadow: 0 0 8px rgba(30, 64, 116, 0.4);
+    transition: all 0.2s ease-in-out;
+    border-radius: 0.375rem;
 }
 
 .main {
