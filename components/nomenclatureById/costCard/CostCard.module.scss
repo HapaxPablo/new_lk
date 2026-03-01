@@ -1,0 +1,35 @@
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  background-color: var(--background-light-green);
+  border-radius: 16px;
+  padding: 16px;
+  max-height: 280px;
+  max-width: 240px;
+  height: 100%;
+  width: 100%;
+  justify-content: space-between;
+  font-size: 14px;
+  white-space: nowrap;
+  align-items: flex-start;
+
+  &__header {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+
+    &__cost {
+      display: flex;
+      flex-direction: row;
+      font-size: 24px;
+      font-weight: 600;
+      gap: 4px;
+    }
+  }
+
+  &__footer {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+}

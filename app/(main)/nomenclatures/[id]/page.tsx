@@ -18,6 +18,8 @@ import Script from 'next/script'
 import { DeviceStatusBadge } from '@/components/ui/device/DeviceStatusBadge'
 import { TStatusType } from '@/types/nomenclature/status'
 import dynamic from 'next/dynamic'
+import { NmcFragment } from '@/components/nomenclatureById/description/fragment/NmcFragment'
+import { formatPrice } from '@/utils/nomenclatureUtils'
 
 const Slider = dynamic(() => import('@/components/slider/Slider'), {
   ssr: true,
@@ -158,7 +160,7 @@ export default async function NomenclatureDetailPage(
           {/* Заголовок и основная информация */}
           <div className="p-4 border-b">
             <span className="text-sm sm:text-2xl font-bold text-[#1E3961] mb-2">
-              {main_info.name}
+              Размещение ролика в {main_info.name}
             </span>
             <div className="flex flex-wrap gap-4 text-sm text-gray-600">
               <span className="bg-blue-100 text-blue-800 px-2 py-1 rounded">
@@ -173,73 +175,26 @@ export default async function NomenclatureDetailPage(
                 size="md"
                 answer={nomenclature.main_info?.last_answer}
               />
+              <span className="bg-orange-100 text-lg px-2 py-1 rounded">
+                Стоимость размещения: {formatPrice(pricePerMonth)} за месяц
+              </span>
             </div>
           </div>
 
           {/* Ответственные лица */}
           <div className="p-4">
-            {/* <h2 className="text-xl font-semibold text-[#1E3961]">
+            <h2 className="text-xl font-semibold text-[#1E3961]">
               Ответственный
-            </h2> */}
+            </h2>
 
-            <div
-              className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full max-h-[160px] overflow-y-auto"
-              // style={{ gridTemplateRows: 'repeat(2, 1fr)' }}
-            >
-              <div>
-                <h3 className="text-lg font-semibold text-[#1E3961]">
-                  Менеджеры
-                </h3>
-                <div className="flex flex-col gap-4">
-                  <ResponsibleCard
-                    label="Реклама"
-                    icon={<Radio size={16} />}
-                    id={responsible?.ad?.id}
-                    name={responsible?.ad?.full_name || 'Не указан'}
-                    color="bg-purple-100"
-                  />
-                  <ResponsibleCard
-                    label="Маркетинг размещения"
-                    icon={<MapPinned size={16} />}
-                    id={responsible?.placement_marketing?.id}
-                    name={
-                      responsible?.placement_marketing?.full_name ||
-                      'Не указано'
-                    }
-                    color="bg-green-100"
-                  />
-                </div>
-              </div>
-              <div>
-                <h3 className="text-lg font-semibold text-[#1E3961]">
-                  Тех. обслуживание
-                </h3>
-                <div className="flex flex-col gap-4">
-                  <ResponsibleCard
-                    label="Радио"
-                    icon={<BoomBox size={16} />}
-                    id={responsible?.radio?.id}
-                    name={responsible?.radio?.full_name || 'Не указано'}
-                    color="bg-gray-200"
-                  />
-                  <ResponsibleCard
-                    label="Техник"
-                    icon={<ToolCase size={16} />}
-                    id={responsible?.technic?.id}
-                    name={responsible?.technic?.full_name || 'Не указано'}
-                    color="bg-gray-200"
-                  />
-                  <ResponsibleCard
-                    label="Техник на адресе"
-                    icon={<ToolCase size={16} />}
-                    id={responsible?.technic_on_address?.id}
-                    name={
-                      responsible?.technic_on_address?.full_name || 'Не указано'
-                    }
-                    color="bg-gray-200"
-                  />
-                </div>
-              </div>
+            <div className="flex flex-col gap-4">
+              <ResponsibleCard
+                label="Реклама"
+                icon={<Radio size={16} />}
+                id={responsible?.ad?.id}
+                name={responsible?.ad?.full_name || 'Не указан'}
+                color="bg-purple-100"
+              />
             </div>
           </div>
 
