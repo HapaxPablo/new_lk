@@ -1,213 +1,139 @@
-.slider {
-  overflow: hidden;
-  position: relative;
-  width: 100%;
-  height: 100%;
-  max-height: 320px;
-
-  &__list {
+.gallery {
     display: flex;
-    height: 100%;
-    transition: transform 0.5s ease-in-out;
+    flex-direction: row;
+    gap: 0.5rem;
     width: 100%;
-
-    &__slide {
-      flex: 0 0 100%;
-      min-width: 100%;
-      position: relative;
-      height: 100%;
-
-      &__image {
-        position: relative;
-        width: 100%;
-        height: 100%;
-
-        img {
-          object-fit: contain;
-          object-position: center;
-        }
-      }
-    }
-  }
-
-  /* DOTS */
-  &__dots {
-    display: flex;
-    justify-content: center;
-    gap: 8px;
-    padding: 16px 0;
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    z-index: 10;
-
-    &__dot {
-      background-color: rgba(255, 255, 255, 0.5);
-      border-radius: 50%;
-      height: 10px;
-      width: 10px;
-      transition: all 0.3s ease;
-      cursor: pointer;
-      border: none;
-      padding: 0;
-
-      &:hover {
-        background-color: rgba(255, 255, 255, 0.8);
-        transform: scale(1.2);
-      }
-
-      &__selected {
-        background-color: #fff;
-        transform: scale(1.2);
-      }
-    }
-  }
-
-  &__arrows {
-    --arrow-color: white;
-    --arrow-hover-color: oklch(0.7 0.25 250);
-    --arrow-size: 24px;
-
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0 16px;
-    z-index: 5;
-    pointer-events: none;
+    height: 100%;
+    position: relative;
 
     @media (max-width: 768px) {
-      // На мобильных всегда показываем стрелки
-      opacity: 1 !important;
-      .slider__arrows__arrow {
-        opacity: 0.9;
-      }
+        flex-direction: column;
     }
-
-    &__arrow {
-      height: 44px;
-      width: 44px;
-      pointer-events: auto;
-      background: rgba(255, 255, 255, 0.26);
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: all 0.3s ease;
-      border: 2px solid rgba(255, 255, 255, 0.3);
-      cursor: pointer;
-      color: white;
-      font-size: 20px;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-      opacity: 0;
-      transform: translateY(0);
-      
-      @media (max-width: 768px) {
-        // На мобильных сразу видимые
-        opacity: 0.9;
-        transform: none;
-      }
-
-      /* Стрелка через mask */
-      &::before {
-        content: '';
-        position: absolute;
-        width: var(--arrow-size);
-        height: var(--arrow-size);
-        background-color: var(--arrow-color);
-        mask-repeat: no-repeat;
-        mask-position: center;
-        mask-size: contain;
-        transition: background-color 0.3s ease;
-      }
-
-      &__left::before {
-        mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M13 18l-6-6 6-6'/%3E%3C/svg%3E");
-      }
-
-      &__right::before {
-        mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M11 18l6-6-6-6'/%3E%3C/svg%3E");
-      }
-
-      /* Анимация появления при наведении на слайдер */
-      .slider:hover & {
-        opacity: 0.9;
-        transform: translateY(0);
-        
-        @media (max-width: 768px) {
-          opacity: 0.9;
-        }
-      }
-
-      /* Изменение цвета при наведении на саму стрелку */
-      &:hover:not(:disabled) {
-        opacity: 1;
-        background: rgba(0, 0, 0, 0.4);
-        transform: scale(1.15);
-        border-color: var(--focus-ring);
-        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
-
-        &::before {
-          background-color: var(--arrow-hover-color);
-        }
-      }
-
-      &:active:not(:disabled) {
-        transform: scale(1);
-      }
-
-      &:focus:not(:disabled) {
-        outline: 2px solid var(--focus-ring);
-        outline-offset: 2px;
-        opacity: 1;
-      }
-
-      /* Отключенное состояние */
-      &__disabled {
-        opacity: 0;
-        cursor: not-allowed;
-        background: rgba(0, 0, 0, 0.3);
-        
-        .slider:hover & {
-          opacity: 0.4;
-        }
-        
-        &:hover {
-          background: rgba(0, 0, 0, 0.3);
-          transform: none;
-          border-color: rgba(255, 255, 255, 0.3);
-          
-          &::before {
-            background-color: var(--arrow-color);
-          }
-        }
-      }
-    }
-  }
-  
-  /* Стиль для мобильного свайпа */
-  &--swiping {
-    cursor: grab;
-    
-    .slider__list {
-      transition: none;
-    }
-  }
 }
 
-// Для скелетона
-.sliderLoading {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: #f5f5f5;
-  border-radius: 8px;
-  width: 100%;
-  height: 100%;
-  min-height: 300px;
+.thumbnails {
+    width: 25%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    gap: 2px;
+    order: 1; // Десктоп - первый
+    overflow: hidden;
+
+    @media (max-width: 768px) {
+        height: 30%;
+        flex-direction: row;
+        width: 100%;
+        order: 2;
+
+    }
+}
+
+.thumbnails__list {
+    position: relative;
+    padding: 2px;
+    flex: 1;
+    overflow-y: auto;
+    overflow-x: hidden;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+
+    &::-webkit-scrollbar {
+        display: none;
+    }
+
+    &::-webkit-scrollbar-track {
+        display: none;
+    }
+
+    &::-webkit-scrollbar-thumb {
+        display: none;
+    }
+
+    @media (max-width: 768px) {
+        height: 100%;
+        flex-direction: row;
+        width: calc(100% - 80px);
+        gap: 6px;
+        overflow-x: auto;
+        overflow-y: hidden;
+    }
+}
+
+.thumbnails_img {
+    position: relative;
+    overflow: visible;
+    border-radius: 0.375rem;
+    width: calc(100% - 4px);
+    height: 77px;
+    flex-shrink: 0;
+
+    &--active {
+        outline: 3px solid var(--primary-color);
+
+        box-shadow: 0 0 8px rgba(30, 64, 116, 0.4);
+        transition: all 0.2s ease-in-out;
+    }
+
+    @media (max-width: 768px) {
+        height: calc(100% - 4px);
+        width: 77px;
+    }
+
+    img {
+        background-position: center;
+        object-fit: cover;
+        border-radius: 0.375rem;
+    }
+
+}
+
+.main {
+    width: 75%;
+    height: 100%;
+    order: 2;
+    overflow: hidden;
+    border-radius: 0.375rem 0 0 0.375rem;
+
+    @media (max-width: 768px) {
+        border-radius: 0 0 0.375rem 0.375rem;
+        width: 100%;
+        height: 70%;
+        order: 1;
+    }
+}
+
+.main__image {
+    position: relative;
+    width: 100%;
+    height: 100%;
+
+    img {
+        background-position: center;
+        object-fit: cover;
+    }
+}
+
+.arrow_up {
+    width: 100%;
+    height: 100%;
+}
+
+.rotate {
+    @media (max-width: 768px) {
+        rotate: -90deg;
+    }
+}
+
+.arrow_down {
+    width: 100%;
+    height: 100%;
 }

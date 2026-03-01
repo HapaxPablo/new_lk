@@ -8,6 +8,7 @@ import { BrandInfoTooltip } from '@/components/ui/tooltip/BrandInfoTooltip'
 import { Radio, MapPinned, BoomBox, ToolCase } from 'lucide-react'
 import { INomenclatureDetailsItem } from '@/types/nomenclature'
 import { Metadata } from 'next'
+import Image from 'next/image'
 
 import {
   generateNomenclatureMetadata,
@@ -153,10 +154,32 @@ export default async function NomenclatureDetailPage(
       />
 
       <div className="flex flex-col sm:flex-row gap-1 p-4 w-full h-full overflow-auto">
-        <div className="flex flex-col gap-2 w-full sm:w-2/5 h-auto">
-          {/* Слайдер с изображениями */}
-          <div className="w-full h-60 sm:h-70 rounded-md shadow-sm overflow-hidden">
-            <Slider images={allImages} autoPlay={true} autoPlayTime={15000} />
+        <div className="flex flex-col gap-2 w-full sm:w-3/5 h-auto">
+          {/* Слайдер с изображениями или логотип */}
+          <div className="w-full min-h-80 sm:h-70 rounded-md shadow-sm overflow-hidden relative">
+            {allImages.length > 0 ? (
+              <Slider images={allImages} autoPlay={true} autoPlayTime={15000} />
+            ) : (
+              <div className="w-full h-full min-h-[320px] bg-gray-100 flex items-center justify-center p-4">
+                {brand.logotype ? (
+                  <Image
+                    src={brand.logotype}
+                    alt="Логотип"
+                    width={200}
+                    height={100}
+                    className="object-contain max-h-full w-auto"
+                  />
+                ) : (
+                  <Image
+                    src="/og-logo.jpg"
+                    alt="Логотип"
+                    width={200}
+                    height={100}
+                    className="object-contain"
+                  />
+                )}
+              </div>
+            )}
           </div>
 
           {/* Описание */}
