@@ -139,7 +139,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
       if (response.ok) {
         setIsAuthenticated(false)
-        router.push('/login')
+        // router.push('/login')
       } else {
         throw new Error('Ошибка при выходе')
       }

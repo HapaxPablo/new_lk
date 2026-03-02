@@ -1,16 +1,12 @@
-'use client'
-
 import styles from './ResponsibleCard.module.scss'
-import { ModalWrapper } from '@/components/modal/ModalWrapper'
-import UserInfoModal from '@/components/user/UserInfoModal'
-import { useModal } from '@/providers/modal/ModalProvider'
-import { ReactNode, Suspense } from 'react'
+import { ReactNode } from 'react'
+import { Phone } from 'lucide-react'
 
 interface Props {
   label: string
   icon: ReactNode
   name: string
-  id?: string
+  phoneNumber?: string[]
   color?: string
 }
 
@@ -18,34 +14,36 @@ export function ResponsibleCard({
   label,
   icon,
   name,
-  id,
+  phoneNumber,
   color = 'bg-gray-100',
 }: Props) {
-  const modalKey = id ?? 'unknown'
-  const { openModal } = useModal('responsible_details', modalKey)
+  const formatPhoneHref = (phone: string) =>
+    `tel:${phone.replace(/[^\d+]/g, '')}`
 
   return (
-    <>
-      <article
-        className={`${styles.wrapper} ${color}`}
-        onClick={() => id && openModal()}
-      >
-        <header className={styles.wrapper__header}>
-          {icon}
-          <h3 className="font-medium">{label}</h3>
-        </header>
-        <div className={styles.wrapper__content}>{name}</div>
-      </article>
+    <article className={`${styles.wrapper} ${color}`}>
+      <header className={styles.wrapper__header}>
+        {icon}
+        <h3 className="font-medium">{label}</h3>
+      </header>
 
-      {id && (
-        <ModalWrapper
-          id="responsible_details"
-          title={`Контактная информация`}
-          keyId={modalKey}
-        >
-          <UserInfoModal userId={id} />
-        </ModalWrapper>
-      )}
-    </>
+      <div className={styles.wrapper__content}>
+        <div>{name}</div>
+      </div>
+      {phoneNumber?.length ? (
+        <div className={styles.phones}>
+          {phoneNumber.map((phone, index) => (
+            <a
+              key={index}
+              href={formatPhoneHref(phone)}
+              className={styles.phones__phone}
+            >
+              <Phone size={16} />
+              {phone}
+            </a>
+          ))}
+        </div>
+      ) : null}
+    </article>
   )
 }

@@ -197,6 +197,7 @@ interface IWeekSettings {
 export interface IResponsiblePerson {
   id: string
   full_name: string
+  phone_number: string[]
 }
 export type ResponsiblePersonRole =
   | 'ad'

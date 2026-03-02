@@ -44,9 +44,9 @@ const SliderClient = function ({
       const activeThumb = thumbnailsListRef.current.children[
         activeThumbIndex
       ] as HTMLElement
-      if (activeThumb) {
-        activeThumb.scrollIntoView({ behavior: 'smooth', block: 'nearest' })
-      }
+      // if (activeThumb) {
+      //   activeThumb.scrollIntoView({ behavior: 'smooth', block: 'nearest' })
+      // }
     }
   }, [selectedIndex, thumbnailOffset])
 
