@@ -208,7 +208,7 @@ export default async function NomenclatureDetailPage(
                 answer={nomenclature.main_info?.last_answer}
               />
               <span className="bg-orange-100 text-lg px-2 py-1 rounded">
-                Стоимость размещения: {formatPrice(pricePerMonth)} за месяц
+                Размещение рекламы: {formatPrice(pricePerMonth)} за месяц
               </span>
             </div>
           </div>
