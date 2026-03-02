@@ -29,22 +29,21 @@ export function ResponsibleCard({
 
       <div className={styles.wrapper__content}>
         <div>{name}</div>
-
-        {phoneNumber?.length ? (
-          <div className={styles.phones}>
-            {phoneNumber.map((phone, index) => (
-              <a
-                key={index}
-                href={formatPhoneHref(phone)}
-                className={styles.phones__phone}
-              >
-                <Phone size={16} />
-                {phone}
-              </a>
-            ))}
-          </div>
-        ) : null}
       </div>
+      {phoneNumber?.length ? (
+        <div className={styles.phones}>
+          {phoneNumber.map((phone, index) => (
+            <a
+              key={index}
+              href={formatPhoneHref(phone)}
+              className={styles.phones__phone}
+            >
+              <Phone size={16} />
+              {phone}
+            </a>
+          ))}
+        </div>
+      ) : null}
     </article>
   )
 }
