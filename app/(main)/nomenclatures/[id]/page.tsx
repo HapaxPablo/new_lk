@@ -223,7 +223,7 @@ export default async function NomenclatureDetailPage(
               <ResponsibleCard
                 label="Реклама"
                 icon={<Radio size={16} />}
-                id={responsible?.ad?.id}
+                phoneNumber={responsible?.ad?.phone_number}
                 name={responsible?.ad?.full_name || 'Не указан'}
                 color="bg-purple-100"
               />

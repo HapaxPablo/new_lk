@@ -6,7 +6,6 @@
   height: 100%;
   padding: 0.75rem;
   border-radius: 0.5rem;
-  cursor: pointer;
   &__header {
     display: flex;
     align-items: center;
@@ -21,5 +20,21 @@
     line-height: 1.5rem;
     font-weight: 600;
     color: var(--color-main-text);
+  }
+}
+
+.phones {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  margin-top: 0.5rem;
+
+  &__phone {
+    display: flex;
+    flex-direction: row;
+    gap: 0.25rem;
+    align-items: center;
+    font-size: 0.875rem;
+    color: var(--primary-color-light);
   }
 }
