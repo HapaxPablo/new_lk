@@ -4,7 +4,7 @@ export async function POST(request: NextRequest) {
   const token = request.cookies.get('access_token')?.value
 
   try {
-    const apiUrl = `${process.env.API_1C_URL}auth/logout/`
+    const apiUrl = `${process.env.API_1C_URL}/auth/logout/`
 
     // Make API call to 1C (non-blocking - we always want to clear cookie)
     if (token) {
