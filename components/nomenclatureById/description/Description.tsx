@@ -51,8 +51,16 @@ export function Description({ nomenclature }: DescriptionProps) {
     address: address || '',
   }
 
+  const newAddress = [
+    address?.city?.name && `г. ${address.city.name}`,
+    address?.street?.name && `ул. ${address.street.name}`,
+    address?.house?.number,
+  ]
+    .filter(Boolean)
+    .join(', ')
+
   return (
-    <div className="h-full p-2 rounded-md shadow-sm gap-2 flex flex-col sm:overflow-y-auto">
+    <div className="h-full p-2 rounded-md shadow-sm flex flex-col sm:overflow-y-auto">
       {displayData.article && (
         <NmcFragment text={displayData.article} type="Артикул" />
       )}
@@ -66,18 +74,13 @@ export function Description({ nomenclature }: DescriptionProps) {
       {displayData.brand && (
         <NmcFragment text={displayData.brand} type="Бренд" />
       )}
-      {displayData.typesOfMedia && (
-        <NmcFragment text={displayData.typesOfMedia} type="Типы носителей" />
-      )}
       {displayData.typePlace && (
         <NmcFragment text={displayData.typePlace} type="Место" />
       )}
       {displayData.typeContent && (
         <NmcFragment text={displayData.typeContent} type="Тип вещания" />
       )}
-      {displayData.address && (
-        <NmcFragment text={displayData.address.full_address} type="Адрес" />
-      )}
+      {displayData.address && <NmcFragment text={newAddress} type="Адрес" />}
     </div>
   )
 }
