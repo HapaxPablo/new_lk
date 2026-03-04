@@ -195,10 +195,10 @@ export default async function NomenclatureDetailPage(
               Размещение ролика в {fullName}
             </span>
             <div className="flex flex-wrap gap-4 text-sm text-gray-600">
-              <span className="bg-blue-100 text-blue-800 px-2 py-1 rounded">
+              <span className="bg-blue-100 text-blue-800 px-2 py-1 rounded items-center flex">
                 {contentType}
               </span>
-              <span className="bg-green-100 text-green-800 px-2 py-1 rounded">
+              <span className="bg-green-100 text-green-800 px-2 py-1 rounded items-center flex">
                 {typeOfPlace}
               </span>
               {}
@@ -207,9 +207,12 @@ export default async function NomenclatureDetailPage(
                 size="md"
                 answer={nomenclature.main_info?.last_answer}
               />
-              <span className="bg-orange-100 text-lg px-2 py-1 rounded">
-                Размещение рекламы: {formatPrice(pricePerMonth)} за месяц
-              </span>
+              <div className="flex flex-col bg-orange-100 rounded gap-0 px-2 py-1 items-center">
+                <span className="text-lg">
+                  Размещение рекламы: {formatPrice(pricePerMonth)}/день
+                </span>
+                <span className="text-xs">*при размещении от 1 месяца</span>
+              </div>
             </div>
           </div>
 

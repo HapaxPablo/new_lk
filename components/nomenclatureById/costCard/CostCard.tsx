@@ -12,9 +12,9 @@ export const CostCard = ({ cost }: CostCardProps) => {
       <div className={styles.wrapper__header}>
         <span>Стоимость размещения</span>
         <span className={styles.wrapper__header__cost}>
-          {formatPrice(cost)}
+          {formatPrice(cost)}/день
         </span>
-        <span>за 1 месяц трансляции</span>
+        <span>при размещении от 1 месяца</span>
       </div>
       <div className={styles.wrapper__footer}>
         <Button variant="success">Добавить в медиаплан</Button>
