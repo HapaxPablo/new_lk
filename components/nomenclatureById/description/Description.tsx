@@ -60,10 +60,10 @@ export function Description({ nomenclature }: DescriptionProps) {
     .join(', ')
 
   return (
-    <div className="h-full p-2 rounded-md shadow-sm flex flex-col sm:overflow-y-auto">
-      {displayData.article && (
+    <div className="gap-2 p-2 rounded-md shadow-sm flex flex-col sm:overflow-y-auto">
+      {/* {displayData.article && (
         <NmcFragment text={displayData.article} type="Артикул" />
-      )}
+      )} */}
 
       {displayData.operator && (
         <NmcFragment text={displayData.operator} type="Оператор" />
@@ -77,9 +77,9 @@ export function Description({ nomenclature }: DescriptionProps) {
       {displayData.typePlace && (
         <NmcFragment text={displayData.typePlace} type="Место" />
       )}
-      {displayData.typeContent && (
+      {/* {displayData.typeContent && (
         <NmcFragment text={displayData.typeContent} type="Тип вещания" />
-      )}
+      )} */}
       {displayData.address && <NmcFragment text={newAddress} type="Адрес" />}
     </div>
   )

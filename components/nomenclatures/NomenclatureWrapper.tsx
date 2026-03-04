@@ -50,9 +50,9 @@ export const NomenclatureWrapper = ({
 
   return (
     <div className={styles.displayWrapper}>
-      <div className={styles.filtersContainer}>
+      {/* <div className={styles.filtersContainer}>
         <FiltersPanel />
-      </div>
+      </div> */}
 
       <div className={styles.contentContainer}>
         <div ref={cardsWrapperRef} className={styles.cardsWrapper}>
