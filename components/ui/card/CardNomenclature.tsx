@@ -39,7 +39,7 @@ export const CardNomenclature: React.FC<CardNomenclatureProps> = ({
 
   // Форматирование цены
   const formattedPrice = pricePerMonth
-    ? `${formatPrice(pricePerMonth)}/мес`
+    ? `от ${formatPrice(pricePerMonth)}/день`
     : 'Цена не указана'
 
   // Форматирование адреса
