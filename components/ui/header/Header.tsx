@@ -15,7 +15,7 @@ export default function Header() {
       <div className={styles.wrapper_menu}>
         <Link
           className={styles.header__logo_wrapper}
-          href="/about"
+          href="/nomenclature"
           aria-label="RMS адрес о нас"
         >
           <Image
