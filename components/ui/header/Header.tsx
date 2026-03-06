@@ -29,11 +29,11 @@ export default function Header() {
             aria-label="logo"
           />
         </Link>
-        {/* <NavigationMenu /> */}
+        <NavigationMenu />
       </div>
       <div className={styles.wrapper_info_user}>
         {/* <SearchMenu /> */}
-        <NotificationMenu />
+        {/* <NotificationMenu /> */}
         <InfoMenu />
         <UserMenu />
       </div>

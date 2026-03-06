@@ -21,34 +21,34 @@ export const NAV_ITEMS: NavItem[] = [
     path: '/nomenclatures',
     icon: MapPin,
   },
-  {
-    title: 'Мои места',
-    path: '/my-place',
-    icon: Star,
-  },
-  {
-    title: 'Ролики',
-    path: '/content',
-    icon: Film,
-  },
-  {
-    title: 'Медиапланы',
-    path: '/media-plans',
-    icon: Calendar,
-  },
-  {
-    title: 'Акции',
-    path: '/promotions',
-    icon: Tag,
-  },
-  {
-    title: 'Задачи',
-    path: '/tasks',
-    icon: CheckSquare,
-  },
-  {
-    title: 'Контрагенты',
-    path: '/counterparties',
-    icon: Users,
-  },
+  // {
+  //   title: 'Мои места',
+  //   path: '/my-place',
+  //   icon: Star,
+  // },
+  // {
+  //   title: 'Ролики',
+  //   path: '/content',
+  //   icon: Film,
+  // },
+  // {
+  //   title: 'Медиапланы',
+  //   path: '/media-plans',
+  //   icon: Calendar,
+  // },
+  // {
+  //   title: 'Акции',
+  //   path: '/promotions',
+  //   icon: Tag,
+  // },
+  // {
+  //   title: 'Задачи',
+  //   path: '/tasks',
+  //   icon: CheckSquare,
+  // },
+  // {
+  //   title: 'Контрагенты',
+  //   path: '/counterparties',
+  //   icon: Users,
+  // },
 ]
