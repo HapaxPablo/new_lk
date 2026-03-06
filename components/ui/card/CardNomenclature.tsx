@@ -121,7 +121,7 @@ export const CardNomenclature: React.FC<CardNomenclatureProps> = ({
         </div>
       </div>
 
-      <div className={styles.actionsSection}>
+      {/* <div className={styles.actionsSection}>
         <Button
           className={styles.button}
           variant="detail"
@@ -147,7 +147,7 @@ export const CardNomenclature: React.FC<CardNomenclatureProps> = ({
             Добавить
           </Button>
         )}
-      </div>
+      </div> */}
     </article>
   )
 }

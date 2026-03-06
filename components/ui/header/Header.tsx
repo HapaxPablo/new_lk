@@ -32,8 +32,8 @@ export default function Header() {
         <NavigationMenu />
       </div>
       <div className={styles.wrapper_info_user}>
-        <SearchMenu />
-        <NotificationMenu />
+        {/* <SearchMenu /> */}
+        {/* <NotificationMenu /> */}
         <InfoMenu />
         <UserMenu />
       </div>

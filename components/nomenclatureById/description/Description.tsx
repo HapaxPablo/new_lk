@@ -68,15 +68,16 @@ export function Description({ nomenclature }: DescriptionProps) {
       {displayData.operator && (
         <NmcFragment text={displayData.operator} type="Оператор" />
       )}
-      {displayData.legalEntity && (
+      {/* {displayData.legalEntity && (
         <NmcFragment text={displayData.legalEntity.name} type="Юр. Лицо" />
+      )} */}
+      {displayData.typePlace && (
+        <NmcFragment text={displayData.typePlace} type="Место" />
       )}
       {displayData.brand && (
         <NmcFragment text={displayData.brand} type="Бренд" />
       )}
-      {displayData.typePlace && (
-        <NmcFragment text={displayData.typePlace} type="Место" />
-      )}
+
       {/* {displayData.typeContent && (
         <NmcFragment text={displayData.typeContent} type="Тип вещания" />
       )} */}
