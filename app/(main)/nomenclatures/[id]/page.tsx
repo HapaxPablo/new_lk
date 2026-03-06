@@ -202,14 +202,14 @@ export default async function NomenclatureDetailPage(
                 {typeOfPlace}
               </span>
               {}
-              <DeviceStatusBadge
+              {/* <DeviceStatusBadge
                 status={nomenclature.main_info.status as TStatusType}
                 size="md"
                 answer={nomenclature.main_info?.last_answer}
-              />
+              /> */}
               <div className="flex flex-col bg-orange-100 rounded gap-0 px-2 py-1 items-center">
                 <span className="text-lg">
-                  Размещение рекламы: {formatPrice(pricePerMonth)}/день
+                  Размещение рекламы: от {formatPrice(pricePerMonth)}/день
                 </span>
                 <span className="text-xs">*при размещении от 1 месяца</span>
               </div>

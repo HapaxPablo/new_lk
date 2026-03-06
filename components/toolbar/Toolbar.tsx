@@ -82,7 +82,7 @@ const Toolbar = ({ totalItems, currentLimit }: ToolbarProps): JSX.Element => {
             />
           </div>
           <div className="flex flex-row gap-1 p-1">
-            <div className={styles.sortContainer} ref={sortRef}>
+            {/* <div className={styles.sortContainer} ref={sortRef}>
               <div
                 className={styles.tooltipContainer}
                 data-tooltip="Сортировка"
@@ -116,7 +116,7 @@ const Toolbar = ({ totalItems, currentLimit }: ToolbarProps): JSX.Element => {
                   </div>
                 </div>
               )}
-            </div>
+            </div> */}
 
             <div className={styles.limitContainer} ref={limitRef}>
               <div
@@ -147,7 +147,6 @@ const Toolbar = ({ totalItems, currentLimit }: ToolbarProps): JSX.Element => {
                     onClick={() => handleLimitChange(48)}
                   >
                     48
-                  
                   </div>
                   <div
                     className={`${styles.dropdownItem} ${
