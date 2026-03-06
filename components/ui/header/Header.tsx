@@ -13,9 +13,13 @@ export default function Header() {
   return (
     <header className={styles.header}>
       <div className={styles.wrapper_menu}>
-        <Link
+        {/* <Link
           className={styles.header__logo_wrapper}
-          href="/about"
+          // href="/nomenclature"
+          aria-label="RMS адрес о нас"
+        > */}
+        <div
+          className={styles.header__logo_wrapper}
           aria-label="RMS адрес о нас"
         >
           <Image
@@ -28,7 +32,8 @@ export default function Header() {
             title="логотип-rmc"
             aria-label="logo"
           />
-        </Link>
+        </div>
+        {/* </Link> */}
         <NavigationMenu />
       </div>
       <div className={styles.wrapper_info_user}>
