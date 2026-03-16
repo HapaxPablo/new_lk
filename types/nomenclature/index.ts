@@ -213,6 +213,7 @@ export type TResponsiblePersons = {
 // Основной интерфейс для детальной информации о номенклатуре
 export interface INomenclatureDetailsItem {
   id: string
+  nameForFront: string
   article: number
   settings: IWeekSettings
   hw_info: IHardwareInfo
@@ -230,6 +231,7 @@ export interface INomenclatureDetailsItem {
   tenants: {
     id: string
     name: string
+    brands_list: string //TODO: удалить после настройки имени на бэке
   }[]
 }
 
