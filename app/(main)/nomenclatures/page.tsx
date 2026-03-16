@@ -71,7 +71,7 @@ export default async function NomenclaturesPage(props: NomenclaturesPageProps) {
 
     // console.log('Making request to:', url.toString())
 
-    const response = await fetch(url.toString())
+    const response = await fetch(url.toString(), { cache: 'force-cache' })
 
     if (!response.ok) {
       throw new Error(`Ошибка ${response.status}: ${response.statusText}`)
@@ -80,9 +80,6 @@ export default async function NomenclaturesPage(props: NomenclaturesPageProps) {
     const data: INomenclatureResponse = await response.json()
     return (
       <div className="flex flex-col h-full w-full p-1 gap-2">
-        <h1 className="text-center text-2xl font-bold flex-shrink-0">
-          Места размещения рекламы
-        </h1>
         <Toolbar totalItems={data.count} currentLimit={limit} />
 
         <div className="flex-grow min-h-0 overflow-hidden">

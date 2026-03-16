@@ -1,0 +1,13 @@
+.backButtonWrapper {
+    display: inline-flex;
+    align-items: center;
+    text-decoration: none;
+    color: inherit;
+    text-align: center;
+    gap: 1rem;
+
+    &:hover {
+        text-decoration: none;
+        color: inherit;
+    }
+}

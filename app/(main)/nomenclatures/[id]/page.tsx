@@ -15,11 +15,12 @@ import {
   generateNomenclatureStructuredData,
   generateNotFoundMetadata,
 } from '@/lib/configs/config-meta/nomenclatures'
+import { BackButton } from '@/components/ui/button/BackButton'
 import Script from 'next/script'
-import { DeviceStatusBadge } from '@/components/ui/device/DeviceStatusBadge'
-import { TStatusType } from '@/types/nomenclature/status'
+// import { DeviceStatusBadge } from '@/components/ui/device/DeviceStatusBadge'
+// import { TStatusType } from '@/types/nomenclature/status'
 import dynamic from 'next/dynamic'
-import { NmcFragment } from '@/components/nomenclatureById/description/fragment/NmcFragment'
+// import { NmcFragment } from '@/components/nomenclatureById/description/fragment/NmcFragment'
 import { formatPrice } from '@/utils/nomenclatureUtils'
 
 const Slider = dynamic(() => import('@/components/slider/Slider'), {
@@ -135,7 +136,7 @@ export default async function NomenclatureDetailPage(
   const structuredData = generateNomenclatureStructuredData(nomenclature, id)
 
   return (
-    <>
+    <div className="flex flex-col bg-gray-200 w-full h-full">
       <Script
         id={`structured-data-${id}`}
         type="application/ld+json"
@@ -145,7 +146,10 @@ export default async function NomenclatureDetailPage(
         strategy="afterInteractive"
       />
 
-      <div className="flex flex-col sm:flex-row gap-1 p-4 w-full h-full overflow-auto">
+      <div className="p-1">
+        <BackButton variant='default' />
+      </div>
+      <div className="flex flex-col sm:flex-row gap-1 p-2 w-full h-full overflow-auto bg-[var(--background)]">
         <div className="flex flex-col gap-2 w-full sm:w-3/5 h-auto">
           {/* Слайдер с изображениями или логотип */}
           <div className="w-full min-h-80 sm:h-70 rounded-md shadow-sm overflow-hidden relative">
@@ -256,6 +260,6 @@ export default async function NomenclatureDetailPage(
           <TabsWrapper item={nomenclature} />
         </div>
       </div>
-    </>
+    </div>
   )
 }

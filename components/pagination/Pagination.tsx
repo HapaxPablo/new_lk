@@ -11,6 +11,7 @@ interface PaginationProps {
   total: number
   limit: number
   page: number
+  infiniteScroll?: boolean
   showPageNumbers?: boolean
   className?: string
 }
@@ -19,7 +20,8 @@ export function Pagination({
   total,
   limit,
   page,
-  showPageNumbers = true,
+  infiniteScroll = true,
+  showPageNumbers = false,
   className = '',
 }: PaginationProps) {
   const searchParams = useSearchParams()
@@ -67,13 +69,13 @@ export function Pagination({
   }, [currentPage, totalPages])
 
   const handlePageChange = async (newPage: number) => {
+    if (infiniteScroll) return // Infinite scroll mode - no navigation
     if (newPage < 1 || newPage > totalPages || newPage === currentPage) return
 
     setIsLoading(true)
     try {
       const params = new URLSearchParams(searchParams.toString())
       params.set('page', newPage.toString())
-      // Используем push вместо replace, чтобы сохранить в истории
       await router.replace(`${pathName}?${params.toString()}`, {
         scroll: false,
       })
@@ -96,7 +98,7 @@ export function Pagination({
         <Button
           variant="primary"
           onClick={() => handlePageChange(currentPage - 1)}
-          disabled={isFirstPage || isLoading}
+          disabled={isFirstPage || isLoading || infiniteScroll}
           isLoading={isLoading}
           className={styles.navButton}
           aria-label="Предыдущая страница"
@@ -124,7 +126,7 @@ export function Pagination({
                     key={`page-${pageNumber}`}
                     variant={isActive ? 'primary' : 'default'}
                     onClick={() => handlePageChange(pageNumber)}
-                    disabled={isLoading}
+                    disabled={isLoading || infiniteScroll}
                     className={`${styles.pageButton} ${isActive ? styles.active : ''}`}
                     aria-label={`Страница ${pageNumber}`}
                     aria-current={isActive ? 'page' : undefined}
@@ -139,7 +141,7 @@ export function Pagination({
         <Button
           variant="primary"
           onClick={() => handlePageChange(currentPage + 1)}
-          disabled={isLastPage || isLoading}
+          disabled={isLastPage || isLoading || infiniteScroll}
           isLoading={isLoading}
           className={styles.navButton}
           aria-label="Следующая страница"
@@ -151,8 +153,9 @@ export function Pagination({
 
       <div className={styles.pageInfo}>
         <span className={styles.infoText}>
-          Страница <strong>{currentPage}</strong> из{' '}
-          <strong>{totalPages}</strong>
+          {infiniteScroll
+            ? `Загружено страниц: <strong>${currentPage}</strong>`
+            : `Страница <strong>${currentPage}</strong> из <strong>${totalPages}</strong>`}
         </span>
         <span className={styles.totalText}>
           Всего: <strong>{total}</strong>
