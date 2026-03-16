@@ -5,6 +5,7 @@ import React from 'react'
 interface Tenant {
   id: string
   name: string
+  brands_list: string
 }
 
 interface RentersTabContentProps {
@@ -19,7 +20,7 @@ export const RentersTabContent = ({ tenants }: RentersTabContentProps) => {
   return (
     <ul>
       {tenants.map((tenant, index) => (
-        <li key={tenant.id || index}>👥 {tenant.name}</li>
+        <li key={tenant.id || index}>👥 {tenant.brands_list}</li>
       ))}
     </ul>
   )

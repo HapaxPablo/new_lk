@@ -127,21 +127,13 @@ export default async function NomenclatureDetailPage(
     address,
     hw_info,
     responsible,
+    nameForFront,
   } = nomenclature
 
   const allImages = [...exterior, ...interior]
 
   const structuredData = generateNomenclatureStructuredData(nomenclature, id)
 
-  const fullName = [
-    typeOfPlace,
-    brand?.name,
-    address?.city?.name && `г. ${address.city.name}`,
-    address?.street?.name && `ул. ${address.street.name}`,
-    address?.house?.number,
-  ]
-    .filter(Boolean)
-    .join(', ')
   return (
     <>
       <Script
@@ -192,7 +184,7 @@ export default async function NomenclatureDetailPage(
           {/* Заголовок и основная информация */}
           <div className="p-4 border-b">
             <span className="text-sm sm:text-2xl font-bold text-[#1E3961] mb-2">
-              Размещение ролика в {fullName}
+              Размещение ролика в {nameForFront}
             </span>
             <div className="flex flex-wrap gap-4 text-sm text-gray-600">
               <span className="bg-blue-100 text-blue-800 px-2 py-1 rounded items-center flex">
