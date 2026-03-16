@@ -7,7 +7,6 @@ import { useRouter } from 'next/navigation'
 import { useInfiniteNomenclatures } from '@/hooks/useInfiniteNomenclatures'
 import { useMediaQuery } from 'usehooks-ts'
 
-// import { Pagination } from '../pagination/Pagination'
 import FiltersPanel from '../panels/filter-panels/FiltersPanels'
 import ScrollButton from '../ui/button/ScrollButton'
 import LoaderSkeleton from '../ui/loader/LoaderSkeleton'
@@ -23,6 +22,7 @@ const Pagination = dynamic(
     loading: () => <LoaderSkeleton />,
   }
 )
+
 interface NomenclatureCardProps {
   nomenclatureData: INomenclatureItem[]
   className?: string
@@ -54,61 +54,122 @@ export const NomenclatureWrapper = ({
 
   const router = useRouter()
   const isMobile = useMediaQuery('(max-width: 768px)')
-  const { items, totalCount, hasMore, isLoadingMore, size, setSize } =
-    useInfiniteNomenclatures(nomenclatureData)
+
+  const {
+    items,
+    totalCount: hookTotalCount,
+    hasMore,
+    isLoadingMore,
+    size,
+    setSize,
+  } = useInfiniteNomenclatures(nomenclatureData, count, page)
 
   const loadMore = useCallback(() => {
+    console.log('📜 Load more clicked:', { size, hasMore, isLoadingMore })
     if (hasMore && !isLoadingMore) {
       setSize((s) => s + 1)
     }
-  }, [hasMore, isLoadingMore, setSize])
+  }, [hasMore, isLoadingMore, setSize, size])
 
+  // Исправленный IntersectionObserver
   useEffect(() => {
+    if (!hasMore || isLoadingMore) return
+
     const observer = new IntersectionObserver(
-      ([entry]) => entry.isIntersecting && loadMore(),
+      (entries) => {
+        const [entry] = entries
+
+        if (entry.isIntersecting && hasMore && !isLoadingMore) {
+          loadMore()
+        }
+      },
       {
-        root: cardsWrapperRef.current,
-        threshold: 0,
+        root: cardsWrapperRef.current, // Используем контейнер вместо viewport
+        rootMargin: '0px 0px 200px 0px',
+        threshold: 0.1,
       }
     )
-    const currentSentinel = sentinelRef.current
-    if (currentSentinel) observer.observe(currentSentinel)
-    return () => observer.disconnect()
-  }, [loadMore, isMobile])
 
+    const currentSentinel = sentinelRef.current
+    if (currentSentinel) {
+      observer.observe(currentSentinel)
+    }
+
+    return () => {
+      if (currentSentinel) {
+        observer.unobserve(currentSentinel)
+      }
+    }
+  }, [loadMore, hasMore, isLoadingMore])
+
+  // Добавляем запасной вариант с scroll событием
+  useEffect(() => {
+    if (!hasMore || isLoadingMore || !cardsWrapperRef.current) return
+
+    const handleScroll = () => {
+      const wrapper = cardsWrapperRef.current
+      if (!wrapper) return
+
+      const { scrollTop, scrollHeight, clientHeight } = wrapper
+      const scrollPercent = (scrollTop + clientHeight) / scrollHeight
+
+      // Триггер при достижении 80% высоты
+      if (scrollPercent >= 0.8) {
+        if (hasMore && !isLoadingMore) {
+          loadMore()
+        }
+      }
+    }
+
+    const currentWrapper = cardsWrapperRef.current
+    currentWrapper.addEventListener('scroll', handleScroll, { passive: true })
+
+    return () => {
+      currentWrapper.removeEventListener('scroll', handleScroll)
+    }
+  }, [hasMore, isLoadingMore, loadMore])
+
+  // Обновляем URL при изменении страницы
   useEffect(() => {
     if (size > 0) {
       router.replace(`?page=${size}`, { scroll: false })
     }
   }, [size, router])
 
-  // console.log('NOMENCLATURE', nomenclatureData);
+  // Определяем, какие данные показывать
+  const displayItems = items.length > 0 ? items : nomenclatureData
+  const displayTotal = hookTotalCount || count || 0
 
   return (
     <div className={styles.displayWrapper}>
-      {/* <div className={styles.filtersContainer}>
+      <div className={styles.filtersContainer}>
         <FiltersPanel />
-      </div> */}
+      </div>
 
       <div className={styles.contentContainer}>
         <div ref={cardsWrapperRef} className={styles.cardsWrapper}>
-          {(items.length > 0 ? items : nomenclatureData).length <= 0 ? (
-            'Места размещения не найдены'
+          {displayItems.length <= 0 ? (
+            <div className={styles.emptyState}>
+              <p>Места размещения не найдены</p>
+            </div>
           ) : (
-            <NomenclatureCards
-              item={items.length > 0 ? items : nomenclatureData}
-            />
+            <NomenclatureCards item={displayItems} />
           )}
 
+          {/* для бесконечной прокрутки */}
           <div
             ref={sentinelRef}
-            style={{ height: '50px', minHeight: '50px' }}
+            className={styles.sentinel}
             aria-hidden="true"
           />
 
+          {/* Индикатор загрузки */}
           {isLoadingMore && (
             <div className={styles.loadingMore}>
               <LoaderSkeleton />
+              <span className={styles.loadingText}>
+                Загрузка дополнительных мест...
+              </span>
             </div>
           )}
 
@@ -116,12 +177,13 @@ export const NomenclatureWrapper = ({
             <Pagination
               limit={limit ?? 24}
               page={size}
-              total={totalCount || count || 0}
+              total={displayTotal}
               infiniteScroll={true}
-              showPageNumbers={true}
+              showPageNumbers={false}
             />
           </div>
 
+          {/* Кнопка прокрутки вверх/вниз */}
           <ScrollButton
             scrollContainerRef={cardsWrapperRef}
             showAfterScroll={500}
