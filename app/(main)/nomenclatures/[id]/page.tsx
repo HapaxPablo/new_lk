@@ -201,7 +201,7 @@ export default async function NomenclatureDetailPage(
               /> */}
               <div className="flex flex-col bg-orange-100 rounded gap-0 px-2 py-1 items-center">
                 <span className="text-lg">
-                  Размещение рекламы: от {formatPrice(pricePerMonth)}/день
+                  Стоимость: от {formatPrice(pricePerMonth)}/день
                 </span>
                 <span className="text-xs">*при размещении от 1 месяца</span>
               </div>
