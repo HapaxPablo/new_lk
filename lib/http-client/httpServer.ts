@@ -90,8 +90,8 @@ class HttpClient1CServer {
     source: NextRequest | ReadonlyRequestCookies,
     rawCookieHeader?: string
   ) {
-    let token: string | null
-    let xrmcCookie: string | undefined
+    let token: string | null = null
+    let xrmcCookie: string | undefined = undefined
 
     if (source instanceof NextRequest) {
       // Извлекаем из NextRequest
@@ -117,11 +117,13 @@ class HttpClient1CServer {
       if (!xrmcCookie) {
         const session = await this.getSessionData(source)
         xrmcCookie =
-          session?.user?.xrmcCookie || source.cookies.get('xrmcCookie')?.value
+          session?.user?.xrmcCookie ||
+          (typeof (source as any).cookies?.get === 'function'
+            ? (source as any).cookies.get('xrmcCookie')?.value
+            : null)
       }
     } else {
-      // Извлекаем из cookieStore
-      // Используем raw cookie header если передан
+      // Извлекаем из cookieStore (ReadonlyRequestCookies)
       let tokenValue: string | null = null
 
       if (rawCookieHeader) {
@@ -132,12 +134,25 @@ class HttpClient1CServer {
         xrmcCookie = xrmcMatch ? xrmcMatch[1] : undefined
       }
 
-      token = tokenValue || source.get('access_token')?.value || null
+      // Безопасно проверяем наличие .get() метода
+      if (typeof (source as any).get === 'function') {
+        token = tokenValue || (source as any).get('access_token')?.value || null
+        if (!xrmcCookie) {
+          xrmcCookie = (source as any).get('xrmcCookie')?.value
+        }
+      }
+
+      if (!token) {
+        token = null
+      }
 
       if (!xrmcCookie) {
         const session = await this.getSessionFromCookies(source)
         xrmcCookie =
-          session?.user?.xrmcCookie || source.get('xrmcCookie')?.value
+          session?.user?.xrmcCookie ||
+          (typeof (source as any).get === 'function'
+            ? (source as any).get('xrmcCookie')?.value
+            : undefined)
       }
     }
 

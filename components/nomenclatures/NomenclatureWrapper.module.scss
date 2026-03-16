@@ -38,11 +38,17 @@
       padding-right: 0.5rem; 
     }
 
-    .paginationContainer {
+.paginationContainer {
       flex-shrink: 0; 
       padding: .5rem;
       border-top: 1px solid var(--border-color-light);
     }
+
+.loadingMore {
+  padding: 20px 0;
+  display: flex;
+  justify-content: center;
+}
   }
 
   // Планшетная версия (768px - 1023px)
