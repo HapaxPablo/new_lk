@@ -184,7 +184,7 @@ export default async function NomenclatureDetailPage(
           {/* Заголовок и основная информация */}
           <div className="p-4 border-b">
             <span className="text-sm sm:text-2xl font-bold text-[#1E3961] mb-2">
-              Размещение ролика в {nameForFront}
+              {nameForFront}
             </span>
             <div className="flex flex-wrap gap-4 text-sm text-gray-600">
               <span className="bg-blue-100 text-blue-800 px-2 py-1 rounded items-center flex">
