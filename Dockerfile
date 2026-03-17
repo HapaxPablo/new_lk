@@ -1,43 +1,62 @@
-# Install dependencies only when needed
-FROM node:20-alpine AS deps
-WORKDIR /app
-COPY package.json package-lock.json ./
-RUN npm ci --legacy-peer-deps
-
-# Build Next.js app
+# ---------- Dependencies + Build ----------
 FROM node:20-alpine AS builder
+
 WORKDIR /app
-COPY --from=deps /app/node_modules ./node_modules
+
+# Устанавливаем зависимости (ВАЖНО: include optional)
+COPY package.json package-lock.json ./
+RUN npm ci --include=optional --legacy-peer-deps
+
+# Копируем проект
 COPY . .
+
+# Build args
 ARG API_1C_URL
 ARG CRYPTO_SECRET_KEY
 ARG CRYPTO_IV
 ARG SECRET_COOKIE_PASSWORD
 ARG NEXTAUTH_URL
+
+# ENV для билда
 ENV API_1C_URL=$API_1C_URL
 ENV CRYPTO_SECRET_KEY=$CRYPTO_SECRET_KEY
 ENV CRYPTO_IV=$CRYPTO_IV
 ENV SECRET_COOKIE_PASSWORD=$SECRET_COOKIE_PASSWORD
 ENV NEXTAUTH_URL=$NEXTAUTH_URL
+
+# Сборка Next.js
 RUN npm run build
 
-# Production image for Next.js
+
+# ---------- Production ----------
 FROM node:20-alpine AS runner
+
 WORKDIR /app
+
+# Создаём пользователя
 RUN addgroup --system --gid 1001 nodejs && \
     adduser --system --uid 1001 nextjs
+
+# Копируем только нужное из билда
 COPY --from=builder /app/public ./public
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
+
+# Переключаемся на non-root
 USER nextjs
+
 EXPOSE 3000
-ENV PORT 3000
+ENV PORT=3000
+
+# Runtime ENV
 ARG API_1C_URL
 ARG CRYPTO_SECRET_KEY
 ARG CRYPTO_IV
 ARG SECRET_COOKIE_PASSWORD
+
 ENV API_1C_URL=$API_1C_URL
 ENV CRYPTO_SECRET_KEY=$CRYPTO_SECRET_KEY
 ENV CRYPTO_IV=$CRYPTO_IV
 ENV SECRET_COOKIE_PASSWORD=$SECRET_COOKIE_PASSWORD
+
 CMD ["node", "server.js"]
