@@ -3,10 +3,12 @@ FROM node:20-alpine AS builder
 
 WORKDIR /app
 
+RUN npm cache clean --force
+
 # Устанавливаем зависимости (ВАЖНО: include optional)
 COPY package.json package-lock.json ./
-RUN npm ci --include=optional --legacy-peer-deps
-
+# RUN npm ci --include=optional --legacy-peer-deps
+RUN npm i --include=optional --legacy-peer-deps
 # Копируем проект
 COPY . .
 
