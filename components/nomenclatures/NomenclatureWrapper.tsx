@@ -49,11 +49,19 @@ export const NomenclatureWrapper = ({
   page,
   count,
 }: NomenclatureCardProps) => {
+  console.log('🔍 NomenclatureWrapper render START', {
+    hasNomenclatureData: !!nomenclatureData,
+    nomenclatureDataLength: nomenclatureData?.length,
+    page,
+    count,
+    timestamp: Date.now(),
+  })
   const cardsWrapperRef = useRef<HTMLDivElement>(null)
   const sentinelRef = useRef<HTMLDivElement>(null)
 
   const router = useRouter()
   const isMobile = useMediaQuery('(max-width: 768px)')
+  console.log('🔍 Before useInfiniteNomenclatures hook')
 
   const {
     items,
@@ -63,7 +71,12 @@ export const NomenclatureWrapper = ({
     size,
     setSize,
   } = useInfiniteNomenclatures(nomenclatureData, count, page)
-
+  console.log('🔍 After useInfiniteNomenclatures hook', {
+    itemsLength: items?.length,
+    hasMore,
+    isLoadingMore,
+    size,
+  })
   const loadMore = useCallback(() => {
     console.log('📜 Load more clicked:', { size, hasMore, isLoadingMore })
     if (hasMore && !isLoadingMore) {
@@ -139,7 +152,7 @@ export const NomenclatureWrapper = ({
   // Определяем, какие данные показывать
   const displayItems = items.length > 0 ? items : nomenclatureData
   const displayTotal = hookTotalCount || count || 0
-
+  console.log('🔍 NomenclatureWrapper render END')
   return (
     <div className={styles.displayWrapper}>
       <div className={styles.contentContainer}>
