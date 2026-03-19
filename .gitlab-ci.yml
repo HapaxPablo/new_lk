@@ -2,6 +2,7 @@ stages:
   - build_test
   - push_test
   - deploy_test
+  - cleanup  # Добавил отдельную стадию для очистки
 
 variables:
   DOCKER_HOST: 'unix:///var/run/docker.sock'
@@ -9,6 +10,8 @@ variables:
   REMOTE_SERVER_USER: $SERVER_USER
   SSH_PRIVATE_KEY: $ID_RSA
   SSH_CMD: 'ssh -i /tmp/deploy_key.pem -o StrictHostKeyChecking=no $SERVER_USER@$REMOTE_SERVER_IP'
+  CACHE_BUST: $CI_PIPELINE_ID  # Уникальный ID для инвалидации кэша
+  BUILD_DATE: $CI_COMMIT_TIMESTAMP
 
 build_test:
   image: docker:stable
@@ -16,9 +19,22 @@ build_test:
   only:
     - test
   script:
-    - docker info # Проверка подключения к Docker
-    - docker system prune -a -f
-    - docker build --build-arg API_1C_URL="$API_1C_URL" --build-arg CRYPTO_SECRET_KEY="$CRYPTO_SECRET_KEY" --build-arg CRYPTO_IV="$CRYPTO_IV" --build-arg SECRET_COOKIE_PASSWORD="$SECRET_COOKIE_PASSWORD" -t $CI_REGISTRY_IMAGE:latest .
+    - docker info
+    # Очистка только неиспользуемых данных (мягче, чем -a)
+    - docker system prune -f
+
+    # Сборка с инвалидацией кэша через pipeline ID
+    - docker build
+        --build-arg API_1C_URL="$API_1C_URL"
+        --build-arg CRYPTO_SECRET_KEY="$CRYPTO_SECRET_KEY"
+        --build-arg CRYPTO_IV="$CRYPTO_IV"
+        --build-arg SECRET_COOKIE_PASSWORD="$SECRET_COOKIE_PASSWORD"
+        --build-arg CACHE_BUST="$CACHE_BUST"
+        --build-arg BUILD_DATE="$BUILD_DATE"
+        --no-cache  # Добавил для гарантии чистой сборки
+        -t $CI_REGISTRY_IMAGE:latest
+        -t $CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA  # Добавил тег с коммитом
+        .
 
 push_test:
   image: docker:stable
@@ -27,7 +43,9 @@ push_test:
     - test
   script:
     - docker login $CI_REGISTRY -u $DOCKER_USER -p $DOCKER_TOKEN
+    # Пушим оба тега
     - docker push $CI_REGISTRY_IMAGE:latest
+    - docker push $CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA
 
 deploy_test:
   image: alpine:latest
@@ -39,17 +57,44 @@ deploy_test:
     - chmod 600 /tmp/deploy_key.pem
     - apk update && apk add openssh-client
   script:
-    # 1. Docker login
-    - $SSH_CMD "echo $DOCKER_TOKEN | docker login $CI_REGISTRY -u $DOCKER_USER -p $DOCKER_TOKEN"
+    # 1. Очистка старого кэша на сервере
+    - $SSH_CMD "docker system prune -f"
 
-    # 2. Pull образа
-    - $SSH_CMD "docker pull $DOCKER_IMAGE_NAME"
+    # 2. Docker login
+    - $SSH_CMD "echo $DOCKER_TOKEN | docker login $CI_REGISTRY -u $DOCKER_USER --password-stdin"
 
-    # 3. Остановка и удаление старого контейнера
+    # 3. Pull образа с конкретным тегом (более надёжно)
+    - $SSH_CMD "docker pull $CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA"
+
+    # 4. Остановка и удаление старого контейнера
     - $SSH_CMD "docker container rm -f new-lk || true"
 
-    # 4. Запуск нового контейнера
-    - $SSH_CMD "docker run --restart unless-stopped -d -p 3000:3000 --name new-lk -e API_1C_URL="$API_1C_URL" -e CRYPTO_SECRET_KEY="$CRYPTO_SECRET_KEY" -e CRYPTO_IV="$CRYPTO_IV" -e SECRET_COOKIE_PASSWORD="$SECRET_COOKIE_PASSWORD" $DOCKER_IMAGE_NAME"
+    # 5. Запуск нового контейнера с явным указанием тега
+    - $SSH_CMD >
+        docker run --restart unless-stopped -d
+        -p 3000:3000
+        --name new-lk
+        -e API_1C_URL="$API_1C_URL"
+        -e CRYPTO_SECRET_KEY="$CRYPTO_SECRET_KEY"
+        -e CRYPTO_IV="$CRYPTO_IV"
+        -e SECRET_COOKIE_PASSWORD="$SECRET_COOKIE_PASSWORD"
+        $CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA
 
   after_script:
-    - rm -f /tmp/deploy_key.pem # Очистка ключа
+    - rm -f /tmp/deploy_key.pem
+
+# Добавил отдельную стадию для периодической очистки
+cleanup:
+  image: docker:stable
+  stage: cleanup
+  only:
+    - schedules  # Можно запускать по расписанию
+  script:
+    # Полная очистка кэша (включая неиспользуемые образы)
+    - docker system prune -a -f --volumes
+    # Очистка на удалённом сервере
+    - echo "$ID_RSA" > /tmp/deploy_key.pem
+    - chmod 600 /tmp/deploy_key.pem
+    - ssh -i /tmp/deploy_key.pem -o StrictHostKeyChecking=no $SERVER_USER@$REMOTE_SERVER_IP "docker system prune -a -f"
+  after_script:
+    - rm -f /tmp/deploy_key.pem
