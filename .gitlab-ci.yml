@@ -24,17 +24,18 @@ build_test:
     - docker system prune -f
 
     # Сборка с инвалидацией кэша через pipeline ID
-    - docker build
-        --build-arg API_1C_URL="$API_1C_URL"
-        --build-arg CRYPTO_SECRET_KEY="$CRYPTO_SECRET_KEY"
-        --build-arg CRYPTO_IV="$CRYPTO_IV"
-        --build-arg SECRET_COOKIE_PASSWORD="$SECRET_COOKIE_PASSWORD"
-        --build-arg CACHE_BUST="$CACHE_BUST"
-        --build-arg BUILD_DATE="$BUILD_DATE"
-        --no-cache  # Добавил для гарантии чистой сборки
-        -t $CI_REGISTRY_IMAGE:latest
-        -t $CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA  # Добавил тег с коммитом
-        .
+    - >
+      docker build
+      --build-arg API_1C_URL="$API_1C_URL"
+      --build-arg CRYPTO_SECRET_KEY="$CRYPTO_SECRET_KEY"
+      --build-arg CRYPTO_IV="$CRYPTO_IV"
+      --build-arg SECRET_COOKIE_PASSWORD="$SECRET_COOKIE_PASSWORD"
+      --build-arg CACHE_BUST="$CACHE_BUST"
+      --build-arg BUILD_DATE="$BUILD_DATE"
+      --no-cache
+      -t $CI_REGISTRY_IMAGE:latest
+      -t $CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA
+      .
 
 push_test:
   image: docker:stable

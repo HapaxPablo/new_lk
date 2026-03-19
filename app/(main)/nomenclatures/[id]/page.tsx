@@ -125,7 +125,7 @@ export default async function NomenclatureDetailPage(
     contentType,
     typeOfPlace,
     legalEntity,
-    address,
+    formattedAddress: address,
     hw_info,
     responsible,
     nameForFront,
@@ -147,7 +147,7 @@ export default async function NomenclatureDetailPage(
       />
 
       <div className="p-1">
-        <BackButton variant='default' />
+        <BackButton variant="default" />
       </div>
       <div className="flex flex-col sm:flex-row gap-1 p-2 w-full h-full overflow-auto bg-[var(--background)]">
         <div className="flex flex-col gap-2 w-full sm:w-3/5 h-auto">
