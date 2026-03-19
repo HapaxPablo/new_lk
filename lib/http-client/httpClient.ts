@@ -22,6 +22,13 @@ class HttpClient1CClient {
 
     console.log('token client', token)
 
+    console.log('Making request to 1C API:', {
+      method,
+      endpoint,
+      isFile,
+      hasToken: !!token,
+    })
+
     // Проверяем, является ли эндпоинт публичным (GET запрос к nomenclatures, counterparties или promotions)
     const isPublicEndpoint =
       endpoint.includes('/api/nomenclatures') ||
