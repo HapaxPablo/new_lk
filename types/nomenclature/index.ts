@@ -209,6 +209,14 @@ export type ResponsiblePersonRole =
 export type TResponsiblePersons = {
   [role in ResponsiblePersonRole]?: IResponsiblePerson
 }
+export interface ITenantsListItem {
+  tenant: {
+    id: string
+    brands_list: string //TODO: удалить после настройки имени на бэке
+    logotypes: string[]
+  }
+  floor: string
+}
 
 // Основной интерфейс для детальной информации о номенклатуре
 export interface INomenclatureDetailsItem {
@@ -228,11 +236,7 @@ export interface INomenclatureDetailsItem {
   code1c: string
   main_info: IMainInfo
   responsible: TResponsiblePersons
-  tenants: {
-    id: string
-    name: string
-    brands_list: string //TODO: удалить после настройки имени на бэке
-  }[]
+  tenants: ITenantsListItem[]
 }
 
 // Интерфейс для дней недели (можно использовать для перечисления)
