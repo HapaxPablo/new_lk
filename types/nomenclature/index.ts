@@ -235,8 +235,7 @@ export interface INomenclatureDetailsItem {
   brand: IBrand
   interior: IImage[]
   exterior: IImage[]
-  address: IFormattedAddress
-  formattedAddress: string
+  formattedAddress: IFormattedAddress
   legalEntity: ILegalEntity
   contentType: string
   typeOfPlace: string
