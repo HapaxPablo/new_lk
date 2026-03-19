@@ -3,12 +3,21 @@ FROM node:20-alpine AS builder
 
 WORKDIR /app
 
-RUN npm cache clean --force
+# Аргумент для инвалидации кэша (можно передавать при сборке)
+ARG CACHE_BUST=1
+# Опционально: дата сборки для полной инвалидации
+ARG BUILD_DATE
 
-# Устанавливаем зависимости (ВАЖНО: include optional)
+# Лучше объединить очистку с установкой зависимостей
 COPY package.json package-lock.json ./
-# RUN npm ci --include=optional --legacy-peer-deps
-RUN npm i --include=optional --legacy-peer-deps
+
+# Очистка кэша npm и установка зависимостей в одной инструкции
+# Это гарантирует свежую установку при каждом изменении CACHE_BUST
+RUN echo "Cache bust: ${CACHE_BUST}" && \
+    npm cache clean --force && \
+    npm ci --include=optional --legacy-peer-deps || \
+    npm i --include=optional --legacy-peer-deps
+
 # Копируем проект
 COPY . .
 
@@ -26,9 +35,9 @@ ENV CRYPTO_IV=$CRYPTO_IV
 ENV SECRET_COOKIE_PASSWORD=$SECRET_COOKIE_PASSWORD
 ENV NEXTAUTH_URL=$NEXTAUTH_URL
 
-# Сборка Next.js
-RUN npm run build
-
+# Сборка Next.js с инвалидацией кэша через аргумент
+RUN echo "Build date: ${BUILD_DATE}" && \
+    npm run build
 
 # ---------- Production ----------
 FROM node:20-alpine AS runner
