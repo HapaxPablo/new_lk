@@ -19,7 +19,7 @@ export const CardNomenclature: React.FC<CardNomenclatureProps> = ({
   onClick,
   codeMP = null, //TODO вынести из пропсов, взять в Item и изменить логику использования
 }) => {
-  const { brand, exterior, typeOfPlace, pricePerMonth, address } = item
+  const { brand, exterior, typeOfPlace, pricePerMonth } = item
 
   // Получаем первое изображение для превью
   const mainImage = exterior?.[0]?.source
@@ -43,9 +43,7 @@ export const CardNomenclature: React.FC<CardNomenclatureProps> = ({
     : 'Цена не указана'
 
   // Форматирование адреса
-  const formattedAddress = address
-    ? `${address?.city?.name || ''}, ${address?.street?.name || ''} ${address?.house?.number || ''}`.trim()
-    : 'Адрес не указан'
+  const formattedAddress = item.formattedAddress || 'Адрес не указан'
 
   return (
     <article className={`${styles.card} ${className}`} onClick={onClick}>

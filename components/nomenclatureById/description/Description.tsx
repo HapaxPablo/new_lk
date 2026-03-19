@@ -51,14 +51,6 @@ export function Description({ nomenclature }: DescriptionProps) {
     address: address || '',
   }
 
-  const newAddress = [
-    address?.city?.name && `г. ${address.city.name}`,
-    address?.street?.name && `ул. ${address.street.name}`,
-    address?.house?.number,
-  ]
-    .filter(Boolean)
-    .join(', ')
-
   return (
     <div className="gap-2 p-2 rounded-md shadow-sm flex flex-col sm:overflow-y-auto">
       {/* {displayData.article && (
@@ -81,7 +73,9 @@ export function Description({ nomenclature }: DescriptionProps) {
       {/* {displayData.typeContent && (
         <NmcFragment text={displayData.typeContent} type="Тип вещания" />
       )} */}
-      {displayData.address && <NmcFragment text={newAddress} type="Адрес" />}
+      {displayData.address && (
+        <NmcFragment text={displayData.address.name} type="Адрес" />
+      )}
     </div>
   )
 }
