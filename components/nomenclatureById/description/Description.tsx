@@ -25,7 +25,7 @@ export function Description({ nomenclature }: DescriptionProps) {
     brand,
     contentType = '',
     typeOfPlace = '',
-    address,
+    formattedAddress,
     main_info = {
       owner: { full_name: '' },
       name: '',
@@ -48,7 +48,7 @@ export function Description({ nomenclature }: DescriptionProps) {
     typesOfMedia: contentType || '',
     typePlace: typeOfPlace || '',
     typeContent: contentType || '',
-    address: address || '',
+    address: formattedAddress?.name || '',
   }
 
   return (
@@ -74,7 +74,7 @@ export function Description({ nomenclature }: DescriptionProps) {
         <NmcFragment text={displayData.typeContent} type="Тип вещания" />
       )} */}
       {displayData.address && (
-        <NmcFragment text={displayData.address.name} type="Адрес" />
+        <NmcFragment text={displayData.address} type="Адрес" />
       )}
     </div>
   )
