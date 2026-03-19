@@ -102,7 +102,8 @@ export interface INomenclatureItem {
   version: string
   brand: IBrand
   exterior: { source: string }[]
-  address: IAddressNomenclature
+  // address: IAddressNomenclature
+  formattedAddress: string
   legalEntity: ILegalEntity
   contentType: ContentType
   typeOfPlace: string
@@ -210,12 +211,18 @@ export type TResponsiblePersons = {
   [role in ResponsiblePersonRole]?: IResponsiblePerson
 }
 export interface ITenantsListItem {
-  tenant: {
-    id: string
-    brands_list: string //TODO: удалить после настройки имени на бэке
-    logotypes: string[]
-  }
+  id: string
+  brands_list: string //TODO: удалить после настройки имени на бэке
+  logotypes: string[]
   floor: string
+}
+
+interface IFormattedAddress {
+  name: string
+  coordinates: {
+    latitude: string
+    longitude: string
+  }
 }
 
 // Основной интерфейс для детальной информации о номенклатуре
@@ -228,7 +235,8 @@ export interface INomenclatureDetailsItem {
   brand: IBrand
   interior: IImage[]
   exterior: IImage[]
-  address: IAddressNomenclature
+  address: IFormattedAddress
+  formattedAddress: string
   legalEntity: ILegalEntity
   contentType: string
   typeOfPlace: string
