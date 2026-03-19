@@ -18,7 +18,7 @@ class HttpClient1CServer {
   private baseUrl: string
 
   constructor() {
-    this.baseUrl = process.env.API_1C_URL || ''
+    this.baseUrl = process.env.API_1C_URL || 'https://api1.krasrm.com/'
   }
 
   private async getSessionData(request: NextRequest) {

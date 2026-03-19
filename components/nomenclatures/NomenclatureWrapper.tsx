@@ -2,7 +2,7 @@
 
 import { INomenclatureItem } from '@/types/nomenclature'
 import dynamic from 'next/dynamic'
-import { useCallback, useEffect, useRef } from 'react'
+import { Suspense, useCallback, useEffect, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import { useInfiniteNomenclatures } from '@/hooks/useInfiniteNomenclatures'
 import { useMediaQuery } from 'usehooks-ts'
@@ -42,8 +42,14 @@ const NomenclatureCards = dynamic(
     loading: () => <LoaderSkeleton />,
   }
 )
-
-export const NomenclatureWrapper = ({
+export const NomenclatureWrapper = (props: NomenclatureCardProps) => {
+  return (
+    <Suspense fallback={<LoaderSkeleton />}>
+      <NomenclatureWrapperContent {...props} />
+    </Suspense>
+  )
+}
+export const NomenclatureWrapperContent = ({
   nomenclatureData,
   limit,
   page,
