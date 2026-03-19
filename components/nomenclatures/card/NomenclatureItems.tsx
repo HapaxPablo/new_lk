@@ -3,6 +3,8 @@ import { INomenclatureItem } from '@/types/nomenclature'
 import { useRouter } from 'next/navigation'
 import styles from './NomenclatureItem.module.scss'
 
+//Чисто проверка
+
 interface NomenclatureCardProps {
   item: INomenclatureItem[]
   className?: string
