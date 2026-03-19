@@ -89,10 +89,8 @@ deploy_test:
 cleanup:
   image: docker:stable
   stage: cleanup
-  only:
-    - schedules # Можно запускать по расписанию
+  when: manual # Ручной запуск
   script:
-    # Полная очистка кэша (включая неиспользуемые образы)
     - docker system prune -a -f --volumes
     # Очистка на удалённом сервере
     - echo "$ID_RSA" > /tmp/deploy_key.pem
