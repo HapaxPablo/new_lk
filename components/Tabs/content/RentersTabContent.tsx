@@ -11,7 +11,7 @@ interface RentersTabContentProps {
 const TenantLogo = ({ tenant }: { tenant: ITenantsListItem }) => {
   const [hasError, setHasError] = useState(false)
   const [shouldRender, setShouldRender] = useState(
-    tenant.tenant.logotypes && tenant.tenant.logotypes.length > 0
+    tenant.logotypes && tenant.logotypes.length > 0
   )
 
   // Если нет логотипа или была ошибка загрузки, не рендерим
@@ -21,10 +21,10 @@ const TenantLogo = ({ tenant }: { tenant: ITenantsListItem }) => {
 
   return (
     <Image
-      src={tenant.tenant.logotypes![0]}
-      alt={`${tenant.tenant.brands_list} логотип`}
-      width={50}
-      height={50}
+      src={tenant.logotypes![0]}
+      alt={`${tenant.brands_list} логотип`}
+      width={120}
+      height={120}
       className="object-contain mr-2"
       onError={() => setHasError(true)} // При ошибке загрузки скрываем изображение
     />
@@ -37,14 +37,14 @@ export const RentersTabContent = ({ tenants }: RentersTabContentProps) => {
   }
 
   return (
-    <ul>
+    <ul className="overflow-auto max-h-96 pr-2">
       {tenants.map((tenant, index) => (
         <li
-          key={tenant.tenant.id || index}
+          key={tenant.id || index}
           className="flex items-center mb-2 flex-row"
         >
           <TenantLogo tenant={tenant} />
-          {tenant.tenant.brands_list}
+          {tenant.brands_list}
         </li>
       ))}
     </ul>
