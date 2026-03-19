@@ -7,7 +7,7 @@ const getNomenclaturesFetcher = async (
   endpoint: string,
   pageIndex?: number
 ): Promise<INomenclatureResponse> => {
-  // console.log('🔗 Fetching nomenclatures:', endpoint)
+  console.log('🔗 Fetching nomenclatures swr:', endpoint)
   const res = await fetch(endpoint, {
     credentials: 'include',
     cache: 'no-store',
@@ -17,12 +17,12 @@ const getNomenclaturesFetcher = async (
     throw new Error(`HTTP ${res.status}: ${await res.text()}`)
   }
   const data = await res.json()
-  // console.log('✅ SWR data:', {
-  //   pageIndex,
-  //   count: data.count,
-  //   resultsLength: data.results.length,
-  //   nextKey: endpoint,
-  // })
+  console.log('✅ SWR data:', {
+    pageIndex,
+    count: data.count,
+    resultsLength: data.results.length,
+    nextKey: endpoint,
+  })
   return data
 }
 
@@ -44,7 +44,6 @@ export const useInfiniteNomenclatures = (
     pageIndex: number,
     previousData: INomenclatureResponse | null
   ): string | null => {
-
     if (previousData && (pageIndex + 1) * limit >= previousData.count)
       return null
     const params = new URLSearchParams({
@@ -57,6 +56,8 @@ export const useInfiniteNomenclatures = (
     if (status) params.set('status', status)
     return `/api/nomenclatures/?${params.toString()}`
   }
+
+  console.log('🔑 SWR key:', getKey(1, null))
 
   const { data, error, size, setSize, isValidating } =
     useSWRInfinite<INomenclatureResponse>(getKey, getNomenclaturesFetcher, {
