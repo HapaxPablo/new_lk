@@ -69,7 +69,7 @@ export default async function NomenclaturesPage(props: NomenclaturesPageProps) {
     if (brand_id) url.searchParams.set('brand_id', brand_id)
     if (status) url.searchParams.set('status', status)
 
-    // console.log('Making request to:', url.toString())
+    console.log('Making request to:', url.toString())
 
     const response = await fetch(url.toString(), { cache: 'force-cache' })
 
