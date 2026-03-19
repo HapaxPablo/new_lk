@@ -24,9 +24,9 @@ class HttpClient1CClient {
 
     // Проверяем, является ли эндпоинт публичным (GET запрос к nomenclatures, counterparties или promotions)
     const isPublicEndpoint =
-      endpoint.includes('api/nomenclatures') ||
-      endpoint.includes('api/counterparties') ||
-      endpoint.includes('api/promotions')
+      endpoint.includes('/api/nomenclatures') ||
+      endpoint.includes('/api/counterparties') ||
+      endpoint.includes('/api/promotions')
 
     const headers: Record<string, string> = {}
 
