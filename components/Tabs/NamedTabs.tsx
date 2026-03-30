@@ -91,5 +91,5 @@ export const NamedTabs = ({ item }: NamedTabsProps) => {
     // },
   ]
 
-  return <Tabs items={tabs} defaultTab="photos" />
+  return <Tabs items={tabs} defaultTab="renters" />
 }
