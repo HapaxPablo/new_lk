@@ -213,7 +213,7 @@ export type TResponsiblePersons = {
 export interface ITenantsListItem {
   id: string
   brands_list: string //TODO: удалить после настройки имени на бэке
-  logotypes: string
+  logotype: string
   floor: string
 }
 
