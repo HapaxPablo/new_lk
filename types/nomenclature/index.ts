@@ -244,6 +244,14 @@ export interface INomenclatureDetailsItem {
   main_info: IMainInfo
   responsible: TResponsiblePersons
   tenants: ITenantsListItem[]
+  external_video_media: string
+  external_audio_media: string
+  internal_video_media: string
+  internal_audio_media: string
+  worktime_start: string
+  worktime_end: string
+  square: string
+  possibility: string
 }
 
 // Интерфейс для дней недели (можно использовать для перечисления)

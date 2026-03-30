@@ -35,6 +35,14 @@ export function Description({ nomenclature }: DescriptionProps) {
       serial_number: '',
     },
     pricePerMonth = '0',
+    external_audio_media,
+    external_video_media,
+    internal_video_media,
+    internal_audio_media,
+    worktime_start,
+    worktime_end,
+    square,
+    possibility,
   } = nomenclature
 
   const ownerName = main_info?.owner?.full_name || ''
@@ -49,6 +57,14 @@ export function Description({ nomenclature }: DescriptionProps) {
     typePlace: typeOfPlace || '',
     typeContent: contentType || '',
     address: formattedAddress?.name || '',
+    externalAudioMedia: external_audio_media || '',
+    externalVideoMedia: external_video_media || '',
+    internalVideoMedia: internal_video_media || '',
+    internalAudioMedia: internal_audio_media || '',
+    worktimeStart: worktime_start || '',
+    worktimeEnd: worktime_end || '',
+    square: square || '',
+    possibility: possibility || '',
   }
 
   return (
@@ -75,6 +91,37 @@ export function Description({ nomenclature }: DescriptionProps) {
       )} */}
       {displayData.address && (
         <NmcFragment text={displayData.address} type="Адрес" />
+      )}
+
+      {displayData.externalAudioMedia && (
+        <NmcFragment
+          text={displayData.externalAudioMedia}
+          type="Кол-во внешних аудио носителей"
+        />
+      )}
+      {displayData.externalVideoMedia && (
+        <NmcFragment
+          text={displayData.externalVideoMedia}
+          type="Кол-во внешних видео носителей"
+        />
+      )}
+      {displayData.internalVideoMedia && (
+        <NmcFragment
+          text={displayData.internalVideoMedia}
+          type="Кол-во внутренних аудио носителей"
+        />
+      )}
+      {displayData.internalAudioMedia && (
+        <NmcFragment
+          text={displayData.internalAudioMedia}
+          type="Кол-во внутренних видео носителей"
+        />
+      )}
+      {displayData.square && (
+        <NmcFragment text={displayData.square} type="Площадь" />
+      )}
+      {displayData.possibility && (
+        <NmcFragment text={displayData.possibility} type="Проходимость" />
       )}
     </div>
   )
