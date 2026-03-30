@@ -11,7 +11,7 @@ interface RentersTabContentProps {
 const TenantLogo = ({ tenant }: { tenant: ITenantsListItem }) => {
   const [hasError, setHasError] = useState(false)
   const [shouldRender, setShouldRender] = useState(
-    tenant.logotypes && tenant.logotypes.length > 0
+    tenant.logotype && tenant.logotype.length > 0
   )
 
   // Если нет логотипа или была ошибка загрузки, не рендерим
@@ -21,7 +21,7 @@ const TenantLogo = ({ tenant }: { tenant: ITenantsListItem }) => {
 
   return (
     <Image
-      src={tenant.logotypes![0]}
+      src={tenant.logotype}
       alt={`${tenant.brands_list} логотип`}
       width={120}
       height={120}
