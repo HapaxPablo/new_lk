@@ -46,13 +46,13 @@ export const NamedTabs = ({ item }: NamedTabsProps) => {
   const totalPhotos = exteriorCount + interiorCount
 
   const tabs: TabItem[] = [
-    {
-      id: 'photos',
-      label: 'Фото',
-      icon: <Image size={16} />,
-      count: totalPhotos,
-      content: <PhotosTabContent exterior={exterior} interior={interior} />,
-    },
+    // {
+    //   id: 'photos',
+    //   label: 'Фото',
+    //   icon: <Image size={16} />,
+    //   count: totalPhotos,
+    //   content: <PhotosTabContent exterior={exterior} interior={interior} />,
+    // },
     // {
     //   id: 'videos',
     //   label: 'Ролики',
@@ -81,13 +81,13 @@ export const NamedTabs = ({ item }: NamedTabsProps) => {
       count: tenants.length,
       content: <RentersTabContent tenants={tenants} />,
     },
-    {
-      id: 'contacts',
-      label: 'Контакты',
-      icon: <Phone size={16} />,
-      count: 0,
-      content: <ContactsTabContent />,
-    },
+    // {
+    //   id: 'contacts',
+    //   label: 'Контакты',
+    //   icon: <Phone size={16} />,
+    //   count: 0,
+    //   content: <ContactsTabContent />,
+    // },
   ]
 
   return <Tabs items={tabs} defaultTab="photos" />
