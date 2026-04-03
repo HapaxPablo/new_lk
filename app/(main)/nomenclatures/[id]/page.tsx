@@ -6,7 +6,7 @@ import {
 } from '@/components/nomenclatureById'
 import { BrandInfoTooltip } from '@/components/ui/tooltip/BrandInfoTooltip'
 import { Radio, MapPinned, BoomBox, ToolCase } from 'lucide-react'
-import { INomenclatureDetailsItem } from '@/types/nomenclature'
+import { INomenclatureDetailsItem, ITenantsResponse } from '@/types/nomenclature'
 import { Metadata } from 'next'
 import Image from 'next/image'
 
@@ -79,6 +79,26 @@ async function getNomenclatureById(
   }
 }
 
+async function getTenantsByNomenclatureId(id: string): Promise<ITenantsResponse | null> {
+  try {
+    const url = new URL(`api/nomenclatures/${id}/tenant/?limit=25&offset=0`, process.env.API_1C_URL)
+
+    const response = await fetch(url.toString(), {
+      method: 'GET',
+      cache: 'no-store',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    })
+
+    if (!response.ok) return null
+    return response.json()
+  } catch (error) {
+    console.error('Error fetching tenants:', error)
+    return null
+  }
+}
+
 export async function generateMetadata(
   props: NomenclatureDetailPageProps
 ): Promise<Metadata> {
@@ -101,7 +121,7 @@ export default async function NomenclatureDetailPage(
   const { id } = params
   const nomenclature = await getNomenclatureById(id)
   // console.log('DETAILS', nomenclature)
-
+  const tenantsData = await getTenantsByNomenclatureId(id)
   if (!nomenclature) {
     return (
       <div className="container mx-auto px-4 py-8">
@@ -197,7 +217,7 @@ export default async function NomenclatureDetailPage(
               <span className="bg-green-100 text-green-800 px-2 py-1 rounded items-center flex">
                 {typeOfPlace}
               </span>
-              {}
+              { }
               {/* <DeviceStatusBadge
                 status={nomenclature.main_info.status as TStatusType}
                 size="md"
@@ -250,14 +270,14 @@ export default async function NomenclatureDetailPage(
                   ? Number(address.coordinates.longitude)
                   : 92.814753
               }
-              // name={main_info.name}
-              // address={nomenclature.address}
+            // name={main_info.name}
+            // address={nomenclature.address}
             />
           </div>
 
           <hr className="solid m-4" />
 
-          <TabsWrapper item={nomenclature} />
+          <TabsWrapper item={nomenclature} initialTenantsData={tenantsData} />
         </div>
       </div>
     </div>

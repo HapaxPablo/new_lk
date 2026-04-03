@@ -1,11 +1,21 @@
 import type { NextConfig } from 'next'
 
 const nextConfig: NextConfig = {
+  trailingSlash: true,
   env: {
     CRYPTO_SECRET_KEY: process.env.CRYPTO_SECRET_KEY,
     CRYPTO_IV: process.env.CRYPTO_IV,
     API_1C_URL: process.env.API_1C_URL,
     SECRET_COOKIE_PASSWORD: process.env.SECRET_COOKIE_PASSWORD,
+  },
+
+  async rewrites() {
+    return [
+      {
+        source: '/api/:path*',
+        destination: 'https://api1.krasrm.com/api/:path*',
+      },
+    ]
   },
 
   async headers() {
@@ -33,24 +43,23 @@ const nextConfig: NextConfig = {
         ],
       },
       {
-        // Применяем ко всем страницам
         source: '/:path*',
         headers: [
           {
             key: 'Content-Security-Policy',
             value: `
-    default-src 'self' 'unsafe-inline' 'unsafe-eval';
-    script-src 'self' 'unsafe-inline' 'unsafe-eval' https://api-maps.yandex.ru https://yastatic.net https://mc.yandex.ru;
-    style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://yastatic.net;
-    img-src 'self' data: blob: https://*.maps.yandex.net https://api-maps.yandex.ru https://cdn2.thecatapi.com https://yandex.ru https://mc.yandex.ru;
-    font-src 'self' data: https://fonts.gstatic.com;
-    connect-src 'self' https://api-maps.yandex.ru https://api.thecatapi.com https://yastatic.net https://mc.yandex.ru;
-    frame-src 'self' https://yandex.ru https://*.yandex.ru https://yandex.com https://*.yandex.com;
-    object-src 'none';
-    base-uri 'self';
-    form-action 'self';
-    media-src 'self';
-  `
+              default-src 'self' 'unsafe-inline' 'unsafe-eval';
+              script-src 'self' 'unsafe-inline' 'unsafe-eval' https://api-maps.yandex.ru https://yastatic.net https://mc.yandex.ru;
+              style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://yastatic.net;
+              img-src 'self' data: blob: https://*.maps.yandex.net https://api-maps.yandex.ru https://cdn2.thecatapi.com https://yandex.ru https://mc.yandex.ru https://api1.krasrm.com;
+              font-src 'self' data: https://fonts.gstatic.com;
+              connect-src 'self' https://api-maps.yandex.ru https://api.thecatapi.com https://yastatic.net https://mc.yandex.ru https://api1.krasrm.com;
+              frame-src 'self' https://yandex.ru https://*.yandex.ru https://yandex.com https://*.yandex.com;
+              object-src 'none';
+              base-uri 'self';
+              form-action 'self';
+              media-src 'self';
+            `
               .replace(/\s+/g, ' ')
               .trim(),
           },

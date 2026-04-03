@@ -10,7 +10,7 @@ import {
   Phone,
 } from 'lucide-react'
 import { Tabs, TabItem } from './Tabs'
-import { INomenclatureDetailsItem } from '@/types/nomenclature'
+import { INomenclatureDetailsItem, ITenantsResponse } from '@/types/nomenclature'
 import {
   PhotosTabContent,
   VideosTabContent,
@@ -22,9 +22,10 @@ import {
 
 interface NamedTabsProps {
   item: INomenclatureDetailsItem
+  initialTenantsData?: ITenantsResponse | null
 }
 
-export const NamedTabs = ({ item }: NamedTabsProps) => {
+export const NamedTabs = ({ item, initialTenantsData }: NamedTabsProps) => {
   if (!item) {
     return (
       <div
@@ -51,7 +52,7 @@ export const NamedTabs = ({ item }: NamedTabsProps) => {
       label: 'Арендаторы',
       icon: <Users size={16} />,
       count: tenants.length,
-      content: <RentersTabContent tenants={tenants} />,
+      content: <RentersTabContent nomenclatureId={item.id} initialTenantsData={initialTenantsData} />,
     },
     // {
     //   id: 'photos',
