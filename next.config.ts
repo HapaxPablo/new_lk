@@ -10,10 +10,19 @@ const nextConfig: NextConfig = {
   },
 
   async rewrites() {
+    // Используем другой префикс для прокси, чтобы не конфликтовать с локальными API
+    const apiUrl =
+      process.env.NODE_ENV === 'development'
+        ? 'http://192.168.0.8:8000/api/:path*'
+        : 'https://api1.krasrm.com/api/:path*'
+
+    console.log('🔧 Rewrites enabled, API URL:', apiUrl)
+    console.log('Current NODE_ENV:', process.env.NODE_ENV)
+
     return [
       {
-        source: '/api/:path*',
-        destination: 'https://api1.krasrm.com/api/:path*',
+        source: '/proxy-api/:path*', // Изменено с /api на /proxy-api
+        destination: apiUrl,
       },
     ]
   },
@@ -21,7 +30,7 @@ const nextConfig: NextConfig = {
   async headers() {
     return [
       {
-        source: '/api/:path*',
+        source: '/proxy-api/:path*',
         headers: [
           {
             key: 'Access-Control-Allow-Origin',
@@ -33,8 +42,7 @@ const nextConfig: NextConfig = {
           },
           {
             key: 'Access-Control-Allow-Headers',
-            value:
-              'Content-Type, Authorization, Cookie, Access-Control-Allow-Credentials',
+            value: 'Content-Type, Authorization, Cookie, X-XRMC-Cookie',
           },
           {
             key: 'Access-Control-Allow-Credentials',
@@ -51,9 +59,9 @@ const nextConfig: NextConfig = {
               default-src 'self' 'unsafe-inline' 'unsafe-eval';
               script-src 'self' 'unsafe-inline' 'unsafe-eval' https://api-maps.yandex.ru https://yastatic.net https://mc.yandex.ru;
               style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://yastatic.net;
-              img-src 'self' data: blob: https://*.maps.yandex.net https://api-maps.yandex.ru https://cdn2.thecatapi.com https://yandex.ru https://mc.yandex.ru https://api1.krasrm.com;
+              img-src 'self' data: blob: https://*.maps.yandex.net https://api-maps.yandex.ru https://cdn2.thecatapi.com https://yandex.ru https://mc.yandex.ru https://api1.krasrm.com http://192.168.0.8:8000;
               font-src 'self' data: https://fonts.gstatic.com;
-              connect-src 'self' https://api-maps.yandex.ru https://api.thecatapi.com https://yastatic.net https://mc.yandex.ru https://api1.krasrm.com;
+              connect-src 'self' https://api-maps.yandex.ru https://api.thecatapi.com https://yastatic.net https://mc.yandex.ru https://api1.krasrm.com http://192.168.0.8:8000 ws://192.168.0.8:8000;
               frame-src 'self' https://yandex.ru https://*.yandex.ru https://yandex.com https://*.yandex.com;
               object-src 'none';
               base-uri 'self';
@@ -109,18 +117,12 @@ const nextConfig: NextConfig = {
         protocol: 'https',
         hostname: 'api-maps.yandex.ru',
       },
+      {
+        protocol: 'http',
+        hostname: '192.168.0.8',
+        port: '8000',
+      },
     ],
-    // domains: [
-    //   'test.lk.krasrm.com',
-    //   'cdn.example.com',
-    //   'api-maps.yandex.ru',
-    //   'cdn2.thecatapi.com',
-    //   'api.thecatapi.com',
-    //   'yastatic.net',
-    //   'fonts.gstatic.com',
-    //   'yandex.ru',
-    //   'api1.krasrm.com',
-    // ],
     formats: ['image/avif', 'image/webp'],
   },
 

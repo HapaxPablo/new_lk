@@ -2,11 +2,13 @@
 
 import { ITenantsListItem, ITenantsResponse } from '@/types/nomenclature'
 import Image from 'next/image'
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useState, useEffect, useRef, useCallback } from 'react'
 import { useInfinityTenants } from '@/hooks/useInfinityTenants'
 import { SearchForm } from '@/components/search-form/SearchForm'
 import { useDebounce } from '@/hooks/useDebounce'
-// import { FloorSelect } from '@/components/ui/select/FloorSelect'
+import { Select } from '@/components/ui/select/Select'
+import styles from './styles/RentersTab.module.scss'
+import SearchClient from '@/components/ui/searchClient/SearchClient'
 
 interface RentersTabContentProps {
   nomenclatureId: string
@@ -40,65 +42,80 @@ export const RentersTabContent = ({ nomenclatureId, initialTenantsData }: Renter
   const { items, hasMore, isLoadingInitial, isLoadingMore, setSize, size, floors } =
     useInfinityTenants(nomenclatureId, debouncedSearch, floor, initialTenantsData)
 
-  console.log('🚀 items:', items)
-
   const loaderRef = useRef<HTMLDivElement>(null)
+  const containerRef = useRef<HTMLUListElement>(null)
 
+  // Observer для бесконечного скролла
   useEffect(() => {
+    const loader = loaderRef.current
+    const container = containerRef.current
+
+    if (!loader || !container) return
+
     const observer = new IntersectionObserver(
       entries => {
         if (entries[0].isIntersecting && hasMore && !isLoadingMore) {
+          console.log('Loading more...', { hasMore, isLoadingMore })
           setSize(prev => prev + 1)
         }
       },
-      { threshold: 0.1 }
+      {
+        threshold: 0.1,
+        root: container, // container должен быть scrollable parent
+        rootMargin: '0px 0px 100px 0px', // Добавляем отступ для упреждающей загрузки
+      }
     )
 
-    if (loaderRef.current) observer.observe(loaderRef.current)
-
+    observer.observe(loader)
     return () => observer.disconnect()
-  }, [hasMore, isLoadingMore, setSize])
+  }, [hasMore, isLoadingMore, setSize]) // Убираем items из зависимостей
 
+  // Сброс пагинации при изменении поиска или этажа
   useEffect(() => {
-    setSize(1)
+    if (size !== 1) {
+      setSize(1)
+    }
   }, [debouncedSearch, floor, setSize])
 
   if (isLoadingInitial) return <p>Загрузка...</p>
 
   return (
     <div>
-      <div className="flex items-center gap-2 mb-4">
-        <div className="flex items-center gap-2 mb-4">
-          <input
-            type="text"
-            value={inputValue}
-            onChange={e => setInputValue(e.target.value)}
-            placeholder="Поиск арендатора..."
-            className="w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-300"
-          />
-        </div>
-        {/* <FloorSelect
+      <div className={styles.filterWrapper}>
+        <SearchClient
+          value={inputValue}
+          onChange={(e: any) => setInputValue(e.target.value)}
+          placeholder="Поиск арендатора..."
+          type='text'
+        />
+        <Select
           options={floors}
           value={floor}
           onChange={setFloor}
-        /> */}
+          placeholder="Этаж"
+        />
       </div>
 
-      {!items.length ? (
+      {!items.length && !isLoadingInitial ? (
         <p>Арендаторы не найдены</p>
       ) : (
-        <ul className="overflow-auto max-h-96 pr-2">
+        <ul
+          ref={containerRef}
+          className='overflow-auto h-96'
+          style={{ overflowAnchor: 'none' }}
+        >
           {items.map((tenant, index) => (
             <li
               key={`${tenant.id}-${tenant.floor}-${index}`}
-              className="flex items-center mb-2 flex-row"
+              className="flex items-center mb-2 flex-row p-2 border-b"
             >
               <TenantLogo tenant={tenant} />
-              {tenant.brands_list}
+              <span>{tenant.brands_list}</span>
             </li>
           ))}
           <div ref={loaderRef} className="py-2 text-center">
-            {isLoadingMore && <p>Загрузка...</p>}
+            {isLoadingMore && <p>Загрузка ещё...</p>}
+            {!hasMore && items.length > 0 && <p>Все арендаторы загружены</p>}
           </div>
         </ul>
       )}

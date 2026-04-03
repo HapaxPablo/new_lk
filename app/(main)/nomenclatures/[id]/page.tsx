@@ -4,8 +4,7 @@ import {
   ResponsibleCard,
   TabsWrapper,
 } from '@/components/nomenclatureById'
-import { BrandInfoTooltip } from '@/components/ui/tooltip/BrandInfoTooltip'
-import { Radio, MapPinned, BoomBox, ToolCase } from 'lucide-react'
+import { Radio } from 'lucide-react'
 import { INomenclatureDetailsItem, ITenantsResponse } from '@/types/nomenclature'
 import { Metadata } from 'next'
 import Image from 'next/image'
@@ -17,10 +16,7 @@ import {
 } from '@/lib/configs/config-meta/nomenclatures'
 import { BackButton } from '@/components/ui/button/BackButton'
 import Script from 'next/script'
-// import { DeviceStatusBadge } from '@/components/ui/device/DeviceStatusBadge'
-// import { TStatusType } from '@/types/nomenclature/status'
 import dynamic from 'next/dynamic'
-// import { NmcFragment } from '@/components/nomenclatureById/description/fragment/NmcFragment'
 import { formatPrice } from '@/utils/nomenclatureUtils'
 
 const Slider = dynamic(() => import('@/components/slider/Slider'), {
@@ -120,7 +116,6 @@ export default async function NomenclatureDetailPage(
   const params = await props.params
   const { id } = params
   const nomenclature = await getNomenclatureById(id)
-  // console.log('DETAILS', nomenclature)
   const tenantsData = await getTenantsByNomenclatureId(id)
   if (!nomenclature) {
     return (
@@ -136,20 +131,19 @@ export default async function NomenclatureDetailPage(
   }
 
   const {
-    article,
     brand,
     exterior,
     interior,
     pricePerMonth,
-    main_info,
     contentType,
     typeOfPlace,
-    legalEntity,
     formattedAddress: address,
-    hw_info,
     responsible,
     nameForFront,
+    main_info
   } = nomenclature
+
+  const { description } = main_info
 
   const allImages = [...exterior, ...interior]
 
@@ -198,14 +192,12 @@ export default async function NomenclatureDetailPage(
             )}
           </div>
 
-          {/* Описание */}
           <div className="w-full h-full sm:h-2/3 ">
             <Description nomenclature={nomenclature} />
           </div>
         </div>
 
         <div className="flex flex-col w-full sm:overflow-y-auto rounded-md shadow-xl">
-          {/* Заголовок и основная информация */}
           <div className="p-4 border-b">
             <span className="text-sm sm:text-2xl font-bold text-[#1E3961] mb-2">
               {nameForFront}
@@ -217,12 +209,6 @@ export default async function NomenclatureDetailPage(
               <span className="bg-green-100 text-green-800 px-2 py-1 rounded items-center flex">
                 {typeOfPlace}
               </span>
-              { }
-              {/* <DeviceStatusBadge
-                status={nomenclature.main_info.status as TStatusType}
-                size="md"
-                answer={nomenclature.main_info?.last_answer}
-              /> */}
               <div className="flex flex-col bg-orange-100 rounded gap-0 px-2 py-1 items-center">
                 <span className="text-lg">
                   Стоимость: от {formatPrice(pricePerMonth)}/день
@@ -232,7 +218,6 @@ export default async function NomenclatureDetailPage(
             </div>
           </div>
 
-          {/* Ответственные лица */}
           <div className="p-4">
             <h2 className="text-xl font-semibold text-[#1E3961]">
               Ответственный
@@ -249,15 +234,14 @@ export default async function NomenclatureDetailPage(
             </div>
           </div>
 
-          <hr className="solid m-4" />
+          <hr className="solid ml-4 mr-4" />
 
           {/* Место вещания */}
           <div className="flex flex-col gap-4 p-4">
             <div className="flex flex-row items-center gap-12">
               <h2 className="text-xl font-semibold text-[#1E3961]">
-                Место вещания
+                На карте
               </h2>
-              <BrandInfoTooltip brand={brand} />
             </div>
             <MapPlacement
               lat={
@@ -270,13 +254,19 @@ export default async function NomenclatureDetailPage(
                   ? Number(address.coordinates.longitude)
                   : 92.814753
               }
-            // name={main_info.name}
-            // address={nomenclature.address}
             />
           </div>
 
-          <hr className="solid m-4" />
-
+          <hr className="solid ml-4 mr-4" />
+          <div className="p-4">
+            <h2 className="text-xl font-semibold text-[#1E3961]">
+              Описание
+            </h2>
+            <span className="px-2 py-1 rounded items-center flex text-base sm:text-lg text-gray-700">
+              {description || 'Описание отсутствует'}
+            </span>
+          </div>
+          <hr className="solid ml-4 mr-4" />
           <TabsWrapper item={nomenclature} initialTenantsData={tenantsData} />
         </div>
       </div>
