@@ -15,7 +15,7 @@ export const CounterpartyItems: React.FC<CounterpartyCardProps> = ({
   const router = useRouter()
 
   const handleClickCard = (id: string) => {
-    router.push(`counterparties/${id}`)
+    router.push(`/counterparties/${id}`)
   }
 
   return (

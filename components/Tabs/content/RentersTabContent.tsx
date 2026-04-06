@@ -1,23 +1,24 @@
 'use client'
 
-import { ITenantsListItem } from '@/types/nomenclature'
+import { ITenantsListItem, ITenantsResponse } from '@/types/nomenclature'
 import Image from 'next/image'
-import React, { useState } from 'react'
+import React, { useState, useEffect, useRef, useCallback } from 'react'
+import { useInfinityTenants } from '@/hooks/useInfinityTenants'
+import { useDebounce } from '@/hooks/useDebounce'
+import { Select } from '@/components/ui/select/Select'
+import styles from './styles/RentersTab.module.scss'
+import SearchClient from '@/components/ui/searchClient/SearchClient'
 
 interface RentersTabContentProps {
-  tenants: ITenantsListItem[]
+  nomenclatureId: string
+  initialTenantsData?: ITenantsResponse | null
 }
 
 const TenantLogo = ({ tenant }: { tenant: ITenantsListItem }) => {
   const [hasError, setHasError] = useState(false)
-  const [shouldRender, setShouldRender] = useState(
-    tenant.logotype && tenant.logotype.length > 0
-  )
+  const [shouldRender] = useState(tenant.logotype && tenant.logotype.length > 0)
 
-  // Если нет логотипа или была ошибка загрузки, не рендерим
-  if (!shouldRender || hasError) {
-    return null
-  }
+  if (!shouldRender || hasError) return null
 
   return (
     <Image
@@ -26,27 +27,100 @@ const TenantLogo = ({ tenant }: { tenant: ITenantsListItem }) => {
       width={120}
       height={120}
       className="object-contain mr-2"
-      onError={() => setHasError(true)} // При ошибке загрузки скрываем изображение
+      onError={() => setHasError(true)}
     />
   )
 }
 
-export const RentersTabContent = ({ tenants }: RentersTabContentProps) => {
-  if (tenants.length === 0) {
-    return <p>Арендаторы не найдены</p>
-  }
+export const RentersTabContent = ({ nomenclatureId, initialTenantsData }: RentersTabContentProps) => {
+  const [inputValue, setInputValue] = useState('')
+  const [floor, setFloor] = useState('')
+
+  const debouncedSearch = useDebounce(inputValue, 500)
+
+  const { items, hasMore, isLoadingInitial, isLoadingMore, setSize, size, floors } =
+    useInfinityTenants(nomenclatureId, debouncedSearch, floor, initialTenantsData)
+
+  const loaderRef = useRef<HTMLDivElement>(null)
+  const containerRef = useRef<HTMLUListElement>(null)
+
+  // Observer для бесконечного скролла
+  useEffect(() => {
+    const loader = loaderRef.current
+    const container = containerRef.current
+
+    if (!loader || !container) return
+
+    const observer = new IntersectionObserver(
+      entries => {
+        if (entries[0].isIntersecting && hasMore && !isLoadingMore) {
+          console.log('Loading more...', { hasMore, isLoadingMore })
+          setSize(prev => prev + 1)
+        }
+      },
+      {
+        threshold: 0.1,
+        root: container,
+        rootMargin: '0px 0px 100px 0px', // отступ для упреждающей загрузки
+      }
+    )
+
+    observer.observe(loader)
+    return () => observer.disconnect()
+  }, [hasMore, isLoadingMore, setSize])
+
+  // Сброс пагинации при изменении поиска или этажа
+  useEffect(() => {
+    if (size !== 1) {
+      setSize(1)
+    }
+  }, [debouncedSearch, floor, setSize])
+
+  if (isLoadingInitial) return <p>Загрузка...</p>
 
   return (
-    <ul className="overflow-auto max-h-96 pr-2">
-      {tenants.map((tenant, index) => (
-        <li
-          key={tenant.id || index}
-          className="flex items-center mb-2 flex-row"
+    <div>
+      <div className={styles.filterWrapper}>
+        <SearchClient
+          value={inputValue}
+          onChange={(e: any) => setInputValue(e.target.value)}
+          placeholder="Поиск арендатора..."
+          type='text'
+        />
+        <Select
+          options={floors}
+          value={floor}
+          onChange={setFloor}
+          placeholder="Этаж"
+        />
+      </div>
+
+      {!items.length && !isLoadingInitial ? (
+        <p>Арендаторы не найдены</p>
+      ) : (
+        <ul
+          ref={containerRef}
+          className='overflow-auto h-96'
+          style={{ overflowAnchor: 'none' }}
         >
-          <TenantLogo tenant={tenant} />
-          {tenant.brands_list}
-        </li>
-      ))}
-    </ul>
+          {items.map((tenant, index) => (
+            <li
+              key={`${tenant.id}-${tenant.floor}-${index}`}
+              className="flex items-center flex-col mb-2 p-2 border-b"
+            >
+              <div className='flex flex-row items-center w-full mb-1'>
+                <TenantLogo tenant={tenant} />
+                <span>{tenant.brands_list}</span>
+              </div>
+              <div>этаж: {tenant.floor}</div>
+            </li>
+          ))}
+          <div ref={loaderRef} className="py-2 text-center">
+            {isLoadingMore && <p>Загрузка ещё...</p>}
+            {!hasMore && items.length > 0 && <p>Все арендаторы загружены</p>}
+          </div>
+        </ul>
+      )}
+    </div>
   )
 }

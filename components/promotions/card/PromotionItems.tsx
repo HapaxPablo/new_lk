@@ -15,7 +15,7 @@ export const PromotionItems: React.FC<PromotionCardProps> = ({
   const router = useRouter()
 
   const handleClickCard = (id: string) => {
-    router.push(`promotions/${id}`)
+    router.push(`/promotions/${id}`)
   }
 
   return (

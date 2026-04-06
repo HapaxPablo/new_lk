@@ -2,13 +2,14 @@
 
 import React from 'react'
 import { NamedTabs } from '@/components/Tabs'
-import { INomenclatureDetailsItem } from '@/types/nomenclature'
+import { INomenclatureDetailsItem, ITenantsResponse } from '@/types/nomenclature'
 
 interface IProps {
   item: INomenclatureDetailsItem
+  initialTenantsData: ITenantsResponse | null
 }
 
-export const TabsWrapper = ({ item }: IProps) => {
+export const TabsWrapper = ({ item, initialTenantsData }: IProps) => {
   if (!item) {
     return (
       <div
@@ -25,7 +26,7 @@ export const TabsWrapper = ({ item }: IProps) => {
 
   return (
     <section aria-label="Дополнительная информация">
-      <NamedTabs item={item} />
+      <NamedTabs item={item} initialTenantsData={initialTenantsData} />
     </section>
   )
 }

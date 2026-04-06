@@ -217,6 +217,13 @@ export interface ITenantsListItem {
   floor: string
 }
 
+export interface ITenantsResponse {
+  count: number
+  next: string | null
+  previous: string | null
+  results: ITenantsListItem[]
+}
+
 interface IFormattedAddress {
   name: string
   coordinates: {
