@@ -112,7 +112,9 @@ export const RentersTabContent = ({ nomenclatureId, initialTenantsData }: Renter
                 <TenantLogo tenant={tenant} />
                 <span>{tenant.brands_list}</span>
               </div>
-              <div>этаж: {tenant.floor}</div>
+              {!floor && (
+                <div className='text-xs text-gray-400'>этаж: {tenant.floor}</div>
+              )}
             </li>
           ))}
           <div ref={loaderRef} className="py-2 text-center">
