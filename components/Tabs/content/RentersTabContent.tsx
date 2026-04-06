@@ -4,7 +4,6 @@ import { ITenantsListItem, ITenantsResponse } from '@/types/nomenclature'
 import Image from 'next/image'
 import React, { useState, useEffect, useRef, useCallback } from 'react'
 import { useInfinityTenants } from '@/hooks/useInfinityTenants'
-import { SearchForm } from '@/components/search-form/SearchForm'
 import { useDebounce } from '@/hooks/useDebounce'
 import { Select } from '@/components/ui/select/Select'
 import styles from './styles/RentersTab.module.scss'
@@ -61,14 +60,14 @@ export const RentersTabContent = ({ nomenclatureId, initialTenantsData }: Renter
       },
       {
         threshold: 0.1,
-        root: container, // container должен быть scrollable parent
-        rootMargin: '0px 0px 100px 0px', // Добавляем отступ для упреждающей загрузки
+        root: container,
+        rootMargin: '0px 0px 100px 0px', // отступ для упреждающей загрузки
       }
     )
 
     observer.observe(loader)
     return () => observer.disconnect()
-  }, [hasMore, isLoadingMore, setSize]) // Убираем items из зависимостей
+  }, [hasMore, isLoadingMore, setSize])
 
   // Сброс пагинации при изменении поиска или этажа
   useEffect(() => {
@@ -107,10 +106,13 @@ export const RentersTabContent = ({ nomenclatureId, initialTenantsData }: Renter
           {items.map((tenant, index) => (
             <li
               key={`${tenant.id}-${tenant.floor}-${index}`}
-              className="flex items-center mb-2 flex-row p-2 border-b"
+              className="flex items-center flex-col mb-2 p-2 border-b"
             >
-              <TenantLogo tenant={tenant} />
-              <span>{tenant.brands_list}</span>
+              <div className='flex flex-row items-center w-full mb-1'>
+                <TenantLogo tenant={tenant} />
+                <span>{tenant.brands_list}</span>
+              </div>
+              <div>этаж: {tenant.floor}</div>
             </li>
           ))}
           <div ref={loaderRef} className="py-2 text-center">
