@@ -106,12 +106,10 @@ export const RentersTabContent = ({ nomenclatureId, initialTenantsData }: Renter
           {items.map((tenant, index) => (
             <li
               key={`${tenant.id}-${tenant.floor}-${index}`}
-              className="flex flex-col mb-2 p-2 border-b"
+              className="flex flex-row mb-2 p-2 items-center"
             >
-              <div className='flex flex-row items-center w-full mb-1'>
-                <TenantLogo tenant={tenant} />
-                <span>{tenant.brands_list}</span>
-              </div>
+              <TenantLogo tenant={tenant} />
+              <span>{tenant.brands_list}</span>
               {!floor && (
                 <div className='text-xs text-gray-400'>этаж: {tenant.floor}</div>
               )}
