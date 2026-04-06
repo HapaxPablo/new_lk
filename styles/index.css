@@ -16,6 +16,7 @@
   --background-secondary: oklch(77.649% 0.00885 271.308);
   --background-opacity: oklch(77.649% 0.00885 271.308 / 40%);
   --background-light-green: oklch(0.9443 0.0417 149.6);
+  --background-white: oklch(1 0 0);
 
   /* Основные цвета */
   --main-color: oklch(0.6546 0.1801 23.49);
