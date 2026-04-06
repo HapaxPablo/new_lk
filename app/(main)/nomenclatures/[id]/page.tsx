@@ -258,14 +258,16 @@ export default async function NomenclatureDetailPage(
           </div>
 
           <hr className="solid ml-4 mr-4" />
-          <div className="p-4">
-            <h2 className="text-xl font-semibold text-[#1E3961]">
-              Описание
-            </h2>
-            <span className="px-2 py-1 rounded items-center flex text-base sm:text-lg text-gray-700">
-              {description || 'Описание отсутствует'}
-            </span>
-          </div>
+          {description && (
+            <div className="p-4">
+              <h2 className="text-xl font-semibold text-[#1E3961]">
+                Описание
+              </h2>
+              <span className="px-2 py-1 rounded items-center flex text-base sm:text-lg text-gray-700">
+                {description}
+              </span>
+            </div>
+          )}
           <hr className="solid ml-4 mr-4" />
           <TabsWrapper item={nomenclature} initialTenantsData={tenantsData} />
         </div>
