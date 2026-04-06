@@ -91,7 +91,7 @@ export const RentersTabContent = ({ nomenclatureId, initialTenantsData }: Renter
           options={floors}
           value={floor}
           onChange={setFloor}
-          placeholder="Этаж"
+          placeholder="Выбрать этаж"
         />
       </div>
 
