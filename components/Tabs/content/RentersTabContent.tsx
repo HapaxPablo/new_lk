@@ -111,7 +111,7 @@ export const RentersTabContent = ({ nomenclatureId, initialTenantsData }: Renter
               <TenantLogo tenant={tenant} />
               <span>{tenant.brands_list}</span>
               {!floor && (
-                <div className='text-xs text-gray-400'>{tenant.floor}</div>
+                <div className='text-xs text-gray-400'>этаж: {tenant.floor}</div>
               )}
             </li>
           ))}
