@@ -108,13 +108,13 @@ export function Description({ nomenclature }: DescriptionProps) {
       {displayData.internalVideoMedia && (
         <NmcFragment
           text={displayData.internalVideoMedia}
-          type="Кол-во внутренних аудио носителей"
+          type="Кол-во внутренних видео носителей"
         />
       )}
       {displayData.internalAudioMedia && (
         <NmcFragment
           text={displayData.internalAudioMedia}
-          type="Кол-во внутренних видео носителей"
+          type="Кол-во внутренних аудио носителей"
         />
       )}
       {displayData.square && (
