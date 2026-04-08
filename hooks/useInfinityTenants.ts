@@ -11,7 +11,7 @@ interface IFloorOption {
 
 const fetcher = async (url: string) => {
   const fullUrl = url.startsWith('/') ? url : `/${url}`
-  console.log('🌐 Fetcher full URL:', fullUrl)
+  // console.log('🌐 Fetcher full URL:', fullUrl)
 
   const res = await fetch(fullUrl, {
     credentials: 'include',

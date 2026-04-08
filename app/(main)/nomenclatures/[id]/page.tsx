@@ -63,6 +63,7 @@ async function getNomenclatureById(
     }
 
     const data = await response.json()
+    console.log('Nomenclature data fetched successfully:', data)
     return data
   } catch (error) {
     console.error('Error fetching nomenclature:', {
@@ -136,7 +137,6 @@ export default async function NomenclatureDetailPage(
     interior,
     pricePerMonth,
     contentType,
-    typeOfPlace,
     formattedAddress: address,
     responsible,
     nameForFront,
@@ -199,76 +199,102 @@ export default async function NomenclatureDetailPage(
 
         <div className="flex flex-col w-full sm:overflow-y-auto rounded-md shadow-xl">
           <div className="p-4 border-b">
-            <span className="text-sm sm:text-2xl font-bold text-[#1E3961] mb-2">
-              {nameForFront}
-            </span>
-            <div className="flex flex-wrap gap-4 text-sm text-gray-600">
-              <span className="bg-blue-100 text-blue-800 px-2 py-1 rounded items-center flex">
-                {contentType}
-              </span>
-              <span className="bg-green-100 text-green-800 px-2 py-1 rounded items-center flex">
-                {typeOfPlace}
-              </span>
-              <div className="flex flex-col bg-orange-100 rounded gap-0 px-2 py-1 items-center">
-                <span className="text-lg">
-                  Стоимость: от {formatPrice(pricePerMonth)}/день
+            <div className='flex flex-row gap-3 items-center'>
+              {brand.logotype && (
+                <span className="items-center flex">
+                  <Image
+                    src={brand.logotype}
+                    alt="Логотип"
+                    width={180}
+                    height={60}
+                    className="object-contain max-h-full w-auto"
+                    loading='lazy'
+                  />
                 </span>
-                <span className="text-xs">*при размещении от 1 месяца</span>
+              )}
+              {nameForFront && (
+                <span className="text-sm sm:text-2xl font-bold text-[#1E3961] mb-2">
+                  {nameForFront}
+                </span>
+              )}
+            </div>
+            {contentType || pricePerMonth && (
+              <div className="flex flex-wrap gap-4 text-sm text-gray-600">
+                {contentType && (
+                  <span className="bg-blue-100 text-blue-800 px-2 py-1 rounded items-center flex">
+                    {contentType}
+                  </span>
+                )}
+                {pricePerMonth && (
+                  <div className="flex flex-col bg-orange-100 rounded gap-0 px-2 py-1 items-center justify-center">
+                    <span className="text-lg">
+                      Стоимость: от {formatPrice(pricePerMonth)}/день
+                    </span>
+                    <span className="text-xs">*при размещении от 1 месяца</span>
+                  </div>
+                )}
               </div>
-            </div>
+            )}
           </div>
+          {responsible?.ad && (
+            <>
+              <div className="p-4">
+                <h2 className="text-xl font-semibold text-[#1E3961]">
+                  Ответственный
+                </h2>
 
-          <div className="p-4">
-            <h2 className="text-xl font-semibold text-[#1E3961]">
-              Ответственный
-            </h2>
+                <div className="flex flex-col gap-4">
+                  <ResponsibleCard
+                    label="Реклама"
+                    icon={<Radio size={16} />}
+                    phoneNumber={responsible?.ad?.phone_number}
+                    name={responsible?.ad?.full_name || 'Не указан'}
+                    color="bg-purple-100"
+                  />
+                </div>
+              </div>
 
-            <div className="flex flex-col gap-4">
-              <ResponsibleCard
-                label="Реклама"
-                icon={<Radio size={16} />}
-                phoneNumber={responsible?.ad?.phone_number}
-                name={responsible?.ad?.full_name || 'Не указан'}
-                color="bg-purple-100"
-              />
-            </div>
-          </div>
-
-          <hr className="solid ml-4 mr-4" />
+              <hr className="solid ml-4 mr-4" />
+            </>
+          )}
 
           {/* Место вещания */}
-          <div className="flex flex-col gap-4 p-4">
-            <div className="flex flex-row items-center gap-12">
-              <h2 className="text-xl font-semibold text-[#1E3961]">
-                На карте
-              </h2>
-            </div>
-            <MapPlacement
-              lat={
-                address?.coordinates?.latitude
-                  ? Number(address.coordinates.latitude)
-                  : 56.011152
-              }
-              lng={
-                address?.coordinates?.longitude
-                  ? Number(address.coordinates.longitude)
-                  : 92.814753
-              }
-            />
-          </div>
-
-          <hr className="solid ml-4 mr-4" />
-          {description && (
-            <div className="p-4">
-              <h2 className="text-xl font-semibold text-[#1E3961]">
-                Описание
-              </h2>
-              <span className="px-2 py-1 rounded items-center flex text-base sm:text-lg text-gray-700">
-                {description}
-              </span>
+          {address && (
+            <div className="flex flex-col gap-4 p-4">
+              <div className="flex flex-row items-center gap-12">
+                <h2 className="text-xl font-semibold text-[#1E3961]">
+                  На карте
+                </h2>
+              </div>
+              <MapPlacement
+                lat={
+                  address?.coordinates?.latitude
+                    ? Number(address.coordinates.latitude)
+                    : 56.011152
+                }
+                lng={
+                  address?.coordinates?.longitude
+                    ? Number(address.coordinates.longitude)
+                    : 92.814753
+                }
+              />
             </div>
           )}
-          <hr className="solid ml-4 mr-4" />
+
+          {description && (
+            <>
+              <hr className="solid ml-4 mr-4" />
+              <div className="p-4">
+                <h2 className="text-xl font-semibold text-[#1E3961]">
+                  Описание
+                </h2>
+                <span className="px-2 py-1 rounded items-center flex text-base sm:text-lg text-gray-700 whitespace-pre-line">
+                  {description}
+                </span>
+              </div>
+              <hr className="solid ml-4 mr-4" />
+            </>
+          )}
           <TabsWrapper item={nomenclature} initialTenantsData={tenantsData} />
         </div>
       </div>

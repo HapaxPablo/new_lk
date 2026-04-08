@@ -1,6 +1,7 @@
 import React from 'react'
 import { NmcFragment } from './fragment/NmcFragment'
 import { INomenclatureDetailsItem } from '@/types/nomenclature'
+import { formatMediaUnits, formatPossibility, formatSquare, formatWorkTime } from '@/utils/nomenclatureUtils'
 
 interface DescriptionProps {
   nomenclature?: INomenclatureDetailsItem | null
@@ -30,11 +31,6 @@ export function Description({ nomenclature }: DescriptionProps) {
       owner: { full_name: '' },
       name: '',
     },
-    hw_info = {
-      model: '',
-      serial_number: '',
-    },
-    pricePerMonth = '0',
     external_audio_media,
     external_video_media,
     internal_video_media,
@@ -45,12 +41,9 @@ export function Description({ nomenclature }: DescriptionProps) {
     possibility,
   } = nomenclature
 
-  const ownerName = main_info?.owner?.full_name || ''
-  const mainName = main_info?.name || ''
 
   const displayData = {
     article: article ? String(article) : '',
-    operator: ownerName,
     legalEntity: legalEntity || '',
     brand: brand?.name || '',
     typesOfMedia: contentType || '',
@@ -72,10 +65,6 @@ export function Description({ nomenclature }: DescriptionProps) {
       {/* {displayData.article && (
         <NmcFragment text={displayData.article} type="Артикул" />
       )} */}
-
-      {displayData.operator && (
-        <NmcFragment text={displayData.operator} type="Оператор" />
-      )}
       {/* {displayData.legalEntity && (
         <NmcFragment text={displayData.legalEntity.name} type="Юр. Лицо" />
       )} */}
@@ -86,42 +75,42 @@ export function Description({ nomenclature }: DescriptionProps) {
         <NmcFragment text={displayData.brand} type="Бренд" />
       )}
 
-      {/* {displayData.typeContent && (
-        <NmcFragment text={displayData.typeContent} type="Тип вещания" />
-      )} */}
+      {worktime_start && worktime_end && (
+        <NmcFragment text={formatWorkTime(worktime_start, worktime_end)} type="Время работы" />
+      )}
       {displayData.address && (
         <NmcFragment text={displayData.address} type="Адрес" />
       )}
 
       {displayData.externalAudioMedia && (
         <NmcFragment
-          text={displayData.externalAudioMedia}
-          type="Кол-во внешних аудио носителей"
+          text={formatMediaUnits(displayData.externalAudioMedia)}
+          type="Уличные громкоговорители"
         />
       )}
       {displayData.externalVideoMedia && (
         <NmcFragment
-          text={displayData.externalVideoMedia}
-          type="Кол-во внешних видео носителей"
+          text={formatMediaUnits(displayData.externalVideoMedia)}
+          type="Уличные видеомониторы"
         />
       )}
       {displayData.internalVideoMedia && (
         <NmcFragment
-          text={displayData.internalVideoMedia}
-          type="Кол-во внутренних видео носителей"
+          text={formatMediaUnits(displayData.internalVideoMedia)}
+          type="Внутренние видеомониторы"
         />
       )}
       {displayData.internalAudioMedia && (
         <NmcFragment
-          text={displayData.internalAudioMedia}
-          type="Кол-во внутренних аудио носителей"
+          text={formatMediaUnits(displayData.internalAudioMedia)}
+          type="Внутренние громкоговорители"
         />
       )}
       {displayData.square && (
-        <NmcFragment text={displayData.square} type="Площадь" />
+        <NmcFragment text={formatSquare(displayData.square)} type="Площадь" />
       )}
       {displayData.possibility && (
-        <NmcFragment text={displayData.possibility} type="Проходимость" />
+        <NmcFragment text={formatPossibility(displayData.possibility)} type="Проходимость" />
       )}
     </div>
   )
