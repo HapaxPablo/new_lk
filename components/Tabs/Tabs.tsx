@@ -11,6 +11,7 @@ export interface TabItem {
   icon?: React.ReactNode
   count?: number
   content: React.ReactNode
+  visual?: boolean
 }
 
 interface TabsProps {
@@ -20,7 +21,9 @@ interface TabsProps {
 }
 
 export const Tabs = ({ items, defaultTab, onTabChange }: TabsProps) => {
-  const [activeTab, setActiveTab] = useState(defaultTab || items[0]?.id)
+  const visibleItems = items.filter(item => item.visual !== false)
+
+  const [activeTab, setActiveTab] = useState(defaultTab || visibleItems[0]?.id)
 
   const handleTabClick = useCallback(
     (tabId: string) => {
@@ -30,12 +33,8 @@ export const Tabs = ({ items, defaultTab, onTabChange }: TabsProps) => {
     [onTabChange]
   )
 
-  if (!items || items.length === 0) {
-    return (
-      <div className={styles.tabsWrapper}>
-        <p className={styles.emptyState}>Нет доступных вкладок</p>
-      </div>
-    )
+  if (!visibleItems || visibleItems.length === 0) {
+    return null
   }
 
   return (
@@ -45,30 +44,32 @@ export const Tabs = ({ items, defaultTab, onTabChange }: TabsProps) => {
         role="tablist"
         aria-label="Вкладки с информацией"
       >
-        {items.map((tab) => (
-          <TabButton
-            key={tab.id}
-            id={tab.id}
-            label={tab.label}
-            icon={tab.icon}
-            count={tab.count}
-            isActive={activeTab === tab.id}
-            onClick={() => handleTabClick(tab.id)}
-            aria-controls={`panel-${tab.id}`}
-          />
+        {visibleItems.map((tab) => (
+          <React.Fragment key={tab.id}>
+            <TabButton
+              id={tab.id}
+              label={tab.label}
+              icon={tab.icon}
+              count={tab.count}
+              isActive={activeTab === tab.id}
+              onClick={() => handleTabClick(tab.id)}
+              aria-controls={`panel-${tab.id}`}
+            />
+          </React.Fragment>
         ))}
       </div>
 
-      {items.map((tab) => (
-        <TabPanel
-          key={tab.id}
-          id={`panel-${tab.id}`}
-          label={tab.label}
-          isActive={activeTab === tab.id}
-          aria-labelledby={`tab-${tab.id}`}
-        >
-          {tab.content}
-        </TabPanel>
+      {visibleItems.map((tab) => (
+        <React.Fragment key={tab.id}>
+          <TabPanel
+            id={`panel-${tab.id}`}
+            label={tab.label}
+            isActive={activeTab === tab.id}
+            aria-labelledby={`tab-${tab.id}`}
+          >
+            {tab.content}
+          </TabPanel>
+        </React.Fragment>
       ))}
     </div>
   )
