@@ -218,23 +218,21 @@ export default async function NomenclatureDetailPage(
                 </span>
               )}
             </div>
-            {contentType || pricePerMonth && (
-              <div className="flex flex-wrap gap-4 text-sm text-gray-600">
-                {contentType && (
-                  <span className="bg-blue-100 text-blue-800 px-2 py-1 rounded items-center flex">
-                    {contentType}
+            <div className="flex flex-wrap gap-4 text-sm text-gray-600">
+              {contentType && (
+                <span className="bg-blue-100 text-blue-800 px-2 py-1 rounded items-center flex">
+                  {contentType}
+                </span>
+              )}
+              {pricePerMonth && (
+                <div className="flex flex-col bg-orange-100 rounded gap-0 px-2 py-1 items-center justify-center">
+                  <span className="text-lg">
+                    Стоимость: от {formatPrice(pricePerMonth)}/день
                   </span>
-                )}
-                {pricePerMonth && (
-                  <div className="flex flex-col bg-orange-100 rounded gap-0 px-2 py-1 items-center justify-center">
-                    <span className="text-lg">
-                      Стоимость: от {formatPrice(pricePerMonth)}/день
-                    </span>
-                    <span className="text-xs">*при размещении от 1 месяца</span>
-                  </div>
-                )}
-              </div>
-            )}
+                  <span className="text-xs">*при размещении от 1 месяца</span>
+                </div>
+              )}
+            </div>
           </div>
           {responsible?.ad && (
             <>

@@ -41,7 +41,7 @@ export const formatPrice = (price: string): string => {
  * Функция для форматирования количества штук носителей
  */
 export const formatMediaUnits = (units: string): string => {
-  return `${units} шт.`
+  return `${units} шт`
 }
 
 /**
@@ -61,5 +61,5 @@ export const formatSquare = (square: string): string => {
 /**
  * Функция для форматирования проходимости */
 export const formatPossibility = (possibility: string): string => {
-  return `${possibility} чел./мес.`
+  return `${possibility} чел/мес`
 }
