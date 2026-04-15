@@ -8,8 +8,8 @@ import { ToastProvider } from '@/providers/toast/ToastProvider'
 import { TooltipProvider } from '@/providers/tooltip/TooltipProvider'
 import type { Metadata } from 'next'
 import localFont from 'next/font/local'
-import '@/styles/index.css'
 import { SWRProvider } from '@/providers/swr/SwrProvider'
+import GeolocationClient from '@/components/ui/geolocation/GeolocationClient'
 
 const montserrat = localFont({
   src: [
@@ -58,6 +58,7 @@ export default function RootLayout({
                 <SWRProvider>
                   <div className="layout">
                     <Header />
+                    <GeolocationClient />
                     <main className="content">{children} </main>
                     <Footer />
                     <TooltipModal />
