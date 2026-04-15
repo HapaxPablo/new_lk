@@ -1,4 +1,3 @@
-// hooks/useCityDetection.ts
 import { useState, useCallback } from 'react';
 import { geocodeByLatLng, fetchPopularCities } from '@/lib/api/geocoding';
 

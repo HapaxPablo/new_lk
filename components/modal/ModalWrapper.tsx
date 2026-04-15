@@ -5,8 +5,10 @@ import { JSX, ReactNode, useEffect } from 'react'
 import styles from './ModalWrapper.module.scss'
 import { useModal } from '@/providers/modal/ModalProvider'
 
+import type { ModalType } from '@/providers/modal/ModalProvider'
+
 interface ModalWrapperProps {
-  id: 'search' | 'notifications' | 'responsible_details'
+  id: ModalType
   keyId?: string // уникальный ключ для карточки
   title?: JSX.Element | string
   children: ReactNode

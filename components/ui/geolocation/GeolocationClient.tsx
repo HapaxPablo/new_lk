@@ -3,13 +3,15 @@
 import { useEffect, useState } from 'react'
 import { useGeolocation } from '@/hooks/useGeolocation'
 import { useCityDetection } from '@/hooks/useCityDetection'
+import { ModalWrapper } from '@/components/modal/ModalWrapper'
+import { useModal } from '@/providers/modal/ModalProvider'
 import { LocationPermissionModal } from './LocationPermissionModal'
 import { CityConfirmationModal } from './CityConfirmationModal'
 import { CityDisplay } from './CityDisplay'
 
 export default function GeolocationClient() {
-  const [showPermissionModal, setShowPermissionModal] = useState(false)
-  const [showCityModal, setShowCityModal] = useState(false)
+  const permissionModal = useModal('location_permission')
+  const cityModal = useModal('city_confirmation')
   const [isClient, setIsClient] = useState(false)
   const [selectedCity, setSelectedCity] = useState<string | null>(null)
   const [isInitialized, setIsInitialized] = useState(false)
@@ -79,7 +81,7 @@ export default function GeolocationClient() {
   useEffect(() => {
     const handleOpenSelector = () => {
       console.log('Opening city selector')
-      setShowCityModal(true)
+      cityModal.openModal()
     }
 
     window.addEventListener('openCitySelector', handleOpenSelector)
@@ -105,7 +107,7 @@ export default function GeolocationClient() {
       if (hasPermission) {
         getLocation()
       } else {
-        setShowPermissionModal(true)
+        permissionModal.openModal()
       }
     }
 
@@ -158,18 +160,18 @@ export default function GeolocationClient() {
       detectedCity,
       cityLoading,
       isInitialized,
-      showCityModal,
+      cityModalIsOpen: cityModal.isOpen,
     })
 
     if (detectedCity && !cityLoading && !isInitialized && detectedCity.name) {
       console.log('🎉 SHOWING CITY MODAL:', detectedCity.name)
-      setShowCityModal(true)
+      cityModal.openModal()
     }
   }, [detectedCity, cityLoading, isInitialized])
 
   const handlePermissionGranted = () => {
     console.log('Permission granted')
-    setShowPermissionModal(false)
+    permissionModal.closeModal()
     getLocation()
   }
 
@@ -183,7 +185,7 @@ export default function GeolocationClient() {
     } else if (!isCorrect) {
       console.log('User said no, showing city selector')
     }
-    setShowCityModal(false)
+    cityModal.closeModal()
   }
 
   const handleCitySelect = (city: string) => {
@@ -191,7 +193,7 @@ export default function GeolocationClient() {
     selectCity(city)
     setSelectedCity(city)
     setIsInitialized(true)
-    setShowCityModal(false)
+    cityModal.closeModal()
   }
 
   const handleCityChange = () => {
@@ -199,7 +201,7 @@ export default function GeolocationClient() {
     localStorage.removeItem('selectedCity')
     setSelectedCity(null)
     setIsInitialized(false)
-    setShowCityModal(true)
+    cityModal.openModal()
   }
 
   // Не рендерим на сервере
@@ -213,20 +215,19 @@ export default function GeolocationClient() {
         isLoading={geoLoading || cityLoading}
       />
 
-      <LocationPermissionModal
-        isOpen={showPermissionModal}
-        onClose={() => setShowPermissionModal(false)}
-        onEnable={handlePermissionGranted}
-      />
+      <ModalWrapper id="location_permission" title="Разрешить геолокацию">
+        <LocationPermissionModal onEnable={handlePermissionGranted} />
+      </ModalWrapper>
 
-      <CityConfirmationModal
-        isOpen={showCityModal}
-        detectedCity={detectedCity}
-        citiesList={citiesList}
-        loading={cityLoading}
-        onConfirm={handleCityConfirm}
-        onSelectCity={handleCitySelect}
-      />
+      <ModalWrapper id="city_confirmation" title="Подтверждение города">
+        <CityConfirmationModal
+          detectedCity={detectedCity}
+          citiesList={citiesList}
+          loading={cityLoading}
+          onConfirm={handleCityConfirm}
+          onSelectCity={handleCitySelect}
+        />
+      </ModalWrapper>
     </>
   )
 }

@@ -2,7 +2,12 @@
 
 import { createContext, useContext, useState, useCallback } from 'react'
 
-type ModalType = 'search' | 'notifications' | 'responsible_details'
+export type ModalType =
+  | 'search'
+  | 'notifications'
+  | 'responsible_details'
+  | 'location_permission'
+  | 'city_confirmation'
 
 type ModalContextType = {
   openModal: (id: ModalType, key?: string) => void
