@@ -53,24 +53,19 @@ deploy_test:
   stage: deploy_test
   only:
     - test
+
   before_script:
     - echo "$ID_RSA" > /tmp/deploy_key.pem
     - chmod 600 /tmp/deploy_key.pem
-    - apk update && apk add openssh-client
+    - apk add --no-cache openssh-client ca-certificates
+    - update-ca-certificates
+    - export SSH_CMD="ssh -i /tmp/deploy_key.pem -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP"
+
   script:
-    # 1. Очистка старого кэша на сервере
-    - $SSH_CMD "docker system prune -f"
-
-    # 2. Docker login
+    - $SSH_CMD "docker image prune -f"
     - $SSH_CMD "echo $DOCKER_TOKEN | docker login $CI_REGISTRY -u $DOCKER_USER --password-stdin"
-
-    # 3. Pull образа с конкретным тегом
     - $SSH_CMD "docker pull $CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA"
-
-    # 4. Остановка и удаление старого контейнера
     - $SSH_CMD "docker container rm -f new-lk || true"
-
-    # 5. ЗАПУСК НОВОГО КОНТЕЙНЕРА - ИСПРАВЛЕНО
     - >
       $SSH_CMD
       "docker run --restart unless-stopped -d
