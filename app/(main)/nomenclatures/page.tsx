@@ -80,6 +80,7 @@ export default async function NomenclaturesPage(props: NomenclaturesPageProps) {
     const data: INomenclatureResponse = await response.json()
     return (
       <div className="flex flex-col h-full w-full p-1 gap-2">
+        <h1 className="text-2xl ml-4">Выберите места для вашей радио-рекламы</h1>
         <Toolbar totalItems={data.count} currentLimit={limit} />
 
         <div className="flex-grow min-h-0 overflow-hidden">

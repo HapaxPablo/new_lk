@@ -58,7 +58,7 @@ export default function RootLayout({
                 <SWRProvider>
                   <div className="layout">
                     <Header />
-                    <GeolocationClient />
+
                     <main className="content">{children} </main>
                     <Footer />
                     <TooltipModal />

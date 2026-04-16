@@ -8,6 +8,7 @@ import SearchMenu from './search/SearchMenu'
 import NotificationMenu from './notification/NotificationMenu'
 import { ModalWrapper } from '@/components/modal/ModalWrapper'
 import { SearchForm } from '@/components/search-form/SearchForm'
+import GeolocationClient from '../geolocation/GeolocationClient'
 
 export default function Header() {
   return (
@@ -33,6 +34,7 @@ export default function Header() {
             aria-label="logo"
           />
         </div>
+        <GeolocationClient />
         {/* </Link> */}
         <NavigationMenu />
       </div>
