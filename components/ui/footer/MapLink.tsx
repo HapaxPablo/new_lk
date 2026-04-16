@@ -1,5 +1,5 @@
 'use client'
-import styles from './FooterStyles.module.scss'
+import styles from './MapLink.module.scss'
 import { MapPin } from 'lucide-react'
 const MapLink = () => {
   const yandexMapsUrl = `https://yandex.ru/maps/?text=${encodeURIComponent('ООО АРЭМСИ 24, Красноярск, ул. Красной Армии, 10с3')}`

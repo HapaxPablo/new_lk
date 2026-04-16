@@ -1,0 +1,15 @@
+.footer_desktop {
+  display: block;
+
+  @media (max-width: 767px) {
+    display: none;
+  }
+}
+
+.footer_mobile {
+  display: none;
+
+  @media (max-width: 767px) {
+    display: block;
+  }
+}
