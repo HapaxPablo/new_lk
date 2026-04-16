@@ -49,16 +49,16 @@ push_test:
     - docker push $CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA
 
 deploy_test:
-  image: alpine:latest
+  image: debian:stable-slim
   stage: deploy_test
   only:
     - test
 
   before_script:
+    - apt update
+    - apt install -y openssh-client
     - echo "$ID_RSA" > /tmp/deploy_key.pem
     - chmod 600 /tmp/deploy_key.pem
-    - apk add --no-cache openssh-client ca-certificates
-    - update-ca-certificates
     - export SSH_CMD="ssh -i /tmp/deploy_key.pem -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP"
 
   script:
