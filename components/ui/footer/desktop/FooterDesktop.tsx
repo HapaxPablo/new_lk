@@ -57,33 +57,37 @@ export default function FooterDesktop({ currentYear }: FooterDesktopProps) {
                     <span itemProp="name">ООО "АРЭМСИ 24"</span>
                     <MapLink />
                 </div>
-
-                <div className={styles.footer__contacts}>
-                    <div className={styles.footer__contact} itemProp="email">
-                        <Mail size={16} />
-                        <a
-                            href="mailto:info@krasrm.com"
-                            className={styles.footer__link}
-                            aria-label="Написать на почту"
-                            itemProp="email"
-                        >
-                            info@krasrm.com
-                        </a>
+                <address itemScope itemType="https://schema.org/LocalBusiness">
+                    <div className={styles.footer__contacts}>
+                        <div className={styles.footer__contact} itemProp="email">
+                            <Mail size={16} />
+                            <span itemProp="email">
+                                <a
+                                    href="mailto:info@krasrm.com"
+                                    className={styles.footer__link}
+                                    aria-label="Написать на почту"
+                                    itemProp="email"
+                                >
+                                    info@krasrm.com
+                                </a>
+                            </span>
+                        </div>
+                        <div className={styles.footer__contact} itemProp="telephone">
+                            <Phone size={16} />
+                            <span itemProp="telephone">
+                                <a
+                                    href="tel:+78005005050"
+                                    className={styles.footer__link}
+                                    aria-label="Позвонить по телефону"
+                                    itemProp="telephone"
+                                >
+                                    8 800 500 50 50
+                                </a>
+                            </span>
+                        </div>
                     </div>
-
-                    <div className={styles.footer__contact} itemProp="telephone">
-                        <Phone size={16} />
-                        <a
-                            href="tel:+78005005050"
-                            className={styles.footer__link}
-                            aria-label="Позвонить по телефону"
-                            itemProp="telephone"
-                        >
-                            8 800 500 50 50
-                        </a>
-                    </div>
-                </div>
+                </address>
             </div>
-        </footer>
+        </footer >
     )
 }

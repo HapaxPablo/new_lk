@@ -50,10 +50,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           const result = await response.json()
           setIsAuthenticated(result.isAuthenticated)
 
-          if (!result.isAuthenticated && url !== '/nomenclatures') {
-            await logout()
-            // console.log('сделать проверку токена в 1с');
-          }
+          // if (!result.isAuthenticated && url !== '/nomenclatures') {
+          //   await logout()
+          //   // console.log('сделать проверку токена в 1с');
+          // }
         } else {
           setIsAuthenticated(false)
         }
