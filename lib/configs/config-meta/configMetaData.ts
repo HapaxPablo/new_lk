@@ -1,19 +1,28 @@
+export const SITE_URL = 'https://krasrm.com'
+
 export const metaDataConfigLayout = {
-  title: 'RMC',
-  description: 'Описание  сайта для SEO',
-  keywords: ['ключевое слово 1', 'ключевое слово 2', 'ключевое слово 3'],
+  title: 'Агентство активной рекламы КрасРМ',
+  description:
+    'Агентство активной рекламы в Красноярске. Реклама, маркетинг, промоции и номенклатуры товаров.',
+  keywords: [
+    'агентство рекламы',
+    'активная реклама',
+    'Красноярск',
+    'маркетинг',
+    'промоции',
+  ],
   icons: {
-    icon: '/favicon.ico', // или '/favicon-32x32.png'
+    icon: '/favicon.ico',
     apple: '/apple-touch-icon.png',
   },
   openGraph: {
-    title: 'Название для соцсетей',
-    description: 'Описание для соцсетей',
-    url: 'https://нашсайт.ру',
-    siteName: 'Название сайта',
+    title: 'Агентство активной рекламы КрасРМ',
+    description: 'Агентство активной рекламы в Красноярске',
+    url: SITE_URL,
+    siteName: 'КрасРМ',
     images: [
       {
-        url: 'https://нашсайт.ру/og-image.jpg',
+        url: `${SITE_URL}/logo_footer.svg`,
         width: 1200,
         height: 630,
       },
@@ -32,10 +41,16 @@ export const metaDataConfigLayout = {
     },
   },
   verification: {
-    google: 'google',
-    yandex: 'yandex',
-    other: {
-      me: ['my-email', 'my-link'],
-    },
+    google: process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION || '',
+    yandex: process.env.NEXT_PUBLIC_YANDEX_SITE_VERIFICATION || '',
   },
+}
+
+/**
+ * Генерирует canonical URL для страницы
+ * @param pathname - путь страницы (например: '/nomenclatures/123')
+ * @returns полный canonical URL
+ */
+export const getCanonicalUrl = (pathname: string = '') => {
+  return `${SITE_URL}${pathname}`
 }

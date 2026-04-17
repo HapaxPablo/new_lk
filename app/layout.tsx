@@ -1,7 +1,7 @@
 import Footer from '@/components/ui/footer/Footer'
 import Header from '@/components/ui/header/Header'
 import { TooltipModal } from '@/components/ui/tooltip/TooltipModal'
-import { metaDataConfigLayout } from '@/lib/configs/config-meta/configMetaData'
+import { metaDataConfigLayout, SITE_URL } from '@/lib/configs/config-meta/configMetaData'
 import { AuthProvider } from '@/providers/auth-provider/AuthProvider'
 import { ModalProvider } from '@/providers/modal/ModalProvider'
 import { ToastProvider } from '@/providers/toast/ToastProvider'
@@ -10,6 +10,8 @@ import type { Metadata } from 'next'
 import localFont from 'next/font/local'
 import { SWRProvider } from '@/providers/swr/SwrProvider'
 import GeolocationClient from '@/components/ui/geolocation/GeolocationClient'
+import Script from 'next/script'
+import { YandexMetricaProvider } from '@/providers/analytics/YandexMetricaProvider'
 
 const montserrat = localFont({
   src: [
@@ -48,9 +50,39 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode
 }>) {
+  // Organization JSON-LD структурированные данные
+  const organizationJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'LocalBusiness',
+    name: 'Агентство активной рекламы КрасРМ',
+    image: `${SITE_URL}/logo_footer.svg`,
+    description: 'Агентство активной рекламы в Красноярске',
+    url: SITE_URL,
+    telephone: '+7-800-500-50-50',
+    email: 'info@krasrm.com',
+    address: {
+      '@type': 'PostalAddress',
+      streetAddress: 'ул. Красной Армии, 10, стр. 3., оф. 2-02',
+      addressLocality: 'Красноярск',
+      addressCountry: 'RU',
+    },
+    sameAs: [],
+  }
+
   return (
     <html lang="ru">
+      <head>
+        {/* Organization JSON-LD */}
+        <Script
+          id="organization-jsonld"
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(organizationJsonLd),
+          }}
+        />
+      </head>
       <body className={`${montserrat.className} antialiased`}>
+        <YandexMetricaProvider />
         <AuthProvider>
           <ModalProvider>
             <TooltipProvider>
