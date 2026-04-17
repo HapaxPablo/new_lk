@@ -18,6 +18,11 @@ export function YandexMetricaProvider() {
     const pathname = usePathname()
     const metricaId = process.env.NEXT_PUBLIC_YANDEX_METRICA_ID
 
+    console.log('[SEO DEBUG]', {
+        metricaId,
+        siteUrl: process.env.NEXT_PUBLIC_SITE_URL,
+    })
+
     useEffect(() => {
         if (!metricaId) {
             console.warn(
