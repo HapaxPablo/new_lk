@@ -24,6 +24,8 @@ build_test:
     - docker info
     # Очистка только неиспользуемых данных (мягче, чем -a)
     - docker system prune -f
+    - echo "SITE_URL=$NEXT_PUBLIC_SITE_URL"
+    - echo "METRICA=$NEXT_PUBLIC_YANDEX_METRICA_ID"
 
     # Сборка с инвалидацией кэша через pipeline ID
     - >
