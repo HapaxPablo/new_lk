@@ -34,7 +34,7 @@ export default function Header() {
             aria-label="logo"
           />
         </div>
-        <GeolocationClient />
+        {/* <GeolocationClient /> TODO: временно скрыл*/}
         {/* </Link> */}
         <NavigationMenu />
       </div>
