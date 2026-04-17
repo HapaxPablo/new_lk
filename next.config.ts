@@ -122,6 +122,14 @@ connect-src 'self' https://api-maps.yandex.ru https://api.thecatapi.com https://
         hostname: '192.168.0.8',
         port: '8000',
       },
+      {
+        protocol: 'https',
+        hostname: 'yandex.ru',
+      },
+      {
+        protocol: 'https',
+        hostname: 'mc.yandex.ru',
+      },
     ],
     formats: ['image/avif', 'image/webp'],
   },
