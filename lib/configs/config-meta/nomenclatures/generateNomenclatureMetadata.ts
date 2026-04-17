@@ -1,5 +1,6 @@
 import { Metadata } from 'next'
 import { INomenclatureDetailsItem } from '@/types/nomenclature'
+import { SITE_URL } from '@/lib/configs/config-meta/configMetaData'
 
 interface GenerateMetadataParams {
   nomenclature: INomenclatureDetailsItem
@@ -20,7 +21,8 @@ export function generateNomenclatureMetadata({
     nameForFront,
   } = nomenclature
 
-  const fullTitle = `${nameForFront} | RMC`
+  const fullTitle = `${nameForFront} | Агентство активной рекламы КрасРМ`
+  const canonicalUrl = `${SITE_URL}/nomenclatures/${id}`
 
   const metaDescription = main_info.description
     ? `${main_info.description.substring(0, 160)}${main_info.description.length > 160 ? '...' : ''}`
@@ -39,7 +41,7 @@ export function generateNomenclatureMetadata({
       'номенклатура',
       'реклама',
       'места размещения',
-      'RMC',
+      'КрасРМ',
       nomenclature.contentType,
       nomenclature.typeOfPlace,
     ].filter(Boolean),
@@ -47,8 +49,8 @@ export function generateNomenclatureMetadata({
       title: fullTitle,
       description: metaDescription,
       type: 'article',
-      url: `${process.env.NEXTAUTH_URL}/nomenclatures/${id}`,
-      siteName: 'RMC',
+      url: canonicalUrl,
+      siteName: 'КрасРМ',
       images: mainImage
         ? [
             {
@@ -60,10 +62,10 @@ export function generateNomenclatureMetadata({
           ]
         : [
             {
-              url: '/og-default.jpg',
+              url: `${SITE_URL}/logo_footer.svg`,
               width: 1200,
               height: 630,
-              alt: 'RMC Номенклатура',
+              alt: 'КрасРМ',
             },
           ],
       locale: 'ru_RU',
@@ -72,10 +74,10 @@ export function generateNomenclatureMetadata({
       card: 'summary_large_image',
       title: fullTitle,
       description: metaDescription,
-      images: mainImage ? [mainImage] : ['/og-default.jpg'],
+      images: mainImage ? [mainImage] : [`${SITE_URL}/logo_footer.svg`],
     },
     alternates: {
-      canonical: `${process.env.NEXTAUTH_URL}/nomenclatures/${id}`,
+      canonical: canonicalUrl,
     },
     robots: {
       index: true,

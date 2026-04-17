@@ -1,0 +1,27 @@
+# https://krasrm.com robots.txt
+
+# Allow all bots
+User-agent: *
+Allow: /
+Disallow: /api/
+Disallow: /_next/
+Disallow: /static/
+Disallow: /*.json$
+Disallow: /*?*sort=
+Disallow: /*?*filter=
+
+# Specific rules for Yandex
+User-agent: Yandex
+Allow: /
+Disallow: /api/
+
+# Specific rules for Google
+User-agent: Googlebot
+Allow: /
+Disallow: /api/
+
+# Crawl delay (delay in seconds before making next request)
+Crawl-delay: 1
+
+# Sitemap location
+Sitemap: https://krasrm.com/sitemap.xml
