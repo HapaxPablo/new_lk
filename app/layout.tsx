@@ -54,8 +54,8 @@ export default function RootLayout({
   const organizationJsonLd = {
     '@context': 'https://schema.org',
     '@type': 'LocalBusiness',
-    name: 'Агентство активной рекламы КрасРМ',
-    image: `${SITE_URL}/logo_footer.svg`,
+    name: 'Агентство активной рекламы ААР',
+    image: `${SITE_URL}/og-logo.jpg`,
     description: 'Агентство активной рекламы в Красноярске',
     url: SITE_URL,
     telephone: '+7-800-500-50-50',
@@ -72,7 +72,6 @@ export default function RootLayout({
   return (
     <html lang="ru">
       <head>
-        {/* Organization JSON-LD */}
         <Script
           id="organization-jsonld"
           type="application/ld+json"
