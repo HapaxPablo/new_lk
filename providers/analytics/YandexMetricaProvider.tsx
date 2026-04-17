@@ -44,14 +44,11 @@ export function YandexMetricaProvider() {
     })(window, document,'script','https://mc.yandex.ru/metrika/tag.js?id=${metricaId}', 'ym');
 
     ym(${metricaId}, 'init', {
-      ssr: true,
-      webvisor: true,
+      ssr: false,
+      webvisor: false,
       clickmap: true,
-      ecommerce: 'dataLayer',
-      referrer: document.referrer,
-      url: location.href,
-      accurateTrackBounce: true,
-      trackLinks: true
+      trackLinks: true,
+      accurateTrackBounce: true
     });
   `
 
