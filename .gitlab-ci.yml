@@ -12,6 +12,8 @@ variables:
   SSH_CMD: 'ssh -i /tmp/deploy_key.pem -o StrictHostKeyChecking=no $SERVER_USER@$REMOTE_SERVER_IP'
   CACHE_BUST: $CI_PIPELINE_ID # Уникальный ID для инвалидации кэша
   BUILD_DATE: $CI_COMMIT_TIMESTAMP
+  NEXT_PUBLIC_SITE_URL: $NEXT_PUBLIC_SITE_URL
+  NEXT_PUBLIC_YANDEX_METRICA_ID: $NEXT_PUBLIC_YANDEX_METRICA_ID
 
 build_test:
   image: docker:stable
@@ -32,6 +34,8 @@ build_test:
       --build-arg SECRET_COOKIE_PASSWORD="$SECRET_COOKIE_PASSWORD"
       --build-arg CACHE_BUST="$CACHE_BUST"
       --build-arg BUILD_DATE="$BUILD_DATE"
+      --build-arg NEXT_PUBLIC_SITE_URL="$NEXT_PUBLIC_SITE_URL"
+      --build-arg NEXT_PUBLIC_YANDEX_METRICA_ID="$NEXT_PUBLIC_YANDEX_METRICA_ID"
       --no-cache
       -t $CI_REGISTRY_IMAGE:latest
       -t $CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA
@@ -75,6 +79,8 @@ deploy_test:
       -e CRYPTO_SECRET_KEY=\"$CRYPTO_SECRET_KEY\"
       -e CRYPTO_IV=\"$CRYPTO_IV\"
       -e SECRET_COOKIE_PASSWORD=\"$SECRET_COOKIE_PASSWORD\"
+      -e NEXT_PUBLIC_SITE_URL=\"$NEXT_PUBLIC_SITE_URL\"
+      -e NEXT_PUBLIC_YANDEX_METRICA_ID=\"$NEXT_PUBLIC_YANDEX_MET
       $CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA"
 
   after_script:
