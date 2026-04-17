@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect } from 'react'
-import { usePathname } from 'next/navigation'
+import Script from 'next/script'
 
 interface ym {
     (counterId: number, method: string, ...args: unknown[]): void
@@ -15,13 +15,7 @@ declare global {
 }
 
 export function YandexMetricaProvider() {
-    const pathname = usePathname()
     const metricaId = process.env.NEXT_PUBLIC_YANDEX_METRICA_ID
-
-    console.log('[SEO DEBUG]', {
-        metricaId,
-        siteUrl: process.env.NEXT_PUBLIC_SITE_URL,
-    })
 
     useEffect(() => {
         if (!metricaId) {
@@ -31,49 +25,54 @@ export function YandexMetricaProvider() {
             return
         }
 
-        // Вставляем скрипт Яндекс.Метрики
-        if (!window.ym) {
-            const script = document.createElement('script')
-            script.async = true
-            script.src = 'https://mc.yandex.ru/metrica/tag.js'
-
-            script.onload = () => {
-                if (window.ym) {
-                    window.ym(parseInt(metricaId), 'init', {
-                        clickmap: true,
-                        trackLinks: true,
-                        accurateTrackBounce: true,
-                        webvisor: true,
-                    })
-                }
-            }
-
-            document.head.appendChild(script)
-
-            // Инициализируем счетчик через глобальный объект
-            window.ym = function (
-                _counterId: number,
-                _method: string,
-                ..._args: unknown[]
-            ) {
-                if (window.dataLayer) {
-                    window.dataLayer.push({
-                        counterId: _counterId,
-                        method: _method,
-                        args: _args,
-                    })
-                }
-            }
-            window.dataLayer = window.dataLayer || []
+        // Инициализируем dataLayer для e-commerce отслеживания
+        if (!window.dataLayer) {
+            window.dataLayer = []
         }
     }, [metricaId])
 
-    // Отправляем просмотры страниц при смене маршрута
-    useEffect(() => {
-        if (window.ym && metricaId) {
-            window.ym(parseInt(metricaId), 'hit', pathname)
-        }
-    }, [pathname, metricaId])
+    if (!metricaId) {
+        return null
+    }
 
-    return null
+    const metricaScript = `
+    (function(m,e,t,r,i,k,a){
+      m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
+      m[i].l=1*new Date();
+      for (var j = 0; j < document.scripts.length; j++) {if (document.scripts[j].src === r) { return; }}
+      k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)
+    })(window, document,'script','https://mc.yandex.ru/metrika/tag.js?id=${metricaId}', 'ym');
+
+    ym(${metricaId}, 'init', {
+      ssr: true,
+      webvisor: true,
+      clickmap: true,
+      ecommerce: 'dataLayer',
+      referrer: document.referrer,
+      url: location.href,
+      accurateTrackBounce: true,
+      trackLinks: true
+    });
+  `
+
+    return (
+        <>
+            <Script
+                id="yandex-metrica"
+                strategy="lazyOnload"
+                dangerouslySetInnerHTML={{
+                    __html: metricaScript,
+                }}
+            />
+            <noscript>
+                <div>
+                    <img
+                        src={`https://mc.yandex.ru/watch/${metricaId}`}
+                        style={{ position: 'absolute', left: '-9999px' }}
+                        alt=""
+                    />
+                </div>
+            </noscript>
+        </>
+    )
 }

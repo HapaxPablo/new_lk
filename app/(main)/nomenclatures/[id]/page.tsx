@@ -18,6 +18,7 @@ import { BackButton } from '@/components/ui/button/BackButton'
 import Script from 'next/script'
 import dynamic from 'next/dynamic'
 import { formatPrice } from '@/utils/nomenclatureUtils'
+import { EcommerceTracker } from '@/components/ecommerce/EcommerceTracker'
 
 const Slider = dynamic(() => import('@/components/slider/Slider'), {
   ssr: true,
@@ -150,152 +151,165 @@ export default async function NomenclatureDetailPage(
   const structuredData = generateNomenclatureStructuredData(nomenclature, id)
 
   return (
-    <div className="flex flex-col bg-gray-200 w-full h-full">
-      <Script
-        id={`structured-data-${id}`}
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{
-          __html: JSON.stringify(structuredData),
+    <>
+      {/* E-commerce отслеживание просмотра товара */}
+      <EcommerceTracker
+        item={{
+          item_id: id,
+          item_name: nameForFront,
+          item_category: contentType,
+          item_brand: brand?.name,
+          price: pricePerMonth,
         }}
-        strategy="afterInteractive"
       />
 
-      <div className="p-1">
-        <BackButton variant="default" />
-      </div>
-      <div className="flex flex-col sm:flex-row gap-1 p-2 w-full h-full overflow-auto bg-[var(--background)]">
-        <div className="flex flex-col gap-2 w-full sm:w-3/5 h-auto">
-          {/* Слайдер с изображениями или логотип */}
-          <div className="w-full min-h-80 sm:h-70 rounded-md shadow-sm overflow-hidden relative">
-            {allImages.length > 0 ? (
-              <Slider images={allImages} autoPlay={true} autoPlayTime={15000} />
-            ) : (
-              <div className="w-full h-full min-h-[320px] bg-gray-100 flex items-center justify-center p-4">
-                {brand.logotype ? (
-                  <Image
-                    src={brand.logotype}
-                    alt="Логотип"
-                    width={200}
-                    height={100}
-                    className="object-contain max-h-full w-auto"
-                  />
-                ) : (
-                  <Image
-                    src="/og-logo.jpg"
-                    alt="Логотип"
-                    width={200}
-                    height={100}
-                    className="object-contain"
-                  />
+      <div className="flex flex-col bg-gray-200 w-full h-full">
+        <Script
+          id={`structured-data-${id}`}
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(structuredData),
+          }}
+          strategy="afterInteractive"
+        />
+
+        <div className="p-1">
+          <BackButton variant="default" />
+        </div>
+        <div className="flex flex-col sm:flex-row gap-1 p-2 w-full h-full overflow-auto bg-[var(--background)]">
+          <div className="flex flex-col gap-2 w-full sm:w-3/5 h-auto">
+            {/* Слайдер с изображениями или логотип */}
+            <div className="w-full min-h-80 sm:h-70 rounded-md shadow-sm overflow-hidden relative">
+              {allImages.length > 0 ? (
+                <Slider images={allImages} autoPlay={true} autoPlayTime={15000} />
+              ) : (
+                <div className="w-full h-full min-h-[320px] bg-gray-100 flex items-center justify-center p-4">
+                  {brand.logotype ? (
+                    <Image
+                      src={brand.logotype}
+                      alt="Логотип"
+                      width={200}
+                      height={100}
+                      className="object-contain max-h-full w-auto"
+                    />
+                  ) : (
+                    <Image
+                      src="/og-logo.jpg"
+                      alt="Логотип"
+                      width={200}
+                      height={100}
+                      className="object-contain"
+                    />
+                  )}
+                </div>
+              )}
+            </div>
+
+            <div className="w-full h-full sm:h-2/3 ">
+              <Description nomenclature={nomenclature} />
+            </div>
+          </div>
+
+          <div className="flex flex-col w-full sm:overflow-y-auto rounded-md shadow-xl">
+            <div className="p-4 border-b">
+              <div className='flex flex-row gap-3 items-center'>
+                {brand.logotype && (
+                  <span className="items-center flex">
+                    <Image
+                      src={brand.logotype}
+                      alt="Логотип"
+                      width={180}
+                      height={60}
+                      className="object-contain max-h-full w-auto"
+                      loading='lazy'
+                    />
+                  </span>
+                )}
+                {nameForFront && (
+                  <span className="text-sm sm:text-2xl font-bold text-[#1E3961] mb-2">
+                    {nameForFront}
+                  </span>
                 )}
               </div>
-            )}
-          </div>
-
-          <div className="w-full h-full sm:h-2/3 ">
-            <Description nomenclature={nomenclature} />
-          </div>
-        </div>
-
-        <div className="flex flex-col w-full sm:overflow-y-auto rounded-md shadow-xl">
-          <div className="p-4 border-b">
-            <div className='flex flex-row gap-3 items-center'>
-              {brand.logotype && (
-                <span className="items-center flex">
-                  <Image
-                    src={brand.logotype}
-                    alt="Логотип"
-                    width={180}
-                    height={60}
-                    className="object-contain max-h-full w-auto"
-                    loading='lazy'
-                  />
-                </span>
-              )}
-              {nameForFront && (
-                <span className="text-sm sm:text-2xl font-bold text-[#1E3961] mb-2">
-                  {nameForFront}
-                </span>
-              )}
-            </div>
-            <div className="flex flex-wrap gap-4 text-sm text-gray-600">
-              {contentType && (
-                <span className="bg-blue-100 text-blue-800 px-2 py-1 rounded items-center flex">
-                  {contentType}
-                </span>
-              )}
-              {pricePerMonth && (
-                <div className="flex flex-col bg-orange-100 rounded gap-0 px-2 py-1 items-center justify-center">
-                  <span className="text-lg">
-                    Стоимость: от {formatPrice(pricePerMonth)}/день
+              <div className="flex flex-wrap gap-4 text-sm text-gray-600">
+                {contentType && (
+                  <span className="bg-blue-100 text-blue-800 px-2 py-1 rounded items-center flex">
+                    {contentType}
                   </span>
-                  <span className="text-xs">*при размещении от 1 месяца</span>
-                </div>
-              )}
+                )}
+                {pricePerMonth && (
+                  <div className="flex flex-col bg-orange-100 rounded gap-0 px-2 py-1 items-center justify-center">
+                    <span className="text-lg">
+                      Стоимость: от {formatPrice(pricePerMonth)}/день
+                    </span>
+                    <span className="text-xs">*при размещении от 1 месяца</span>
+                  </div>
+                )}
+              </div>
             </div>
+            {responsible?.ad && (
+              <>
+                <div className="p-4">
+                  <h2 className="text-xl font-semibold text-[#1E3961]">
+                    Ответственный
+                  </h2>
+
+                  <div className="flex flex-col gap-4">
+                    <ResponsibleCard
+                      label="Реклама"
+                      icon={<Radio size={16} />}
+                      phoneNumber={responsible?.ad?.phone_number}
+                      name={responsible?.ad?.full_name || 'Не указан'}
+                      color="bg-purple-100"
+                    />
+                  </div>
+                </div>
+
+                <hr className="solid ml-4 mr-4" />
+              </>
+            )}
+
+            {/* Место вещания */}
+            {address && (
+              <div className="flex flex-col gap-4 p-4">
+                <div className="flex flex-row items-center gap-12">
+                  <h2 className="text-xl font-semibold text-[#1E3961]">
+                    На карте
+                  </h2>
+                </div>
+                <MapPlacement
+                  lat={
+                    address?.coordinates?.latitude
+                      ? Number(address.coordinates.latitude)
+                      : 56.011152
+                  }
+                  lng={
+                    address?.coordinates?.longitude
+                      ? Number(address.coordinates.longitude)
+                      : 92.814753
+                  }
+                />
+              </div>
+            )}
+
+            {description && (
+              <>
+                <hr className="solid ml-4 mr-4" />
+                <div className="p-4">
+                  <h2 className="text-xl font-semibold text-[#1E3961]">
+                    Описание
+                  </h2>
+                  <span className="px-2 py-1 rounded items-center flex text-base sm:text-lg text-gray-700 whitespace-pre-line">
+                    {description}
+                  </span>
+                </div>
+                <hr className="solid ml-4 mr-4" />
+              </>
+            )}
+            <TabsWrapper item={nomenclature} initialTenantsData={tenantsData} />
           </div>
-          {responsible?.ad && (
-            <>
-              <div className="p-4">
-                <h2 className="text-xl font-semibold text-[#1E3961]">
-                  Ответственный
-                </h2>
-
-                <div className="flex flex-col gap-4">
-                  <ResponsibleCard
-                    label="Реклама"
-                    icon={<Radio size={16} />}
-                    phoneNumber={responsible?.ad?.phone_number}
-                    name={responsible?.ad?.full_name || 'Не указан'}
-                    color="bg-purple-100"
-                  />
-                </div>
-              </div>
-
-              <hr className="solid ml-4 mr-4" />
-            </>
-          )}
-
-          {/* Место вещания */}
-          {address && (
-            <div className="flex flex-col gap-4 p-4">
-              <div className="flex flex-row items-center gap-12">
-                <h2 className="text-xl font-semibold text-[#1E3961]">
-                  На карте
-                </h2>
-              </div>
-              <MapPlacement
-                lat={
-                  address?.coordinates?.latitude
-                    ? Number(address.coordinates.latitude)
-                    : 56.011152
-                }
-                lng={
-                  address?.coordinates?.longitude
-                    ? Number(address.coordinates.longitude)
-                    : 92.814753
-                }
-              />
-            </div>
-          )}
-
-          {description && (
-            <>
-              <hr className="solid ml-4 mr-4" />
-              <div className="p-4">
-                <h2 className="text-xl font-semibold text-[#1E3961]">
-                  Описание
-                </h2>
-                <span className="px-2 py-1 rounded items-center flex text-base sm:text-lg text-gray-700 whitespace-pre-line">
-                  {description}
-                </span>
-              </div>
-              <hr className="solid ml-4 mr-4" />
-            </>
-          )}
-          <TabsWrapper item={nomenclature} initialTenantsData={tenantsData} />
         </div>
       </div>
-    </div>
+    </>
   )
 }
