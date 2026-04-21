@@ -4,43 +4,43 @@ import InfoMenu from './infoMenu/InfoMenu'
 import NavigationMenu from './naviMenu/NavigationMenu'
 import UserMenu from './userMenu/UserMenu'
 import Link from 'next/link'
-import SearchMenu from './search/SearchMenu'
-import NotificationMenu from './notification/NotificationMenu'
 import { ModalWrapper } from '@/components/modal/ModalWrapper'
 import { SearchForm } from '@/components/search-form/SearchForm'
-import GeolocationClient from '../geolocation/GeolocationClient'
+import Order from './order/Order'
 
 export default function Header() {
+
   return (
     <header className={styles.header}>
       <div className={styles.wrapper_menu}>
-        {/* <Link
+        <Link
           className={styles.header__logo_wrapper}
-          // href="/nomenclature"
-          aria-label="RMS адрес о нас"
-        > */}
-        <div
-          className={styles.header__logo_wrapper}
+          href="/nomenclatures"
           aria-label="RMS адрес о нас"
         >
-          <Image
-            className={styles.header__logo}
-            src="/logo.svg"
-            alt="logo"
-            width={120}
-            height={24}
-            priority
-            title="логотип-rmc"
-            aria-label="logo"
-          />
-        </div>
-        {/* <GeolocationClient /> TODO: временно скрыл*/}
-        {/* </Link> */}
+          <div
+            className={styles.header__logo_wrapper}
+            aria-label="RMS адрес о нас"
+          >
+            <Image
+              className={styles.header__logo}
+              src="/logo.svg"
+              alt="logo"
+              width={120}
+              height={24}
+              priority
+              title="логотип-rmc"
+              aria-label="logo"
+            />
+          </div>
+          {/* <GeolocationClient /> TODO: временно скрыл*/}
+        </Link>
         <NavigationMenu />
       </div>
       <div className={styles.wrapper_info_user}>
         {/* <SearchMenu /> */}
         {/* <NotificationMenu /> */}
+        <Order />
         <InfoMenu />
         <UserMenu />
       </div>

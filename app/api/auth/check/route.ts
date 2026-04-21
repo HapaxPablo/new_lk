@@ -9,7 +9,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ isAuthenticated: false, status: 200 })
     }
 
-    const apiUrl = `${process.env.API_1C_URL}/auth/jwt/verify/`
+    const apiUrl = `${process.env.API_1C_URL}auth/jwt/verify/`
     const response = await fetch(apiUrl, {
       method: 'POST',
       body: JSON.stringify({ token: token }),

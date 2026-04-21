@@ -168,7 +168,9 @@
 }
 
 .button {
-  min-width: 9rem;
+  font-size: var(--text-xs); /* 0.875rem (14px) */
+  line-height: var(--text-xs--line-height); /* 1.25rem (20px) */
+  // min-width: 9rem;
   min-height: 1.5rem;
 }
 
