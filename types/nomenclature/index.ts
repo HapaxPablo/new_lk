@@ -93,6 +93,7 @@ export interface IAddressNomenclature {
 // Интерфейс элемента номенклатуры
 export interface INomenclatureItem {
   id: string
+  nameForFront: string
   code1c: string
   article: string
   name: string
@@ -103,7 +104,7 @@ export interface INomenclatureItem {
   brand: IBrand
   exterior: { source: string }[]
   // address: IAddressNomenclature
-  formattedAddress: string
+  formattedAddress: string | IFormattedAddress
   legalEntity: ILegalEntity
   contentType: ContentType
   typeOfPlace: string

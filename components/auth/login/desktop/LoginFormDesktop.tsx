@@ -107,7 +107,7 @@ export function LoginFormDesktop() {
             <span className={styles.errorText}>{error}</span>
           )}
 
-          <Link href="/" className={styles.forgotPassword}>
+          <Link href="/reset-password" className={styles.forgotPassword}>
             Забыли пароль?
           </Link>
         </div>

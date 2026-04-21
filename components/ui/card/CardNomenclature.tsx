@@ -1,10 +1,13 @@
+'use client'
+
 import { INomenclatureItem } from '@/types/nomenclature'
 import Image from 'next/image'
-import { MapPin, ImageOff, MapPinHouse, RussianRuble } from 'lucide-react'
+import { MapPin, MapPinHouse, RussianRuble } from 'lucide-react'
 import styles from './CardNomenclature.module.scss'
 import { formatPrice } from '@/utils'
 import { useUniversalClick } from '@/hooks/useUniversalClick'
 import { Button } from '../button/Button'
+import { useNomenclatureStore } from '@/store/useNomenclatureStore'
 
 interface CardNomenclatureProps {
   className?: string
@@ -20,17 +23,17 @@ export const CardNomenclature: React.FC<CardNomenclatureProps> = ({
   codeMP = null, //TODO вынести из пропсов, взять в Item и изменить логику использования
 }) => {
   const { brand, exterior, typeOfPlace, pricePerMonth } = item
-
   // Получаем первое изображение для превью
   const mainImage = exterior?.[0]?.source
   const logoSrc = brand?.logotype
+  const { ids, toggle } = useNomenclatureStore()
 
   const handleUniversalClick = useUniversalClick()
 
   // Обработчик для кнопки "Добавить"
-  const handleAdd = () => {
-    console.log('Add button clicked for item:', item.id)
-  }
+  const isSelected = ids.includes(item.id)
+
+  const handleAdd = () => toggle(item)
 
   // Обработчик для кнопки "Медиаплан"
   const handleMediaPlan = () => {
@@ -43,7 +46,12 @@ export const CardNomenclature: React.FC<CardNomenclatureProps> = ({
     : 'Цена не указана'
 
   // Форматирование адреса
-  const formattedAddress = item.formattedAddress || 'Адрес не указан'
+  const formattedAddress =
+    typeof item.formattedAddress === 'string'
+      ? item.formattedAddress
+      : item.formattedAddress?.name || 'Адрес не указан'
+
+
 
   return (
     <article className={`${styles.card} ${className}`} onClick={onClick}>
@@ -116,10 +124,11 @@ export const CardNomenclature: React.FC<CardNomenclatureProps> = ({
               <span className={styles.priceText}>{formattedPrice}</span>
             </div>
           </div>
+
         </div>
       </div>
 
-      {/* <div className={styles.actionsSection}>
+      <div className={styles.actionsSection}>
         <Button
           className={styles.button}
           variant="detail"
@@ -141,11 +150,12 @@ export const CardNomenclature: React.FC<CardNomenclatureProps> = ({
             className={styles.button}
             variant="add"
             onClick={(e) => handleUniversalClick(handleAdd, e)}
+          // disabled={isSelected}
           >
-            Добавить
+            {isSelected ? 'Убрать из заказа' : 'Разместить ролик'}
           </Button>
         )}
-      </div> */}
+      </div>
     </article>
   )
 }
