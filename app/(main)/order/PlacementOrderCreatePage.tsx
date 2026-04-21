@@ -3,6 +3,7 @@
 import { CardNomenclature } from "@/components/ui/card/CardNomenclature";
 import { useEffect, useState } from "react";
 import { useNomenclatureStore } from "@/store/useNomenclatureStore";
+import Link from "next/link";
 
 const DAYS = [
     { key: "mon", label: "Пн" },
@@ -48,7 +49,7 @@ export default function PlacementOrderCreatePage({
     const [errors, setErrors] = useState<FormErrors>({});
 
     const [form, setForm] = useState<FormState>({
-        duration: "",
+        duration: "30",
         all_days: true,
         days_of_week: [],
     });
@@ -84,6 +85,9 @@ export default function PlacementOrderCreatePage({
         setErrors(e);
         return Object.keys(e).length === 0;
     };
+
+    const days = Number(form.duration) || 0
+    const finalPrice = totalPrice * days
 
     const handleSubmit = async () => {
         if (!validate()) return;
@@ -132,6 +136,21 @@ export default function PlacementOrderCreatePage({
         }
     };
 
+    const today = new Date()
+
+    const startDate = new Date()
+    startDate.setDate(today.getDate() + 2)
+
+    const endDate = new Date(startDate)
+    endDate.setDate(startDate.getDate() + days)
+
+    const formatDate = (date: Date) =>
+        date.toLocaleDateString('ru-RU', {
+            day: '2-digit',
+            month: '2-digit',
+            year: 'numeric',
+        })
+
     return (
         <div className="overflow-auto h-full">
 
@@ -178,7 +197,9 @@ export default function PlacementOrderCreatePage({
                                 item={item}
                             />
                         ))}
+
                     </div>
+
                 </div>
 
                 {/* RIGHT */}
@@ -192,11 +213,12 @@ export default function PlacementOrderCreatePage({
                         <input
                             type="number"
                             min={1}
-                            placeholder="30"
                             value={form.duration}
                             onChange={(e) =>
-                                setForm((p) =>
-                                    ({ ...p, duration: e.target.value }))
+                                setForm((p) => ({
+                                    ...p,
+                                    duration: e.target.value,
+                                }))
                             }
                             className="w-full border
                              border-gray-200 rounded-lg
@@ -271,11 +293,27 @@ export default function PlacementOrderCreatePage({
                         </div>
                     </div>
 
-                    <div className="flex justify-between">
-                        <span>Общая сумма</span>
-                        <span className="text-gray-600 font-semibold">
-                            {totalPrice.toLocaleString('ru-RU')} ₽
-                        </span>
+                    <div className="flex flex-col justify-start items-start gap-1">
+                        <div className="flex flex-row gap-2 items-center">
+                            <span >Общая сумма </span>
+                            <span className="font-semibold">
+                                {finalPrice.toLocaleString('ru-RU')} ₽
+                            </span>
+                        </div>
+                        <div className="text-xs text-gray-500">
+                            {totalPrice.toLocaleString('ru-RU')} ₽ × {days || '—'} дней
+                        </div>
+                    </div>
+
+                    <div className="flex flex-row gap-4 text-xs text-gray-500 space-y-1">
+
+                        <div>
+                            Старт: {formatDate(startDate)}
+                        </div>
+
+                        <div>
+                            Окончание: {days ? formatDate(endDate) : "—"}
+                        </div>
                     </div>
 
                     {/* Submit */}
@@ -286,6 +324,12 @@ export default function PlacementOrderCreatePage({
                     >
                         {submitting ? "Отправка..." : "Создать заказ"}
                     </button>
+
+
+
+                    <Link href="/nomenclatures">
+                        <span className="text-primary">Выбрать места</span>
+                    </Link>
 
                     {success && (
                         <div className="text-green-600 text-sm">
