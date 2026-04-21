@@ -8,6 +8,9 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button/Button'
 import { Eye, EyeOff } from 'lucide-react'
+import { useToast } from '@/hooks/useToast'
+import { useRouter } from 'next/navigation'
+
 
 export default function ResetPassword() {
 
@@ -21,10 +24,11 @@ export default function ResetPassword() {
     const [isLoading, setIsLoading] = useState(false)
     const [showNewPassword, setShowNewPassword] = useState(false)
     const [showConfirmPassword, setShowConfirmPassword] = useState(false)
-
+    const { showToast } = useToast()
+    const router = useRouter()
     const onSubmit = async (data: ResetPasswordSchema) => {
         setIsLoading(true)
-        await fetch('/api/auth/reset-password', {
+        const response = await fetch('/api/auth/reset-password', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -35,6 +39,13 @@ export default function ResetPassword() {
                 new_password_confirm: data.new_password_confirm,
             }),
         })
+        const result = await response.json()
+        if (!response.ok || !result.detail) {
+            showToast(`${result.detail}`, 'error')
+        } else {
+            showToast(`${result.detail}`, 'success')
+            router.push('/login')
+        }
         setIsLoading(false)
     }
 
@@ -58,7 +69,7 @@ export default function ResetPassword() {
                         className="w-auto h-auto"
                     />
                 </div>
-                <div className={styles.title}>Вход</div>
+                <div className={styles.title}>Сброс пароля</div>
 
                 <div className={styles.formFields}>
                     <input
