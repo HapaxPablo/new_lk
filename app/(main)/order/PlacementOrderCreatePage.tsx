@@ -136,6 +136,21 @@ export default function PlacementOrderCreatePage({
         }
     };
 
+    const today = new Date()
+
+    const startDate = new Date()
+    startDate.setDate(today.getDate() + 2)
+
+    const endDate = new Date(startDate)
+    endDate.setDate(startDate.getDate() + days)
+
+    const formatDate = (date: Date) =>
+        date.toLocaleDateString('ru-RU', {
+            day: '2-digit',
+            month: '2-digit',
+            year: 'numeric',
+        })
+
     return (
         <div className="overflow-auto h-full">
 
@@ -290,6 +305,17 @@ export default function PlacementOrderCreatePage({
                         </div>
                     </div>
 
+                    <div className="flex flex-row gap-4 text-xs text-gray-500 space-y-1">
+
+                        <div>
+                            Старт: {formatDate(startDate)}
+                        </div>
+
+                        <div>
+                            Окончание: {days ? formatDate(endDate) : "—"}
+                        </div>
+                    </div>
+
                     {/* Submit */}
                     <button
                         onClick={handleSubmit}
@@ -298,6 +324,8 @@ export default function PlacementOrderCreatePage({
                     >
                         {submitting ? "Отправка..." : "Создать заказ"}
                     </button>
+
+
 
                     <Link href="/nomenclatures">
                         <span className="text-primary">Выбрать места</span>
