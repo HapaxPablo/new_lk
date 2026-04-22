@@ -90,10 +90,10 @@ export default async function NomenclaturesPage(props: NomenclaturesPageProps) {
         />
 
         <div className="flex flex-col h-full w-full p-1 gap-2">
-          <h1 className="text-xl! md:text-2xl ml-4">Выберите места для вашей радио-рекламы</h1>
+          <h1 className="text-xl! md:text-2xl ml-4 font-semibold mb-3">Выберите места для вашей радио-рекламы</h1>
           <Toolbar totalItems={data.count} currentLimit={limit} />
 
-          <div className="flex-grow min-h-0 overflow-hidden">
+          <div className="grow min-h-0 overflow-hidden">
             <div className="h-full">
               <NomenclatureWrapper
                 nomenclatureData={data.results}

@@ -1,9 +1,11 @@
 'use client'
 
 import { CardNomenclature } from "@/components/ui/card/CardNomenclature";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useNomenclatureStore } from "@/store/useNomenclatureStore";
-import Link from "next/link";
+import styles from "./OrderCreate.module.scss";
+import { INomenclatureItem } from "@/types/nomenclature";
+import { useRouter } from "next/navigation";
 
 const DAYS = [
     { key: "mon", label: "Пн" },
@@ -32,34 +34,30 @@ export default function PlacementOrderCreatePage({
     initialItems,
     initialIds,
 }: {
-    initialItems: any[]
+    initialItems: INomenclatureItem[]
     initialIds: string[]
 }) {
-    const {
-        ids,
-        items,
-        setInitial,
-        getTotalPrice,
-    } = useNomenclatureStore()
+    const router = useRouter()
+    const { ids, items, setInitial } = useNomenclatureStore()
     const itemCount = useNomenclatureStore((state) => state.items.length)
-    const totalPrice = getTotalPrice()
+    const totalPrice = useNomenclatureStore((state) => state.getTotalPrice())
 
-    const [submitting, setSubmitting] = useState(false);
-    const [success, setSuccess] = useState(false);
-    const [errors, setErrors] = useState<FormErrors>({});
+    const initialized = useRef(false)
 
+    const [submitting, setSubmitting] = useState(false)
+    const [success, setSuccess] = useState(false)
+    const [errors, setErrors] = useState<FormErrors>({})
     const [form, setForm] = useState<FormState>({
         duration: "30",
         all_days: true,
         days_of_week: [],
-    });
+    })
 
-    console.log('Initial Items:', initialItems)
-
-    // 🚀 HYDRATION (SSR → store)
     useEffect(() => {
+        if (initialized.current) return
+        initialized.current = true
         setInitial(initialIds, initialItems)
-    }, [initialIds, initialItems])
+    }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
     const toggleDay = (key: string) => {
         setForm((prev) => ({
@@ -67,34 +65,29 @@ export default function PlacementOrderCreatePage({
             days_of_week: prev.days_of_week.includes(key)
                 ? prev.days_of_week.filter((d) => d !== key)
                 : [...prev.days_of_week, key],
-        }));
-    };
+        }))
+    }
 
     const validate = (): boolean => {
-        const e: FormErrors = {};
-
+        const e: FormErrors = {}
         if (!form.duration || Number(form.duration) < 1)
-            e.duration = "Укажите кол-во дней (минимум 1)";
-
+            e.duration = "Укажите кол-во дней (минимум 1)"
         if (!form.all_days && form.days_of_week.length === 0)
-            e.days_of_week = "Выберите хотя бы один день недели";
-
+            e.days_of_week = "Выберите хотя бы один день недели"
         if (ids.length === 0)
-            e.nomenclature_ids = "Выберите хотя бы одно место размещения";
-
-        setErrors(e);
-        return Object.keys(e).length === 0;
-    };
+            e.nomenclature_ids = "Выберите хотя бы одно место размещения"
+        setErrors(e)
+        return Object.keys(e).length === 0
+    }
 
     const days = Number(form.duration) || 0
     const finalPrice = totalPrice * days
 
     const handleSubmit = async () => {
-        if (!validate()) return;
-
-        setSubmitting(true);
-        setErrors({});
-        setSuccess(false);
+        if (!validate()) return
+        setSubmitting(true)
+        setErrors({})
+        setSuccess(false)
 
         try {
             const res = await fetch("/api/order/", {
@@ -106,43 +99,37 @@ export default function PlacementOrderCreatePage({
                     days_of_week: form.all_days ? [] : form.days_of_week,
                     nomenclature_ids: ids,
                 }),
-            });
+            })
 
             if (!res.ok) {
-                const data = await res.json();
+                const data = await res.json()
                 const msg =
                     data?.days_of_week?.[0] ??
                     data?.nomenclature_ids?.[0] ??
                     data?.detail ??
-                    "Ошибка при создании заказа";
-
-                setErrors({ submit: msg });
-                return;
+                    "Ошибка при создании заказа"
+                setErrors({ submit: msg })
+                return
             }
 
-            setSuccess(true);
-
-            setForm({
-                duration: "",
-                all_days: true,
-                days_of_week: [],
-            });
+            setSuccess(true)
+            setForm({ duration: "", all_days: true, days_of_week: [] })
             setInitial([], [])
 
         } catch {
-            setErrors({ submit: "Нет соединения с сервером" });
+            setErrors({ submit: "Нет соединения с сервером" })
         } finally {
-            setSubmitting(false);
+            setSubmitting(false)
         }
-    };
+    }
 
-    const today = new Date()
-
-    const startDate = new Date()
-    startDate.setDate(today.getDate() + 2)
-
-    const endDate = new Date(startDate)
-    endDate.setDate(startDate.getDate() + days)
+    const { startDate, endDate } = useMemo(() => {
+        const start = new Date()
+        start.setDate(start.getDate() + 2)
+        const end = new Date(start)
+        end.setDate(start.getDate() + days)
+        return { startDate: start, endDate: end }
+    }, [days])
 
     const formatDate = (date: Date) =>
         date.toLocaleDateString('ru-RU', {
@@ -152,198 +139,149 @@ export default function PlacementOrderCreatePage({
         })
 
     return (
-        <div className="overflow-auto h-full">
-
-            <meta name="description" content="Страница оформления заказа на размещение ролика" />
-            <meta name="keywords" content="оформление заказа, размещение ролика, выбор мест размещения, продолжительность, дни недели, общая сумма" />
-            <div className="w-full flex items-center justify-center px-8 py-6 border-b">
-                <h1 className="text-xl font-bold">Оформление заказа на размещение ролика</h1>
+        <div className={styles.page}>
+            <div className={styles.header}>
+                <h1 className={styles.header__title}>
+                    Оформление заказа на размещение ролика
+                </h1>
             </div>
-            <div className={`grid ${itemCount > 3
-                ? 'md:grid-cols-[1fr_400px]'
-                : 'md:grid-cols-[3fr_640px]'
-                } px-8 py-10 gap-8`}
-            >
+
+            <div className={`${styles.grid} ${styles['grid--few']}`}>
 
                 {/* LEFT */}
-                <div className="space-y-6">
-                    <div className="flex justify-between items-center">
-                        <span className="text-xs uppercase text-gray-500 tracking-widest">
-                            Места размещения
-                        </span>
-
+                <div className={styles.placements}>
+                    <div className={styles.placements__header}>
+                        <span className={styles.placements__label}>Места размещения</span>
                         {ids.length > 0 && (
-                            <span className="text-xs text-gray-400">
-                                Выбрано: {ids.length}
-                            </span>
+                            <span className={styles.placements__count}>Выбрано: {ids.length}</span>
                         )}
                     </div>
 
                     {errors.nomenclature_ids && (
-                        <p className="text-xs text-red-500">
-                            {errors.nomenclature_ids}
-                        </p>
+                        <p className={styles.placements__error}>{errors.nomenclature_ids}</p>
                     )}
 
-                    <div className="md:max-h-[640] max-h-[280] overflow-y-auto p-2 flex flex-row flex-wrap gap-2">
+                    <div className={styles.placements__list}>
                         {itemCount === 0 && (
-                            <div className="text-sm text-gray-500">
+                            <div className={styles.placements__empty}>
                                 Нет выбранных мест размещения
                             </div>
                         )}
                         {items.map((item) => (
-                            <CardNomenclature
-                                key={item.id}
-                                item={item}
-                            />
+                            <CardNomenclature key={item.id} item={item} />
                         ))}
-
                     </div>
-
                 </div>
 
                 {/* RIGHT */}
-                <div className="space-y-4 w-full">
+                <div className={styles.form}>
 
                     {/* Duration */}
-                    <div className="space-y-2">
-                        <label className="text-xs tracking-widest text-gray-500 uppercase block">
-                            Количество дней
-                        </label>
+                    <div className={styles.form__group}>
+                        <label className={styles.form__label}>Количество дней</label>
                         <input
                             type="number"
                             min={1}
                             value={form.duration}
-                            onChange={(e) =>
-                                setForm((p) => ({
-                                    ...p,
-                                    duration: e.target.value,
-                                }))
-                            }
-                            className="w-full border
-                             border-gray-200 rounded-lg
-                             px-4 py-2.5 text-sm
-                              text-gray-700 placeholder-gray-300
-                              outline-none focus:border-gray-400
-                              focus:ring-1 focus:ring-gray-100 transition-all
-                               bg-white shadow-sm"
+                            onChange={(e) => setForm((p) => ({ ...p, duration: e.target.value }))}
+                            className={styles.form__input}
                         />
                         {errors.duration && (
-                            <p className="text-xs text-red-500">{errors.duration}</p>
+                            <p className={styles.form__error}>{errors.duration}</p>
                         )}
                     </div>
 
                     {/* Days */}
-                    <div className="space-y-3">
-                        <label className="text-xs tracking-widest text-gray-500 uppercase">
-                            Дни размещения
-                        </label>
+                    <div className={styles.days}>
+                        <label className={styles.form__label}>Дни размещения</label>
 
-                        <label className="flex items-center gap-3 cursor-pointer">
+                        <label className={styles.days__checkbox}>
                             <input
                                 type="checkbox"
                                 checked={form.all_days}
-                                onChange={() =>
-                                    setForm((p) => ({
-                                        ...p,
-                                        all_days: !p.all_days,
-                                        days_of_week: [],
-                                    }))
-                                }
-                                className="hidden peer"
+                                onChange={() => setForm((p) => ({ ...p, all_days: !p.all_days, days_of_week: [] }))}
                             />
-                            <div className="w-4 h-4 border rounded peer-checked:bg-orange-400" />
-                            <span className="text-sm text-gray-600">
+                            <div className={styles.days__box} />
+                            <span className={styles.days__text}>
                                 {form.all_days ? "Все дни недели" : "Выбрать дни"}
                             </span>
                         </label>
 
                         {!form.all_days && (
-                            <div className="grid grid-cols-7 gap-1">
-                                {DAYS.map((d) => {
-                                    const active = form.days_of_week.includes(d.key)
-
-                                    return (
-                                        <button
-                                            key={d.key}
-                                            type="button"
-                                            onClick={() => toggleDay(d.key)}
-                                            className={`text-xs p-2 border rounded ${active ? "bg-black text-white" : ""
-                                                }`}
-                                        >
-                                            {d.label}
-                                        </button>
-                                    )
-                                })}
+                            <div className={styles.days__grid}>
+                                {DAYS.map((d) => (
+                                    <button
+                                        key={d.key}
+                                        type="button"
+                                        onClick={() => toggleDay(d.key)}
+                                        className={`${styles.days__day} ${form.days_of_week.includes(d.key) ? styles['days__day--active'] : ''}`}
+                                    >
+                                        {d.label}
+                                    </button>
+                                ))}
                             </div>
                         )}
 
                         {errors.days_of_week && (
-                            <p className="text-xs text-red-500">
-                                {errors.days_of_week}
-                            </p>
+                            <p className={styles.form__error}>{errors.days_of_week}</p>
                         )}
                     </div>
 
                     {/* Summary */}
-                    <div className="text-xs text-gray-500 space-y-1">
+                    <div className={styles.summary}>
                         <div>Выбрано мест: {ids.length}</div>
-                        <div>
-                            Дней: {form.duration || "—"}
-                        </div>
+                        <div>Дней: {form.duration || "—"}</div>
                     </div>
 
-                    <div className="flex flex-col justify-start items-start gap-1">
-                        <div className="flex flex-row gap-2 items-center">
-                            <span >Общая сумма </span>
-                            <span className="font-semibold">
-                                {finalPrice.toLocaleString('ru-RU')} ₽
-                            </span>
-                        </div>
-                        <div className="text-xs text-gray-500">
-                            {totalPrice.toLocaleString('ru-RU')} ₽ × {days || '—'} дней
-                        </div>
+                    <div className={styles.summary__total}>
+                        <span>Общая сумма</span>
+                        <span className={styles.summary__amount}>
+                            {finalPrice.toLocaleString('ru-RU')} ₽
+                        </span>
                     </div>
 
-                    <div className="flex flex-row gap-4 text-xs text-gray-500 space-y-1">
-
-                        <div>
-                            Старт: {formatDate(startDate)}
-                        </div>
-
-                        <div>
-                            Окончание: {days ? formatDate(endDate) : "—"}
-                        </div>
+                    <div className={styles.summary__breakdown}>
+                        {totalPrice.toLocaleString('ru-RU')} ₽ × {days || '—'} дней
                     </div>
 
-                    {/* Submit */}
-                    <button
-                        onClick={handleSubmit}
-                        disabled={submitting}
-                        className="w-full bg-black text-white py-3 rounded-lg"
-                    >
-                        {submitting ? "Отправка..." : "Создать заказ"}
-                    </button>
+                    <div className={styles.summary__dates}>
+                        <div>Старт: {formatDate(startDate)}</div>
+                        <div>Окончание: {days ? formatDate(endDate) : "—"}</div>
+                    </div>
 
+                    {/* Buttons */}
+                    <div className={styles.button}>
+                        <button
+                            onClick={handleSubmit}
+                            disabled={submitting}
+                            className={styles.button__create}
+                        >
+                            {submitting ? "Отправка..." : "Создать заказ"}
+                        </button>
 
+                        <button
+                            onClick={() => router.push('/nomenclatures')}
+                            className={styles.button__select}
+                        >
+                            Добавить места
+                        </button>
 
-                    <Link href="/nomenclatures">
-                        <span className="text-primary">Выбрать места</span>
-                    </Link>
+                        <button
+                            onClick={() => setInitial([], [])}
+                            className={styles.button__remove}
+                        >
+                            Очистить корзину
+                        </button>
 
-                    {success && (
-                        <div className="text-green-600 text-sm">
-                            Заказ создан
-                        </div>
-                    )}
-
-                    {errors.submit && (
-                        <div className="text-red-500 text-sm">
-                            {errors.submit}
-                        </div>
-                    )}
+                        {success && (
+                            <div className={styles.success}>Заказ создан</div>
+                        )}
+                        {errors.submit && (
+                            <p className={styles.form__error}>{errors.submit}</p>
+                        )}
+                    </div>
                 </div>
             </div>
         </div>
-    );
+    )
 }

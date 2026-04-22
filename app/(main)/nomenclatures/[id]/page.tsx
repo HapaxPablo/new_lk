@@ -14,11 +14,12 @@ import {
   generateNomenclatureStructuredData,
   generateNotFoundMetadata,
 } from '@/lib/configs/config-meta/nomenclatures'
-import { BackButton } from '@/components/ui/button/BackButton'
 import Script from 'next/script'
 import dynamic from 'next/dynamic'
 import { formatPrice } from '@/utils/nomenclatureUtils'
 import { EcommerceTracker } from '@/components/ecommerce/EcommerceTracker'
+import { AddButtonToOrder } from '@/components/ui/button/AddButtonToOrder'
+import BreadcrumbsSetter from '@/components/ui/breadcrumbs/BreadcrumbsSetter'
 
 const Slider = dynamic(() => import('@/components/slider/Slider'), {
   ssr: true,
@@ -162,7 +163,7 @@ export default async function NomenclatureDetailPage(
           price: pricePerMonth,
         }}
       />
-
+      <BreadcrumbsSetter title={`${nomenclature.typeOfPlace} ${nomenclature.brand.name}`} />
       <div className="flex flex-col bg-gray-200 w-full h-full">
         <Script
           id={`structured-data-${id}`}
@@ -172,10 +173,6 @@ export default async function NomenclatureDetailPage(
           }}
           strategy="afterInteractive"
         />
-
-        <div className="p-1">
-          <BackButton variant="default" />
-        </div>
         <div className="flex flex-col sm:flex-row gap-1 p-2 w-full h-full overflow-auto bg-[var(--background)]">
           <div className="flex flex-col gap-2 w-full sm:w-3/5 h-auto">
             {/* Слайдер с изображениями или логотип */}
@@ -205,7 +202,7 @@ export default async function NomenclatureDetailPage(
               )}
             </div>
 
-            <div className="w-full h-full sm:h-2/3 ">
+            <div className="w-full h-full sm:h-2/3 hidden md:block">
               <Description nomenclature={nomenclature} />
             </div>
           </div>
@@ -245,8 +242,23 @@ export default async function NomenclatureDetailPage(
                     <span className="text-xs">*при размещении от 1 месяца</span>
                   </div>
                 )}
+                <AddButtonToOrder item={nomenclature} />
               </div>
             </div>
+            {description && (
+              <>
+                {/* <hr className="solid ml-4 mr-4" /> */}
+                <div className="p-4">
+                  <h2 className="text-xl font-semibold text-[#1E3961]">
+                    Описание
+                  </h2>
+                  <span className="px-2 py-1 rounded items-center flex text-base sm:text-lg text-gray-700 whitespace-pre-line">
+                    {description}
+                  </span>
+                </div>
+                <hr className="solid ml-4 mr-4" />
+              </>
+            )}
             {responsible?.ad && (
               <>
                 <div className="p-4">
@@ -267,6 +279,15 @@ export default async function NomenclatureDetailPage(
 
                 <hr className="solid ml-4 mr-4" />
               </>
+            )}
+            {description && (
+              <div>
+                <div className="w-full h-full sm:h-2/3 block md:hidden p-4">
+                  <Description nomenclature={nomenclature} />
+
+                </div>
+                <hr className="solid ml-4 mr-4" />
+              </div>
             )}
 
             {/* Место вещания */}
@@ -290,21 +311,6 @@ export default async function NomenclatureDetailPage(
                   }
                 />
               </div>
-            )}
-
-            {description && (
-              <>
-                <hr className="solid ml-4 mr-4" />
-                <div className="p-4">
-                  <h2 className="text-xl font-semibold text-[#1E3961]">
-                    Описание
-                  </h2>
-                  <span className="px-2 py-1 rounded items-center flex text-base sm:text-lg text-gray-700 whitespace-pre-line">
-                    {description}
-                  </span>
-                </div>
-                <hr className="solid ml-4 mr-4" />
-              </>
             )}
             <TabsWrapper item={nomenclature} initialTenantsData={tenantsData} />
           </div>

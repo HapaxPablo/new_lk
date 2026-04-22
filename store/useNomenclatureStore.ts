@@ -1,9 +1,10 @@
 'use client'
-import { INomenclatureItem } from '@/types/nomenclature'
+import { STORAGE_KEY } from '@/lib/constants'
+import { INomenclatureBase, INomenclatureItem } from '@/types/nomenclature'
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 
-interface Item extends INomenclatureItem {
+interface Item extends INomenclatureBase {
   id: string
   [key: string]: any
   pricePerMonth: string
@@ -13,19 +14,18 @@ interface State {
   ids: string[]
   items: Item[]
   setInitial: (ids: string[], items: Item[]) => void
-  toggle: (item: INomenclatureItem) => void
+  toggle: (item: INomenclatureBase) => void
   mergeItems: (items: Item[]) => void
   removeItem: (id: string) => void
   getTotalPrice: () => number
 }
-const STORAGE_KEY = 'selected_nomenclatures'
 export const useNomenclatureStore = create<State>()(
   persist(
     (set, get) => ({
       ids: [],
       items: [],
 
-      toggle: (item: INomenclatureItem) => {
+      toggle: (item: INomenclatureBase) => {
         const { items } = get()
 
         const exists = items.some((i) => i.id === item.id)
@@ -74,6 +74,7 @@ export const useNomenclatureStore = create<State>()(
 
     {
       name: 'nomenclature-storage',
+      partialize: () => ({}),
     }
   )
 )

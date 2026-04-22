@@ -5,12 +5,14 @@ import { NAV_ITEMS } from '@/lib/configs/configMenuHeader'
 import { X } from 'lucide-react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import MenuIcon from './MenuIcon'
+import Image from 'next/image'
 
 const NavigationMenuMobile = () => {
   const pathname = usePathname()
   const [isOpen, setIsOpen] = useState<boolean>(false)
   const toggleMenu = () => setIsOpen(!isOpen)
+  const currentItem = NAV_ITEMS.find((item) => item.path === pathname)
+
 
   return (
     <>
@@ -20,16 +22,26 @@ const NavigationMenuMobile = () => {
           onClick={toggleMenu}
           aria-label={isOpen ? 'Закрыть меню' : 'Открыть меню'}
         >
-          <MenuIcon />
+          <Image
+            className={styles.header__logo}
+            src="/logo_mobile.svg"
+            alt="logo"
+            width={24}
+            height={24}
+            priority
+            title="логотип-rmc"
+            aria-label="logo"
+          />
         </button>
-        <span className={styles.menu_button_description}>
-          {NAV_ITEMS.map((item) => (item.path === pathname ? item.title : ''))}
-        </span>
+        {/* <span className={styles.menu_button_description}>
+          {currentItem?.title}
+        </span> */}
       </div>
       <div
         className={`${styles.menuOverlay} ${isOpen ? styles.open : ''}`}
         onClick={toggleMenu}
       />
+
       <nav
         aria-label="Основное меню"
         className={`${styles.link_wrapper} ${isOpen ? styles.open : ''}`}
@@ -51,9 +63,8 @@ const NavigationMenuMobile = () => {
             key={item.path}
             href={item.path}
             onClick={toggleMenu}
-            className={`${styles.link_item} ${
-              pathname === item.path ? styles.active : ''
-            }`}
+            className={`${styles.link_item} ${pathname === item.path ? styles.active : ''
+              }`}
           >
             <div className={styles.link_content}>
               {item.icon && (

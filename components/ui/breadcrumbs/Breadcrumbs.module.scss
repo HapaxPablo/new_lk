@@ -1,0 +1,30 @@
+// components/Breadcrumbs/Breadcrumbs.module.scss
+.breadcrumbs {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 12px 16px;
+  font-size: 14px;
+}
+
+.crumb {
+  color: var(--color-text-secondary, #6b7280);
+  text-decoration: none;
+  white-space: nowrap;
+
+  &:hover {
+    color: var(--color-primary, #2563eb);
+    text-decoration: underline;
+  }
+}
+
+.current {
+  color: var(--color-text-primary, #111827);
+  font-weight: 500;
+  pointer-events: none;
+}
+
+.separator {
+  color: var(--color-text-secondary, #6b7280);
+  flex-shrink: 0;
+}
