@@ -1,8 +1,6 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
-import { Button } from '@/components/ui/button/Button'
-// import styles from './Map.module.scss'
 import { useMediaQuery } from 'usehooks-ts'
 
 interface MapProps {
@@ -22,7 +20,7 @@ export function MapPlacement({ className, lat, lng, address }: MapProps) {
 
     // Загружаем API
     const script = document.createElement('script')
-    script.src = 'https://api-maps.yandex.ru/2.1/?apikey=КЛЮЧ&lang=ru_RU'
+    script.src = `https://api-maps.yandex.ru/2.1/?apikey=${process.env.NEXT_PUBLIC_YANDEX_MAP}&lang=ru_RU`
     script.async = true
 
     script.onload = () => {
@@ -31,7 +29,7 @@ export function MapPlacement({ className, lat, lng, address }: MapProps) {
         // @ts-ignore
         const map = new ymaps.Map(mapRef.current, {
           center: [lat, lng],
-          zoom: 17,
+          zoom: 15,
           controls: ['zoomControl'], // только кнопки зума
         })
 
@@ -39,19 +37,19 @@ export function MapPlacement({ className, lat, lng, address }: MapProps) {
         map.behaviors.disable(
           isMobile
             ? [
-                'drag', // перетаскивание
-                'scrollZoom', // зум колесом
-                'dblClickZoom', // зум двойным кликом
-                'multiTouch', // мультитач на мобильных - ВАЖНО!
-                'rightMouseButtonMagnifier',
-              ]
+              'drag', // перетаскивание
+              'scrollZoom', // зум колесом
+              'dblClickZoom', // зум двойным кликом
+              'multiTouch', // мультитач на мобильных - ВАЖНО!
+              'rightMouseButtonMagnifier',
+            ]
             : [
-                // 'drag', // перетаскивание
-                'scrollZoom', // зум колесом
-                'dblClickZoom', // зум двойным кликом
-                'multiTouch', // мультитач на мобильных - ВАЖНО!
-                'rightMouseButtonMagnifier',
-              ]
+              // 'drag', // перетаскивание
+              'scrollZoom', // зум колесом
+              'dblClickZoom', // зум двойным кликом
+              'multiTouch', // мультитач на мобильных - ВАЖНО!
+              'rightMouseButtonMagnifier',
+            ]
         )
 
         // Добавляем метку
@@ -79,7 +77,7 @@ export function MapPlacement({ className, lat, lng, address }: MapProps) {
     <div className="relative">
       <div
         ref={mapRef}
-        className="w-full h-[400px] rounded-lg overflow-hidden"
+        className="w-full h-55 rounded-lg overflow-hidden"
       />
     </div>
   )

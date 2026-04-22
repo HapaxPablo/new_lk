@@ -7,6 +7,7 @@ import Link from 'next/link'
 import { ModalWrapper } from '@/components/modal/ModalWrapper'
 import { SearchForm } from '@/components/search-form/SearchForm'
 import Order from './order/Order'
+import GeolocationClient from '../geolocation/GeolocationClient'
 
 export default function Header() {
 
@@ -33,8 +34,10 @@ export default function Header() {
               aria-label="logo"
             />
           </div>
+
           {/* <GeolocationClient /> TODO: временно скрыл*/}
         </Link>
+        {/* <GeolocationClient /> */}
         <NavigationMenu />
       </div>
       <div className={styles.wrapper_info_user}>

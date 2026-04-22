@@ -91,25 +91,25 @@ export interface IAddressNomenclature {
 }
 
 // Интерфейс элемента номенклатуры
-export interface INomenclatureItem {
-  id: string
-  nameForFront: string
-  code1c: string
-  article: string
-  name: string
-  timezone: string
-  status: string
-  last_answer: string
-  version: string
-  brand: IBrand
-  exterior: { source: string }[]
-  // address: IAddressNomenclature
-  formattedAddress: string | IFormattedAddress
-  legalEntity: ILegalEntity
-  contentType: ContentType
-  typeOfPlace: string
-  pricePerMonth: string
-}
+// export interface INomenclatureItem {
+//   id: string
+//   nameForFront: string
+//   code1c: string
+//   article: string
+//   name: string
+//   timezone: string
+//   status: string
+//   last_answer: string
+//   version: string
+//   brand: IBrand
+//   exterior: { source: string }[]
+//   // address: IAddressNomenclature
+//   formattedAddress: string | IFormattedAddress
+//   legalEntity: ILegalEntity
+//   contentType: ContentType
+//   typeOfPlace: string
+//   pricePerMonth: string
+// }
 
 // Интерфейс ответа для номенклатуры
 export interface INomenclatureResponse {
@@ -233,22 +233,36 @@ interface IFormattedAddress {
   }
 }
 
-// Основной интерфейс для детальной информации о номенклатуре
-export interface INomenclatureDetailsItem {
+export interface INomenclatureBase {
   id: string
   nameForFront: string
-  article: number
-  settings: IWeekSettings
-  hw_info: IHardwareInfo
+  code1c: string
   brand: IBrand
-  interior: IImage[]
-  exterior: IImage[]
-  formattedAddress: IFormattedAddress
+  exterior: { source: string }[]
+  formattedAddress: string | IFormattedAddress // union в базе
   legalEntity: ILegalEntity
   contentType: string
   typeOfPlace: string
   pricePerMonth: string
-  code1c: string
+}
+
+export interface INomenclatureItem extends INomenclatureBase {
+  article: string
+  name: string
+  timezone: string
+  status: string
+  last_answer: string
+  version: string
+  formattedAddress: string // сужаем — в каталоге всегда строка
+}
+
+export interface INomenclatureDetailsItem extends INomenclatureBase {
+  article: number
+  formattedAddress: IFormattedAddress // сужаем — в деталях всегда объект
+  interior: IImage[]
+  exterior: IImage[]
+  settings: IWeekSettings
+  hw_info: IHardwareInfo
   main_info: IMainInfo
   responsible: TResponsiblePersons
   tenants: ITenantsListItem[]
@@ -261,6 +275,35 @@ export interface INomenclatureDetailsItem {
   square: string
   possibility: string
 }
+
+// Основной интерфейс для детальной информации о номенклатуре
+// export interface INomenclatureDetailsItem {
+//   id: string
+//   nameForFront: string
+//   article: number
+//   settings: IWeekSettings
+//   hw_info: IHardwareInfo
+//   brand: IBrand
+//   interior: IImage[]
+//   exterior: IImage[]
+//   formattedAddress: IFormattedAddress
+//   legalEntity: ILegalEntity
+//   contentType: string
+//   typeOfPlace: string
+//   pricePerMonth: string
+//   code1c: string
+//   main_info: IMainInfo
+//   responsible: TResponsiblePersons
+//   tenants: ITenantsListItem[]
+//   external_video_media: string
+//   external_audio_media: string
+//   internal_video_media: string
+//   internal_audio_media: string
+//   worktime_start: string
+//   worktime_end: string
+//   square: string
+//   possibility: string
+// }
 
 // Интерфейс для дней недели (можно использовать для перечисления)
 export enum EWeekDays {
