@@ -7,11 +7,11 @@ export default function Footer() {
 
   return (
     <>
-      <div className={styles.footer_desktop}>
-        <FooterDesktop currentYear={currentYear} />
-      </div>
       <div className={styles.footer_mobile}>
         <FooterMobile currentYear={currentYear} />
+      </div>
+      <div className={styles.footer_desktop}>
+        <FooterDesktop currentYear={currentYear} />
       </div>
     </>
   )
