@@ -33,7 +33,7 @@ export default function FooterMobile({ currentYear }: FooterMobileProps) {
                         <Image
                             src="/logo_footer.svg"
                             alt="RMC Logo"
-                            width={120}
+                            width={60}
                             height={24}
                             className={styles.footer__logoImage}
                             priority
