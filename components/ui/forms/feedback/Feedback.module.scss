@@ -1,0 +1,102 @@
+.form {
+  max-width: 700px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 32px;
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.title {
+  font-size: 24px;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.subtitle {
+  font-size: 14px;
+  color: #777;
+  margin-bottom: 24px;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.flex {
+  display: flex;
+  flex-direction: column;
+  width: 100%; // ← было 700px
+  gap: 12px;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+}
+textarea.input {
+  height: 100px;
+  padding: 10px 12px;
+  resize: vertical;
+}
+
+.input {
+  height: 44px;
+  padding: 0 12px;
+  border: 1px solid #eaeaea;
+  border-radius: 10px;
+  font-size: 14px;
+  outline: none;
+  transition: 0.2s;
+
+  &:focus {
+    border-color: #6c5ce7;
+  }
+}
+
+.button {
+  margin-top: 16px;
+  height: 48px;
+  border: none;
+  border-radius: 12px;
+  background: #6c5ce7;
+  color: white;
+  font-size: 16px;
+  cursor: pointer;
+  transition: 0.2s;
+
+  &:hover {
+    opacity: 0.9;
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+}
+
+.error {
+  font-size: 12px;
+  color: #ff4d4f;
+  margin-top: 4px;
+}
+
+.success {
+  margin-top: 12px;
+  color: #22c55e;
+  font-size: 14px;
+}
+
+/* 📱 mobile */
+@media (max-width: 600px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+}

@@ -1,9 +1,12 @@
 import { getMiddlewareSession } from '@/lib/session'
 import { NextResponse, type NextRequest } from 'next/server'
+import { isModuleNamespaceObject } from 'util/types'
 
 export async function middleware(request: NextRequest) {
   const { session, response } = await getMiddlewareSession(request)
   const { pathname } = request.nextUrl
+  const ua = request.headers.get('user-agent') ?? ''
+  const isMobile = /mobile|android|iphone/i.test(ua)
 
   // ✅ Маршруты авторизации
   const authRoutes = ['/login', '/registration']
@@ -56,6 +59,10 @@ export async function middleware(request: NextRequest) {
   const token = request.cookies.get('access_token')?.value
   if (token) {
     res.headers.set('Authorization', `access_token ${token}`)
+  }
+
+  if (isMobile) {
+    res.headers.set('x-is-mobile', isMobile ? '1' : '0')
   }
 
   return res
