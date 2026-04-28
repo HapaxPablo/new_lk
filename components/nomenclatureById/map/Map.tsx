@@ -8,9 +8,10 @@ interface MapProps {
   lat: number
   className?: string
   address?: string
+  zoom?: number
 }
 
-export function MapPlacement({ className, lat, lng, address }: MapProps) {
+export function MapPlacement({ className, lat, lng, address, zoom }: MapProps) {
   const mapRef = useRef<HTMLDivElement>(null)
   const isMobile = useMediaQuery('(max-width: 600px)')
   const [mapInstance, setMapInstance] = useState<any>(null)
@@ -29,7 +30,7 @@ export function MapPlacement({ className, lat, lng, address }: MapProps) {
         // @ts-ignore
         const map = new ymaps.Map(mapRef.current, {
           center: [lat, lng],
-          zoom: 15,
+          zoom: zoom ? zoom : 15,
           controls: ['zoomControl'], // только кнопки зума
         })
 
@@ -77,7 +78,7 @@ export function MapPlacement({ className, lat, lng, address }: MapProps) {
     <div className="relative">
       <div
         ref={mapRef}
-        className="w-full h-55 rounded-lg overflow-hidden"
+        className={`w-full h-55 rounded-lg overflow-hidden ${className}`}
       />
     </div>
   )
