@@ -120,6 +120,31 @@ export default async function AboutPage() {
             <p>г. Красноярск, ул. Красной Армии, 10</p>
             <p>Пн–Пт: 5:00–16:00 (МСК)</p>
           </div>
+          <div className={styles.grid2_row}>
+            <div className='flex flex-row gap-4'>
+              <div className='flex flex-col text-pretty'>
+                <div>Реквизиты:</div>
+                <div>ООО «АРЭМСИ 24»</div>
+                <div>ИНН 2466158759 КПП 246601001</div>
+                <div>Юр. адрес 660017 г. Красноярск, ул. Красной Армии, 10, стр.3, оф.2-01</div>
+                <div>Р/с 40702810923000000420</div>
+                <div>К/с 30101810600000000774</div>
+                <div>Банк Филиал «Новосибирский» АО «Альфа-Банк»</div>
+                <div>БИК 045004774</div>
+              </div>
+              <div className='flex flex-col text-pretty'>
+                <div>Реквизиты:</div>
+                <div>ООО «Агентство активной рекламы»</div>
+                <div>ИНН 2466119125 КПП 246001001</div>
+                <div>Юр. адрес 660017 г. Красноярск, ул. Красной Армии, 10, стр.3, оф.2-01</div>
+                <div>Р/с 40702810823330000481</div>
+                <div>К/с 30101810600000000774</div>
+                <div>Банк Филиал «Новосибирский» АО «Альфа-Банк»</div>
+                <div>БИК 045004774</div>
+              </div>
+            </div>
+            <div className='w-full flex justify-center'>«АРЭМСИ 24» зарегистрирована в реестре аккредитованных IT-компаний, начиная с 19.05.2022 г.</div>
+          </div>
           <div className={styles.map}>
             <MapPlacement
               className='h-110'
