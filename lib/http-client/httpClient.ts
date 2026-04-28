@@ -7,6 +7,7 @@ class HttpClient1CClient {
 
   constructor() {
     this.baseUrl = process.env.NEXT_PUBLIC_API_1C_URL || ''
+    console.log('baseUrl:', this.baseUrl)
   }
 
   private async request<T = any>(

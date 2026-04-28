@@ -6,6 +6,7 @@ import {
   Tag,
   CheckSquare,
   Users,
+  Info,
 } from 'lucide-react'
 import type { LucideIcon } from 'lucide-react'
 
@@ -20,6 +21,11 @@ export const NAV_ITEMS: NavItem[] = [
     title: 'Места для рекламы',
     path: '/nomenclatures',
     icon: MapPin,
+  },
+  {
+    title: 'О нас',
+    path: '/about',
+    icon: Info,
   },
   // {
   //   title: 'Мои места',
