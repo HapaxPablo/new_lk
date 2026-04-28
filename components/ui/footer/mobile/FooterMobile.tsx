@@ -25,7 +25,7 @@ export default function FooterMobile({ currentYear }: FooterMobileProps) {
 
                 <div className={styles.footer__brand}>
                     <Link
-                        href="/"
+                        href="/about"
                         className={styles.footer__logo}
                         aria-label="RMC Home"
                         itemProp="url"

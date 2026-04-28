@@ -23,7 +23,7 @@ export default function FooterDesktop({ currentYear }: FooterDesktopProps) {
 
                 <div className={styles.footer__brand}>
                     <Link
-                        href="/"
+                        href="/about"
                         className={styles.footer__logo}
                         aria-label="RMC Home"
                         itemProp="url"
