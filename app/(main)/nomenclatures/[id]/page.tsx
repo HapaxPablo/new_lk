@@ -20,6 +20,10 @@ import { formatPrice } from '@/utils/nomenclatureUtils'
 import { EcommerceTracker } from '@/components/ecommerce/EcommerceTracker'
 import { AddButtonToOrder } from '@/components/ui/button/AddButtonToOrder'
 import BreadcrumbsSetter from '@/components/ui/breadcrumbs/BreadcrumbsSetter'
+import Feedback from '@/components/ui/forms/feedback/Feedback'
+import { ModalWrapper } from '@/components/modal/ModalWrapper'
+import { Button } from '@/components/ui/button/Button'
+import ModalFeedBack from '@/components/nomenclatureById/modalFeedBack/ModalFeedBack'
 
 const Slider = dynamic(() => import('@/components/slider/Slider'), {
   ssr: true,
@@ -202,9 +206,12 @@ export default async function NomenclatureDetailPage(
               )}
             </div>
 
-            <div className="w-full h-full sm:h-2/3 hidden md:block">
+            <div className="w-full hidden md:block">
               <Description nomenclature={nomenclature} />
             </div>
+            <ModalFeedBack />
+
+
           </div>
 
           <div className="flex flex-col w-full sm:overflow-y-auto rounded-md shadow-xl">
@@ -280,13 +287,12 @@ export default async function NomenclatureDetailPage(
                 <hr className="solid ml-4 mr-4" />
               </>
             )}
-            {description && (
+            {nomenclature && (
               <div>
                 <div className="w-full h-full sm:h-2/3 block md:hidden p-4">
                   <Description nomenclature={nomenclature} />
 
                 </div>
-                <hr className="solid ml-4 mr-4" />
               </div>
             )}
 
