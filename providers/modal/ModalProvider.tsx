@@ -8,6 +8,7 @@ export type ModalType =
   | 'responsible_details'
   | 'location_permission'
   | 'city_confirmation'
+  | 'feedback'
 
 type ModalContextType = {
   openModal: (id: ModalType, key?: string) => void
