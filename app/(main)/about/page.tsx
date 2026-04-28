@@ -39,7 +39,7 @@ export default async function AboutPage() {
           <p className={styles.subtitle}>
             Размещаем рекламу в супермаркетах и ТЦ по всей России
           </p>
-          <ContactButton className={styles.ctaBlock} />
+          <ContactButton />
         </div>
       </div>
 
@@ -90,7 +90,7 @@ export default async function AboutPage() {
           </div>
           <div className={styles.ctaBlock}>
             <h3 className='text-lg w-full flex items-center justify-center'>Готовы запустить рекламу?</h3>
-            <ContactButton className={styles.ctaBlock} />
+            <ContactButton />
           </div>
         </div>
       </div>
