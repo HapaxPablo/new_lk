@@ -9,6 +9,7 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: ButtonVariant
   isLoading?: boolean
   fullWidth?: boolean
+  isActive?: boolean
 }
 
 export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
@@ -20,6 +21,7 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       className = '',
       children,
       disabled,
+      isActive,
       ...props
     },
     ref
@@ -28,6 +30,7 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       styles.button,
       styles[`button${variant.charAt(0).toUpperCase() + variant.slice(1)}`],
       fullWidth ? styles.buttonFullWidth : '',
+      isActive ? styles.buttonActive : '',
       className,
     ].join(' ')
 

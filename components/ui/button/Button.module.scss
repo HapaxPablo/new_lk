@@ -26,15 +26,15 @@
 
   // Варианты кнопок
   &Primary {
-    background-color: var(--primary-color);
+    background-color: var(--main-color);
     color: white;
 
     &:hover {
-      background-color: var(--primary-color-light);
+      background-color: var(--main-color-light);
     }
 
     &:active {
-      background-color: var(--primary-color-dark);
+      background-color: var(--main-color-dark);
     }
   }
 
@@ -102,6 +102,10 @@
     }
 
     &:active {
+      background-color: var(--main-color);
+      color: white;
+    }
+    &.buttonActive {
       background-color: var(--main-color);
       color: white;
     }

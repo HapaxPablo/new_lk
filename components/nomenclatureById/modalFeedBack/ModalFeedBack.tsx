@@ -15,7 +15,7 @@ export default function ModalFeedBack() {
 
     return (
         <>
-            <Button onClick={handleClick}>Обратная связь</Button>
+            <Button onClick={handleClick} variant="add">Написать нам</Button>
             <ModalWrapper id='feedback' title='Обратная связь'>
                 <Feedback />
             </ModalWrapper>

@@ -7,7 +7,7 @@ import { MouseEvent } from 'react'
 import { useNomenclatureStore } from '@/store/useNomenclatureStore'
 
 export default function Order() {
-    const itemCount = useNomenclatureStore((state) => state.items.length)
+    const itemCount = useNomenclatureStore((state) => state.ids.length)
     const router = useRouter()
     const handleRedirectToOrder = (e: MouseEvent) => {
         e.preventDefault()

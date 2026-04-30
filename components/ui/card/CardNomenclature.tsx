@@ -150,6 +150,7 @@ export const CardNomenclature: React.FC<CardNomenclatureProps> = ({
             className={styles.button}
             variant="add"
             onClick={(e) => handleUniversalClick(handleAdd, e)}
+            isActive={isSelected}
           // disabled={isSelected}
           >
             {isSelected ? 'Убрать из заказа' : 'Разместить ролик'}
