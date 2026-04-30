@@ -41,6 +41,8 @@ export default function PlacementOrderCreatePage({
     const { ids, items, setInitial } = useNomenclatureStore()
     const itemCount = useNomenclatureStore((state) => state.items.length)
     const totalPrice = useNomenclatureStore((state) => state.getTotalPrice())
+    const [mounted, setMounted] = useState(false)
+
 
     const initialized = useRef(false)
 
@@ -56,8 +58,9 @@ export default function PlacementOrderCreatePage({
     useEffect(() => {
         if (initialized.current) return
         initialized.current = true
+
         setInitial(initialIds, initialItems)
-    }, []) // eslint-disable-line react-hooks/exhaustive-deps
+    }, [])
 
     const toggleDay = (key: string) => {
         setForm((prev) => ({
@@ -137,6 +140,10 @@ export default function PlacementOrderCreatePage({
             month: '2-digit',
             year: 'numeric',
         })
+
+    useEffect(() => {
+        setMounted(true)
+    }, [])
 
     return (
         <div className={styles.page}>
@@ -228,23 +235,23 @@ export default function PlacementOrderCreatePage({
                     </div>
 
                     {/* Summary */}
-                    <div className={styles.summary}>
-                        <div>Выбрано мест: {ids.length}</div>
+                    <div className={styles.summary} suppressHydrationWarning>
+                        <div>Выбрано мест: {mounted ? ids.length : '0'}</div>
                         <div>Дней: {form.duration || "—"}</div>
                     </div>
 
                     <div className={styles.summary__total}>
                         <span>Общая сумма</span>
-                        <span className={styles.summary__amount}>
-                            {finalPrice.toLocaleString('ru-RU')} ₽
+                        <span className={styles.summary__amount} suppressHydrationWarning>
+                            {mounted ? finalPrice.toLocaleString('ru-RU') : '0'} ₽
                         </span>
                     </div>
 
-                    <div className={styles.summary__breakdown}>
-                        {totalPrice.toLocaleString('ru-RU')} ₽ × {days || '—'} дней
+                    <div className={styles.summary__breakdown} suppressHydrationWarning>
+                        {mounted ? totalPrice.toLocaleString('ru-RU') : '0'} ₽ × {days || '—'} дней
                     </div>
 
-                    <div className={styles.summary__dates}>
+                    <div className={styles.summary__dates} suppressHydrationWarning>
                         <div>Старт: {formatDate(startDate)}</div>
                         <div>Окончание: {days ? formatDate(endDate) : "—"}</div>
                     </div>

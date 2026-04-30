@@ -13,6 +13,7 @@ import GeolocationClient from '@/components/ui/geolocation/GeolocationClient'
 import Script from 'next/script'
 import { YandexMetricaProvider } from '@/providers/analytics/YandexMetricaProvider'
 import Breadcrumbs from '@/components/ui/breadcrumbs/Breadcrumbs'
+import { NomenclatureStoreProvider } from '@/providers/nomenclature/NomenclatureStoreProvider'
 
 const montserrat = localFont({
   src: [
@@ -88,13 +89,15 @@ export default function RootLayout({
             <TooltipProvider>
               <ToastProvider>
                 <SWRProvider>
-                  <div className="layout">
-                    <Header />
-                    <Breadcrumbs />
-                    <main className="content">{children} </main>
-                    <Footer />
-                    <TooltipModal />
-                  </div>
+                  <NomenclatureStoreProvider>
+                    <div className="layout">
+                      <Header />
+                      <Breadcrumbs />
+                      <main className="content">{children} </main>
+                      <Footer />
+                      <TooltipModal />
+                    </div>
+                  </NomenclatureStoreProvider>
                 </SWRProvider>
               </ToastProvider>
             </TooltipProvider>

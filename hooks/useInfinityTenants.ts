@@ -61,7 +61,7 @@ export const useInfinityTenants = (
       revalidateOnFocus: false,
       revalidateIfStale: false,
       revalidateFirstPage: false,
-      keepPreviousData: true,
+      keepPreviousData: false,
       // fallbackData: initialData ? [initialData] : undefined,
     })
 

@@ -10,7 +10,7 @@ export function AddButtonToOrder({ item }: { item: INomenclatureBase }) {
     console.log('AddButtonToOrder rendered with item:', item)
     const isSelected = ids.includes(item.id)
     return (
-        <Button variant="add" onClick={handleAdd}>
+        <Button onClick={handleAdd}>
             {isSelected ? 'Убрать из заказа' : 'Разместить ролик'}
         </Button>
     )

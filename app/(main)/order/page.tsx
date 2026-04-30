@@ -28,17 +28,19 @@ async function getSelectedIds(): Promise<string[]> {
 }
 
 async function getNomenclatures(ids: string[]): Promise<INomenclatureItem[]> {
-    const baseUrl = new URL('api/nomenclatures/', process.env.API_1C_URL)
+    if (!ids.length) return []
 
-    const results = await Promise.all(
-        ids.map((id) =>
-            fetch(`${baseUrl}${id}`, { cache: 'no-store' })
-                .then((res) => (res.ok ? res.json() : null))
-                .catch(() => null)  // сетевая ошибка не роняет всю страницу
-        )
-    )
+    const baseUrl = new URL('api/nomenclatures/bulk/', process.env.API_1C_URL)
+    baseUrl.searchParams.set('ids', ids.join(','))
 
-    return results.filter(Boolean) as INomenclatureItem[]
+    try {
+        const res = await fetch(baseUrl.toString(), { cache: 'no-store' })
+        if (!res.ok) return []
+        const data = await res.json()
+        return Array.isArray(data) ? data : []
+    } catch {
+        return []
+    }
 }
 
 // ── page ─────────────────────────────────────────────────────────────────────

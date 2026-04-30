@@ -209,14 +209,14 @@ export default async function NomenclatureDetailPage(
             <div className="w-full hidden md:block">
               <Description nomenclature={nomenclature} />
             </div>
-            <ModalFeedBack />
+
 
 
           </div>
 
           <div className="flex flex-col w-full sm:overflow-y-auto rounded-md shadow-xl">
             <div className="p-4 border-b">
-              <div className='flex flex-row gap-3 items-center'>
+              <div className='flex flex-row gap-3 items-center mb-2'>
                 {brand.logotype && (
                   <span className="items-center flex">
                     <Image
@@ -230,7 +230,7 @@ export default async function NomenclatureDetailPage(
                   </span>
                 )}
                 {nameForFront && (
-                  <span className="text-sm sm:text-2xl font-bold text-[#1E3961] mb-2">
+                  <span className="text-sm sm:text-2xl font-bold text-[#1E3961] mb-2 whitespace-pre-line">
                     {nameForFront}
                   </span>
                 )}
@@ -250,6 +250,7 @@ export default async function NomenclatureDetailPage(
                   </div>
                 )}
                 <AddButtonToOrder item={nomenclature} />
+                <ModalFeedBack />
               </div>
             </div>
             {description && (
