@@ -56,7 +56,7 @@ export const useInfinityTenants = (
     return `/proxy-api/nomenclatures/${nomenclatureId}/tenant/?${params.toString()}`
   }
 
-  const { data, error, size, setSize, isValidating } =
+  const { data, error, size, setSize, isValidating, mutate } =
     useSWRInfinite<ITenantsResponse>(getKey, fetcher, {
       revalidateOnFocus: false,
       revalidateIfStale: false,
@@ -90,6 +90,7 @@ export const useInfinityTenants = (
     isLoadingMore,
     size,
     setSize,
+    mutate,
     floors: floors || [],
   }
 }

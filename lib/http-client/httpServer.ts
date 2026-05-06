@@ -21,6 +21,13 @@ class HttpClient1CServer {
     this.baseUrl = process.env.API_1C_URL || 'https://api1.krasrm.com/'
   }
 
+  private isNextRequest(source: any): source is NextRequest {
+    return (
+      typeof source?.headers?.get === 'function' &&
+      typeof source?.cookies?.getAll === 'function'
+    )
+  }
+
   private async getSessionData(request: NextRequest) {
     try {
       const res = new Response()
@@ -51,7 +58,6 @@ class HttpClient1CServer {
 
   private async getSessionFromCookies(cookieStore: ReadonlyRequestCookies) {
     try {
-      // Создаем Request объект из cookieStore
       const url = new URL('http://localhost')
       const headers = new Headers()
 
@@ -93,37 +99,32 @@ class HttpClient1CServer {
     let token: string | null = null
     let xrmcCookie: string | undefined = undefined
 
-    if (source instanceof NextRequest) {
-      // Извлекаем из NextRequest
-      // Используем raw cookie header если передан, иначе из request.cookies
+    if (this.isNextRequest(source)) {
       const cookieHeader = rawCookieHeader || source.headers.get('cookie') || ''
 
-      // Пробуем извлечь токен из заголовка напрямую
       const tokenMatch = cookieHeader.match(/access_token=([^;]+)/)
       token = tokenMatch ? tokenMatch[1] : null
 
       const xrmcMatch = cookieHeader.match(/xrmcCookie=([^;]+)/)
       xrmcCookie = xrmcMatch ? xrmcMatch[1] : undefined
 
-      // Если не нашли в заголовке, пробуем стандартный способ
       if (!token) {
         token =
           source.cookies.get('access_token')?.value ||
           source.headers.get('Authorization')?.replace('Bearer ', '') ||
           source.headers.get('x-access-token') ||
-          source.headers.get('access-token')
+          source.headers.get('access-token') ||
+          null
       }
 
       if (!xrmcCookie) {
         const session = await this.getSessionData(source)
         xrmcCookie =
-          session?.user?.xrmcCookie ||
-          (typeof (source as any).cookies?.get === 'function'
-            ? (source as any).cookies.get('xrmcCookie')?.value
-            : null)
+          session?.user?.xrmcCookie || source.cookies.get('xrmcCookie')?.value
       }
     } else {
-      // Извлекаем из cookieStore (ReadonlyRequestCookies)
+      const cookieStore = source as ReadonlyRequestCookies
+
       let tokenValue: string | null = null
 
       if (rawCookieHeader) {
@@ -134,25 +135,15 @@ class HttpClient1CServer {
         xrmcCookie = xrmcMatch ? xrmcMatch[1] : undefined
       }
 
-      // Безопасно проверяем наличие .get() метода
-      if (typeof (source as any).get === 'function') {
-        token = tokenValue || (source as any).get('access_token')?.value || null
-        if (!xrmcCookie) {
-          xrmcCookie = (source as any).get('xrmcCookie')?.value
-        }
-      }
-
-      if (!token) {
-        token = null
+      token = tokenValue || cookieStore.get('access_token')?.value || null
+      if (!xrmcCookie) {
+        xrmcCookie = cookieStore.get('xrmcCookie')?.value
       }
 
       if (!xrmcCookie) {
-        const session = await this.getSessionFromCookies(source)
+        const session = await this.getSessionFromCookies(cookieStore)
         xrmcCookie =
-          session?.user?.xrmcCookie ||
-          (typeof (source as any).get === 'function'
-            ? (source as any).get('xrmcCookie')?.value
-            : undefined)
+          session?.user?.xrmcCookie || cookieStore.get('xrmcCookie')?.value
       }
     }
 
