@@ -13,6 +13,7 @@ import {
 
 type AuthContextType = {
   isAuthenticated: boolean
+  isEmployee: boolean
   login: (email: string, password: string) => Promise<LoginResponse>
   logout: () => Promise<void>
   error: string | null
@@ -30,6 +31,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined)
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [isAuthenticated, setIsAuthenticated] = useState(false)
+  const [isEmployee, setIsEmployee] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [blockTime, setBlockTime] = useState<number | null>(null)
   const router = useRouter()
@@ -49,13 +51,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         if (response.ok) {
           const result = await response.json()
           setIsAuthenticated(result.isAuthenticated)
-
+          setIsEmployee(result.isEmployee ?? false)
           // if (!result.isAuthenticated && url !== '/nomenclatures') {
           //   await logout()
           //   // console.log('сделать проверку токена в 1с');
           // }
         } else {
           setIsAuthenticated(false)
+
         }
       } catch (err) {
         console.error('Auth check failed:', err)
@@ -151,7 +154,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   return (
     <AuthContext.Provider
-      value={{ isAuthenticated, login, logout, error, blockTime }}
+      value={{ isAuthenticated, login, logout, error, blockTime, isEmployee }}
     >
       {children}
     </AuthContext.Provider>
