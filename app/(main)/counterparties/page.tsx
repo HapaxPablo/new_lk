@@ -70,7 +70,7 @@ export default async function CounterpartiesPage(
     return (
       <div className={styles.container}>
         <h1 className={styles.title}>Контрагенты</h1>
-        <Toolbar totalItems={data.count} currentLimit={limit} />
+        <Toolbar totalItems={data.count} />
         <div className={styles.contentWrapper}>
           <div className={styles.content}>
             <CounterpartiesWrapper

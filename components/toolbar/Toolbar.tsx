@@ -1,6 +1,6 @@
 'use client'
 import { useClickOutside } from '@/hooks/useClickOutside'
-import { ListChecks, Settings } from 'lucide-react'
+import { Settings } from 'lucide-react'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { JSX, useRef, useState } from 'react'
 import FiltersPanel from '../panels/filter-panels/FiltersPanels'
@@ -9,10 +9,9 @@ import styles from './Toolbar.module.scss'
 
 interface ToolbarProps {
   totalItems: number
-  currentLimit: number
 }
 
-const Toolbar = ({ totalItems, currentLimit }: ToolbarProps): JSX.Element => {
+const Toolbar = ({ totalItems }: ToolbarProps): JSX.Element => {
   const router = useRouter()
   const pathname = usePathname()
   const searchParams = useSearchParams()
@@ -95,40 +94,6 @@ const Toolbar = ({ totalItems, currentLimit }: ToolbarProps): JSX.Element => {
             >
               ТЦ
             </button>
-
-            {/* Количество на странице */}
-            <div className={styles.limitContainer} ref={limitRef}>
-              <div
-                className={styles.tooltipContainer}
-                data-tooltip="Количество на странице"
-              >
-                <ListChecks
-                  size={24}
-                  onClick={toggleLimitOptions}
-                  className={`${styles.icon} ${showLimitOptions ? styles.activeIcon : ''}`}
-                />
-              </div>
-
-              {showLimitOptions && (
-                <div className={styles.dropdown}>
-                  {[24, 48, 72].map((limit) => (
-                    <div
-                      key={limit}
-                      className={`${styles.dropdownItem} ${currentLimit === limit ? styles.active : ''}`}
-                      onClick={() => handleLimitChange(limit)}
-                    >
-                      {limit}
-                    </div>
-                  ))}
-                  <div
-                    className={`${styles.dropdownItem} ${currentLimit === totalItems ? styles.active : ''}`}
-                    onClick={() => handleLimitChange(totalItems)}
-                  >
-                    Все
-                  </div>
-                </div>
-              )}
-            </div>
           </div>
         </div>
       </div>

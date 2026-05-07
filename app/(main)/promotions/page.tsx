@@ -69,7 +69,7 @@ export default async function PromotionsPage(props: PromotionsPageProps) {
     return (
       <div className={styles.container}>
         <h1 className={styles.title}>Акции</h1>
-        <Toolbar totalItems={data.count} currentLimit={limit} />
+        <Toolbar totalItems={data.count} />
         <div className={styles.contentWrapper}>
           <div className={styles.content}>
             <PromotionsWrapper
