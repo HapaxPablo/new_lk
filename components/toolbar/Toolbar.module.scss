@@ -43,7 +43,6 @@
 
 .icon {
   transition: color 0.2s ease;
-  // color: #64748b;
   color: var(--background);
 
   &:hover {
@@ -56,13 +55,14 @@
 }
 
 .sortContainer,
-.limitContainer {
+.limitContainer,
+.typeOfPlaceContainer {
   position: relative;
 }
 
 .dropdown {
   position: absolute;
-  padding: .2rem;
+  padding: 0.2rem;
   top: 100%;
   right: 0;
   background: var(--background);
@@ -98,7 +98,6 @@
 .totalItems {
   margin-right: auto;
   font-size: 0.875rem;
-  // color: #4a5568;
   color: var(--background);
 }
 
@@ -130,7 +129,54 @@
     flex-wrap: nowrap;
   }
 
-  .tooltipContainer[data-tooltip="Фильтры"] {
+  .tooltipContainer[data-tooltip='Фильтры'] {
     display: none;
+  }
+}
+
+.typeOfPlaceDropdown {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  z-index: 200;
+  width: 280px;
+
+  transform-origin: top center;
+  animation: dropDown 0.18s ease forwards;
+}
+
+@keyframes dropDown {
+  from {
+    opacity: 0;
+    transform: scaleY(0.85) translateY(-6px);
+  }
+  to {
+    opacity: 1;
+    transform: scaleY(1) translateY(0);
+  }
+}
+
+.tcButton {
+  padding: 3px 10px;
+  border-radius: 4px;
+  border: 1px solid var(--background);
+  background: transparent;
+  color: var(--background);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    background 0.15s,
+    color 0.15s;
+  line-height: 1.5;
+
+  &:hover {
+    background: var(--background);
+    color: var(--primary-color);
+  }
+
+  &.tcButtonActive {
+    background: var(--background);
+    color: var(--primary-color);
   }
 }

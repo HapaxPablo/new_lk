@@ -35,6 +35,7 @@ interface NomenclaturesPageProps {
     brand_name?: string
     brand_id?: string
     status?: string
+    type_of_place?: string
   }>
 }
 export async function generateMetadata(
@@ -59,6 +60,7 @@ export default async function NomenclaturesPage(props: NomenclaturesPageProps) {
   const brand_name = params.brand_name || ''
   const brand_id = params.brand_id || ''
   const status = params.status || ''
+  const typeOfPlace = params.type_of_place || ''
 
   // console.log('Page params:', { limit, page, search, brand_name, brand_id })
   try {
@@ -69,6 +71,7 @@ export default async function NomenclaturesPage(props: NomenclaturesPageProps) {
     if (brand_name) url.searchParams.set('brand_name', brand_name)
     if (brand_id) url.searchParams.set('brand_id', brand_id)
     if (status) url.searchParams.set('status', status)
+    if (typeOfPlace) url.searchParams.set('type_of_place', typeOfPlace)
 
     console.log('Making request to:', url.toString())
 
@@ -79,6 +82,7 @@ export default async function NomenclaturesPage(props: NomenclaturesPageProps) {
     }
 
     const data: INomenclatureResponse = await response.json()
+
     return (
       <>
         <EcommerceTracker

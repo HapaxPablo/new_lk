@@ -3,7 +3,7 @@
 import { INomenclatureItem } from '@/types/nomenclature'
 import dynamic from 'next/dynamic'
 import { Suspense, useCallback, useEffect, useRef } from 'react'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { useInfiniteNomenclatures } from '@/hooks/useInfiniteNomenclatures'
 import { useMediaQuery } from 'usehooks-ts'
 
@@ -55,19 +55,12 @@ export const NomenclatureWrapperContent = ({
   page,
   count,
 }: NomenclatureCardProps) => {
-  console.log('🔍 NomenclatureWrapper render START', {
-    hasNomenclatureData: !!nomenclatureData,
-    nomenclatureDataLength: nomenclatureData?.length,
-    page,
-    count,
-    timestamp: Date.now(),
-  })
   const cardsWrapperRef = useRef<HTMLDivElement>(null)
   const sentinelRef = useRef<HTMLDivElement>(null)
 
   const router = useRouter()
+  const searchParams = useSearchParams()
   const isMobile = useMediaQuery('(max-width: 768px)')
-  console.log('🔍 Before useInfiniteNomenclatures hook')
 
   const {
     items,
@@ -77,33 +70,26 @@ export const NomenclatureWrapperContent = ({
     size,
     setSize,
   } = useInfiniteNomenclatures(nomenclatureData, count, page)
-  console.log('🔍 After useInfiniteNomenclatures hook', {
-    itemsLength: items?.length,
-    hasMore,
-    isLoadingMore,
-    size,
-  })
+
   const loadMore = useCallback(() => {
-    console.log('📜 Load more clicked:', { size, hasMore, isLoadingMore })
     if (hasMore && !isLoadingMore) {
       setSize((s) => s + 1)
     }
   }, [hasMore, isLoadingMore, setSize, size])
 
-  // Исправленный IntersectionObserver
+  // IntersectionObserver
   useEffect(() => {
     if (!hasMore || isLoadingMore) return
 
     const observer = new IntersectionObserver(
       (entries) => {
         const [entry] = entries
-
         if (entry.isIntersecting && hasMore && !isLoadingMore) {
           loadMore()
         }
       },
       {
-        root: cardsWrapperRef.current, // Используем контейнер вместо viewport
+        root: cardsWrapperRef.current,
         rootMargin: '0px 0px 200px 0px',
         threshold: 0.1,
       }
@@ -121,7 +107,7 @@ export const NomenclatureWrapperContent = ({
     }
   }, [loadMore, hasMore, isLoadingMore])
 
-  // Добавляем запасной вариант с scroll событием
+  // Scroll-based fallback
   useEffect(() => {
     if (!hasMore || isLoadingMore || !cardsWrapperRef.current) return
 
@@ -132,7 +118,6 @@ export const NomenclatureWrapperContent = ({
       const { scrollTop, scrollHeight, clientHeight } = wrapper
       const scrollPercent = (scrollTop + clientHeight) / scrollHeight
 
-      // Триггер при достижении 80% высоты
       if (scrollPercent >= 0.8) {
         if (hasMore && !isLoadingMore) {
           loadMore()
@@ -148,17 +133,23 @@ export const NomenclatureWrapperContent = ({
     }
   }, [hasMore, isLoadingMore, loadMore])
 
-  // Обновляем URL при изменении страницы
   useEffect(() => {
-    if (size > 0) {
-      router.replace(`?page=${size}`, { scroll: false })
+    if (size > 1 && hasMore) {
+      const params = new URLSearchParams(searchParams.toString())
+      params.set('page', String(size))
+      router.replace(`?${params.toString()}`, { scroll: false })
     }
-  }, [size, router])
+    // Обнулить page, если дошли до конца
+    if (!hasMore && size > 1) {
+      const params = new URLSearchParams(searchParams.toString())
+      params.set('page', String(size - 1)) // последняя валидная страница
+      router.replace(`?${params.toString()}`, { scroll: false })
+    }
+  }, [size, hasMore])
 
-  // Определяем, какие данные показывать
   const displayItems = items.length > 0 ? items : nomenclatureData
   const displayTotal = hookTotalCount || count || 0
-  console.log('🔍 NomenclatureWrapper render END')
+
   return (
     <div className={styles.displayWrapper}>
       <div className={styles.contentContainer}>
@@ -171,14 +162,12 @@ export const NomenclatureWrapperContent = ({
             <NomenclatureCards item={displayItems} />
           )}
 
-          {/* для бесконечной прокрутки */}
           <div
             ref={sentinelRef}
             className={styles.sentinel}
             aria-hidden="true"
           />
 
-          {/* Индикатор загрузки */}
           {isLoadingMore && (
             <div className={styles.loadingMore}>
               <LoaderSkeleton />
@@ -198,7 +187,6 @@ export const NomenclatureWrapperContent = ({
             />
           </div>
 
-          {/* Кнопка прокрутки вверх/вниз */}
           <ScrollButton
             scrollContainerRef={cardsWrapperRef}
             showAfterScroll={500}

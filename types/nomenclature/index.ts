@@ -14,6 +14,22 @@ export interface IBrand {
   /** Код из 1С */
   code1c?: string | null
 }
+
+export interface ITypeOfPlace {
+  id: string
+  name: string
+  tariff: string
+  tariff_single: string
+  abbreviation: string
+  code1c: string
+  is_mall: boolean
+  is_active: boolean
+}
+
+export interface ITypeOfPlaceResponse {
+  results: ITypeOfPlace[]
+}
+
 export interface ILegalEntity {
   id: string
   name: string
@@ -115,8 +131,8 @@ export interface IAddressNomenclature {
 export interface INomenclatureResponse {
   results: INomenclatureItem[]
   count: number
-  next: number
-  previous: number
+  next: string | null
+  previous: string | null
 }
 
 // Интерфейс параметров запроса для номенклатуры

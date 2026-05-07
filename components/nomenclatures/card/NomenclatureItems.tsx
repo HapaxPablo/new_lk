@@ -38,7 +38,7 @@ export const NomenclatureItems: React.FC<NomenclatureCardProps> = ({
       {item.map((item, key) => (
         <CardNomenclature
           onClick={() => handleClickCard(item)}
-          key={`${item.id} - ${item.code1c}`}
+          key={`${item.id} - ${key}`}
           className={`${className}`}
           item={item}
         />

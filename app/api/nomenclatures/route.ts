@@ -8,45 +8,33 @@ import { NextRequest } from 'next/server'
 export const revalidate = 3600
 
 export async function GET(request: NextRequest) {
-  console.log('Nomenclatures API called with URL:', request.url)
-
   try {
     const { searchParams } = new URL(request.url)
 
-    const queryParams: INomenclatureQueryParams = {
-      limit: Number(searchParams.get('limit')) || 24,
-      page: Number(searchParams.get('page')) || 1,
-      search: searchParams.get('search') || undefined,
-      brand_name: searchParams.get('brand_name') || undefined,
-      brand_id: searchParams.get('brand_id') || undefined,
-    }
+    const limit = Number(searchParams.get('limit')) || 24
+    const page = Number(searchParams.get('page')) || 1
+    const search = searchParams.get('search') || undefined
+    const brand_name = searchParams.get('brand_name') || undefined
+    const brand_id = searchParams.get('brand_id') || undefined
+    const status = searchParams.get('status') || undefined
+    const type_of_place = searchParams.get('type_of_place') || undefined
 
-    console.log('Query params received:', queryParams)
-
-    // Формируем параметры для 1С API
     const paramsFor1C: Record<string, string> = {
-      limit: String(queryParams.limit),
-      page: String(queryParams.page),
+      limit: String(limit),
+      page: String(page),
     }
 
-    // Добавляем параметры фильтрации если они есть
-    if (queryParams.search) {
-      paramsFor1C.search = queryParams.search
-    }
-    if (queryParams.brand_name) {
-      paramsFor1C.brand_name = queryParams.brand_name
-    }
+    if (search) paramsFor1C.search = search
+    if (brand_name) paramsFor1C.brand_name = brand_name
+    if (brand_id) paramsFor1C.brand_id = brand_id
+    if (status) paramsFor1C.status = status
+    if (type_of_place) paramsFor1C.type_of_place = type_of_place
 
     const queryString = new URLSearchParams(paramsFor1C).toString()
-    console.log('Making request to 1C API with params:', paramsFor1C)
 
-    // Делаем запрос к 1С через наш HttpClient
     const response = await HttpClient1C.server(
       request
     ).get<INomenclatureResponse>(`api/nomenclatures/?${queryString}`)
-
-    console.log('Response from 1C API received, count:', response.count)
-    console.log('First item brand:', response.results[0]?.brand)
 
     return Response.json(response)
   } catch (error: any) {

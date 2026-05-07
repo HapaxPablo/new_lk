@@ -16,7 +16,6 @@ import styles from './FiltersPanel.module.scss'
 import dynamic from 'next/dynamic'
 import LoaderSkeleton from '@/components/ui/loader/LoaderSkeleton'
 import StatusSelect from './status-select/StatusSelect'
-
 const BrandSelect = dynamic(
   () =>
     import('../filter-panels/brand-select/BrandSelect').then((mod) => ({
@@ -181,9 +180,8 @@ const FiltersPanel = ({ isOpen, onClose }: FiltersPanelProps): JSX.Element => {
 
       <div
         ref={panelRef}
-        className={`${styles.panel} ${isOpen ? styles.panelOpen : ''} ${
-          !onClose ? styles.desktopPanel : ''
-        }`}
+        className={`${styles.panel} ${isOpen ? styles.panelOpen : ''} ${!onClose ? styles.desktopPanel : ''
+          }`}
       >
         {onClose && (
           <div className={styles.panelHeader}>
@@ -250,7 +248,7 @@ const FiltersPanel = ({ isOpen, onClose }: FiltersPanelProps): JSX.Element => {
           <div className={styles.filterGroup}>
             <label htmlFor='status-select' id="status-label" className={styles.filterLabel}>Статус устройства</label>
             <StatusSelect
-              id="status-select" 
+              id="status-select"
               ref={statusRef}
               value={getCurrentValue('status')}
               onChange={handleStatusChange}
