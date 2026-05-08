@@ -67,7 +67,7 @@ export default function FooterMobile({ currentYear }: FooterMobileProps) {
                                         aria-label="Позвонить по телефону"
                                         itemProp="telephone"
                                     >
-                                        8 800 500 50 50
+                                        8 800 222 59 38
                                     </a>
                                 </span>
                             </div>

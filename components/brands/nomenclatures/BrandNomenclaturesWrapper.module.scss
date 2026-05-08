@@ -1,0 +1,62 @@
+// BrandNomenclatures.module.scss
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.count {
+  font-size: var(--text-sm);
+  color: var(--second-text-color);
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.item {
+  padding: 0.75rem 1rem;
+  background: var(--background-secondary);
+  border-radius: 0.375rem;
+  font-size: var(--text-sm);
+  color: var(--main-text-color);
+  line-height: 1.4;
+}
+
+.skeleton {
+  height: 48px;
+  border-radius: 0.375rem;
+  background: linear-gradient(
+    90deg,
+    var(--background-secondary) 25%,
+    var(--background) 50%,
+    var(--background-secondary) 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.2s infinite;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+.empty {
+  font-size: var(--text-sm);
+  color: var(--second-text-color);
+}
+
+.loader {
+  height: 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--text-sm);
+  color: var(--second-text-color);
+}

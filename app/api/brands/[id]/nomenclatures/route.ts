@@ -6,17 +6,17 @@ export const revalidate = 3600
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: Promise<{ slug: string }> }
+  { params }: { params: Promise<{ id: string; limit: string; offset: string }> }
 ) {
   try {
-    const { slug } = await params
+    const { id, limit, offset } = await params
 
-    if (!slug) {
-      return Response.json({ error: 'slug is required' }, { status: 400 })
+    if (!id) {
+      return Response.json({ error: 'id is required' }, { status: 400 })
     }
 
     const response = await HttpClient1C.server(request).get<IBrandDetail>(
-      `api/brands/${slug}`
+      `api/brands/${id}/nomenclatures?limit=${limit || 15}&offset=${offset || 0}`
     )
 
     return Response.json(response)

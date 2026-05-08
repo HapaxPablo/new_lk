@@ -1,0 +1,141 @@
+import { Metadata } from 'next'
+import { cookies } from 'next/headers'
+import { notFound } from 'next/navigation'
+import styles from './BrandDetail.module.scss'
+import { InfoRow } from '@/components/ui/InfoRow'
+import {
+    FileText,
+} from 'lucide-react'
+import { httpClient1CServer } from '@/lib/http-client/httpServer'
+import { IBrandDetail } from '@/types/brands'
+import Image from 'next/image'
+import { BrandNomenclatures } from '@/components/brands/nomenclatures/BrandNomenclaturesWrapper'
+
+interface BrandDetailPageProps {
+    params: Promise<{
+        slug: string
+    }>
+}
+
+async function getBrandBySlug(slug: string): Promise<IBrandDetail | null> {
+    try {
+        const cookieStore = await cookies()
+
+        console.log('Fetching brand details for slug:', slug)
+
+        // Правильный эндпоинт с ID в пути
+        const data = await httpClient1CServer.get<IBrandDetail>(
+            cookieStore,
+            `api/brands/${slug}/`
+        )
+
+        // console.log('Brand data received:', data)
+        return data
+
+    } catch (error) {
+        console.error('Error fetching brand:', {
+            error: error instanceof Error ? error.message : error,
+            slug,
+            apiUrl: process.env.API_1C_URL,
+        })
+
+        // Если ошибка 404, возвращаем null для отображения 404 страницы
+        if (error instanceof Error && error.message.includes('404')) {
+            return null
+        }
+
+        // Пробрасываем ошибку дальше для обработки error.tsx
+        throw error
+    }
+}
+
+export async function generateMetadata(
+    props: BrandDetailPageProps
+): Promise<Metadata> {
+    try {
+        const params = await props.params
+        const { slug } = params
+
+        const brand = await getBrandBySlug(slug)
+
+        if (!brand) {
+            return {
+                title: 'Бренд не найден | Личный кабинет',
+            }
+        }
+
+        return {
+            title: `${brand.name || 'Бренд'} | Бренды`,
+            description: brand.description || `Информация о бренде ${brand.name}`,
+        }
+    } catch (error) {
+        console.error('Error generating metadata:', error)
+        return {
+            title: 'Ошибка | Бренды',
+        }
+    }
+}
+
+export default async function BrandDetailPage(
+    props: BrandDetailPageProps
+) {
+    const params = await props.params
+    const { slug } = params
+
+    const brand = await getBrandBySlug(slug)
+    console.log('DETAILS', brand)
+
+    if (!brand) {
+        notFound() // Используем Next.js notFound для 404 страницы
+    }
+
+    const fullName = brand.name
+    return (
+        <div className={styles.container}>
+            <div className={styles.card}>
+
+                <div className={styles.header}>
+                    <div className={styles.logotype}>
+                        {brand.logotype ? (
+                            <Image
+                                src={brand.logotype}
+                                alt={`Бренд ${brand.name || 'Бренд'}`}
+                                fill
+                                className={styles.image}
+                            />
+                        ) : (
+                            <div className={styles.logoPlaceholder}>
+                                <Image
+                                    src="/og-logo.jpg"
+                                    alt="Логотип"
+                                    width={200}
+                                    height={100}
+                                    className="object-contain"
+                                />
+                            </div>
+                        )}
+                    </div>
+                    <h1 className={styles.title}>
+                        {fullName || 'Бренд'}
+                    </h1>
+                </div>
+
+            </div>
+
+
+
+            <div className={styles.card}>
+                <h2 className={styles.sectionTitle}>Описание</h2>
+                <InfoRow
+                    icon={<FileText size={16} />}
+                    label=""
+                    value={brand.description || '-'}
+                />
+            </div>
+            <div className={styles.card}>
+                <h2 className={styles.sectionTitle}>Номенклатуры</h2>
+                <BrandNomenclatures brandId={brand.id} />
+            </div>
+        </div>
+    )
+}
