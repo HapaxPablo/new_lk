@@ -75,7 +75,7 @@ export function SearchForm({
   placeholder = 'Поиск...',
   searchParamName = 'search',
   className = '',
-  debounceDelay = 800,
+  debounceDelay = 1000,
   hideButton = false,
   buttonText = 'Найти',
   buttonClassName = '',
