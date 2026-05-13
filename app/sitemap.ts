@@ -3,7 +3,7 @@ import { MetadataRoute } from 'next'
 export const revalidate = 3600
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL!
-const API_URL = process.env.NEXT_PUBLIC_API_URL!
+const API_URL = process.env.API_1C_URL!
 
 async function getNomenclatures() {
   const res = await fetch(`${API_URL}/nomenclatures?limit=99999`, {
