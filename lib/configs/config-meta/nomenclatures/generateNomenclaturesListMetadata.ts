@@ -1,4 +1,5 @@
 import { Metadata } from 'next'
+import { SITE_URL } from '../configMetaData'
 
 interface GenerateNomenclaturesListMetadataParams {
   search?: string
@@ -7,13 +8,14 @@ interface GenerateNomenclaturesListMetadataParams {
 
 export function generateNomenclaturesListMetadata({
   search = '',
-  brand_name = ''
+  brand_name = '',
 }: GenerateNomenclaturesListMetadataParams): Metadata {
   const hasSearch = !!search
   const hasBrandFilter = !!brand_name
 
   let title = 'Каталог номенклатуры | RMC'
-  let description = 'Просмотрите наш полный каталог номенклатуры. Найдите нужные товары и материалы.'
+  let description =
+    'Просмотрите наш полный каталог номенклатуры. Найдите нужные товары и материалы.'
 
   if (hasSearch && hasBrandFilter) {
     title = `Поиск: "${search}" | Бренд: ${brand_name} | Каталог номенклатуры`
@@ -26,7 +28,7 @@ export function generateNomenclaturesListMetadata({
     description = `Номенклатуры бренда "${brand_name}" в каталоге`
   }
 
-  const keywords = hasSearch 
+  const keywords = hasSearch
     ? [
         `поиск ${search}`,
         'номенклатура',
@@ -47,9 +49,9 @@ export function generateNomenclaturesListMetadata({
     keywords.unshift(brand_name)
   }
 
-  const canonicalUrl = hasSearch 
-    ? `https://lk.krasrm.com/nomenclatures?searchValue=${encodeURIComponent(search)}`
-    : 'https://lk.krasrm.com/nomenclatures'
+  const canonicalUrl = hasSearch
+    ? `${SITE_URL}/nomenclatures?searchValue=${encodeURIComponent(search)}`
+    : `${SITE_URL}/nomenclatures`
 
   return {
     title,

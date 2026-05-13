@@ -60,15 +60,67 @@ export default function RootLayout({
     image: `${SITE_URL}/og-logo.jpg`,
     description: 'Агентство активной рекламы в Красноярске',
     url: SITE_URL,
-    telephone: '+7-800-500-50-50',
+    telephone: '+7-800-222-59-38',
     email: 'info@krasrm.com',
     address: {
       '@type': 'PostalAddress',
       streetAddress: 'ул. Красной Армии, 10, стр. 3., оф. 2-02',
       addressLocality: 'Красноярск',
       addressCountry: 'RU',
+      postalCode: '660017',
     },
-    sameAs: [],
+    openingHoursSpecification: [
+      {
+        "@type": "OpeningHoursSpecification",
+        dayOfWeek: [
+          "Monday",
+          "Tuesday",
+          "Wednesday",
+          "Thursday",
+          "Friday",
+          "Saturday",
+          "Sunday"
+        ],
+        opens: "09:00",
+        closes: "18:00"
+      },
+      {
+        "@type": "OpeningHoursSpecification",
+        dayOfWeek: [
+          "Понедельник",
+          "Вторник",
+          "Среда",
+          "Четверг",
+          "Пятница",
+          "Суббота",
+          "Воскресенье"
+        ],
+        opens: "09:00",
+        closes: "18:00"
+      },
+    ],
+    geo: {
+      "@type": "GeoCoordinates",
+      latitude: 56.014468,
+      longitude: 92.854937
+    },
+    priceRange: "$$",
+    logo: `${SITE_URL}/logo.svg`,
+    founder: {
+      "@type": "Person",
+      name: "Говядин Антон Иванович",
+      sameAs: "https://vk.com/antongovyadin"
+    },
+    areaServed: {
+      "@type": "GeoCircle",
+      geoMidpoint: {
+        "@type": "GeoCoordinates",
+        latitude: 56.014468,
+        longitude: 92.854937
+      },
+      geoRadius: 1000
+    },
+    sameAs: "https://vk.com/krasrm",
   }
 
   return (

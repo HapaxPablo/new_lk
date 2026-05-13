@@ -33,6 +33,7 @@ build_test:
         --build-arg NEXT_PUBLIC_SITE_URL="$NEXT_PUBLIC_SITE_URL" \
         --build-arg NEXT_PUBLIC_API_1C_URL="$NEXT_PUBLIC_API_1C_URL" \
         --build-arg NEXT_PUBLIC_YANDEX_METRICA_ID="$NEXT_PUBLIC_YANDEX_METRICA_ID" \
+        --build-arg SITE_URL="$SITE_URL" \
         --no-cache \
         -t $CI_REGISTRY_IMAGE:latest \
         -t $CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA \
@@ -75,6 +76,7 @@ deploy_test:
         -e NEXT_PUBLIC_SITE_URL=\"$NEXT_PUBLIC_SITE_URL\" \
         -e NEXT_PUBLIC_API_1C_URL=\"$NEXT_PUBLIC_API_1C_URL\" \
         -e NEXT_PUBLIC_YANDEX_METRICA_ID=\"$NEXT_PUBLIC_YANDEX_METRICA_ID\" \
+        -e SITE_URL=\"$SITE_URL\" \
         $CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA"
   after_script:
     - rm -f /tmp/deploy_key.pem

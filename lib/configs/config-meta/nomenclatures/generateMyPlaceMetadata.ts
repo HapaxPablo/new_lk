@@ -1,4 +1,5 @@
 import { Metadata } from 'next'
+import { SITE_URL } from '../configMetaData'
 
 interface generateMyPlaceMetadataParams {
   search?: string
@@ -7,7 +8,7 @@ interface generateMyPlaceMetadataParams {
 
 export function generateMyPlaceMetadata({
   search = '',
-  brand_name = ''
+  brand_name = '',
 }: generateMyPlaceMetadataParams): Metadata {
   const hasSearch = !!search
   const hasBrandFilter = !!brand_name
@@ -26,7 +27,7 @@ export function generateMyPlaceMetadata({
     description = `Номенклатуры бренда "${brand_name}" в каталоге`
   }
 
-  const keywords = hasSearch 
+  const keywords = hasSearch
     ? [
         `поиск ${search}`,
         'номенклатура',
@@ -47,9 +48,9 @@ export function generateMyPlaceMetadata({
     keywords.unshift(brand_name)
   }
 
-  const canonicalUrl = hasSearch 
-    ? `https://lk.krasrm.com/my-place?searchValue=${encodeURIComponent(search)}`
-    : 'https://lk.krasrm.com/my-place'
+  const canonicalUrl = hasSearch
+    ? `${SITE_URL}/my-place?search=${encodeURIComponent(search)}`
+    : `${SITE_URL}/my-place`
 
   return {
     title,

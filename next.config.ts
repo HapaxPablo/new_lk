@@ -84,7 +84,7 @@ const nextConfig: NextConfig = {
     remotePatterns: [
       {
         protocol: 'https',
-        hostname: 'test.lk.krasrm.com',
+        hostname: 'krasrm.com',
       },
       {
         protocol: 'https',

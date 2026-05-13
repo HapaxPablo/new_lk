@@ -1,71 +1,77 @@
 import { MetadataRoute } from 'next'
 
-const SITE_URL = 'https://krasrm.com'
+export const revalidate = 3600
 
-// Статические маршруты
-const staticRoutes: MetadataRoute.Sitemap = [
-  {
-    url: `${SITE_URL}`,
-    lastModified: new Date(),
-    changeFrequency: 'weekly',
-    priority: 1.0,
-  },
-  {
-    url: `${SITE_URL}/nomenclatures`,
-    lastModified: new Date(),
-    changeFrequency: 'daily',
-    priority: 0.9,
-  },
-  {
-    url: `${SITE_URL}/counterparties`,
-    lastModified: new Date(),
-    changeFrequency: 'weekly',
-    priority: 0.8,
-  },
-  {
-    url: `${SITE_URL}/promotions`,
-    lastModified: new Date(),
-    changeFrequency: 'daily',
-    priority: 0.7,
-  },
-  {
-    url: `${SITE_URL}/about`,
-    lastModified: new Date(),
-    changeFrequency: 'monthly',
-    priority: 0.6,
-  },
-  {
-    url: `${SITE_URL}/content`,
-    lastModified: new Date(),
-    changeFrequency: 'monthly',
-    priority: 0.5,
-  },
-  {
-    url: `${SITE_URL}/media-plans`,
-    lastModified: new Date(),
-    changeFrequency: 'weekly',
-    priority: 0.7,
-  },
-  {
-    url: `${SITE_URL}/order`,
-    lastModified: new Date(),
-    changeFrequency: 'monthly',
-    priority: 0.5,
-  },
-  {
-    url: `${SITE_URL}/tasks`,
-    lastModified: new Date(),
-    changeFrequency: 'weekly',
-    priority: 0.6,
-  },
-  {
-    url: `${SITE_URL}/my-place`,
-    lastModified: new Date(),
-    changeFrequency: 'weekly',
-    priority: 0.5,
-  },
-]
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL!
+const API_URL = process.env.NEXT_PUBLIC_API_URL!
 
-export default function sitemap(): MetadataRoute.Sitemap {
-  return staticRoutes
+async function getNomenclatures() {
+  const res = await fetch(`${API_URL}/nomenclatures?limit=99999`, {
+    next: { revalidate: 3600 },
+  })
+
+  if (!res.ok) {
+    return []
+  }
+
+  return res.json()
+}
+
+async function getBrands() {
+  const res = await fetch(`${API_URL}/brands?limit=99999`, {
+    next: { revalidate: 3600 },
+  })
+
+  if (!res.ok) {
+    return []
+  }
+
+  return res.json()
+}
+
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+  const staticRoutes: MetadataRoute.Sitemap = [
+    {
+      url: SITE_URL,
+      lastModified: new Date(),
+      changeFrequency: 'weekly',
+      priority: 1,
+    },
+    {
+      url: `${SITE_URL}/nomenclatures`,
+      lastModified: new Date(),
+      changeFrequency: 'daily',
+      priority: 0.9,
+    },
+    {
+      url: `${SITE_URL}/promotions`,
+      lastModified: new Date(),
+      changeFrequency: 'daily',
+      priority: 0.8,
+    },
+  ]
+
+  const nomenclatures = await getNomenclatures()
+
+  const nomenclatureRoutes: MetadataRoute.Sitemap = nomenclatures.results.map(
+    (item: any) => ({
+      url: `${SITE_URL}/nomenclatures/${item.slug}`,
+      lastModified: item.updated_at || new Date(),
+      changeFrequency: 'weekly',
+      priority: 0.8,
+    })
+  )
+
+  const brands = await getBrands()
+
+  const brandRoutes: MetadataRoute.Sitemap = brands.results.map(
+    (brand: any) => ({
+      url: `${SITE_URL}/brands/${brand.slug}`,
+      lastModified: brand.updated_at || new Date(),
+      changeFrequency: 'weekly',
+      priority: 0.7,
+    })
+  )
+
+  return [...staticRoutes, ...nomenclatureRoutes, ...brandRoutes]
 }

@@ -20,8 +20,5 @@ User-agent: Googlebot
 Allow: /
 Disallow: /api/
 
-# Crawl delay (delay in seconds before making next request)
-Crawl-delay: 1
-
 # Sitemap location
 Sitemap: https://krasrm.com/sitemap.xml

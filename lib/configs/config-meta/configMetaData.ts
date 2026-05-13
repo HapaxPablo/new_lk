@@ -1,4 +1,4 @@
-export const SITE_URL = 'https://krasrm.com'
+export const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL!
 
 export const metaDataConfigLayout = {
   title: 'Агентство активной рекламы КрасРМ',
@@ -52,5 +52,5 @@ export const metaDataConfigLayout = {
  * @returns полный canonical URL
  */
 export const getCanonicalUrl = (pathname: string = '') => {
-  return `${SITE_URL}${pathname}`
+  return `${SITE_URL}/${pathname}`
 }
