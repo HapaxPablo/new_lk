@@ -21,6 +21,10 @@ const nextConfig: NextConfig = {
 
     return [
       {
+        source: '/accreditation.html',
+        destination: '/accreditation',
+      },
+      {
         source: '/proxy-api/:path*', // Изменено с /api на /proxy-api
         destination: apiUrl,
       },

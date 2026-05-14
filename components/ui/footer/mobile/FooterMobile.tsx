@@ -83,7 +83,11 @@ export default function FooterMobile({ currentYear }: FooterMobileProps) {
                     <MapLink />
                 </div>
                 <div className={styles.footer__copyright}>
-                    <span itemProp="name">ООО "АРЭМСИ 24"</span>
+                    <span itemProp="name">
+                        <a href="/accreditation" itemProp="url" className={`${styles.footer__link} underline!`}>
+                            ООО "АРЭМСИ 24"
+                        </a>
+                    </span>
                     <span>© 2022-{currentYear} RMC Technologies</span>
                 </div>
             </div>

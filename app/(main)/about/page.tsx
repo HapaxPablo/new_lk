@@ -133,7 +133,7 @@ export default async function AboutPage() {
                 <div>БИК 045004774</div>
 
               </div>
-              <div>
+              {/* <div>
                 ОКВЭД:
                 <ul className='list-disc list-inside text-pretty'>
                   <li>62,01 Разработка компьютерного программного обеспечения</li>
@@ -145,13 +145,13 @@ export default async function AboutPage() {
                   <li>62.09 Деятельность, связанная с использованием вычислительной техники и информационных технологий, прочая</li>
                   <li>63.11 Деятельность по обработке данных, предоставление услуг по размещению информации и связанная с этим деятельность</li>
                 </ul>
-              </div>
+              </div> */}
 
             </div>
             <div className='w-full flex justify-center text-xl font-semibold text-pretty'>
               «АРЭМСИ 24» зарегистрирована в реестре аккредитованных IT-компаний, начиная с 19.05.2022 г.
             </div>
-            <div>
+            {/* <div>
               <div className='text-xl font-semibold'>Технологический стек АРЭМСИ24:</div>
               <ul className='list-disc list-inside text-pretty'>
                 <li>
@@ -173,7 +173,7 @@ export default async function AboutPage() {
                 <li>Windows: pycaw/comtypes (звук) | Linux: alsaaudio/PulseAudio</li>
                 <li>Сборка: PyInstaller (EXE)</li>
               </ul>
-            </div>
+            </div> */}
           </div>
           <div className={styles.map}>
             <MapPlacement

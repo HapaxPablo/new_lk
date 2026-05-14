@@ -54,7 +54,11 @@ export default function FooterDesktop({ currentYear }: FooterDesktopProps) {
                     itemType="https://schema.org/PostalAddress"
                 >
                     {/* <Cpu size={14} /> */}
-                    <span itemProp="name">ООО "АРЭМСИ 24"</span>
+                    <span itemProp="name">
+                        <a href="/accreditation" itemProp="url" className={`${styles.footer__link} underline!`}>
+                            Сведения об аккредитации  ООО "АРЭМСИ 24"
+                        </a>
+                    </span>
                     <MapLink />
                 </div>
                 <address itemScope itemType="https://schema.org/LocalBusiness">
