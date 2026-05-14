@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect } from 'react'
+import { useRouter, usePathname, useSearchParams } from 'next/navigation'
 import Script from 'next/script'
 
 interface ym {
@@ -16,7 +17,20 @@ declare global {
 
 export function YandexMetricaProvider() {
     const metricaId = process.env.NEXT_PUBLIC_YANDEX_METRICA_ID
+    const pathname = usePathname()
+    const searchParams = useSearchParams()
 
+    // Отслеживание смены маршрута
+    useEffect(() => {
+        if (!metricaId || !window.ym) return
+
+        const url = `${pathname}${searchParams.toString() ? `?${searchParams.toString()}` : ''}`
+        window.ym(Number(metricaId), 'hit', url, {
+            title: document.title,
+        })
+    }, [pathname, searchParams, metricaId])
+
+    // Инициализация dataLayer
     useEffect(() => {
         if (!metricaId) {
             console.warn(
@@ -41,14 +55,15 @@ export function YandexMetricaProvider() {
       m[i].l=1*new Date();
       for (var j = 0; j < document.scripts.length; j++) {if (document.scripts[j].src === r) { return; }}
       k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)
-    })(window, document,'script','https://mc.yandex.ru/metrika/tag.js?id=${metricaId}', 'ym');
+    })(window, document,'script','https://mc.yandex.ru/metrika/tag.js', 'ym');
 
     ym(${metricaId}, 'init', {
       ssr: false,
       webvisor: false,
       clickmap: true,
       trackLinks: true,
-      accurateTrackBounce: true
+      accurateTrackBounce: true,
+      ecommerce: 'dataLayer'
     });
   `
 
@@ -56,7 +71,7 @@ export function YandexMetricaProvider() {
         <>
             <Script
                 id="yandex-metrica"
-                strategy="lazyOnload"
+                strategy="afterInteractive"
                 dangerouslySetInnerHTML={{
                     __html: metricaScript,
                 }}
@@ -66,7 +81,7 @@ export function YandexMetricaProvider() {
                     <img
                         src={`https://mc.yandex.ru/watch/${metricaId}`}
                         style={{ position: 'absolute', left: '-9999px' }}
-                        alt=""
+                        alt="Яндекс.Метрика"
                     />
                 </div>
             </noscript>

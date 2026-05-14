@@ -1,6 +1,15 @@
 'use client'
 import dynamic from 'next/dynamic'
+import { Metadata } from 'next'
 
+export const metadata: Metadata = {
+    title: 'Восстановление пароля | Личный кабинет',
+    robots: {
+        index: false,
+        follow: false,
+        nocache: true,
+    },
+}
 const ResetPassword = dynamic(
     () =>
         import('@/components/auth/reset-password/ResetPassword').then((mod) => ({

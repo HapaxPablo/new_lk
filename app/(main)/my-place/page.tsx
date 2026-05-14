@@ -23,6 +23,14 @@ export async function generateMetadata(
   })
 }
 
+export const metadata: Metadata = {
+  title: 'Мое место | Личный кабинет',
+  robots: {
+    index: false,  // ← Исключить из индексации
+    follow: true,
+  },
+}
+
 export default async function NomenclaturesPage(props: MyPlacePageProps) {
   const searchParams = await props.searchParams
   const params = await searchParams

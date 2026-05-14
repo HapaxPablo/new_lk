@@ -1,5 +1,6 @@
 import { EcommerceTracker } from '@/components/ecommerce/EcommerceTracker'
 import LoaderSkeleton from '@/components/ui/loader/LoaderSkeleton'
+import { SITE_URL } from '@/lib/configs/config-meta/configMetaData'
 import { generateNomenclaturesListMetadata } from '@/lib/configs/config-meta/nomenclatures'
 import { INomenclatureResponse } from '@/types/nomenclature'
 import { Metadata } from 'next'
@@ -45,10 +46,20 @@ export async function generateMetadata(
   const search = searchParams.search || ''
   const brand_name = searchParams.brand_name || ''
 
-  return generateNomenclaturesListMetadata({
+  const metadata = generateNomenclaturesListMetadata({
     search,
     brand_name,
   })
+
+  // Canonical URL для основного списка (без фильтров)
+  const canonicalUrl = `${SITE_URL}/nomenclatures`
+
+  return {
+    ...metadata,
+    alternates: {
+      canonical: canonicalUrl,
+    },
+  }
 }
 
 export default async function NomenclaturesPage(props: NomenclaturesPageProps) {

@@ -47,7 +47,15 @@ async function getNomenclatures(ids: string[]): Promise<INomenclatureItem[]> {
 
 export async function generateMetadata(): Promise<Metadata> {
     const ids = await getSelectedIds()
-    return generateOrderMetadata({ itemCount: ids.length })
+    const metadata = generateOrderMetadata({ itemCount: ids.length })
+
+    return {
+        ...metadata,
+        robots: {
+            index: false,  // ← Исключить корзину из индексации
+            follow: true,
+        },
+    }
 }
 
 export default async function Page() {

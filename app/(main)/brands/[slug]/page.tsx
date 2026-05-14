@@ -10,6 +10,10 @@ import { httpClient1CServer } from '@/lib/http-client/httpServer'
 import { IBrandDetail } from '@/types/brands'
 import Image from 'next/image'
 import { BrandNomenclatures } from '@/components/brands/nomenclatures/BrandNomenclaturesWrapper'
+import { SITE_URL } from '@/lib/configs/config-meta/configMetaData'
+import { BreadcrumbJsonLd } from '@/components/seo/BreadcrumbJsonLd'
+import { EcommerceTracker } from '@/components/ecommerce/EcommerceTracker'
+import BreadcrumbsSetter from '@/components/ui/breadcrumbs/BreadcrumbsSetter'
 
 interface BrandDetailPageProps {
     params: Promise<{
@@ -64,9 +68,14 @@ export async function generateMetadata(
             }
         }
 
+        const canonicalUrl = `${SITE_URL}/brands/${slug}`
+
         return {
             title: `${brand.name || 'Бренд'} | Бренды`,
             description: brand.description || `Информация о бренде ${brand.name}`,
+            alternates: {
+                canonical: canonicalUrl,
+            },
         }
     } catch (error) {
         console.error('Error generating metadata:', error)
@@ -75,7 +84,6 @@ export async function generateMetadata(
         }
     }
 }
-
 export default async function BrandDetailPage(
     props: BrandDetailPageProps
 ) {
@@ -90,52 +98,71 @@ export default async function BrandDetailPage(
     }
 
     const fullName = brand.name
+    const breadcrumbItems = [
+        { name: 'Главная', url: `${SITE_URL}` },
+        { name: 'Бренды', url: `${SITE_URL}/brands` },
+        { name: fullName, url: `${SITE_URL}/brands/${slug}` },
+    ]
     return (
-        <div className={styles.container}>
-            <div className={styles.card}>
+        <>
+            <BreadcrumbJsonLd items={breadcrumbItems} />
+            <EcommerceTracker
+                item={{
+                    item_id: slug,
+                    item_name: fullName,
+                    item_category: fullName,
+                    item_brand: brand?.name,
+                    price: '0',
+                }}
+            />
+            <BreadcrumbsSetter title={`${brand.name || 'Бренд'}`} />
 
-                <div className={styles.header}>
-                    <div className={styles.logotype}>
-                        {brand.logotype ? (
-                            <Image
-                                src={brand.logotype}
-                                alt={`Бренд ${brand.name || 'Бренд'}`}
-                                fill
-                                className={styles.image}
-                            />
-                        ) : (
-                            <div className={styles.logoPlaceholder}>
+            <div className={styles.container}>
+                <div className={styles.card}>
+
+                    <div className={styles.header}>
+                        <div className={styles.logotype}>
+                            {brand.logotype ? (
                                 <Image
-                                    src="/og-logo.jpg"
-                                    alt="Логотип"
-                                    width={200}
-                                    height={100}
-                                    className="object-contain"
+                                    src={brand.logotype}
+                                    alt={`Бренд ${brand.name || 'Бренд'}`}
+                                    fill
+                                    className={styles.image}
                                 />
-                            </div>
-                        )}
+                            ) : (
+                                <div className={styles.logoPlaceholder}>
+                                    <Image
+                                        src="/og-logo.jpg"
+                                        alt="Логотип"
+                                        width={200}
+                                        height={100}
+                                        className="object-contain"
+                                    />
+                                </div>
+                            )}
+                        </div>
+                        <h1 className={styles.title}>
+                            {fullName || 'Бренд'}
+                        </h1>
                     </div>
-                    <h1 className={styles.title}>
-                        {fullName || 'Бренд'}
-                    </h1>
+
                 </div>
 
-            </div>
 
 
-
-            <div className={styles.card}>
-                <h2 className={styles.sectionTitle}>Описание</h2>
-                <InfoRow
-                    icon={<FileText size={16} />}
-                    label=""
-                    value={brand.description || '-'}
-                />
+                <div className={styles.card}>
+                    <h2 className={styles.sectionTitle}>Описание</h2>
+                    <InfoRow
+                        icon={<FileText size={16} />}
+                        label=""
+                        value={brand.description || '-'}
+                    />
+                </div>
+                <div className={styles.card}>
+                    <h2 className={styles.sectionTitle}>Номенклатуры</h2>
+                    <BrandNomenclatures brandId={brand.id} />
+                </div>
             </div>
-            <div className={styles.card}>
-                <h2 className={styles.sectionTitle}>Номенклатуры</h2>
-                <BrandNomenclatures brandId={brand.id} />
-            </div>
-        </div>
+        </>
     )
 }

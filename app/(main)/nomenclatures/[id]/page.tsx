@@ -20,10 +20,10 @@ import { formatPrice } from '@/utils/nomenclatureUtils'
 import { EcommerceTracker } from '@/components/ecommerce/EcommerceTracker'
 import { AddButtonToOrder } from '@/components/ui/button/AddButtonToOrder'
 import BreadcrumbsSetter from '@/components/ui/breadcrumbs/BreadcrumbsSetter'
-import Feedback from '@/components/ui/forms/feedback/Feedback'
-import { ModalWrapper } from '@/components/modal/ModalWrapper'
-import { Button } from '@/components/ui/button/Button'
 import ModalFeedBack from '@/components/nomenclatureById/modalFeedBack/ModalFeedBack'
+import { SITE_URL } from '@/lib/configs/config-meta/configMetaData'
+import { BreadcrumbJsonLd } from '@/components/seo/BreadcrumbJsonLd'
+
 
 const Slider = dynamic(() => import('@/components/slider/Slider'), {
   ssr: true,
@@ -114,9 +114,16 @@ export async function generateMetadata(
     return generateNotFoundMetadata()
   }
 
-  return generateNomenclatureMetadata({ nomenclature, id })
-}
+  const metadata = generateNomenclatureMetadata({ nomenclature, id })
 
+  // Добавить canonical URL
+  return {
+    ...metadata,
+    alternates: {
+      canonical: `${SITE_URL}/nomenclatures/${id}`,
+    },
+  }
+}
 export default async function NomenclatureDetailPage(
   props: NomenclatureDetailPageProps
 ) {
@@ -154,9 +161,14 @@ export default async function NomenclatureDetailPage(
   const allImages = [...exterior, ...interior]
 
   const structuredData = generateNomenclatureStructuredData(nomenclature, id)
-
+  const breadcrumbItems = [
+    { name: 'Главная', url: `${SITE_URL}` },
+    { name: 'Места для рекламы', url: `${SITE_URL}/nomenclatures` },
+    { name: nameForFront, url: `${SITE_URL}/nomenclatures/${id}` },
+  ]
   return (
     <>
+      <BreadcrumbJsonLd items={breadcrumbItems} />
       {/* E-commerce отслеживание просмотра товара */}
       <EcommerceTracker
         item={{

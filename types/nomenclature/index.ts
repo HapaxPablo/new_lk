@@ -292,6 +292,8 @@ export interface INomenclatureDetailsItem extends INomenclatureBase {
   worktime_end: string
   square: string
   possibility: string
+  created_at?: string
+  updated_at?: string
 }
 
 // Основной интерфейс для детальной информации о номенклатуре
