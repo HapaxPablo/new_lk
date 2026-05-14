@@ -1,11 +1,12 @@
 'use client'
 import { useClickOutside } from '@/hooks/useClickOutside'
-import { Settings } from 'lucide-react'
+import { Settings, SlidersHorizontal } from 'lucide-react'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { JSX, useRef, useState } from 'react'
 import FiltersPanel from '../panels/filter-panels/FiltersPanels'
 import { SearchForm } from '../search-form/SearchForm'
 import styles from './Toolbar.module.scss'
+import { Button } from '../ui/button/Button'
 
 interface ToolbarProps {
   totalItems: number
@@ -78,26 +79,25 @@ const Toolbar = ({ totalItems }: ToolbarProps): JSX.Element => {
           <SearchForm hideButton className={styles.searchForm} />
 
           <div className={styles.tooltipContainer} data-tooltip="Фильтры">
-            <Settings
+            <SlidersHorizontal
               size={24}
               onClick={toggleFilters}
               className={`${styles.icon} ${showFilters ? styles.activeIcon : ''}`}
             />
           </div>
-
-          <div className="flex flex-row gap-1 p-1 items-center justify-center">
-            {/* Быстрый фильтр: Торговый центр */}
-            <button
-              type="button"
-              onClick={handleTcClick}
-              className={`${styles.tcButton} ${isTcActive ? styles.tcButtonActive : ''}`}
-            >
-              ТЦ
-            </button>
-          </div>
         </div>
       </div>
-
+      <div className="flex flex-row">
+        {/* Быстрый фильтр: Торговый центр */}
+        <Button
+          type="button"
+          onClick={handleTcClick}
+          variant={isTcActive ? 'primary' : 'default'}
+        // className={`${styles.tcButton} ${isTcActive ? styles.tcButtonActive : ''}`}
+        >
+          Торговый центр
+        </Button>
+      </div>
       <FiltersPanel
         isOpen={showFilters}
         onClose={() => setShowFilters(false)}

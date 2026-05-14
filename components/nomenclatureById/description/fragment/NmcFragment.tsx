@@ -5,9 +5,13 @@ import React from 'react'
 export function NmcFragment({
   text,
   type,
+  onClick,
+  className = '',
 }: {
   text: string | number
   type: string
+  onClick?: () => void
+  className?: string
 }) {
   return (
     <>
@@ -18,6 +22,8 @@ export function NmcFragment({
             text={`${text}`.trim()}
             type="span"
             ariaLabel={`${type} ${text}`}
+            onClick={onClick}
+            className={className}
           />
         </div>
       )}

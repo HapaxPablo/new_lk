@@ -2,7 +2,7 @@
 import { IBrandNomenclatureListResponse } from '@/types/brands'
 import useSWRInfinite from 'swr/infinite'
 
-const LIMIT = 5
+const LIMIT = 25
 
 const fetcher = async (url: string) => {
   const fullUrl = url.startsWith('/') ? url : `/${url}`
@@ -19,16 +19,13 @@ export const useBrandNomenclatures = (brandId: string) => {
     pageIndex: number,
     previousData: IBrandNomenclatureListResponse | null
   ): string | null => {
-    if (previousData && previousData.results.length < LIMIT && pageIndex > 0) {
-      return null
+    if (pageIndex === 0) {
+      return `/proxy-api/brands/${brandId}/nomenclatures/?limit=${LIMIT}&offset=0`
     }
+    if (!previousData) return null
+    if (!previousData.next) return null
 
-    const params = new URLSearchParams({
-      limit: LIMIT.toString(),
-      offset: (pageIndex * LIMIT).toString(),
-    })
-
-    return `/proxy-api/brands/${brandId}/nomenclatures/?${params.toString()}`
+    return `/proxy-api/brands/${brandId}/nomenclatures/?limit=${LIMIT}&offset=${pageIndex * LIMIT}`
   }
 
   const { data, error, size, setSize, isValidating } =
@@ -39,13 +36,27 @@ export const useBrandNomenclatures = (brandId: string) => {
       keepPreviousData: false,
     })
 
-  const items = data ? data.flatMap((page) => page.results) : []
+  const rawItems = data ? data.flatMap((page) => page.results) : []
+
+  // Временно для отладки
+  console.log('pages count:', data?.length)
+  data?.forEach((page, i) => {
+    console.log(
+      `page ${i}:`,
+      page.results.map((r) => r.id)
+    )
+  })
+
+  const seen = new Set<string>()
+  const items = rawItems.filter((item) => {
+    if (seen.has(item.id)) return false
+    seen.add(item.id)
+    return true
+  })
+
   const totalCount = data?.[0]?.count ?? 0
   const lastPageData = data?.[data.length - 1]
-
-  const hasMore = lastPageData
-    ? lastPageData.results.length === LIMIT && items.length < totalCount
-    : false
+  const hasMore = !!lastPageData?.next
 
   const isLoadingInitial = !data && !error
   const isLoadingMore = isValidating && size > 1

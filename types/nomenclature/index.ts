@@ -13,6 +13,8 @@ export interface IBrand {
   description?: string | null
   /** Код из 1С */
   code1c?: string | null
+
+  slug?: string
 }
 
 export interface ITypeOfPlace {

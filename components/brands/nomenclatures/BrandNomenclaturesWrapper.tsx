@@ -13,24 +13,30 @@ export const BrandNomenclatures = ({ brandId }: Props) => {
     const { items, totalCount, hasMore, isLoadingInitial, isLoadingMore, setSize, size } =
         useBrandNomenclatures(brandId)
     const loaderRef = useRef<HTMLDivElement>(null)
+    const listRef = useRef<HTMLDivElement>(null)
 
     useEffect(() => {
-        if (!loaderRef.current) return
+        const loader = loaderRef.current
+        if (!loader) return
+
         const observer = new IntersectionObserver(
             (entries) => {
                 if (entries[0].isIntersecting && hasMore && !isLoadingMore) {
-                    setSize(size + 1)
+                    setSize((s) => s + 1)  // функциональный апдейт
                 }
             },
-            { threshold: 0.5 }
+            {
+                root: null,       // viewport (убрали listRef)
+                threshold: 0.1,
+            }
         )
-        observer.observe(loaderRef.current)
+        observer.observe(loader)
         return () => observer.disconnect()
-    }, [hasMore, isLoadingMore, size, setSize])
+    }, [hasMore, isLoadingMore, setSize])  // size убрали из deps
 
     if (isLoadingInitial) {
         return (
-            <div className={styles.list}>
+            <div className={styles.list} ref={listRef}>
                 {Array.from({ length: 3 }).map((_, i) => (
                     <div key={i} className={styles.skeleton} />
                 ))}
@@ -49,13 +55,13 @@ export const BrandNomenclatures = ({ brandId }: Props) => {
     return (
         <div className={styles.wrapper}>
             <p className={styles.count}>Всего: {totalCount}</p>
-            <div className={styles.list}>
+            <div className={styles.list} ref={listRef}>
                 {items.map((item) => (
                     <CardNomenclature key={item.id} item={item} onClick={() => handleRedirect(item.id)} />
                 ))}
-            </div>
-            <div ref={loaderRef} className={styles.loader}>
-                {isLoadingMore && <span>Загрузка...</span>}
+                <div ref={loaderRef} className={styles.loader}>
+                    {isLoadingMore && <span>Загрузка...</span>}
+                </div>
             </div>
         </div>
     )

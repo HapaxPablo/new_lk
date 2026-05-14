@@ -1,3 +1,4 @@
+'use client'
 import React from 'react'
 import { NmcFragment } from './fragment/NmcFragment'
 import { INomenclatureDetailsItem } from '@/types/nomenclature'
@@ -60,6 +61,12 @@ export function Description({ nomenclature }: DescriptionProps) {
     possibility: possibility || '',
   }
 
+  const handleRedirectToBrand = () => {
+    if (brand?.slug) {
+      window.open(`/brands/${brand.slug}`, '_blank')
+    }
+  }
+
   return (
     <div className="gap-2 p-2 rounded-md shadow-sm flex flex-col sm:overflow-y-auto">
       {/* {displayData.article && (
@@ -72,7 +79,7 @@ export function Description({ nomenclature }: DescriptionProps) {
         <NmcFragment text={displayData.typePlace} type="Место" />
       )}
       {displayData.brand && (
-        <NmcFragment text={displayData.brand} type="Бренд" />
+        <NmcFragment text={displayData.brand} type="Бренд" onClick={handleRedirectToBrand} className='cursor-pointer' />
       )}
 
       {worktime_start && worktime_end && (

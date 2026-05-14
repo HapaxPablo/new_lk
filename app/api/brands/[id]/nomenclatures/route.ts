@@ -2,21 +2,25 @@ import { HttpClient1C } from '@/lib/http-client'
 import { IBrandDetail } from '@/types/brands'
 import { NextRequest } from 'next/server'
 
-export const revalidate = 3600
+export const revalidate = 0 // убираем кэш, иначе разные offset дадут один ответ
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: Promise<{ id: string; limit: string; offset: string }> }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const { id, limit, offset } = await params
+    const { id } = await params
 
     if (!id) {
       return Response.json({ error: 'id is required' }, { status: 400 })
     }
 
+    const searchParams = request.nextUrl.searchParams
+    const limit = searchParams.get('limit') ?? '15'
+    const offset = searchParams.get('offset') ?? '0'
+
     const response = await HttpClient1C.server(request).get<IBrandDetail>(
-      `api/brands/${id}/nomenclatures?limit=${limit || 15}&offset=${offset || 0}`
+      `api/brands/${id}/nomenclatures?limit=${limit}&offset=${offset}`
     )
 
     return Response.json(response)
