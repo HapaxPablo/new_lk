@@ -79,7 +79,7 @@ export function Description({ nomenclature }: DescriptionProps) {
         <NmcFragment text={displayData.typePlace} type="Место" />
       )}
       {displayData.brand && (
-        <NmcFragment text={displayData.brand} type="Бренд" onClick={handleRedirectToBrand} className='cursor-pointer' />
+        <NmcFragment text={displayData.brand} type="Бренд" onClick={handleRedirectToBrand} className='cursor-pointer hover:underline text-blue-600!' />
       )}
 
       {worktime_start && worktime_end && (

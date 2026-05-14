@@ -131,19 +131,43 @@ export default async function AboutPage() {
                 <div>К/с 30101810600000000774</div>
                 <div>Банк Филиал «Новосибирский» АО «Альфа-Банк»</div>
                 <div>БИК 045004774</div>
+
               </div>
-              <div className='flex flex-col text-pretty'>
-                <div>Реквизиты:</div>
-                <div>ООО «Агентство активной рекламы»</div>
-                <div>ИНН 2466119125 КПП 246001001</div>
-                <div>Юр. адрес 660017 г. Красноярск, ул. Красной Армии, 10, стр.3, оф.2-01</div>
-                <div>Р/с 40702810823330000481</div>
-                <div>К/с 30101810600000000774</div>
-                <div>Банк Филиал «Новосибирский» АО «Альфа-Банк»</div>
-                <div>БИК 045004774</div>
+              <div>
+                ОКВЭД:
+                <ul className='list-disc list-inside text-pretty'>
+                  <li>62,01 Разработка компьютерного программного обеспечения</li>
+                  <li>60.10 Деятельность в области радиовещания</li>
+                  <li>59.20 Деятельность в области звукозаписи и издания музыкальных произведений</li>
+                  <li>60.20 Деятельность в области телевизионного вещания</li>
+                  <li>61.10 Деятельность в области связи на базе проводных технологий</li>
+                  <li>62.03 Деятельность по управлению компьютерным оборудованием</li>
+                  <li>62.09 Деятельность, связанная с использованием вычислительной техники и информационных технологий, прочая</li>
+                  <li>63.11 Деятельность по обработке данных, предоставление услуг по размещению информации и связанная с этим деятельность</li>
+                </ul>
               </div>
+
             </div>
-            <div className='w-full flex justify-center'>«АРЭМСИ 24» зарегистрирована в реестре аккредитованных IT-компаний, начиная с 19.05.2022 г.</div>
+            <div className='w-full flex justify-center text-xl font-semibold text-pretty'>
+              «АРЭМСИ 24» зарегистрирована в реестре аккредитованных IT-компаний, начиная с 19.05.2022 г.
+            </div>
+            <div>
+              <div className='text-xl font-semibold'>Технологический стек АРЭМСИ24:</div>
+              <ul className='list-disc list-inside text-pretty'>
+                <li>
+                  Frontend: React, Next.js, TypeScript, Tailwind CSS
+                </li>
+                <li>
+                  Backend: Django, Django REST Framework, PostgreSQL
+                </li>
+              </ul>
+              <div className='text-xl font-semibold'>Стек АРЭМСИ24 Content Player:</div>
+              <ul className='list-disc list-inside text-pretty'>
+                <li>Python 3.14 + PyQt6 (GUI) + VLC (медиа) + SQLite (БД) + aiohttp (API)</li>
+                <li>Windows: pycaw/comtypes (звук) | Linux: alsaaudio/PulseAudio</li>
+                <li>Сборка: PyInstaller (EXE)</li>
+              </ul>
+            </div>
           </div>
           <div className={styles.map}>
             <MapPlacement
@@ -162,6 +186,6 @@ export default async function AboutPage() {
           <Feedback />
         </div>
       </div>
-    </main>
+    </main >
   )
 }
