@@ -160,6 +160,12 @@ export default async function AboutPage() {
                 <li>
                   Backend: Django, Django REST Framework, PostgreSQL
                 </li>
+                <li>
+                  DevOps: Docker, GitLab локальный, CI/CD, Nginx
+                </li>
+                <li>
+                  1c: Предприятие 8.3 (Управление торговлей, Бухгалтерия, Зарплата и тд) + интеграция с API нашего ПО
+                </li>
               </ul>
               <div className='text-xl font-semibold'>Стек АРЭМСИ24 Content Player:</div>
               <ul className='list-disc list-inside text-pretty'>
