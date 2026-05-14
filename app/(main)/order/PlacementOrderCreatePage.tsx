@@ -141,6 +141,10 @@ export default function PlacementOrderCreatePage({
             year: 'numeric',
         })
 
+    const handleRedirect = (id: string) => {
+        window.open(`/nomenclatures/${id}`, '_blank');
+    }
+
     useEffect(() => {
         setMounted(true)
     }, [])
@@ -175,7 +179,7 @@ export default function PlacementOrderCreatePage({
                             </div>
                         )}
                         {items.map((item) => (
-                            <CardNomenclature key={item.id} item={item} />
+                            <CardNomenclature key={item.id} item={item} onClick={() => handleRedirect(item.id)} />
                         ))}
                     </div>
                 </div>

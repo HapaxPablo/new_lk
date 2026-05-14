@@ -1,3 +1,5 @@
+import { IBrand } from '../nomenclature'
+
 export interface ICreateBrandRequest {
   name: string
   logotype: string
@@ -30,9 +32,19 @@ export interface IBrandDetail {
   deleted_at: string
 }
 
+interface IBrandNomenclatureExterior {
+  source: string
+  id: string
+}
+
 export interface IBrandNomenclatureShort {
   id: string
   nameForFront: string
+  formattedAddress: string
+  exterior: IBrandNomenclatureExterior[]
+  typeOfPlace: string
+  pricePerMonth: string
+  brand?: IBrand
 }
 export interface IBrandNomenclatureListResponse {
   count: number

@@ -1,6 +1,6 @@
 'use client'
-import { clearCookie, STORAGE_KEY, writeCookie } from '@/lib/constants'
-import { INomenclatureBase, INomenclatureItem } from '@/types/nomenclature'
+import { clearCookie, writeCookie } from '@/lib/constants'
+import { INomenclatureBase } from '@/types/nomenclature'
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 

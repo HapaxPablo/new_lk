@@ -16,13 +16,16 @@
   gap: 0.5rem;
 }
 
-.item {
-  padding: 0.75rem 1rem;
-  background: var(--background-secondary);
-  border-radius: 0.375rem;
-  font-size: var(--text-sm);
-  color: var(--main-text-color);
-  line-height: 1.4;
+.list {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.5rem;
+  max-height: 400px;
+  overflow-y: auto;
+
+  @media (min-width: 1200px) {
+    grid-template-columns: repeat(4, 1fr);
+  }
 }
 
 .skeleton {

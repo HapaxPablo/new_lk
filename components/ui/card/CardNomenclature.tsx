@@ -1,6 +1,5 @@
 'use client'
 
-import { INomenclatureItem } from '@/types/nomenclature'
 import Image from 'next/image'
 import { MapPin, MapPinHouse, RussianRuble } from 'lucide-react'
 import styles from './CardNomenclature.module.scss'
@@ -12,7 +11,7 @@ import { useNomenclatureStore } from '@/store/useNomenclatureStore'
 interface CardNomenclatureProps {
   className?: string
   onClick?: () => void
-  item: INomenclatureItem
+  item: any
   codeMP?: string | null
 }
 
@@ -49,7 +48,7 @@ export const CardNomenclature: React.FC<CardNomenclatureProps> = ({
   const formattedAddress =
     typeof item.formattedAddress === 'string'
       ? item.formattedAddress
-      : item.formattedAddress?.name || 'Адрес не указан'
+      : item.formattedAddress || 'Адрес не указан'
 
 
 
@@ -105,8 +104,8 @@ export const CardNomenclature: React.FC<CardNomenclatureProps> = ({
             <MapPinHouse className={styles.icon} size={16} />
             <div className={styles.textContent}>
               <span className={styles.primaryText}>
-                {typeOfPlace || 'Тип не указан'} •{' '}
-                {brand?.name || 'Бренд не указан'}
+                {typeOfPlace || 'Тип не указан'}
+                {brand?.name ? ` • ${brand.name}` : ''}
               </span>
             </div>
           </div>
