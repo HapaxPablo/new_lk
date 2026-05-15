@@ -79,6 +79,10 @@ export default function AccreditationPage() {
                                 <p className="font-medium">ООО «АРЭМСИ 24»</p>
                             </div>
                             <div className="border-b pb-3">
+                                <p className="text-gray-600 text-sm mb-1">Основной государственный регистрационный номер (ОГРН):</p>
+                                <p className="font-medium">1152468003159</p>
+                            </div>
+                            <div className="border-b pb-3">
                                 <p className="text-gray-600 text-sm mb-1">Идентификационный номер налогоплательщика (ИНН):</p>
                                 <p className="font-medium">2466158759</p>
                             </div>
@@ -88,7 +92,7 @@ export default function AccreditationPage() {
                             </div>
                             <div className="border-b pb-3">
                                 <p className="text-gray-600 text-sm mb-1">Юридический и фактический адрес:</p>
-                                <p className="font-medium">660017 г. Красноярск, ул. Красной Армии, 10, стр.3, оф.2-01</p>
+                                <p className="font-medium">660017 г. Красноярск, ул. Красной Армии, 10, стр.3, оф.2-02</p>
                             </div>
                             <div className="border-b pb-3">
                                 <p className="text-gray-600 text-sm mb-1">Телефон:</p>
@@ -136,7 +140,7 @@ export default function AccreditationPage() {
                         <h2 className="text-2xl font-semibold mb-6">Аккредитация</h2>
                         <div className="bg-blue-50 border-l-4 border-blue-500 p-4">
                             <p className="text-gray-800">
-                                ООО «АРЭМСИ 24» зарегистрирована в реестре аккредитованных IT-компаний с <span className="font-semibold">19.05.2022</span>
+                                ООО «АРЭМСИ 24» зарегистрирована в реестре аккредитованных IT-компаний с <span className="font-semibold">05.06.2023</span>
                             </p>
                         </div>
                     </section>
