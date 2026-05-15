@@ -14,6 +14,7 @@ import Script from 'next/script'
 import { YandexMetricaProvider } from '@/providers/analytics/YandexMetricaProvider'
 import Breadcrumbs from '@/components/ui/breadcrumbs/Breadcrumbs'
 import { NomenclatureStoreProvider } from '@/providers/nomenclature/NomenclatureStoreProvider'
+import { Suspense } from 'react'
 
 const montserrat = localFont({
   src: [
@@ -144,7 +145,9 @@ export default function RootLayout({
                   <NomenclatureStoreProvider>
                     <div className="layout">
                       <Header />
-                      <Breadcrumbs />
+                      <Suspense fallback={null}>
+                        <Breadcrumbs />
+                      </Suspense>
                       <main className="content">{children} </main>
                       <Footer />
                       <TooltipModal />

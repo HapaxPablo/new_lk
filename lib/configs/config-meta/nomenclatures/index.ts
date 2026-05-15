@@ -1,6 +1,7 @@
+export { generateMyPlaceMetadata } from './generateMyPlaceMetadata'
+export { generateNomenclatureStructuredData } from './generateNomenclatureMetadata'
 export {
   generateNomenclatureMetadata,
   generateNotFoundMetadata,
-} from './generateNomenclatureMetadata'
-export { generateNomenclatureStructuredData } from './generateNomenclatureStructuredData'
+} from './generateNomenclatureStructuredData'
 export { generateNomenclaturesListMetadata } from './generateNomenclaturesListMetadata'
