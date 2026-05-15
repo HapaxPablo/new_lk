@@ -136,7 +136,10 @@ export default function RootLayout({
         />
       </head>
       <body className={`${montserrat.className} antialiased`}>
-        <YandexMetricaProvider />
+        <Suspense fallback={null}>
+          <YandexMetricaProvider />
+        </Suspense>
+
         <AuthProvider>
           <ModalProvider>
             <TooltipProvider>
@@ -145,10 +148,15 @@ export default function RootLayout({
                   <NomenclatureStoreProvider>
                     <div className="layout">
                       <Header />
+
                       <Suspense fallback={null}>
                         <Breadcrumbs />
                       </Suspense>
-                      <main className="content">{children} </main>
+
+                      <main className="content">
+                        {children}
+                      </main>
+
                       <Footer />
                       <TooltipModal />
                     </div>

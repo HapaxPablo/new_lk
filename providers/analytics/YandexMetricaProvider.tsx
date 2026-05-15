@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect } from 'react'
-import { useRouter, usePathname, useSearchParams } from 'next/navigation'
+import { usePathname, useSearchParams } from 'next/navigation'
 import Script from 'next/script'
 
 interface ym {
@@ -17,29 +17,27 @@ declare global {
 
 export function YandexMetricaProvider() {
     const metricaId = process.env.NEXT_PUBLIC_YANDEX_METRICA_ID
+
     const pathname = usePathname()
     const searchParams = useSearchParams()
 
-    // Отслеживание смены маршрута
     useEffect(() => {
         if (!metricaId || !window.ym) return
 
-        const url = `${pathname}${searchParams.toString() ? `?${searchParams.toString()}` : ''}`
+        const query = searchParams.toString()
+
+        const url = query
+            ? `${pathname}?${query}`
+            : pathname
+
         window.ym(Number(metricaId), 'hit', url, {
             title: document.title,
         })
     }, [pathname, searchParams, metricaId])
 
-    // Инициализация dataLayer
     useEffect(() => {
-        if (!metricaId) {
-            console.warn(
-                '[SEO] NEXT_PUBLIC_YANDEX_METRICA_ID не установлен в переменных окружения'
-            )
-            return
-        }
+        if (!metricaId) return
 
-        // Инициализируем dataLayer для e-commerce отслеживания
         if (!window.dataLayer) {
             window.dataLayer = []
         }
@@ -49,33 +47,40 @@ export function YandexMetricaProvider() {
         return null
     }
 
-    const metricaScript = `
-    (function(m,e,t,r,i,k,a){
-      m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
-      m[i].l=1*new Date();
-      for (var j = 0; j < document.scripts.length; j++) {if (document.scripts[j].src === r) { return; }}
-      k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)
-    })(window, document,'script','https://mc.yandex.ru/metrika/tag.js', 'ym');
-
-    ym(${metricaId}, 'init', {
-      ssr: false,
-      webvisor: false,
-      clickmap: true,
-      trackLinks: true,
-      accurateTrackBounce: true,
-      ecommerce: 'dataLayer'
-    });
-  `
-
     return (
         <>
             <Script
                 id="yandex-metrica"
                 strategy="afterInteractive"
                 dangerouslySetInnerHTML={{
-                    __html: metricaScript,
+                    __html: `
+            (function(m,e,t,r,i,k,a){
+              m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
+              m[i].l=1*new Date();
+
+              for (var j = 0; j < document.scripts.length; j++) {
+                if (document.scripts[j].src === r) { return; }
+              }
+
+              k=e.createElement(t),
+              a=e.getElementsByTagName(t)[0],
+              k.async=1,
+              k.src=r,
+              a.parentNode.insertBefore(k,a)
+            })(window, document,'script',
+            'https://mc.yandex.ru/metrika/tag.js', 'ym');
+
+            ym(${metricaId}, 'init', {
+              webvisor: false,
+              clickmap: true,
+              trackLinks: true,
+              accurateTrackBounce: true,
+              ecommerce: 'dataLayer'
+            });
+          `,
                 }}
             />
+
             <noscript>
                 <div>
                     <img
