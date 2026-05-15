@@ -43,6 +43,7 @@ const NomenclatureCards = dynamic(
     loading: () => <LoaderSkeleton />,
   }
 )
+
 export const NomenclatureWrapper = (props: NomenclatureCardProps) => {
   return (
     <Suspense fallback={<LoaderSkeleton />}>
@@ -50,6 +51,7 @@ export const NomenclatureWrapper = (props: NomenclatureCardProps) => {
     </Suspense>
   )
 }
+
 export const NomenclatureWrapperContent = ({
   nomenclatureData,
   limit,
@@ -140,10 +142,9 @@ export const NomenclatureWrapperContent = ({
       params.set('page', String(size))
       router.replace(`?${params.toString()}`, { scroll: false })
     }
-    // Обнулить page, если дошли до конца
     if (!hasMore && size > 1) {
       const params = new URLSearchParams(searchParams.toString())
-      params.set('page', String(size - 1)) // последняя валидная страница
+      params.set('page', String(size - 1))
       router.replace(`?${params.toString()}`, { scroll: false })
     }
   }, [size, hasMore])
@@ -154,19 +155,22 @@ export const NomenclatureWrapperContent = ({
   return (
     <div className={styles.displayWrapper}>
       <div className={styles.contentContainer}>
+
+        {/* Хедер снаружи скроллируемого контейнера — всегда виден */}
+        {displayItems.length > 0 && (
+          <div className={styles.header}>
+            <div>Всего найдено: {displayTotal}</div>
+            <SelectAllButton items={displayItems} />
+          </div>
+        )}
+
         <div ref={cardsWrapperRef} className={styles.cardsWrapper}>
           {displayItems.length <= 0 ? (
             <div className={styles.emptyState}>
               <p>Места размещения не найдены</p>
             </div>
           ) : (
-            <>
-              <div className={styles.header}>
-                <div>Всего найдено: {displayTotal}</div>
-                <SelectAllButton items={displayItems} />
-              </div>
-              <NomenclatureCards item={displayItems} />
-            </>
+            <NomenclatureCards item={displayItems} />
           )}
 
           <div

@@ -2,8 +2,13 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 1rem;
+  padding-bottom: 8px;
+  padding-left: 8px;
+  padding-right: 8px;
   gap: 1rem;
+  flex-shrink: 0; // не сжимается во flex-колонке
+  border-bottom: 1px solid var(--border-color-light); // визуальный разделитель
+  background: var(--background); // перекрывает карточки при z-наложении
 }
 
 .displayWrapper {
