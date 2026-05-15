@@ -48,7 +48,7 @@ export const CardNomenclature: React.FC<CardNomenclatureProps> = ({
   const formattedAddress =
     typeof item.formattedAddress === 'string'
       ? item.formattedAddress
-      : item.formattedAddress || 'Адрес не указан'
+      : item.formattedAddress?.name ?? 'Адрес не указан'
 
 
 

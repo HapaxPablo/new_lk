@@ -3,7 +3,13 @@
   flex-direction: column;
   gap: 0.5rem;
 }
-
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+  gap: 16px;
+}
 .count {
   font-size: var(--text-sm);
   color: var(--second-text-color);

@@ -18,6 +18,7 @@ interface State {
   mergeItems: (items: Item[]) => void
   removeItem: (id: string) => void
   getTotalPrice: () => number
+  toggleAllItems: (items: any[]) => void
 }
 export const useNomenclatureStore = create<State>()(
   persist(
@@ -35,6 +36,30 @@ export const useNomenclatureStore = create<State>()(
         writeCookie(updated.map((i) => i.id)) // ← было и раньше
 
         set({ items: updated, ids: updated.map((i) => i.id) })
+      },
+      toggleAllItems: (newItems: any[]) => {
+        const { ids, items: currentItems } = get()
+        const newItemIds = newItems.map((i) => i.id)
+
+        // Проверяем, все ли новые элементы уже выбраны
+        const allSelected =
+          newItemIds.length > 0 && newItemIds.every((id) => ids.includes(id))
+
+        if (allSelected) {
+          // Если все выбраны - удаляем их
+          const itemsToKeep = currentItems.filter(
+            (i) => !newItemIds.includes(i.id)
+          )
+          writeCookie(itemsToKeep.map((i) => i.id))
+          set({ items: itemsToKeep, ids: itemsToKeep.map((i) => i.id) })
+        } else {
+          // Если не все выбраны - добавляем их
+          const map = new Map(currentItems.map((i) => [i.id, i]))
+          newItems.forEach((i) => map.set(i.id, i))
+          const items = Array.from(map.values())
+          writeCookie(items.map((i) => i.id))
+          set({ items, ids: items.map((i) => i.id) })
+        }
       },
 
       removeItem: (id) => {

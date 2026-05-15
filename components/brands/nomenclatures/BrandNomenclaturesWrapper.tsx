@@ -4,6 +4,8 @@ import { useRef, useEffect } from 'react'
 import { useBrandNomenclatures } from '@/hooks/useBrandNomenclatures'
 import styles from './BrandNomenclaturesWrapper.module.scss'
 import { CardNomenclature } from '@/components/ui/card/CardNomenclature'
+import { useNomenclatureStore } from '@/store/useNomenclatureStore'
+import { Button } from '@/components/ui/button/Button'
 
 interface Props {
     brandId: string
@@ -15,6 +17,8 @@ export const BrandNomenclatures = ({ brandId }: Props) => {
     const loaderRef = useRef<HTMLDivElement>(null)
     const listRef = useRef<HTMLDivElement>(null)
 
+    const { ids, toggleAllItems } = useNomenclatureStore()
+
     useEffect(() => {
         const loader = loaderRef.current
         if (!loader) return
@@ -22,17 +26,17 @@ export const BrandNomenclatures = ({ brandId }: Props) => {
         const observer = new IntersectionObserver(
             (entries) => {
                 if (entries[0].isIntersecting && hasMore && !isLoadingMore) {
-                    setSize((s) => s + 1)  // функциональный апдейт
+                    setSize((s) => s + 1)
                 }
             },
             {
-                root: null,       // viewport (убрали listRef)
+                root: null,
                 threshold: 0.1,
             }
         )
         observer.observe(loader)
         return () => observer.disconnect()
-    }, [hasMore, isLoadingMore, setSize])  // size убрали из deps
+    }, [hasMore, isLoadingMore, setSize])
 
     if (isLoadingInitial) {
         return (
@@ -52,9 +56,26 @@ export const BrandNomenclatures = ({ brandId }: Props) => {
         window.open(`/nomenclatures/${id}`, '_blank');
     }
 
+    // Новый обработчик для выбрать все
+    const handleSelectAll = () => {
+        toggleAllItems(items)
+    }
+
+    // Проверяем, все ли элементы выбраны
+    const allSelected = items.length > 0 && items.every(item => ids.includes(item.id))
+
     return (
         <div className={styles.wrapper}>
-            <p className={styles.count}>Всего: {totalCount}</p>
+            <div className={styles.header}>
+                <p className={styles.count}>Всего: {totalCount}</p>
+                <Button
+                    variant="add"
+                    onClick={handleSelectAll}
+                    isActive={allSelected}
+                >
+                    {allSelected ? 'Убрать все из заказа' : 'Выбрать все'}
+                </Button>
+            </div>
             <div className={styles.list} ref={listRef}>
                 {items.map((item) => (
                     <CardNomenclature key={item.id} item={item} onClick={() => handleRedirect(item.id)} />

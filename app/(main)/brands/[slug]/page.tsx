@@ -14,6 +14,7 @@ import { SITE_URL } from '@/lib/configs/config-meta/configMetaData'
 import { BreadcrumbJsonLd } from '@/components/seo/BreadcrumbJsonLd'
 import { EcommerceTracker } from '@/components/ecommerce/EcommerceTracker'
 import BreadcrumbsSetter from '@/components/ui/breadcrumbs/BreadcrumbsSetter'
+import { Button } from '@/components/ui/button/Button'
 
 interface BrandDetailPageProps {
     params: Promise<{
