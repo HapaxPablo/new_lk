@@ -17,18 +17,18 @@ export async function generateMetadata(
   const search = searchParams.name || ''
   const brand_name = searchParams.brand_name || ''
 
-  return generateMyPlaceMetadata({
+  const metadata = await generateMyPlaceMetadata({
     search,
     brand_name,
   })
-}
 
-export const metadata: Metadata = {
-  title: 'Мое место | Личный кабинет',
-  robots: {
-    index: false,  // ← Исключить из индексации
-    follow: true,
-  },
+  return {
+    ...metadata,
+    robots: {
+      index: false,
+      follow: true,
+    },
+  }
 }
 
 export default async function NomenclaturesPage(props: MyPlacePageProps) {
