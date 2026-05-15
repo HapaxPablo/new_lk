@@ -11,6 +11,7 @@ import FiltersPanel from '../panels/filter-panels/FiltersPanels'
 import ScrollButton from '../ui/button/ScrollButton'
 import LoaderSkeleton from '../ui/loader/LoaderSkeleton'
 import styles from './NomenclatureWrapper.module.scss'
+import { SelectAllButton } from './select-all-button/SelectAllButton'
 
 const Pagination = dynamic(
   () =>
@@ -159,7 +160,13 @@ export const NomenclatureWrapperContent = ({
               <p>Места размещения не найдены</p>
             </div>
           ) : (
-            <NomenclatureCards item={displayItems} />
+            <>
+              <div className={styles.header}>
+                <div>Всего найдено: {displayTotal}</div>
+                <SelectAllButton items={displayItems} />
+              </div>
+              <NomenclatureCards item={displayItems} />
+            </>
           )}
 
           <div

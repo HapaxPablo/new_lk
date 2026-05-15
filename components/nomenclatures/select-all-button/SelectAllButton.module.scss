@@ -1,0 +1,20 @@
+.container {
+  position: relative;
+
+  &:hover button:disabled::after {
+    content: attr(title);
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    white-space: nowrap;
+    background: #333;
+    color: white;
+    padding: 8px 12px;
+    border-radius: 4px;
+    font-size: 12px;
+    z-index: 1000;
+    margin-bottom: 8px;
+    pointer-events: none;
+  }
+}

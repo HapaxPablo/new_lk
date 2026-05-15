@@ -1,3 +1,11 @@
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  gap: 1rem;
+}
+
 .displayWrapper {
   position: relative;
   display: flex;
@@ -40,7 +48,7 @@
 
     .paginationContainer {
       flex-shrink: 0;
-      padding: .5rem;
+      padding: 0.5rem;
       border-top: 1px solid var(--border-color-light);
     }
 
@@ -84,7 +92,7 @@
     .paginationContainer {
       flex-shrink: 0;
       // margin-top: 1rem;
-      padding: .5rem;
+      padding: 0.5rem;
       border-top: 1px solid var(--border-color-light);
     }
   }
@@ -113,7 +121,7 @@
 
     .paginationContainer {
       flex-shrink: 0;
-      padding: .5rem;
+      padding: 0.5rem;
       border-top: 1px solid var(--border-color-light);
     }
   }
