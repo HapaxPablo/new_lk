@@ -6,6 +6,7 @@ import { useNomenclatureStore } from "@/store/useNomenclatureStore";
 import styles from "./OrderCreate.module.scss";
 import { INomenclatureItem } from "@/types/nomenclature";
 import { useRouter } from "next/navigation";
+import ModalFeedBack from "@/components/nomenclatureById/modalFeedBack/ModalFeedBack";
 
 const DAYS = [
     { key: "mon", label: "Пн" },
@@ -155,6 +156,7 @@ export default function PlacementOrderCreatePage({
                 <h1 className={styles.header__title}>
                     Оформление заказа на размещение ролика
                 </h1>
+
             </div>
 
             <div className={`${styles.grid} ${styles['grid--few']}`}>
@@ -284,6 +286,7 @@ export default function PlacementOrderCreatePage({
                             Очистить корзину
                         </button>
 
+
                         {success && (
                             <div className={styles.success}>Заказ создан</div>
                         )}
@@ -291,6 +294,8 @@ export default function PlacementOrderCreatePage({
                             <p className={styles.form__error}>{errors.submit}</p>
                         )}
                     </div>
+                    <ModalFeedBack pathName='order' nomenclaturesIds={initialIds} />
+
                 </div>
             </div>
         </div>

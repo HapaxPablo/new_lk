@@ -15,12 +15,20 @@ const schema = z.object({
     name: z.string().min(2, 'Минимум 2 символа'),
     phone: z.string().min(18, 'Введите полный номер'),
     email: z.string().email('Некорректный email'),
-    message: z.string().optional()
+    message: z.string().optional(),
+    brandId: z.string().optional(),
+    nomenclaturesIds: z.array(z.string()).optional(),
 })
 
 type FormValues = z.infer<typeof schema>
 
-export default function Feedback() {
+type FeedbackProps = {
+    pathName?: string
+    brandId?: string
+    nomenclaturesIds?: string[]
+}
+
+export default function Feedback({ pathName, brandId, nomenclaturesIds }: FeedbackProps) {
     const {
         register,
         control,
@@ -42,19 +50,27 @@ export default function Feedback() {
 
     const onSubmit = async (data: FormValues) => {
         try {
-            // 🧼 очищаем телефон
             const cleanPhone = data.phone.replace(/\D/g, '')
 
-            const payload = {
+            const payload: Record<string, unknown> = {
                 ...data,
                 phone: cleanPhone,
+                pathname: pathName,  // добавляем всегда
             }
 
-            await new Promise((res) => setTimeout(res, 1000))
+            switch (pathName) {
+                case 'order':
+                    payload.nomenclaturesIds = nomenclaturesIds
+                    break
+                case 'brands':
+                    payload.brandId = brandId
+                    break
+                case 'nomenclatures':
+                    payload.nomenclaturesIds = nomenclaturesIds
+                    break
+            }
 
-            // console.log('SEND:', payload)
-
-            client.post('api/feedback/', data)
+            await client.post('api/feedback/', payload)
 
             reset()
         } catch (e) {

@@ -15,6 +15,7 @@ import { BreadcrumbJsonLd } from '@/components/seo/BreadcrumbJsonLd'
 import { EcommerceTracker } from '@/components/ecommerce/EcommerceTracker'
 import BreadcrumbsSetter from '@/components/ui/breadcrumbs/BreadcrumbsSetter'
 import { Button } from '@/components/ui/button/Button'
+import ModalFeedBack from '@/components/nomenclatureById/modalFeedBack/ModalFeedBack'
 
 interface BrandDetailPageProps {
     params: Promise<{
@@ -104,6 +105,8 @@ export default async function BrandDetailPage(
         { name: 'Бренды', url: `${SITE_URL}/brands` },
         { name: fullName, url: `${SITE_URL}/brands/${slug}` },
     ]
+
+    const brandId = brand.id
     return (
         <>
             <BreadcrumbJsonLd items={breadcrumbItems} />
@@ -145,6 +148,7 @@ export default async function BrandDetailPage(
                         <h1 className={styles.title}>
                             {fullName || 'Бренд'}
                         </h1>
+                        <ModalFeedBack pathName='brands' brandId={brandId} />
                     </div>
 
                 </div>

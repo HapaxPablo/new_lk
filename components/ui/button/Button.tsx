@@ -3,7 +3,7 @@
 import React, { ButtonHTMLAttributes } from 'react'
 import styles from './Button.module.scss'
 
-type ButtonVariant = 'primary' | 'success' | 'warning' | 'error' | 'default' | "add" | "detail" | "navigate"
+type ButtonVariant = 'primary' | 'success' | 'warning' | 'error' | 'default' | "add" | "detail" | "navigate" | "feedback"
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: ButtonVariant

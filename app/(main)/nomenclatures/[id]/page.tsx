@@ -166,6 +166,7 @@ export default async function NomenclatureDetailPage(
     { name: 'Места для рекламы', url: `${SITE_URL}/nomenclatures` },
     { name: nameForFront, url: `${SITE_URL}/nomenclatures/${id}` },
   ]
+  const nomenclaturesIds = [id]
   return (
     <>
       <BreadcrumbJsonLd items={breadcrumbItems} />
@@ -262,7 +263,7 @@ export default async function NomenclatureDetailPage(
                   </div>
                 )}
                 <AddButtonToOrder item={nomenclature} />
-                <ModalFeedBack />
+                <ModalFeedBack pathName='nomenclatures' nomenclaturesIds={nomenclaturesIds} />
               </div>
             </div>
             {description && (

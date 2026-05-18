@@ -25,6 +25,30 @@
   // }
 
   // Варианты кнопок
+
+  &Feedback {
+    // background-color: transparent;
+    color: var(--main-text-color);
+    border-color: var(--border-color);
+    gap: 0.375rem;
+
+    &:hover {
+      background-color: var(--hover-overlay);
+      border-color: var(--primary-color);
+      color: var(--primary-color);
+    }
+
+    &:active {
+      background-color: var(--active-overlay);
+    }
+
+    &.buttonActive {
+      background-color: var(--primary-color);
+      color: white;
+      border-color: var(--primary-color);
+    }
+  }
+
   &Primary {
     background-color: var(--primary-color);
     color: white;
