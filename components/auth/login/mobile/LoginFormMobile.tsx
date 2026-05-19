@@ -26,6 +26,7 @@ export function LoginFormMobile() {
   const [countdown, setCountdown] = useState<string | null>(null)
   const [showPassword, setShowPassword] = useState(false)
 
+
   useEffect(() => {
     if (blockTime) {
       const interval = setInterval(() => {
@@ -106,7 +107,7 @@ export function LoginFormMobile() {
             <span className={styles.errorText}>{error}</span>
           )}
 
-          <Link href="/" className={styles.forgotPasswordLink}>
+          <Link href="/reset-password" className={styles.forgotPasswordLink}>
             Забыли пароль?
           </Link>
           <Button

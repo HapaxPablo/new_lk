@@ -10,6 +10,13 @@
   },
   "dependencies": {
     "@hookform/resolvers": "^5.1.1",
+    "@skbkontur/colors": "^2.1.7",
+    "@skbkontur/icons": "^2.0.10",
+    "@skbkontur/logos": "^3.0.2",
+    "@skbkontur/react-error-pages": "^3.2.4",
+    "@skbkontur/react-ui": "^6.0.5",
+    "@skbkontur/react-ui-validations": "^3.0.2",
+    "@skbkontur/typography": "^0.2.2",
     "@types/react-toastify": "^4.0.2",
     "@types/validator": "^13.15.2",
     "iron-session": "^8.0.4",
