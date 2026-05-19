@@ -1,8 +1,9 @@
-import { HttpClient1C } from '@/lib/http-client'
 import { NextRequest, NextResponse } from 'next/server'
 
 interface PlacementOrderPayload {
   duration: number
+  start_date: string
+  end_date: string
   all_days: boolean
   days_of_week: string[]
   nomenclature_ids: string[]
@@ -12,7 +13,14 @@ export async function POST(request: NextRequest) {
   try {
     const body: PlacementOrderPayload = await request.json()
 
-    const { duration, all_days, days_of_week, nomenclature_ids } = body
+    const {
+      duration,
+      start_date,
+      end_date,
+      all_days,
+      days_of_week,
+      nomenclature_ids,
+    } = body
 
     if (!duration || duration < 1) {
       return NextResponse.json(
@@ -45,6 +53,8 @@ export async function POST(request: NextRequest) {
       },
       body: JSON.stringify({
         duration,
+        start_date,
+        end_date,
         all_days,
         days_of_week,
         nomenclature_ids,
@@ -59,6 +69,7 @@ export async function POST(request: NextRequest) {
         { status: data.status }
       )
     }
+
     return NextResponse.json(
       { detail: 'Заказ успешно создан' },
       { status: 201 }
@@ -72,7 +83,6 @@ export async function POST(request: NextRequest) {
     }
 
     console.error('Error in order POST handler:', error)
-
     console.error('PlacementOrder create error:', error.message)
 
     return NextResponse.json(

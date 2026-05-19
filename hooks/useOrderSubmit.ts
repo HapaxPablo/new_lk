@@ -1,5 +1,6 @@
 import { RefObject, useRef, useState } from 'react'
 import { useNomenclatureStore } from '@/store/useNomenclatureStore'
+import { formatDateForApi } from './useDateRange'
 
 export interface FormState {
   duration: string
@@ -52,7 +53,18 @@ export function useOrderSubmit(
       const res = await fetch('/api/order/', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload),
+        body: JSON.stringify({
+          duration: Number(form.duration),
+          start_date: parsedStartRef.current
+            ? formatDateForApi(parsedStartRef.current)
+            : null,
+          end_date: parsedEndRef.current
+            ? formatDateForApi(parsedEndRef.current)
+            : null,
+          all_days: form.all_days,
+          days_of_week: form.all_days ? [] : form.days_of_week,
+          nomenclature_ids: ids,
+        }),
       })
       if (!res.ok) {
         if (res.status === 401) {
