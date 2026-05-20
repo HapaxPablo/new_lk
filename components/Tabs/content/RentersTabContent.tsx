@@ -37,8 +37,8 @@ const TenantLogo = ({ tenant }: { tenant: ITenantsListItem }) => {
       <Image
         src={tenant.logotype}
         alt={tenant.brands_list}
-        width={40}
-        height={40}
+        width={120}
+        height={60}
         className={styles.tenantLogo}
         onError={() => setHasError(true)}
       />
