@@ -289,7 +289,7 @@ export default async function NomenclatureDetailPage(
 
                   <div className="flex flex-col gap-4">
                     <ResponsibleCard
-                      label="за маркетинг размещения"
+                      label="за размещения"
                       icon={<Radio size={16} />}
                       phoneNumber={responsible?.ad?.phone_number}
                       name={responsible?.ad?.full_name || 'Не указан'}
