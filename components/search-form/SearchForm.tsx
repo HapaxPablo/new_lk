@@ -86,14 +86,18 @@ export function SearchForm({
   const searchParams = useSearchParams()
   const inputRef = useRef<HTMLInputElement>(null)
   const searchValue = searchParams.get('search')
-
+  const [isFocused, setIsFocused] = useState(false)
   const [isPending, startTransition] = useTransition()
   const [inputValue, setInputValue] = useState(
     searchValue ? searchValue : initialSearch
   )
 
   // Создаем debounce-функцию для обработки ввода
+  // Создаем debounce-функцию для обработки ввода
   const debouncedSearch = useDebounceCallback((value: string) => {
+    // не отправляем если меньше 3 символов (но разрешаем пустую строку — для сброса)
+    if (value.length > 0 && value.length < 3) return
+
     const params = new URLSearchParams(searchParams.toString())
 
     if (value) {
@@ -101,26 +105,30 @@ export function SearchForm({
     } else {
       params.delete(searchParamName)
     }
-    params.delete('page') // Сбрасываем пагинацию
+    params.delete('page')
     startTransition(() => {
       router.push(`${pathname}?${params.toString()}`)
     })
   }, debounceDelay)
 
+
+
   // Обработчик отправки формы (по кнопке или Enter)
   const handleSubmit = useCallback(
     (e: React.FormEvent<HTMLFormElement>) => {
       e.preventDefault()
-      // Отменяем отложенный debounce-запрос
       debouncedSearch.cancel()
 
       const formData = new FormData(e.currentTarget)
       const searchValue = formData.get(searchParamName) as string
+
+      // не отправляем если меньше 3 символов
+      if (searchValue.length > 0 && searchValue.length < 3) return
+
       debouncedSearch(searchValue)
     },
     [debouncedSearch, searchParamName]
   )
-
   // Обработчик изменения инпута
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value
@@ -168,11 +176,14 @@ export function SearchForm({
 
   return (
     <>
+
       {isPending && <Loader size="large" variant="primary" />}
+
       <form
         onSubmit={handleSubmit}
         className={`flex ${className} ${hideButton ? 'rounded' : ''}`}
       >
+
         <div className={`relative flex-grow`}>
           <input
             ref={inputRef}
@@ -181,6 +192,9 @@ export function SearchForm({
             placeholder={placeholder}
             value={inputValue}
             onChange={handleInputChange}
+            onFocus={() => setIsFocused(true)}
+            onBlur={() => setIsFocused(false)}
+
             className={`w-full px-4 py-2 border ${hideButton ? 'rounded' : 'rounded-l'} ${inputClassName} focus:outline-none focus:ring-2 focus:ring-blue-300 pr-10`}
           />
 
@@ -194,6 +208,13 @@ export function SearchForm({
             >
               <X size={18} />
             </button>
+          )}
+
+          {isFocused && inputValue.length < 3 && (
+            <div className="absolute left-0 top-full mt-1 z-50 px-2 py-1 text-xs text-white bg-gray-700 rounded shadow whitespace-nowrap">
+              Введите минимум 3 символа
+              <div className="absolute -top-1 left-4 w-2 h-2 bg-gray-700 rotate-45" />
+            </div>
           )}
         </div>
 
