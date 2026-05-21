@@ -36,7 +36,8 @@ export default function FooterMobile({ currentYear }: FooterMobileProps) {
                             width={60}
                             height={24}
                             className={styles.footer__logoImage}
-                            priority
+                            loading="lazy"
+
                             title="логотип-rmc"
                             aria-label="logo"
                             itemProp="logo"

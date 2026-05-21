@@ -62,8 +62,10 @@ export const CardNomenclature: React.FC<CardNomenclatureProps> = ({
                 src={mainImage}
                 alt={`Фасад ${brand?.name || 'места'}`}
                 fill
+
                 className={styles.image}
                 sizes="80px"
+                loading="lazy"
               />
             ) : logoSrc ? (
               <Image
@@ -72,6 +74,8 @@ export const CardNomenclature: React.FC<CardNomenclatureProps> = ({
                 fill
                 className={styles.image}
                 sizes="80px"
+                loading="lazy"
+
               />
             ) : (
               <div className={styles.imagePlaceholder}>
@@ -81,6 +85,8 @@ export const CardNomenclature: React.FC<CardNomenclatureProps> = ({
                   width={200}
                   height={100}
                   className="object-contain"
+                  loading="lazy"
+
                 />
               </div>
             )}
@@ -94,6 +100,8 @@ export const CardNomenclature: React.FC<CardNomenclatureProps> = ({
                 fill
                 className={styles.logo}
                 sizes="80px"
+                loading="lazy"
+
               />{' '}
             </div>
           )}

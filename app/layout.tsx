@@ -44,6 +44,7 @@ const montserrat = localFont({
       // style: 'normal',
     },
   ],
+  display: 'swap', // Рекомендуется для оптимизации загрузки шрифтов
 })
 
 export const metadata: Metadata = metaDataConfigLayout
@@ -126,6 +127,7 @@ export default function RootLayout({
 
   return (
     <html lang="ru">
+      <meta charSet="UTF-8" />
       <head>
         <Script
           id="organization-jsonld"

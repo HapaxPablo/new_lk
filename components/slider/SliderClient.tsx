@@ -255,9 +255,8 @@ const SliderClient = function ({
             return (
               <div
                 key={actualIndex}
-                className={`${styles.thumbnails_img} ${
-                  isActive ? styles.thumbnails_img_active : ''
-                }`}
+                className={`${styles.thumbnails_img} ${isActive ? styles.thumbnails_img_active : ''
+                  } relative aspect-video`}
                 onClick={() => handleThumbnailClick(actualIndex)}
               >
                 {image.source && (
@@ -265,6 +264,8 @@ const SliderClient = function ({
                     src={image.source}
                     alt={`Миниатюра ${actualIndex + 1}`}
                     fill
+                    loading="lazy"
+
                     sizes="80px"
                   />
                 )}
@@ -302,7 +303,8 @@ const SliderClient = function ({
               src={currentImage.source}
               alt={`Изображение ${selectedIndex + 1}`}
               fill
-              priority
+              loading="lazy"
+
               sizes="(max-width: 768px) 100vw, 60vw"
             />
           </div>
@@ -313,6 +315,8 @@ const SliderClient = function ({
               alt="Логотип"
               width={200}
               height={100}
+              loading="lazy"
+
               className="object-contain"
             />
           </div>

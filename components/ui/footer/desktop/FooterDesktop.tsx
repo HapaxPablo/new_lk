@@ -34,7 +34,8 @@ export default function FooterDesktop({ currentYear }: FooterDesktopProps) {
                             width={120}
                             height={24}
                             className={styles.footer__logoImage}
-                            priority
+                            loading="lazy"
+
                             title="логотип-rmc"
                             aria-label="logo"
                             itemProp="logo"

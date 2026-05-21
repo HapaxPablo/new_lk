@@ -174,13 +174,17 @@ function DefaultContent({ data }: { data: any }) {
 
         if (field.isImage && typeof value === 'string') {
           displayValue = (
-            <Image
-              src={value}
-              alt={`Изображение ${field.label || 'места'}`}
-              fill
-              className={styles.image}
-              sizes="80px"
-            />
+            <div className='relative aspect-video'>
+              <Image
+                src={value}
+                alt={`Изображение ${field.label || 'места'}`}
+                fill
+                className={styles.image}
+                sizes="80px"
+                loading="lazy"
+
+              />
+            </div>
           )
         } else if (field.isDate && typeof value === 'string') {
           displayValue = new Date(value).toLocaleDateString('ru-RU', {

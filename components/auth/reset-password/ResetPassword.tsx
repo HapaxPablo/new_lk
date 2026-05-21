@@ -65,7 +65,8 @@ export default function ResetPassword() {
                         alt="logo"
                         width={120}
                         height={24}
-                        priority
+                        loading="lazy"
+
                         className="w-auto h-auto"
                     />
                 </div>

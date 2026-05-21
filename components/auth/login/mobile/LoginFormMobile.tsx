@@ -60,8 +60,10 @@ export function LoginFormMobile() {
           alt="logo"
           width={120}
           height={24}
-          priority
+          // priority
           className="w-auto h-auto"
+          loading="lazy"
+
         />
       </div>
       <div className={styles.title}>Вход</div>

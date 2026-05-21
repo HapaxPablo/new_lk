@@ -29,7 +29,8 @@ export default function Header() {
               alt="logo"
               width={120}
               height={24}
-              priority
+              loading="lazy"
+
               title="логотип-rmc"
               aria-label="logo"
             />

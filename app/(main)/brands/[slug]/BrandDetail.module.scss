@@ -129,6 +129,7 @@
   height: 160px;
   border-radius: 0.5rem;
   overflow: hidden;
+  aspect-ratio: 16/9;
 
   .image {
     object-fit: contain;

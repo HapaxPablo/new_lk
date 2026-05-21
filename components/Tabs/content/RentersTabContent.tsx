@@ -35,6 +35,8 @@ const TenantLogo = ({ tenant }: { tenant: ITenantsListItem }) => {
   return (
     <div className={styles.tenantLogoWrapper}>
       <Image
+        loading="lazy"
+
         src={tenant.logotype}
         alt={tenant.brands_list}
         width={120}

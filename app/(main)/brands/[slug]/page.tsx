@@ -132,6 +132,7 @@ export default async function BrandDetailPage(
                                     alt={`Бренд ${brand.name || 'Бренд'}`}
                                     fill
                                     className={styles.image}
+                                    loading="lazy"
                                 />
                             ) : (
                                 <div className={styles.logoPlaceholder}>
@@ -141,6 +142,7 @@ export default async function BrandDetailPage(
                                         width={200}
                                         height={100}
                                         className="object-contain"
+                                        loading="lazy"
                                     />
                                 </div>
                             )}

@@ -94,7 +94,8 @@ export default function RegisterFormFields({
           alt="logo"
           width={120}
           height={24}
-          priority
+          loading="lazy"
+
         />
       </div>
       <h2 className={styles.title}>Регистрация</h2>

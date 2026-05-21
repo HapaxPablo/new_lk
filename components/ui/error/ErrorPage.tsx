@@ -13,7 +13,9 @@ export default function ErrorPage({ error }: ErrorProps) {
             alt="logo"
             width={240}
             height={80}
-            priority
+
+            loading="lazy"
+
             className="w-60 h-20"
           />
           <div className="flex flex-col flex-wrap text-left uppercase font-bold">

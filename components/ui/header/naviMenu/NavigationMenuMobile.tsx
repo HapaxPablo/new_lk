@@ -28,7 +28,8 @@ const NavigationMenuMobile = () => {
             alt="logo"
             width={24}
             height={24}
-            priority
+            loading="lazy"
+
             title="логотип-rmc"
             aria-label="logo"
           />

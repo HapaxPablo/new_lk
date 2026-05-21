@@ -6,6 +6,7 @@
   overflow: hidden;
   background: var(--background);
   flex-shrink: 0;
+  aspect-ratio: 16/9;
 
   &__image {
     object-fit: cover;

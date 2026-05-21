@@ -30,6 +30,8 @@ export const CardBrand: React.FC<CardBrandProps> = ({
                                 src={item.logotype}
                                 alt={`Бренд ${item.name || 'Бренд'}`}
                                 fill
+                                loading="lazy"
+
                                 className={styles.image}
                             />
                         ) : (
@@ -39,6 +41,8 @@ export const CardBrand: React.FC<CardBrandProps> = ({
                                     alt="Логотип"
                                     width={200}
                                     height={100}
+                                    loading="lazy"
+
                                     className="object-contain"
                                 />
                             </div>

@@ -15,6 +15,8 @@ export function UserAvatar({ src, alt }: UserAvatarProps) {
           src={src}
           alt={alt ?? 'Аватар пользователя'}
           fill
+          loading="lazy"
+
           className={styles.avatar__image}
           sizes="80px"
         />

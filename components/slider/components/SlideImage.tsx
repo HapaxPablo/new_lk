@@ -17,7 +17,7 @@ export default function SlideImage({
   // console.log(src);
 
   return (
-    <div className={styles.slider__list__slide__image}>
+    <div className={`relative aspect-video ${styles.slider__list__slide__image}`}>
       <Image
         src={src}
         alt={alt}

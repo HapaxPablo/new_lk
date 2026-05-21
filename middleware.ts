@@ -3,7 +3,14 @@ import { NextResponse, type NextRequest } from 'next/server'
 import { isModuleNamespaceObject } from 'util/types'
 
 export async function middleware(request: NextRequest) {
+  //редирект с www на без www для SEO
+  if (request.nextUrl.hostname === 'www.krasrm.com') {
+    const url = request.nextUrl.clone()
+    url.hostname = 'krasrm.com'
+    return NextResponse.redirect(url, 301)
+  }
   const { session, response } = await getMiddlewareSession(request)
+
   const { pathname } = request.nextUrl
   const ua = request.headers.get('user-agent') ?? ''
   const isMobile = /mobile|android|iphone/i.test(ua)

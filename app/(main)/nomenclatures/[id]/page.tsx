@@ -205,6 +205,7 @@ export default async function NomenclatureDetailPage(
                       width={200}
                       height={100}
                       className="object-contain max-h-full w-auto"
+                      loading="lazy"
                     />
                   ) : (
                     <Image
@@ -213,6 +214,7 @@ export default async function NomenclatureDetailPage(
                       width={200}
                       height={100}
                       className="object-contain"
+                      loading="lazy"
                     />
                   )}
                 </div>
