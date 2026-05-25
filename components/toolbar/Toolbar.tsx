@@ -76,7 +76,7 @@ const Toolbar = ({ totalItems }: ToolbarProps): JSX.Element => {
       <div className={styles.toolbar}>
         <div className={styles.mainPanel}>
           <div className={styles.totalItems}>Всего: {totalItems}</div>
-          <SearchForm hideButton className={styles.searchForm} />
+          <SearchForm hideButton className={styles.searchForm} placeholder='Напишите здесь город, улицу, название места или название арендатора для отбора' />
 
           <div className={styles.tooltipContainer} data-tooltip="Фильтры">
             <SlidersHorizontal
