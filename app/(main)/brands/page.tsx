@@ -1,5 +1,5 @@
 import { EcommerceTracker } from "@/components/ecommerce/EcommerceTracker"
-import Toolbar from "@/components/toolbar/Toolbar"
+import { SearchForm } from "@/components/search-form/SearchForm"
 import LoaderSkeleton from "@/components/ui/loader/LoaderSkeleton"
 import { IBrandListResponse } from "@/types/brands"
 import { Metadata } from "next"
@@ -21,7 +21,16 @@ export async function generateMetadata(
         description: 'Список брендов',
     }
 }
-
+const Toolbar = dynamic(
+    () =>
+        import('@/components/toolbar/brands/ToolbarBrands').then((mod) => ({
+            default: mod.default,
+        })),
+    {
+        ssr: true,
+        loading: () => <LoaderSkeleton />,
+    }
+)
 const BrandWrapper = dynamic(
     () =>
         import('../../../components/brands/BrandsWrapper').then(
@@ -68,6 +77,7 @@ export default async function BrandsPage(props: BrandsPageProps) {
                     <h1 className="text-xl! md:text-2xl ml-4 font-semibold mb-3">
                         Выберите бренды для вашей радио-рекламы
                     </h1>
+                    <Toolbar totalItems={data.count} />
                     <div className="grow min-h-0 overflow-hidden">
                         <div className="h-full">
                             <BrandWrapper
