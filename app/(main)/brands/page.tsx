@@ -9,6 +9,7 @@ interface BrandsPageProps {
     searchParams: Promise<{
         limit?: string
         offset?: string
+        search?: string
     }>
 }
 
@@ -48,15 +49,20 @@ export default async function BrandsPage(props: BrandsPageProps) {
     const searchParams = await props.searchParams
     const limit = Number(searchParams.limit) || 15
     const offset = Number(searchParams.offset) || 0
+    const searchQuery = searchParams.search || ''
 
     try {
         const url = new URL('/api/brands/assigned', process.env.API_1C_URL)
         url.searchParams.set('limit', String(limit))
         url.searchParams.set('offset', String(offset))
+        if (searchQuery) {
+            url.searchParams.set('search', searchQuery)
+            url.searchParams.set('page', '1') // Сбросить пагинацию при новом поисковом запросе
+        }
 
         console.log('Making request to:', url.toString())
 
-        const response = await fetch(url.toString(), { cache: 'force-cache' })
+        const response = await fetch(url.toString(), { cache: 'no-store' })
 
         if (!response.ok) {
             throw new Error(`Ошибка ${response.status}: ${response.statusText}`)

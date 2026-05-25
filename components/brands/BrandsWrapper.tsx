@@ -8,12 +8,7 @@ import LoaderSkeleton from '../ui/loader/LoaderSkeleton'
 import styles from './BrandsWrapper.module.scss'
 import { useBrands } from '@/hooks/useBrands'
 import { IBrandListItem } from '@/types/brands'
-
-const BrandCards = dynamic(
-    () => import('./card/BrandItem').then((mod) => ({ default: mod.BrandItems })),
-    { ssr: true, loading: () => <LoaderSkeleton /> }
-)
-
+import { BrandItems as BrandCards } from './card/BrandItem'
 interface BrandCardsProps {
     brandData: IBrandListItem[]
     className?: string

@@ -15,11 +15,13 @@ export async function GET(request: NextRequest) {
     const queryParams = {
       limit: Number(searchParams.get('limit')) || 15,
       offset: Number(searchParams.get('offset')) || 0,
+      search: searchParams.get('search') || '',
     }
 
     const paramsFor1C: Record<string, string> = {
       limit: String(queryParams.limit),
       offset: String(queryParams.offset),
+      search: String(queryParams.search),
     }
     const queryString = new URLSearchParams(paramsFor1C).toString()
 

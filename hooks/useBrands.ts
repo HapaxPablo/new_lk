@@ -1,16 +1,18 @@
 // hooks/useBrands.ts
 import useSWRInfinite from 'swr/infinite'
+import { useEffect } from 'react'
 import { IBrandListItem, IBrandListResponse } from '@/types/brands'
+import { useSearchParams } from 'next/navigation'
 
 const fetcher = async (url: string) => {
-  const fullUrl = url.startsWith('/') ? url : `/${url}`
-  const res = await fetch(fullUrl, {
+  const res = await fetch(url, {
     credentials: 'include',
     cache: 'no-store',
   })
   if (!res.ok) throw new Error(`HTTP ${res.status}`)
   return res.json()
 }
+
 interface UseBrandsOptions {
   initialData?: IBrandListItem[]
   initialCount?: number
@@ -19,23 +21,15 @@ interface UseBrandsOptions {
 }
 
 export const useBrands = (options: UseBrandsOptions = {}) => {
-  const {
-    initialData = [],
-    initialCount = 0,
-    limit = 15,
-    initialOffset = 0,
-  } = options
+  const { limit = 15 } = options
+
+  const searchParams = useSearchParams()
+  const search = searchParams.get('search') || ''
 
   const getKey = (
     pageIndex: number,
     previousData: IBrandListResponse | null
   ): string | null => {
-    // Если это первая страница или данные еще пусты
-    if (pageIndex === 0) {
-      return `/proxy-api/brands/assigned/?limit=${limit}&offset=0`
-    }
-
-    // Остановить, если получили меньше, чем запросили
     if (previousData && previousData.results.length < limit) {
       return null
     }
@@ -44,38 +38,34 @@ export const useBrands = (options: UseBrandsOptions = {}) => {
       limit: limit.toString(),
       offset: (pageIndex * limit).toString(),
     })
+    if (search) params.set('search', search)
 
-    return `/proxy-api/brands/assigned/?${params.toString()}`
+    const key = `/proxy-api/brands/assigned/?${params.toString()}`
+    return key
   }
 
   const { data, error, size, setSize, isValidating } =
     useSWRInfinite<IBrandListResponse>(getKey, fetcher, {
       revalidateOnFocus: false,
       revalidateIfStale: false,
-      revalidateFirstPage: false,
-      keepPreviousData: true,
-      fallbackData:
-        initialData.length > 0
-          ? [
-              {
-                results: initialData,
-                count: initialCount,
-                next: initialCount > initialData.length ? 'next' : null,
-                previous: null,
-              },
-            ]
-          : undefined,
+      revalidateFirstPage: true, // ← важно: перезапрашивать при смене ключа
+      keepPreviousData: false, // ← убираем, иначе старые данные остаются
     })
 
-  const items = data ? data.flatMap((page) => page.results) : initialData
-  const totalCount = data?.[0]?.count ?? initialCount
+  // Сброс пагинации при смене поиска
+  useEffect(() => {
+    setSize(1)
+  }, [search, setSize])
+
+  const items = data ? data.flatMap((page) => page.results) : []
+  const totalCount = data?.[0]?.count ?? 0
   const lastPageData = data?.[data.length - 1]
 
   const hasMore = lastPageData
     ? lastPageData.results.length === limit && items.length < totalCount
-    : initialData.length < initialCount
+    : false
 
-  const isLoadingInitial = !data && !error && initialData.length === 0
+  const isLoadingInitial = !data && !error
   const isLoadingMore = isValidating && size > 1
 
   return {
