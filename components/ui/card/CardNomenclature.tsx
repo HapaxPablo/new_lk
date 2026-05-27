@@ -21,9 +21,9 @@ export const CardNomenclature: React.FC<CardNomenclatureProps> = ({
   onClick,
   codeMP = null, //TODO вынести из пропсов, взять в Item и изменить логику использования
 }) => {
-  const { brand, exterior, typeOfPlace, pricePerMonth } = item
+  const { brand, exterior, typeOfPlace, pricePerMonth, brandName } = item
   // Получаем первое изображение для превью
-  const mainImage = exterior?.[0]?.source
+  const mainImage = exterior?.[0]?.source || exterior
   const logoSrc = brand?.logotype
   const { ids, toggle } = useNomenclatureStore()
 
@@ -114,6 +114,7 @@ export const CardNomenclature: React.FC<CardNomenclatureProps> = ({
               <span className={styles.primaryText}>
                 {typeOfPlace || 'Тип не указан'}
                 {brand?.name ? ` • ${brand.name}` : ''}
+                {brandName && ` • ${brandName}`}
               </span>
             </div>
           </div>

@@ -28,6 +28,11 @@ export const NAV_ITEMS: NavItem[] = [
     icon: Star,
   },
   {
+    title: 'Арендаторы',
+    path: '/tenants',
+    icon: Users,
+  },
+  {
     title: 'О нас',
     path: '/about',
     icon: Info,

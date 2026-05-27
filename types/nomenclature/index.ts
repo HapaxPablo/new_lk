@@ -234,6 +234,7 @@ export interface ITenantsListItem {
   brands_list: string //TODO: удалить после настройки имени на бэке
   logotype: string
   floor: string
+  tenant_id: string
 }
 
 export interface ITenantsResponse {

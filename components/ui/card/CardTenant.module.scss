@@ -1,0 +1,159 @@
+.card {
+  width: 100%;
+  min-height: 168px;
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding: 0.85rem;
+  overflow: hidden;
+  cursor: pointer;
+  transition:
+    box-shadow 0.2s ease,
+    transform 0.2s ease,
+    border-color 0.2s ease;
+
+  &:hover {
+    border-color: var(--primary-color);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.14);
+    transform: translateY(-2px);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--focus-ring);
+    outline-offset: 2px;
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+}
+
+.headerRow {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding-bottom: 0.65rem;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.countBadge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 2.25rem;
+  height: 2.25rem;
+  padding: 0 0.5rem;
+  border-radius: 8px;
+  background: var(--primary-color);
+  color: var(--background);
+  font-weight: 700;
+  font-size: var(--text-lg);
+  line-height: 1;
+}
+
+.imageWrapper {
+  position: relative;
+  width: 80px;
+  // height: 60px;
+  flex: 1;
+  border-radius: 6px;
+  overflow: hidden;
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  aspect-ratio: 16/9;
+}
+
+.image {
+  object-fit: contain;
+}
+
+.imagePlaceholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: #f3f4f6;
+  color: #6b7280;
+  font-size: 10px;
+  text-align: center;
+  gap: 4px;
+
+  svg {
+    color: #9ca3af;
+  }
+}
+
+.logoWrapper {
+  position: relative;
+  width: 80px;
+  height: 32px;
+  border-radius: 4px;
+  overflow: hidden;
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  aspect-ratio: 16/9;
+}
+
+.logo {
+  object-fit: contain;
+  padding: 2px;
+}
+
+.logoPlaceholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f3f4f6;
+  color: #6b7280;
+  font-size: 9px;
+  gap: 2px;
+
+  svg {
+    color: #9ca3af;
+  }
+}
+
+.countLabel {
+  color: var(--second-text-color);
+  font-size: var(--text-sm);
+  line-height: 1.25;
+}
+
+.infoSection {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+  min-width: 0;
+}
+
+.nameText {
+  font-weight: 700;
+  color: var(--main-text-color);
+  overflow-wrap: anywhere;
+}
+
+.codeText {
+  font-size: var(--text-sm);
+  color: var(--main-text-color);
+}
+
+.secondaryText {
+  font-size: var(--text-xs);
+  color: var(--second-text-color);
+  overflow-wrap: anywhere;
+}
+
+@media (max-width: 768px) {
+  .card {
+    min-height: 152px;
+    padding: 0.75rem;
+  }
+}

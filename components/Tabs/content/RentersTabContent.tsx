@@ -36,7 +36,6 @@ const TenantLogo = ({ tenant }: { tenant: ITenantsListItem }) => {
     <div className={styles.tenantLogoWrapper}>
       <Image
         loading="lazy"
-
         src={tenant.logotype}
         alt={tenant.brands_list}
         width={120}
@@ -53,12 +52,10 @@ const SkeletonRow = () => (
     <div className={styles.colIndex}>
       <div className={styles.skeletonIndex} />
     </div>
-
     <div className={styles.colMain}>
       <div className={styles.skeletonAvatar} />
       <div className={styles.skeletonTitle} />
     </div>
-
     <div className={styles.colFloor}>
       <div className={styles.skeletonSub} />
     </div>
@@ -84,11 +81,12 @@ export const RentersTabContent = ({
     setSize,
     size,
     floors,
-    mutate
+    mutate,
   } = useInfinityTenants(nomenclatureId, debouncedSearch, floor, initialTenantsData)
 
   const loaderRef = useRef<HTMLDivElement>(null)
   const containerRef = useRef<HTMLDivElement>(null)
+  const isLoadingMoreRef = useRef(false)
 
   const handleClickDelete = async (tenantId: string) => {
     try {
@@ -114,14 +112,19 @@ export const RentersTabContent = ({
   }
 
   useEffect(() => {
+    isLoadingMoreRef.current = isLoadingMore
+  }, [isLoadingMore])
+
+  useEffect(() => {
     const loader = loaderRef.current
     const container = containerRef.current
     if (!loader || !container) return
 
     const observer = new IntersectionObserver(
-      entries => {
-        if (entries[0].isIntersecting && hasMore && !isLoadingMore) {
-          setSize(prev => prev + 1)
+      (entries) => {
+        if (entries[0].isIntersecting && hasMore && !isLoadingMoreRef.current) {
+          isLoadingMoreRef.current = true
+          setSize((prev) => prev + 1)
         }
       },
       { threshold: 0.1, root: container, rootMargin: '0px 0px 100px 0px' }
@@ -129,7 +132,7 @@ export const RentersTabContent = ({
 
     observer.observe(loader)
     return () => observer.disconnect()
-  }, [hasMore, isLoadingMore, setSize])
+  }, [hasMore, setSize])
 
   useEffect(() => {
     if (size !== 1) setSize(1)
@@ -144,7 +147,7 @@ export const RentersTabContent = ({
             value={inputValue}
             onChange={(e: any) => setInputValue(e.target.value)}
             placeholder="Поиск арендатора..."
-            type='text'
+            type="text"
           />
           <Select
             options={floors}
@@ -153,8 +156,6 @@ export const RentersTabContent = ({
             placeholder="Выбрать этаж"
           />
         </div>
-
-
       </div>
 
       {/* СПИСОК */}
@@ -162,9 +163,11 @@ export const RentersTabContent = ({
         <div className={styles.list}>
           {/* header */}
           <div className={styles.header}>
-            <div className='flex justify-center items-center'>#</div>
-            <div className='flex justify-center items-center'>Арендатор</div>
-            {!floor && <div className='flex justify-center items-center'>Этаж</div>}
+            <div className="flex justify-center items-center">#</div>
+            <div className="flex justify-center items-center">Арендатор</div>
+            {!floor && (
+              <div className="flex justify-center items-center">Этаж</div>
+            )}
           </div>
 
           {/* body */}
@@ -182,16 +185,22 @@ export const RentersTabContent = ({
                   className={styles.row}
                   onMouseEnter={() => setHovered(tenant.id)}
                   onMouseLeave={() => setHovered(null)}
+                  onClick={() =>
+                    window.open(`/tenants/${tenant.tenant_id}`, '_blank')
+                  }
                 >
                   <div className={styles.colIndex}>
-                    {hovered === tenant.id && isEmployee
-                      ? <UserMinus size={20}
+                    {hovered === tenant.id && isEmployee ? (
+                      <UserMinus
+                        size={20}
                         onClick={(e) => {
                           e.stopPropagation()
                           handleClickDelete(tenant.id)
                         }}
                       />
-                      : index + 1}
+                    ) : (
+                      index + 1
+                    )}
                   </div>
 
                   <div className={styles.colMain}>
@@ -214,11 +223,16 @@ export const RentersTabContent = ({
               ))
             )}
 
-            {/* loader */}
-            <div ref={loaderRef} className={styles.loaderAnchor}>
-              {isLoadingMore && <div className={styles.spinner} />}
-            </div>
+            {/* якорь для observer — всегда в DOM */}
+            <div ref={loaderRef} className={styles.loaderAnchor} />
           </div>
+
+          {/* спиннер снаружи скроллируемой области — всегда виден */}
+          {isLoadingMore && (
+            <div className={styles.spinnerWrapper}>
+              <div className={styles.spinner} />
+            </div>
+          )}
         </div>
       </div>
     </div>
