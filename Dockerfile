@@ -1,5 +1,5 @@
 # ---------- Dependencies + Build ----------
-FROM node:24.12.0-alpine AS builder
+FROM node:24-alpine AS builder
 
 WORKDIR /app
 
