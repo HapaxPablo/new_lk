@@ -132,8 +132,9 @@ export default async function TenantDetailPage(props: TenantDetailPageProps) {
                   src={tenant.brand.logotype}
                   alt={`Бренд ${tenant.brand.name || 'Бренд'}`}
                   fill
+                  sizes="(max-width: 768px) 100vw, 320px"
                   className={styles.image}
-                  loading="lazy"
+                  priority
                 />
               ) : (
                 <div className={styles.logoPlaceholder}>

@@ -31,9 +31,15 @@ export const CardTenant: React.FC<CardTenantProps> = ({
         }
       }}
     >
+
       <div className={styles.headerRow}>
+        <InfoRow
+          // icon={<Building2 size={16} />}
+          label=""
+          value={item.brandName || '-'}
+          valueClassName={styles.nameText}
+        />
         <span className={styles.countBadge}>{item.count}</span>
-        <span className={styles.countLabel}>мест размещения</span>
       </div>
 
       <div className={styles.infoSection}>
@@ -43,8 +49,8 @@ export const CardTenant: React.FC<CardTenantProps> = ({
               src={item.brandLogotype}
               alt={`Бренд ${item.brandName || 'Арендатор'}`}
               fill
-              sizes="80px"
-              loading="lazy"
+              sizes="(max-width: 768px) 100vw, 320px"
+              priority
               className={styles.image}
             />
           ) : (
@@ -60,12 +66,7 @@ export const CardTenant: React.FC<CardTenantProps> = ({
             </div>
           )}
         </div>
-        <InfoRow
-          icon={<Building2 size={16} />}
-          label=""
-          value={item.brandName || '-'}
-          valueClassName={styles.nameText}
-        />
+
       </div>
     </article>
   )
