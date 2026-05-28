@@ -59,6 +59,12 @@ export const CardTenant: React.FC<CardTenantProps> = ({
             </div>
           )}
         </div>
+        <InfoRow
+          icon={<Building2 size={16} />}
+          label=""
+          value={item.brandName || '-'}
+          valueClassName={styles.nameText}
+        />
       </div>
     </article>
   )
