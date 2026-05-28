@@ -6,6 +6,9 @@
   height: 100%;
   padding: 1rem;
   overflow: hidden;
+  @media(min-height: 768px) {
+      overflow-y: auto;
+  }
 }
 
 .summaryCard {
