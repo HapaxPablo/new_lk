@@ -5,18 +5,28 @@ import { ITenantPlace } from '@/types/tenants'
 import { useNomenclatureStore } from '@/store/useNomenclatureStore'
 import { Button } from '@/components/ui/button/Button'
 import styles from './PlacesGrid.module.scss'
+import { INomenclatureItem } from '@/types/nomenclature'
 
 interface PlacesGridProps {
     places: ITenantPlace[]
+    nomenclatures: INomenclatureItem[]
 }
 
-export function PlacesGrid({ places }: PlacesGridProps) {
+
+export function PlacesGrid({ places, nomenclatures }: PlacesGridProps) {
+
     const { ids, toggleAllItems } = useNomenclatureStore()
 
-    const normalizedPlaces = places.map((place) => ({
-        ...place,
-        id: place.nomenclatureId,
-    }))
+    const normalizedPlaces = places.map((place) => {
+        const nomenclature = nomenclatures.find(
+            (n) => n.id === place.nomenclatureId
+        )
+        return {
+            ...nomenclature,
+            ...place,
+            id: place.nomenclatureId,
+        }
+    })
 
     const allSelected =
         normalizedPlaces.length > 0 &&

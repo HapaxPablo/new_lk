@@ -12,6 +12,10 @@ import styles from './TenantDetail.module.scss'
 import { CardNomenclature } from '@/components/ui/card/CardNomenclature'
 import { PlacesGrid } from './PlacesGrid'
 import Image from 'next/image'
+import { BreadcrumbJsonLd } from '@/components/seo/BreadcrumbJsonLd'
+import { SITE_URL } from '@/lib/configs/config-meta/configMetaData'
+import { EcommerceTracker } from '@/components/ecommerce/EcommerceTracker'
+import { INomenclatureItem } from '@/types/nomenclature'
 
 interface TenantDetailPageProps {
   params: Promise<{
@@ -41,6 +45,23 @@ async function getTenantById(
     }
 
     throw error
+  }
+}
+
+async function getNomenclatures(ids: string[]): Promise<INomenclatureItem[]> {
+  if (!ids.length) return []
+  // console.log('Fetching nomenclatures for IDs:', ids)
+  const baseUrl = new URL('api/nomenclatures/bulk/', process.env.API_1C_URL)
+  baseUrl.searchParams.set('ids', ids.join(','))
+
+  try {
+    const res = await fetch(baseUrl.toString(), { cache: 'no-store' })
+    if (!res.ok) return []
+    const data = await res.json()
+    // console.log('Fetched nomenclatures:', data)
+    return Array.isArray(data) ? data : []
+  } catch {
+    return []
   }
 }
 
@@ -77,10 +98,27 @@ export default async function TenantDetailPage(props: TenantDetailPageProps) {
     notFound()
   }
 
+  const nomenclatureIds = tenant.places.map((p) => p.nomenclatureId)
+  const nomenclatures = await getNomenclatures(nomenclatureIds)
+
   const title = tenant.tenantName || tenant.keyword || 'Арендатор'
-  const code1c = tenant.tenantCode1c?.replace(/^0+/, '') || '-'
+  const breadcrumbItems = [
+    { name: 'Главная', url: `${SITE_URL}` },
+    { name: 'Арендаторы', url: `${SITE_URL}/tenants` },
+    { name: tenant.brand.name, url: `${SITE_URL}/tenants/${tenant.brand.name}` },
+  ]
   return (
     <>
+      <BreadcrumbJsonLd items={breadcrumbItems} />
+      <EcommerceTracker
+        item={{
+          item_id: tenant.tenantId,
+          item_name: tenant.brand.name,
+          item_category: tenant.brand.name,
+          item_tenant: tenant.brand.name,
+          price: '0',
+        }}
+      />
       <BreadcrumbsSetter title={title} />
 
       <div className={styles.container}>
@@ -126,7 +164,7 @@ export default async function TenantDetailPage(props: TenantDetailPageProps) {
 
         {tenant.places.length > 0 ? (
           <div className={styles.placeGrid}>
-            <PlacesGrid places={tenant.places} />
+            <PlacesGrid places={tenant.places} nomenclatures={nomenclatures} />
           </div>
         ) : (
           <p className={styles.emptyText}>Места размещения не найдены</p>

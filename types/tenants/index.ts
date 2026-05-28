@@ -16,14 +16,6 @@ export interface IGroupedTenantsResponse {
 
 export interface ITenantPlace {
   nomenclatureId: string
-  nomenclatureCode1c: string
-  nomenclatureName: string
-  typeOfPlace: string
-  floor: string
-  atm: boolean
-  brandId: string
-  brandName: string
-  exterior: string
 }
 
 export interface ITenantBrand {

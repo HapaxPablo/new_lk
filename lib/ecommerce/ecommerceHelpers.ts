@@ -7,6 +7,7 @@ export interface EcommerceItem {
   item_name: string
   item_category?: string
   item_brand?: string
+  item_tenant?: string
   price: string
   currency?: string
 }

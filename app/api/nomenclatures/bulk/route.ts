@@ -20,17 +20,9 @@ export async function GET(request: NextRequest) {
       return Response.json([], { status: 200 })
     }
 
-    const results = await Promise.all(
-      idList.map((id) =>
-        HttpClient1C.server(request)
-          .get<INomenclatureItem>(`api/nomenclatures/${id}`)
-          .catch(() => null)
-      )
+    const items = await HttpClient1C.server(request).get<INomenclatureItem[]>(
+      `api/nomenclatures/bulk/?ids=${idList.join(',')}`
     )
-
-    const items = results.filter(Boolean) as INomenclatureItem[]
-
-    console.log('items', items)
 
     return Response.json(items)
   } catch (error: any) {

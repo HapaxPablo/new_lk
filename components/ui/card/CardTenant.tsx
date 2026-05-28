@@ -43,6 +43,7 @@ export const CardTenant: React.FC<CardTenantProps> = ({
               src={item.brandLogotype}
               alt={`Бренд ${item.brandName || 'Арендатор'}`}
               fill
+              sizes="80px"
               loading="lazy"
               className={styles.image}
             />
