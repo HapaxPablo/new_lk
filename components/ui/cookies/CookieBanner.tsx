@@ -6,10 +6,11 @@ import { useState } from 'react'
 import styles from './CookieBanner.module.scss'
 
 export default function CookieBanner() {
-  const { hasConsent, isLoaded, acceptAll, rejectAll } = useCookieConsent()
+  const { hasConsent, isLoaded, acceptAll } = useCookieConsent()
   const [showSettings, setShowSettings] = useState(false)
+  const [isRejected, setIsRejected] = useState(false)
 
-  if (!isLoaded || hasConsent) {
+  if (!isLoaded || hasConsent || isRejected) {
     return null
   }
 
@@ -56,7 +57,7 @@ export default function CookieBanner() {
         <div className={styles.actions}>
           <button
             className={styles.buttonSecondary}
-            onClick={rejectAll}
+            onClick={() => setIsRejected(true)}
             type="button"
           >
             Отклонить

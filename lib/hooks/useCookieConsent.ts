@@ -49,7 +49,7 @@ export function useCookieConsent() {
     updateConsent(allRejected)
   }
 
-  const hasConsent = consent !== null
+  const hasConsent = consent !== null && consent.analytics === true && consent.marketing === true
 
   return {
     consent,
