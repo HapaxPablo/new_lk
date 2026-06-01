@@ -52,9 +52,9 @@ export const BrandNomenclatures = ({ brandId }: Props) => {
         return <p className={styles.empty}>Номенклатуры не найдены</p>
     }
 
-    const handleRedirect = (id: string) => {
-        window.open(`/nomenclatures/${id}`, '_blank');
-    }
+    // const handleRedirect = (id: string) => {
+    //     window.open(`/nomenclatures/${id}`, '_blank');
+    // }
 
     // Новый обработчик для выбрать все
     const handleSelectAll = () => {
@@ -78,7 +78,7 @@ export const BrandNomenclatures = ({ brandId }: Props) => {
             </div>
             <div className={styles.list} ref={listRef}>
                 {items.map((item) => (
-                    <CardNomenclature key={item.id} item={item} onClick={() => handleRedirect(item.id)} />
+                    <CardNomenclature key={item.id} item={item} />
                 ))}
                 <div ref={loaderRef} className={styles.loader}>
                     {isLoadingMore && <span>Загрузка...</span>}

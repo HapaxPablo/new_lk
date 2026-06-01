@@ -6,6 +6,7 @@ import { useUniversalClick } from '@/hooks/useUniversalClick'
 import { InfoRow } from '../InfoRow'
 import { IBrandListItem } from '@/types/brands'
 import Image from 'next/image'
+import { LinkButton } from '../button/LinkButton'
 
 interface CardBrandProps {
     className?: string
@@ -58,13 +59,17 @@ export const CardBrand: React.FC<CardBrandProps> = ({
             </div>
 
             <div className={styles.actionsSection}>
-                <Button
+                {/* TODO: LinkButton подробнее href=brands/{item.slug} */}
+                <LinkButton href={`brands/${item.slug}`} variant="default">
+                    Подробнее
+                </LinkButton>
+                {/* <Button
                     className={styles.button}
                     variant="detail"
                     onClick={(e) => handleUniversalClick(onClick, e)}
                 >
                     Подробнее
-                </Button>
+                </Button> */}
             </div>
         </article>
     )

@@ -16,7 +16,7 @@ export const BrandItems: React.FC<BrandCardProps> = ({
     const router = useRouter()
 
     const handleClickCard = (slug: string) => {
-        router.push(`/brands/${slug}`)
+        // router.push(`/brands/${slug}`)
     }
 
     return (
