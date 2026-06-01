@@ -39,10 +39,10 @@ export async function buildSitemapEntries(): Promise<MetadataRoute.Sitemap> {
   // В списке api/nomenclatures/ нет updated_at — дата = момент сборки sitemap
   const generatedAt = new Date()
 
-  const [nomenclatures, brands] = await Promise.all([
-    fetchAllNomenclaturesForSitemap<INomenclatureItem>(),
-    fetchAllBrandsForSitemap<IBrandListItem>(),
-  ])
+  // Последовательно: при build/CI меньше параллельных коннектов к API
+  const nomenclatures =
+    await fetchAllNomenclaturesForSitemap<INomenclatureItem>()
+  const brands = await fetchAllBrandsForSitemap<IBrandListItem>()
 
   console.info(
     `[sitemap] Loaded ${nomenclatures.length} nomenclatures, ${brands.length} brands`

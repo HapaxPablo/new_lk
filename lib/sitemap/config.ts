@@ -1,11 +1,16 @@
-/** Размер страницы при обходе API 1С (лимит на стороне API может быть меньше). */
-export const SITEMAP_PAGE_SIZE = 500
+/** Бренды: размер страницы при обходе API. */
+export const SITEMAP_BRANDS_PAGE_SIZE = 100
 
 /**
- * Кэш ответов sitemap (секунды).
- * В app/sitemap.ts для export const revalidate нужен тот же литерал (3600).
+ * Номенклатуры: меньший limit — большие ответы рвут соединение (UND_ERR_SOCKET).
  */
-export const SITEMAP_REVALIDATE_SECONDS = 3600
+export const SITEMAP_NOMENCLATURES_PAGE_SIZE = 100
+
+/** Повторы запроса при обрыве соединения. */
+export const SITEMAP_FETCH_RETRIES = 3
+
+/** Таймаут одного запроса к API (мс). */
+export const SITEMAP_FETCH_TIMEOUT_MS = 60_000
 
 /** Защита от бесконечного цикла пагинации. */
 export const SITEMAP_MAX_PAGES = 500
