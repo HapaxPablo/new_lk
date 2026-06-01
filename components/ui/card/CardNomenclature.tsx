@@ -7,6 +7,8 @@ import { formatPrice } from '@/utils'
 import { useUniversalClick } from '@/hooks/useUniversalClick'
 import { Button } from '../button/Button'
 import { useNomenclatureStore } from '@/store/useNomenclatureStore'
+import Link from 'next/link'
+import { LinkButton } from '../button/LinkButton'
 
 interface CardNomenclatureProps {
   className?: string
@@ -137,13 +139,9 @@ export const CardNomenclature: React.FC<CardNomenclatureProps> = ({
       </div>
 
       <div className={styles.actionsSection}>
-        <Button
-          className={styles.button}
-          variant="detail"
-          onClick={(e) => handleUniversalClick(onClick, e)}
-        >
+        <LinkButton href={`nomenclatures/${item.id}`} variant="default">
           Подробнее
-        </Button>
+        </LinkButton>
 
         {codeMP ? (
           <Button

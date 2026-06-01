@@ -9,6 +9,46 @@ const nextConfig: NextConfig = {
     SECRET_COOKIE_PASSWORD: process.env.SECRET_COOKIE_PASSWORD,
   },
 
+  async redirects() {
+    const rules: {
+      source: string
+      has: { type: 'host'; value: string }[]
+      destination: string
+      permanent: boolean
+    }[] = []
+
+    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL
+    if (siteUrl) {
+      try {
+        const origin = new URL(siteUrl)
+        rules.push({
+          source: '/:path*',
+          has: [{ type: 'host', value: `www.${origin.hostname}` }],
+          destination: `${origin.origin}/:path*`,
+          permanent: true,
+        })
+      } catch {
+        // ignore invalid SITE_URL
+      }
+    }
+
+    rules.push({
+      source: '/:path*',
+      has: [{ type: 'host', value: 'www.krasrm.com' }],
+      destination: 'https://krasrm.com/:path*',
+      permanent: true,
+    })
+
+    rules.push({
+      source: '/:path*',
+      has: [{ type: 'host', value: 'www.lk.krasrm.com' }],
+      destination: 'https://lk.krasrm.com/:path*',
+      permanent: true,
+    })
+
+    return rules
+  },
+
   async rewrites() {
     // Используем другой префикс для прокси, чтобы не конфликтовать с локальными API
     const apiUrl =

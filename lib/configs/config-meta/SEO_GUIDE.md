@@ -51,6 +51,11 @@ app/
 public/
 ├── robots.txt                    # Правила для поисковиков
 
+lib/sitemap/
+├── build-entries.ts              # Сбор всех URL для sitemap.xml
+├── fetch-paginated.ts            # Пагинация API 1С (номенклатуры, бренды)
+├── urls.ts                       # SITE_URL и API_1C_URL (как на страницах каталога)
+
 lib/configs/config-meta/
 ├── configMetaData.ts             # Главная конфигурация SEO + Organization данные
 ├── nomenclatures/
