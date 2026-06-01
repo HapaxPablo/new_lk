@@ -51,7 +51,7 @@ export async function buildSitemapEntries(): Promise<MetadataRoute.Sitemap> {
   const tenants = await fetchAllTenantsForSitemap<ITenantsListItem>()
 
   console.info(
-    `[sitemap] Loaded ${nomenclatures.length} nomenclatures, ${brands.length} brands`
+    `[sitemap] Loaded ${nomenclatures.length} nomenclatures, ${brands.length} brands, ${tenants.length} tenants`
   )
 
   const seen = new Set(entries.map((e) => e.url))
@@ -90,11 +90,6 @@ export async function buildSitemapEntries(): Promise<MetadataRoute.Sitemap> {
       changeFrequency: 'weekly',
       priority: 0.7,
     })
-    if (nomenclatures.length === 0 && tenants.length === 0) {
-      console.warn(
-        '[sitemap] No dynamic URLs — check API_1C_URL and public access to api/nomenclatures/ and api/brands/assigned'
-      )
-    }
   }
 
   for (const brand of brands) {
@@ -116,9 +111,9 @@ export async function buildSitemapEntries(): Promise<MetadataRoute.Sitemap> {
     })
   }
 
-  if (nomenclatures.length === 0 && brands.length === 0) {
+  if (nomenclatures.length === 0 && brands.length === 0 && tenants.length === 0) {
     console.warn(
-      '[sitemap] No dynamic URLs — check API_1C_URL and public access to api/nomenclatures/ and api/brands/assigned'
+      '[sitemap] No dynamic URLs — check API_1C_URL and public access to api/nomenclatures/, api/brands/assigned, and api/tenants/grouped'
     )
   }
 
