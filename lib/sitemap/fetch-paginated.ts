@@ -178,7 +178,7 @@ export async function fetchAllBrandsForSitemap<
  * Тенанты: api/tenants/grouped (как /tenants и useTenants — hasMore по count).
  */
 export async function fetchAllTenantsForSitemap<
-  T extends { id: string },
+  T extends { tenantId: string },
 >(): Promise<T[]> {
   const all: T[] = []
   let offset = 0

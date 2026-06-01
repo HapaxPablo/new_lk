@@ -1,12 +1,12 @@
-import { redirectFromWwwToApex } from '@/lib/get-request-host'
+// import { redirectFromWwwToApex } from '@/lib/get-request-host'
 import { getMiddlewareSession } from '@/lib/session'
 import { NextResponse, type NextRequest } from 'next/server'
 
 export async function middleware(request: NextRequest) {
-  const wwwRedirect = redirectFromWwwToApex(request)
-  if (wwwRedirect) {
-    return wwwRedirect
-  }
+  // const wwwRedirect = redirectFromWwwToApex(request)
+  // if (wwwRedirect) {
+  //   return wwwRedirect
+  // }
   const { session, response } = await getMiddlewareSession(request)
 
   const { pathname } = request.nextUrl
