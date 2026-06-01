@@ -4,6 +4,7 @@ import {
   SITEMAP_FETCH_TIMEOUT_MS,
   SITEMAP_MAX_PAGES,
   SITEMAP_NOMENCLATURES_PAGE_SIZE,
+  SITEMAP_TENANTS_PAGE_SIZE,
 } from './config'
 import { buildSitemapApiUrl } from './urls'
 
@@ -76,8 +77,25 @@ async function fetchPaginatedPage<T>(
   }
 }
 
+function shouldFetchNextPage(
+  loaded: number,
+  lastBatchSize: number,
+  totalCount?: number
+): boolean {
+  if (lastBatchSize === 0) {
+    return false
+  }
+
+  if (totalCount !== undefined) {
+    return loaded < totalCount
+  }
+
+  return lastBatchSize > 0
+}
+
 /**
  * Номенклатуры: пагинация по page (как в каталоге).
+ * Ориентируемся на count — API может отдавать меньше limit за запрос.
  */
 export async function fetchAllNomenclaturesForSitemap<
   T extends { id: string },
@@ -85,6 +103,7 @@ export async function fetchAllNomenclaturesForSitemap<
   const all: T[] = []
   let page = 1
   const pageSize = SITEMAP_NOMENCLATURES_PAGE_SIZE
+  let totalCount: number | undefined
 
   while (page <= SITEMAP_MAX_PAGES) {
     const url = buildSitemapApiUrl('api/nomenclatures/', {
@@ -93,9 +112,16 @@ export async function fetchAllNomenclaturesForSitemap<
     })
 
     const data = await fetchPaginatedPage<T>(url)
-    all.push(...data.results)
+    if (data.results.length === 0) {
+      break
+    }
 
-    if (!data.next || data.results.length < pageSize) {
+    all.push(...data.results)
+    if (data.count !== undefined) {
+      totalCount = data.count
+    }
+
+    if (!shouldFetchNextPage(all.length, data.results.length, totalCount)) {
       break
     }
 
@@ -106,7 +132,7 @@ export async function fetchAllNomenclaturesForSitemap<
 }
 
 /**
- * Бренды для публичного каталога: api/brands/assigned (как /brands).
+ * Бренды: api/brands/assigned (как /brands и useBrands — hasMore по count).
  */
 export async function fetchAllBrandsForSitemap<
   T extends { slug: string },
@@ -114,6 +140,7 @@ export async function fetchAllBrandsForSitemap<
   const all: T[] = []
   let offset = 0
   const pageSize = SITEMAP_BRANDS_PAGE_SIZE
+  let totalCount: number | undefined
 
   for (let page = 0; page < SITEMAP_MAX_PAGES; page += 1) {
     const url = buildSitemapApiUrl('api/brands/assigned', {
@@ -122,13 +149,69 @@ export async function fetchAllBrandsForSitemap<
     })
 
     const data = await fetchPaginatedPage<T>(url)
-    all.push(...data.results)
-
-    if (!data.next || data.results.length < pageSize) {
+    if (data.results.length === 0) {
       break
     }
 
-    offset += pageSize
+    all.push(...data.results)
+    if (data.count !== undefined) {
+      totalCount = data.count
+    }
+
+    if (!shouldFetchNextPage(all.length, data.results.length, totalCount)) {
+      break
+    }
+
+    offset += data.results.length
+  }
+
+  if (totalCount !== undefined && all.length < totalCount) {
+    console.warn(
+      `[sitemap] Brands incomplete: loaded ${all.length} of ${totalCount}`
+    )
+  }
+
+  return all
+}
+
+/**
+ * Тенанты: api/tenants/grouped (как /tenants и useTenants — hasMore по count).
+ */
+export async function fetchAllTenantsForSitemap<
+  T extends { id: string },
+>(): Promise<T[]> {
+  const all: T[] = []
+  let offset = 0
+  const pageSize = SITEMAP_TENANTS_PAGE_SIZE
+  let totalCount: number | undefined
+
+  for (let page = 0; page < SITEMAP_MAX_PAGES; page += 1) {
+    const url = buildSitemapApiUrl('api/tenants/grouped', {
+      limit: String(pageSize),
+      offset: String(offset),
+    })
+
+    const data = await fetchPaginatedPage<T>(url)
+    if (data.results.length === 0) {
+      break
+    }
+
+    all.push(...data.results)
+    if (data.count !== undefined) {
+      totalCount = data.count
+    }
+
+    if (!shouldFetchNextPage(all.length, data.results.length, totalCount)) {
+      break
+    }
+
+    offset += data.results.length
+  }
+
+  if (totalCount !== undefined && all.length < totalCount) {
+    console.warn(
+      `[sitemap] Tenants incomplete: loaded ${all.length} of ${totalCount}`
+    )
   }
 
   return all

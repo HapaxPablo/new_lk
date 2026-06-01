@@ -1,11 +1,16 @@
 import type { MetadataRoute } from 'next'
 import { IBrandListItem } from '@/types/brands'
-import { INomenclatureItem } from '@/types/nomenclature'
+import { INomenclatureItem, ITenantsListItem } from '@/types/nomenclature'
 import {
   fetchAllBrandsForSitemap,
   fetchAllNomenclaturesForSitemap,
+  fetchAllTenantsForSitemap,
 } from './fetch-paginated'
-import { absoluteSitePath, getSitemapApiBaseUrl, getSitemapSiteUrl } from './urls'
+import {
+  absoluteSitePath,
+  getSitemapApiBaseUrl,
+  getSitemapSiteUrl,
+} from './urls'
 
 function staticEntries(): MetadataRoute.Sitemap {
   const routes: Array<{
@@ -43,6 +48,7 @@ export async function buildSitemapEntries(): Promise<MetadataRoute.Sitemap> {
   const nomenclatures =
     await fetchAllNomenclaturesForSitemap<INomenclatureItem>()
   const brands = await fetchAllBrandsForSitemap<IBrandListItem>()
+  const tenants = await fetchAllTenantsForSitemap<ITenantsListItem>()
 
   console.info(
     `[sitemap] Loaded ${nomenclatures.length} nomenclatures, ${brands.length} brands`
@@ -67,6 +73,28 @@ export async function buildSitemapEntries(): Promise<MetadataRoute.Sitemap> {
       changeFrequency: 'weekly',
       priority: 0.8,
     })
+  }
+
+  for (const tenant of tenants) {
+    if (!tenant.id) {
+      continue
+    }
+    const url = absoluteSitePath(`/tenants/${tenant.id}`)
+    if (seen.has(url)) {
+      continue
+    }
+    seen.add(url)
+    entries.push({
+      url,
+      lastModified: generatedAt,
+      changeFrequency: 'weekly',
+      priority: 0.7,
+    })
+    if (nomenclatures.length === 0 && tenants.length === 0) {
+      console.warn(
+        '[sitemap] No dynamic URLs — check API_1C_URL and public access to api/nomenclatures/ and api/brands/assigned'
+      )
+    }
   }
 
   for (const brand of brands) {
