@@ -139,7 +139,7 @@ export const CardNomenclature: React.FC<CardNomenclatureProps> = ({
       </div>
 
       <div className={styles.actionsSection}>
-        <LinkButton href={`nomenclatures/${item.id}`} variant="default">
+        <LinkButton href={`/nomenclatures/${item.id}`} variant="default">
           Подробнее
         </LinkButton>
 
