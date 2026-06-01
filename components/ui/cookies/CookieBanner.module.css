@@ -1,0 +1,148 @@
+.banner {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: #1a1a1a;
+  border-top: 1px solid #333;
+  z-index: 1000;
+  animation: slideUp 0.3s ease-out;
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+.content {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.text {
+  flex: 1;
+  color: #fff;
+}
+
+.title {
+  margin: 0 0 8px 0;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.description {
+  margin: 0;
+  font-size: 14px;
+  color: #ccc;
+  line-height: 1.4;
+}
+
+.link {
+  color: #0066cc;
+  text-decoration: none;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+.settings {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 0 20px;
+  border-right: 1px solid #333;
+}
+
+.checkbox {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  color: #ccc;
+
+  input {
+    cursor: pointer;
+
+    &:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+  }
+
+  label {
+    cursor: pointer;
+    margin: 0;
+  }
+}
+
+.actions {
+  display: flex;
+  gap: 10px;
+}
+
+.buttonPrimary,
+.buttonSecondary {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 4px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.buttonPrimary {
+  background: #0066cc;
+  color: #fff;
+
+  &:hover {
+    background: #0052a3;
+  }
+}
+
+.buttonSecondary {
+  background: #333;
+  color: #fff;
+  border: 1px solid #555;
+
+  &:hover {
+    background: #444;
+  }
+}
+
+@media (max-width: 768px) {
+  .content {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .settings {
+    border-right: none;
+    border-top: 1px solid #333;
+    padding: 12px 0 0 0;
+    margin-top: 12px;
+    width: 100%;
+  }
+
+  .actions {
+    width: 100%;
+    flex-wrap: wrap;
+  }
+
+  .buttonPrimary,
+  .buttonSecondary {
+    flex: 1;
+    min-width: 100px;
+  }
+}

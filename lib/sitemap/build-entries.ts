@@ -112,7 +112,11 @@ export async function buildSitemapEntries(): Promise<MetadataRoute.Sitemap> {
     })
   }
 
-  if (nomenclatures.length === 0 && brands.length === 0 && tenants.length === 0) {
+  if (
+    nomenclatures.length === 0 &&
+    brands.length === 0 &&
+    tenants.length === 0
+  ) {
     console.warn(
       '[sitemap] No dynamic URLs — check API_1C_URL and public access to api/nomenclatures/, api/brands/assigned, and api/tenants/grouped'
     )

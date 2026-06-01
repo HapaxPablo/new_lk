@@ -1,0 +1,51 @@
+.container {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 40px 20px;
+  overflow-y: scroll;
+  scrollbar-width: none;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+.article {
+  section {
+    margin-bottom: 32px;
+  }
+
+  h1 {
+    margin-bottom: 24px;
+  }
+
+  h2 {
+    font-size: 20px;
+    margin-top: 24px;
+    margin-bottom: 12px;
+  }
+
+  h3 {
+    font-size: 16px;
+    margin-top: 16px;
+    margin-bottom: 8px;
+  }
+
+  p {
+    line-height: 1.6;
+    margin-bottom: 12px;
+  }
+
+  ul {
+    margin-left: 20px;
+    margin-bottom: 12px;
+
+    li {
+      margin-bottom: 8px;
+    }
+  }
+
+  time {
+    font-weight: 500;
+  }
+}
