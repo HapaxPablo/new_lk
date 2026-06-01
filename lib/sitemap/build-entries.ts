@@ -1,6 +1,7 @@
 import type { MetadataRoute } from 'next'
 import { IBrandListItem } from '@/types/brands'
-import { INomenclatureItem, ITenantsListItem } from '@/types/nomenclature'
+import { INomenclatureItem } from '@/types/nomenclature'
+import { IGroupedTenant } from '@/types/tenants'
 import {
   fetchAllBrandsForSitemap,
   fetchAllNomenclaturesForSitemap,
@@ -48,7 +49,7 @@ export async function buildSitemapEntries(): Promise<MetadataRoute.Sitemap> {
   const nomenclatures =
     await fetchAllNomenclaturesForSitemap<INomenclatureItem>()
   const brands = await fetchAllBrandsForSitemap<IBrandListItem>()
-  const tenants = await fetchAllTenantsForSitemap<ITenantsListItem>()
+  const tenants = await fetchAllTenantsForSitemap<IGroupedTenant>()
 
   console.info(
     `[sitemap] Loaded ${nomenclatures.length} nomenclatures, ${brands.length} brands, ${tenants.length} tenants`
@@ -76,10 +77,10 @@ export async function buildSitemapEntries(): Promise<MetadataRoute.Sitemap> {
   }
 
   for (const tenant of tenants) {
-    if (!tenant.id) {
+    if (!tenant.tenantId) {
       continue
     }
-    const url = absoluteSitePath(`/tenants/${tenant.id}`)
+    const url = absoluteSitePath(`/tenants/${tenant.tenantId}`)
     if (seen.has(url)) {
       continue
     }
