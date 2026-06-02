@@ -36,9 +36,9 @@ export function PlacesGrid({ places, nomenclatures }: PlacesGridProps) {
         toggleAllItems(normalizedPlaces)
     }
 
-    const handleRedirect = (id: string) => {
-        window.open(`/nomenclatures/${id}`, '_blank')
-    }
+    // const handleRedirect = (id: string) => {
+    //     window.open(`/nomenclatures/${id}`, '_blank')
+    // }
 
     return (
         <div className={styles.wrapper}>
@@ -58,7 +58,7 @@ export function PlacesGrid({ places, nomenclatures }: PlacesGridProps) {
                     <CardNomenclature
                         key={place.nomenclatureId}
                         item={place}
-                        onClick={() => handleRedirect(place.nomenclatureId)}
+                    // onClick={() => handleRedirect(place.nomenclatureId)}
                     />
                 ))}
             </div>

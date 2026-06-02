@@ -5,6 +5,7 @@ import { Building2, Hash, MapPinned } from 'lucide-react'
 import { InfoRow } from '../InfoRow'
 import styles from './CardTenant.module.scss'
 import Image from 'next/image'
+import { LinkButton } from '../button/LinkButton'
 
 interface CardTenantProps {
   className?: string
@@ -66,7 +67,10 @@ export const CardTenant: React.FC<CardTenantProps> = ({
             </div>
           )}
         </div>
-
+        <LinkButton href={`tenants/${item.tenantId}`} variant="default">
+          Подробнее
+        </LinkButton>
+        {/* TODO: LinkButton подробнее href=tenants/{id} */}
       </div>
     </article>
   )

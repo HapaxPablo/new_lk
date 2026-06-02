@@ -30,7 +30,6 @@ export const NomenclatureItems: React.FC<NomenclatureCardProps> = ({
     )
 
     // Переход на страницу с расшифровкой
-    router.push(`/nomenclatures/${nomenclature.id}`)
   }
 
   return (
