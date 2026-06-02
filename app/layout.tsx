@@ -162,6 +162,9 @@ export default function RootLayout({
 
                       <Footer />
                       <TooltipModal />
+                      <Suspense fallback={null}>
+                        <CookieBanner />
+                      </Suspense>
                     </div>
                   </NomenclatureStoreProvider>
                 </SWRProvider>

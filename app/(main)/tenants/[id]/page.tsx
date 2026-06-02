@@ -101,7 +101,7 @@ export default async function TenantDetailPage(props: TenantDetailPageProps) {
   const nomenclatureIds = tenant.places.map((p) => p.nomenclatureId)
   const nomenclatures = await getNomenclatures(nomenclatureIds)
 
-  const title = tenant.tenantName || tenant.keyword || 'Арендатор'
+  const title = tenant.brand.name || 'Арендатор'
   const breadcrumbItems = [
     { name: 'Главная', url: `${SITE_URL}` },
     { name: 'Арендаторы', url: `${SITE_URL}/tenants` },
