@@ -66,20 +66,34 @@ export default function PlacesMap({
 
     const initMap = async () => {
       try {
-        const styleUrl =
-          process.env.NEXT_PUBLIC_MAP_STYLE_URL ||
-          'http://192.168.0.8:7777/styles/basic/style.json'
+        // const styleUrl =
+        //   process.env.NEXT_PUBLIC_MAP_STYLE_URL ||
+        //   'http://192.168.0.8:7777/styles/basic/style.json' dev
+
+        const styleUrl = process.env.NEXT_PUBLIC_MAP_STYLE_URL
+        if (!styleUrl) {
+          setError('Карта временно недоступна')
+          return
+        }
 
         map.current = new maplibre.Map({
           container: mapContainer.current!,
           style: styleUrl,
           center: [37.62, 55.75],
           zoom: 10,
+          // transformRequest: (url) => {
+          //   if (url.startsWith('/')) {
+          //     const tileBase =
+          //       process.env.NEXT_PUBLIC_MAP_TILE_SERVER_URL ||
+          //       'http://192.168.0.8:7777'
+          //     return { url: `${tileBase}${url}` }
+          //   }
+          //   return { url }
+          // }, dev
           transformRequest: (url) => {
             if (url.startsWith('/')) {
-              const tileBase =
-                process.env.NEXT_PUBLIC_MAP_TILE_SERVER_URL ||
-                'http://192.168.0.8:7777'
+              const tileBase = process.env.NEXT_PUBLIC_MAP_TILE_SERVER_URL
+              if (!tileBase) return { url }
               return { url: `${tileBase}${url}` }
             }
             return { url }
