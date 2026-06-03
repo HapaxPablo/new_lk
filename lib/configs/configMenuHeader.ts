@@ -37,6 +37,11 @@ export const NAV_ITEMS: NavItem[] = [
     path: '/about',
     icon: Info,
   },
+  {
+    title: 'Площадки',
+    path: '/places',
+    icon: MapPin,
+  },
   // {
   //   title: 'Мои места',
   //   path: '/my-place',

@@ -1,7 +1,7 @@
 'use client'
 
 import Image from 'next/image'
-import { MapPin, MapPinHouse, RussianRuble } from 'lucide-react'
+import { MapPin, MapPinHouse, RussianRuble, Eye } from 'lucide-react'
 import styles from './CardNomenclature.module.scss'
 import { formatPrice } from '@/utils'
 import { useUniversalClick } from '@/hooks/useUniversalClick'
@@ -21,7 +21,7 @@ export const CardNomenclature: React.FC<CardNomenclatureProps> = ({
   item,
   className = '',
   onClick,
-  codeMP = null, //TODO вынести из пропсов, взять в Item и изменить логику использования
+  codeMP = null,
 }) => {
   const { brand, exterior, typeOfPlace, pricePerMonth, brandName } = item
   // Получаем первое изображение для превью
@@ -59,25 +59,13 @@ export const CardNomenclature: React.FC<CardNomenclatureProps> = ({
       <div className={styles.cardContent}>
         <div className={styles.mediaSection}>
           <div className={styles.imageWrapper}>
-            {mainImage ? (
+            {mainImage.length > 0 ? (
               <Image
                 src={mainImage}
                 alt={`Фасад ${brand?.name || 'места'}`}
                 fill
-
                 className={styles.image}
                 sizes="80px"
-                loading="lazy"
-              />
-            ) : logoSrc ? (
-              <Image
-                src={logoSrc}
-                alt={`Логотип ${brand?.name}`}
-                fill
-                className={styles.image}
-                sizes="80px"
-                loading="lazy"
-
               />
             ) : (
               <div className={styles.imagePlaceholder}>
@@ -139,6 +127,7 @@ export const CardNomenclature: React.FC<CardNomenclatureProps> = ({
       </div>
 
       <div className={styles.actionsSection}>
+
         <LinkButton href={`/nomenclatures/${item.id}`} variant="default">
           Подробнее
         </LinkButton>

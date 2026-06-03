@@ -80,7 +80,6 @@ const nextConfig: NextConfig = {
             key: 'Strict-Transport-Security',
             value: 'max-age=63072000; includeSubDomains; preload',
           },
-
           {
             key: 'Access-Control-Allow-Origin',
             value: '*',
@@ -105,18 +104,19 @@ const nextConfig: NextConfig = {
           {
             key: 'Content-Security-Policy',
             value: `
-              default-src 'self' 'unsafe-inline' 'unsafe-eval';
-              script-src 'self' 'unsafe-inline' 'unsafe-eval' https://api-maps.yandex.ru https://yastatic.net https://mc.yandex.ru;
-              style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://yastatic.net;
-              img-src 'self' data: blob: https://*.maps.yandex.net https://api-maps.yandex.ru https://cdn2.thecatapi.com https://yandex.ru https://mc.yandex.ru https://api1.krasrm.com http://192.168.0.8:8000;
-              font-src 'self' data: https://fonts.gstatic.com;
-              connect-src 'self' wss://mc.yandex.ru https://*.yandex.ru https://api.thecatapi.com https://yastatic.net https://mc.yandex.ru https://api1.krasrm.com http://192.168.0.8:8000 ws://192.168.0.8:8000;
-              frame-src 'self' https://yandex.ru https://*.yandex.ru https://yandex.com https://*.yandex.com;
-              object-src 'none';
-              base-uri 'self';
-              form-action 'self';
-              media-src 'self';
-            `
+            default-src 'self' 'unsafe-inline' 'unsafe-eval';
+            script-src 'self' 'unsafe-inline' 'unsafe-eval' https://api-maps.yandex.ru https://yastatic.net https://mc.yandex.ru;
+            style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://yastatic.net;
+            img-src 'self' data: blob: https://*.maps.yandex.net https://api-maps.yandex.ru https://cdn2.thecatapi.com https://yandex.ru https://mc.yandex.ru https://api1.krasrm.com http://192.168.0.8:8000;
+            font-src 'self' data: https://fonts.gstatic.com;
+            connect-src 'self' wss://mc.yandex.ru https://*.yandex.ru https://api.thecatapi.com https://yastatic.net https://mc.yandex.ru https://api1.krasrm.com http://192.168.0.8:8000 ws://192.168.0.8:8000 https://log.api-maps.yandex.ru http://192.168.0.8:7777;
+            worker-src blob:;
+            frame-src 'self' https://yandex.ru https://*.yandex.ru https://yandex.com https://*.yandex.com;
+            object-src 'none';
+            base-uri 'self';
+            form-action 'self';
+            media-src 'self';
+          `
               .replace(/\s+/g, ' ')
               .trim(),
           },

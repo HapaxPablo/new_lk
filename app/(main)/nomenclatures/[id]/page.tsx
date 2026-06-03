@@ -180,7 +180,7 @@ export default async function NomenclatureDetailPage(
           price: pricePerMonth,
         }}
       />
-      <BreadcrumbsSetter title={`${nomenclature.typeOfPlace} ${nomenclature.brand.name}`} />
+      <BreadcrumbsSetter title={`${nomenclature.typeOfPlace} ${nomenclature.brand ? nomenclature.brand.name : ''}`} />
       <div className="flex flex-col bg-gray-200 w-full h-full">
         <Script
           id={`structured-data-${id}`}
@@ -198,25 +198,30 @@ export default async function NomenclatureDetailPage(
                 <Slider images={allImages} autoPlay={true} autoPlayTime={15000} />
               ) : (
                 <div className="w-full h-full min-h-[320px] bg-gray-100 flex items-center justify-center p-4">
-                  {brand.logotype ? (
-                    <Image
-                      src={brand.logotype}
-                      alt="Логотип"
-                      width={200}
-                      height={100}
-                      className="object-contain max-h-full w-auto"
-                      loading="lazy"
-                    />
-                  ) : (
-                    <Image
-                      src="/og-logo.jpg"
-                      alt="Логотип"
-                      width={200}
-                      height={100}
-                      className="object-contain"
-                      loading="lazy"
-                    />
+                  {brand && (
+                    <>
+                      {brand.logotype ? (
+                        <Image
+                          src={brand.logotype}
+                          alt="Логотип"
+                          width={200}
+                          height={100}
+                          className="object-contain max-h-full w-auto"
+                          loading="lazy"
+                        />
+                      ) : (
+                        <Image
+                          src="/og-logo.jpg"
+                          alt="Логотип"
+                          width={200}
+                          height={100}
+                          className="object-contain"
+                          loading="lazy"
+                        />
+                      )}
+                    </>
                   )}
+
                 </div>
               )}
             </div>
@@ -232,17 +237,21 @@ export default async function NomenclatureDetailPage(
           <div className="flex flex-col w-full sm:overflow-y-auto rounded-md shadow-xl">
             <div className="p-4 border-b">
               <div className='flex flex-row gap-3 items-center mb-2'>
-                {brand.logotype && (
-                  <span className="items-center flex">
-                    <Image
-                      src={brand.logotype}
-                      alt="Логотип"
-                      width={180}
-                      height={60}
-                      className="object-contain max-h-full w-auto"
-                      loading='lazy'
-                    />
-                  </span>
+                {brand && (
+                  <>
+                    {brand.logotype && (
+                      <span className="items-center flex">
+                        <Image
+                          src={brand.logotype}
+                          alt="Логотип"
+                          width={180}
+                          height={60}
+                          className="object-contain max-h-full w-auto"
+                          loading='lazy'
+                        />
+                      </span>
+                    )}
+                  </>
                 )}
                 {nameForFront && (
                   <span className="text-sm sm:text-2xl font-bold text-[#1E3961] mb-2 whitespace-pre-line">

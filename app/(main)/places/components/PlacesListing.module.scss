@@ -1,0 +1,20 @@
+.cardGrid {
+  display: grid;
+  place-items: center;
+  gap: 1rem;
+  width: 100%;
+  padding: 0.5rem;
+  grid-template-columns: repeat(2, 320px);
+  grid-auto-rows: 160px;
+  max-height: 520px;
+  overflow-y: auto;
+
+  @media (max-width: 767px) {
+    grid-template-columns: 1fr;
+  }
+
+  @media (max-width: 480px) {
+    gap: 0.75rem;
+    padding: 0.25rem;
+  }
+}

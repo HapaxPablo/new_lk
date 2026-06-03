@@ -23,6 +23,13 @@ const Breadcrumbs = () => {
     if (!rootItem) return null
 
     const isDetail = segments.length > 1
+    console.log('Breadcrumbs.tsx', {
+        pathname,
+        segments,
+        rootSegment,
+        NAV_ITEMS,
+        rootItem,
+    })
 
     return (
         <nav aria-label="Хлебные крошки" className={styles.breadcrumbs}>
@@ -36,7 +43,7 @@ const Breadcrumbs = () => {
             {/* Раздел */}
             {isDetail ? (
                 <Link href={rootItem.path} className={styles.crumb}>
-                    {rootItem.title}
+                    {pathname.includes('/places') ? 'Площадки для рекламы' : rootItem.title}
                 </Link>
             ) : (
                 <span className={`${styles.crumb} ${styles.current}`}>

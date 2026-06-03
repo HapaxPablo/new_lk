@@ -28,6 +28,10 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(new URL('/nomenclatures', request.url))
   }
 
+  if (request.nextUrl.pathname === '/places' && !session.user) {
+    return NextResponse.redirect(new URL('/nomenclatures', request.url))
+  }
+
   // ✅ Защита API-запросов к 1С
   const api1cUrl = new URL(process.env.API_1C_URL!)
   const is1cApiRequest =
@@ -75,13 +79,6 @@ export async function middleware(request: NextRequest) {
 
 export const config = {
   matcher: [
-    /*
-     * Match all request paths except for the ones starting with:
-     * - _next/static (static files)
-     * - _next/image (image optimization files)
-     * - favicon.ico (favicon file)
-     * - proxy-api (API proxy to 1C)
-     */
-    '/((?!_next/static|_next/image|favicon.ico|proxy-api).*)',
+    '/((?!_next/static|_next/image|favicon.ico|proxy-api|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico|css|js)$).*)',
   ],
 }
