@@ -263,31 +263,10 @@ export default function PlacesMap({
   }
 
   return (
-    <>
-      <div className="hidden md:block h-full">
-        <div ref={mapContainer} className="w-full h-full rounded-lg overflow-hidden" />
-      </div>
+    <div className="block h-full">
+      <div ref={mapContainer} className="w-full h-full rounded-lg overflow-hidden" />
+    </div>
 
-      <div className="md:hidden w-full">
-        {!showMobileMap ? (
-          <button
-            onClick={() => setShowMobileMap(true)}
-            className="w-full py-3 bg-blue-500 text-white rounded-lg font-medium hover:bg-blue-600 transition-colors"
-          >
-            Показать карту
-          </button>
-        ) : (
-          <div className="space-y-2">
-            <div ref={mapContainer} className="w-full h-96 rounded-lg overflow-hidden" />
-            <button
-              onClick={() => setShowMobileMap(false)}
-              className="w-full py-2 bg-gray-300 text-gray-700 rounded-lg font-medium hover:bg-gray-400 transition-colors"
-            >
-              Скрыть карту
-            </button>
-          </div>
-        )}
-      </div>
-    </>
+
   )
 }
