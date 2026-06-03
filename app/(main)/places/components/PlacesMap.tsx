@@ -94,6 +94,7 @@ export default function PlacesMap({
           transformRequest: (url) => {
             if (url.startsWith('/')) {
               const tileBase = process.env.NEXT_PUBLIC_MAP_TILE_SERVER_URL
+              console.log('Using map tileBase URL:', tileBase)
               if (!tileBase) return { url }
               return { url: `${tileBase}${url}` }
             }
