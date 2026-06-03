@@ -71,6 +71,7 @@ export default function PlacesMap({
         //   'http://192.168.0.8:7777/styles/basic/style.json' dev
 
         const styleUrl = process.env.NEXT_PUBLIC_MAP_STYLE_URL
+        console.log('Using map style URL:', styleUrl)
         if (!styleUrl) {
           setError('Карта временно недоступна')
           return
