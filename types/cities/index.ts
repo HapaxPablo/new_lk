@@ -30,3 +30,14 @@ export interface ICitiesResponse {
 export interface IGetNameCity {
   name: string
 }
+
+export interface ICitySitemap {
+  id: string
+  name: string
+  slug: string
+  region: string
+  region_name?: string
+  locality_type: string
+  timezone: string | null
+  nomenclature_count?: number
+}

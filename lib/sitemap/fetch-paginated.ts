@@ -6,7 +6,7 @@ import {
   SITEMAP_NOMENCLATURES_PAGE_SIZE,
   SITEMAP_TENANTS_PAGE_SIZE,
 } from './config'
-import { buildSitemapApiUrl } from './urls'
+import { buildSitemapApiUrl, getSitemapApiBaseUrl } from './urls'
 
 export interface PaginatedApiResponse<T> {
   results: T[]
@@ -215,4 +215,69 @@ export async function fetchAllTenantsForSitemap<
   }
 
   return all
+}
+
+export async function fetchAllCitiesForSitemap<T>(): Promise<T[]> {
+  const apiBase = getSitemapApiBaseUrl()
+
+  try {
+    const url = `${apiBase}/api/cities/`
+    console.log(`[sitemap] Fetching cities from: ${url}`)
+
+    const response = await fetch(url, {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      // Таймаут для предотвращения зависания
+      signal: AbortSignal.timeout(30000), // 30 секунд
+    })
+
+    if (!response.ok) {
+      console.error(
+        `[sitemap] Error fetching cities: ${response.status} ${response.statusText}`
+      )
+
+      // Пытаемся получить текст ошибки
+      try {
+        const errorText = await response.text()
+        console.error(`[sitemap] Error response: ${errorText}`)
+      } catch (e) {
+        console.error(`[sitemap] Could not read error response`)
+      }
+
+      return []
+    }
+
+    const data = await response.json()
+
+    // Бэкенд возвращает массив городов (без пагинации)
+    const cities = Array.isArray(data) ? data : data.results || []
+
+    console.log(`[sitemap] ✓ Fetched ${cities.length} cities`)
+
+    // Выводим примеры городов для отладки
+    if (cities.length > 0) {
+      const sampleSize = Math.min(5, cities.length)
+      console.log(`[sitemap] Sample cities (first ${sampleSize}):`)
+      cities.slice(0, sampleSize).forEach((city: any, index: number) => {
+        console.log(
+          `[sitemap]   ${index + 1}. ${city.name} (slug: ${city.slug}, nomenclatures: ${city.nomenclature_count || 0})`
+        )
+      })
+    }
+
+    return cities
+  } catch (error) {
+    if (error instanceof DOMException && error.name === 'TimeoutError') {
+      console.error('[sitemap] ❌ Timeout fetching cities (30s)')
+    } else if (error instanceof TypeError && error.message.includes('fetch')) {
+      console.error(
+        '[sitemap] ❌ Network error fetching cities:',
+        error.message
+      )
+    } else {
+      console.error('[sitemap] ❌ Error fetching cities:', error)
+    }
+    return []
+  }
 }

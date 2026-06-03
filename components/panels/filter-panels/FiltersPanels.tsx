@@ -16,6 +16,7 @@ import styles from './FiltersPanel.module.scss'
 import dynamic from 'next/dynamic'
 import LoaderSkeleton from '@/components/ui/loader/LoaderSkeleton'
 import StatusSelect from './status-select/StatusSelect'
+import { CitySelect } from './cities-select/CitySelect'
 const BrandSelect = dynamic(
   () =>
     import('../filter-panels/brand-select/BrandSelect').then((mod) => ({
@@ -52,6 +53,7 @@ const FiltersPanel = ({ isOpen, onClose }: FiltersPanelProps): JSX.Element => {
   const brandSelectRef = useRef<{ handleClearAll: () => void }>(null)
   const counterpartySelectRef = useRef<{ handleClearAll: () => void }>(null)
   const statusRef = useRef<{ handleClearAll: () => void }>(null)
+  const citySelectRef = useRef<{ handleClearAll: () => void }>(null)
 
   const [currentFilters, setCurrentFilters] = useState<ISavedFilters>({})
   const [savePermanently, setSavePermanently] = useState<boolean>(false)
@@ -141,15 +143,19 @@ const FiltersPanel = ({ isOpen, onClose }: FiltersPanelProps): JSX.Element => {
     setCurrentFilters({})
     clearFiltersFromStorage()
 
-    // if (brandSelectRef.current) {
-    //   brandSelectRef.current.handleClearAll()
-    // }
-    // if (statusRef.current) {
-    //   statusRef.current.handleClearAll()
-    // }
-    // if (counterpartySelectRef.current) {
-    //   counterpartySelectRef.current.handleClearAll()
-    // }
+    // Очищаем все селекты
+    if (brandSelectRef.current) {
+      brandSelectRef.current.handleClearAll()
+    }
+    if (statusRef.current) {
+      statusRef.current.handleClearAll()
+    }
+    if (counterpartySelectRef.current) {
+      counterpartySelectRef.current.handleClearAll()
+    }
+    if (citySelectRef.current) {
+      citySelectRef.current.handleClearAll()
+    }
   }
 
   const getCurrentValue = (key: string): string => {
@@ -163,8 +169,14 @@ const FiltersPanel = ({ isOpen, onClose }: FiltersPanelProps): JSX.Element => {
   const handleCaChange = (counterpartyId: string) => {
     handleFilterChange('counterparty_id', counterpartyId)
   }
+
   const handleStatusChange = (status: string) => {
     handleFilterChange('status', status)
+  }
+
+  const handleCityChange = (cityName: string) => {
+    // Город не сохраняем в фильтры, так как происходит редирект
+    // handleFilterChange('city', cityName)
   }
 
   return (
@@ -223,6 +235,16 @@ const FiltersPanel = ({ isOpen, onClose }: FiltersPanelProps): JSX.Element => {
                 ? 'Фильтры сохранятся после закрытия браузера'
                 : 'Фильтры очистятся при закрытии вкладки'}
             </div>
+          </div>
+
+          <div className={styles.filterGroup}>
+            <label className={styles.filterLabel}>Города</label>
+            <CitySelect
+              ref={citySelectRef}
+              value={getCurrentValue('city')}
+              onChange={handleCityChange}
+              placeholder="Поиск города..."
+            />
           </div>
 
           <div className={styles.filterGroup}>
