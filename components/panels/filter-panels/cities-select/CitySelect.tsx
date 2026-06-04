@@ -125,7 +125,7 @@ export const CitySelect = forwardRef(
 
             const { scrollTop, scrollHeight, clientHeight } = optionsContainerRef.current
             if (scrollHeight - scrollTop - clientHeight < 100) {
-                loadCities(searchTerm, false)
+                loadCities(searchTerm)
             }
         }, [loadingMore, hasMore, searchTerm, loadCities])
 

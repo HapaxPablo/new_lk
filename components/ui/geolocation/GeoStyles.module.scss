@@ -1,5 +1,10 @@
 .geoIcon {
-  stroke: var(--warning-color);
+  stroke: var(--background);
+  transition: stroke 0.2s;
+}
+
+.geoIconActive {
+  stroke: var(--warning-color-dark);
 }
 
 .loadingContainer {
@@ -39,6 +44,10 @@
   cursor: pointer;
   transition: background-color 0.2s;
   font-size: 0.875rem;
+
+  :hover {
+    stroke: var(--warning-color);
+  }
 
   // &:hover {
   //     background-color: rgb(249, 250, 251); // gray-50

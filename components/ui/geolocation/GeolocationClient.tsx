@@ -1,81 +1,75 @@
+// components/GeolocationClient.tsx
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef, useCallback } from 'react'
 import { useGeolocation } from '@/hooks/useGeolocation'
-import { useCityDetection } from '@/hooks/useCityDetection'
+import { useCityDetection, type City } from '@/hooks/useCityDetection'
 import { ModalWrapper } from '@/components/modal/ModalWrapper'
 import { useModal } from '@/providers/modal/ModalProvider'
 import { LocationPermissionModal } from './LocationPermissionModal'
 import { CityConfirmationModal } from './CityConfirmationModal'
 import { CityDisplay } from './CityDisplay'
+import { useGeoStore } from '@/store/geoStore'
 
 export default function GeolocationClient() {
   const permissionModal = useModal('location_permission')
   const cityModal = useModal('city_confirmation')
   const [isClient, setIsClient] = useState(false)
-  const [selectedCity, setSelectedCity] = useState<string | null>(null)
-  const [isInitialized, setIsInitialized] = useState(false)
+
+  // Флаги для предотвращения повторных действий
+  const locationCheckStarted = useRef(false)
+  const cityDetectionStarted = useRef(false)
+  const permissionListenerSet = useRef(false)
+
+  const {
+    selectedCity,
+    isInitialized,
+    setSelectedCity,
+    setInitialized,
+    setDetectedCity,
+    clearCity,
+  } = useGeoStore()
 
   const {
     coordinates,
     loading: geoLoading,
-    error: geoError,
     getLocation,
   } = useGeolocation()
 
   const {
-    detectedCity,
     citiesList,
     loading: cityLoading,
+    detectedCity: hookDetectedCity,
     detectCity,
     confirmCity,
     selectCity,
   } = useCityDetection()
 
-  // Загружаем сохранённый город при загрузке
+  // Инициализация на клиенте - ТОЛЬКО ОДИН РАЗ
   useEffect(() => {
     setIsClient(true)
 
-    const loadSavedCity = () => {
-      const savedCity = localStorage.getItem('selectedCity')
-      console.log('Saved city from localStorage:', savedCity)
-
-      if (savedCity) {
-        try {
-          const city = JSON.parse(savedCity)
-          setSelectedCity(city.name)
-          setIsInitialized(true)
-          console.log('City loaded:', city.name)
-        } catch (e) {
-          console.error('Error parsing saved city', e)
-          setIsInitialized(false)
-        }
-      } else {
-        console.log('No saved city found')
-        setIsInitialized(false)
-      }
+    // Проверяем, есть ли уже сохраненный город в store
+    const savedCity = useGeoStore.getState().selectedCity
+    if (savedCity) {
+      console.log('City loaded from store:', savedCity.name)
+      setInitialized(true)
+      locationCheckStarted.current = true // Не нужно запрашивать геолокацию
     }
-
-    loadSavedCity()
-  }, [])
+  }, []) // Пустой массив - только при монтировании
 
   // Слушаем событие изменения города
   useEffect(() => {
-    const handleCityChange = (event: CustomEvent) => {
+    const handleCityChange = (event: CustomEvent<City>) => {
       console.log('City changed event:', event.detail)
-      setSelectedCity(event.detail.name)
-      setIsInitialized(true)
+      setSelectedCity(event.detail)
     }
 
     window.addEventListener('cityChanged', handleCityChange as EventListener)
-
     return () => {
-      window.removeEventListener(
-        'cityChanged',
-        handleCityChange as EventListener
-      )
+      window.removeEventListener('cityChanged', handleCityChange as EventListener)
     }
-  }, [])
+  }, [setSelectedCity])
 
   // Слушаем событие открытия селектора города
   useEffect(() => {
@@ -85,22 +79,21 @@ export default function GeolocationClient() {
     }
 
     window.addEventListener('openCitySelector', handleOpenSelector)
-
     return () => {
       window.removeEventListener('openCitySelector', handleOpenSelector)
     }
-  }, [])
+  }, [cityModal])
 
-  // Проверяем геопозицию только если город не выбран
+  // Проверяем геопозицию - ТОЛЬКО ОДИН РАЗ
   useEffect(() => {
-    if (!isClient || isInitialized) {
-      console.log('Skipping location check - already initialized or not client')
+    if (!isClient || isInitialized || locationCheckStarted.current) {
       return
     }
 
+    locationCheckStarted.current = true
+
     const checkLocation = async () => {
       console.log('Checking location, no city selected')
-
       const hasPermission = await checkGeolocationPermission()
       console.log('Has permission:', hasPermission)
 
@@ -112,105 +105,116 @@ export default function GeolocationClient() {
     }
 
     checkLocation()
-  }, [isClient, isInitialized, getLocation])
+  }, [isClient, isInitialized]) // Убраны getLocation и permissionModal
 
-  // Когда получили координаты, определяем город - ФИКС
+  // Когда получили координаты, определяем город - ТОЛЬКО ОДИН РАЗ
   useEffect(() => {
-    console.log('*** COORDS EFFECT ***', {
-      hasCoords: !!coordinates,
-      detectedCity: !!detectedCity,
-      cityLoading,
-      isInitialized,
-    })
-
-    if (coordinates && !detectedCity && !cityLoading && !isInitialized) {
-      console.log(
-        '🚀 CALLING detectCity:',
-        coordinates.latitude.toFixed(2),
-        coordinates.longitude.toFixed(2)
-      )
-      detectCity(coordinates.latitude, coordinates.longitude)
+    if (!coordinates || cityDetectionStarted.current || isInitialized) {
+      return
     }
-  }, [coordinates, detectedCity, cityLoading, detectCity, isInitialized])
 
-  // Слушаем изменения разрешения геолокации
+    cityDetectionStarted.current = true
+
+    console.log(
+      '🚀 CALLING detectCity:',
+      coordinates.latitude.toFixed(2),
+      coordinates.longitude.toFixed(2)
+    )
+    detectCity(coordinates.latitude, coordinates.longitude)
+  }, [coordinates, isInitialized]) // Убран detectCity из зависимостей
+
+  // Синхронизируем detectedCity с Zustand store
   useEffect(() => {
-    if (!navigator.permissions || selectedCity || isInitialized) return
+    if (hookDetectedCity && !useGeoStore.getState().detectedCity) {
+      setDetectedCity(hookDetectedCity)
+    }
+  }, [hookDetectedCity, setDetectedCity])
+
+  // Слушаем изменения разрешения геолокации - ТОЛЬКО ОДИН РАЗ
+  useEffect(() => {
+    if (!navigator.permissions || permissionListenerSet.current || isInitialized) {
+      return
+    }
+
+    permissionListenerSet.current = true
 
     navigator.permissions
       .query({ name: 'geolocation' as PermissionName })
-      .then((permissionStatus) => {
-        console.log('Permission status:', permissionStatus.state)
-        if (permissionStatus.state === 'granted') {
+      .then((status) => {
+        console.log('Permission status:', status.state)
+
+        if (status.state === 'granted' && !locationCheckStarted.current) {
+          locationCheckStarted.current = true
           getLocation()
         }
-        permissionStatus.onchange = () => {
-          console.log('Permission changed:', permissionStatus.state)
-          if (permissionStatus.state === 'granted') {
+
+        status.onchange = () => {
+          console.log('Permission changed:', status.state)
+          if (status.state === 'granted' && !locationCheckStarted.current) {
+            locationCheckStarted.current = true
             getLocation()
           }
         }
       })
       .catch((err) => console.error('Permission query error:', err))
-  }, [getLocation, selectedCity, isInitialized])
+  }, [isInitialized]) // Пустой массив для однократного выполнения
 
   // Когда город определён, показываем модалку подтверждения
   useEffect(() => {
-    console.log('Modal check:', {
-      detectedCity,
-      cityLoading,
-      isInitialized,
-      cityModalIsOpen: cityModal.isOpen,
-    })
-
-    if (detectedCity && !cityLoading && !isInitialized && detectedCity.name) {
-      console.log('🎉 SHOWING CITY MODAL:', detectedCity.name)
-      cityModal.openModal()
+    if (
+      hookDetectedCity &&
+      !cityLoading &&
+      !isInitialized &&
+      hookDetectedCity.name &&
+      !cityModal.isOpen
+    ) {
+      console.log('🎉 SHOWING CITY MODAL:', hookDetectedCity.name)
+      // Небольшая задержка чтобы избежать конфликтов
+      setTimeout(() => {
+        cityModal.openModal()
+      }, 100)
     }
-  }, [detectedCity, cityLoading, isInitialized])
+  }, [hookDetectedCity, cityLoading, isInitialized, cityModal])
 
-  const handlePermissionGranted = () => {
+  const handlePermissionGranted = useCallback(() => {
     console.log('Permission granted')
     permissionModal.closeModal()
-    getLocation()
-  }
+    if (!locationCheckStarted.current) {
+      locationCheckStarted.current = true
+      getLocation()
+    }
+  }, [permissionModal, getLocation])
 
-  const handleCityConfirm = (isCorrect: boolean) => {
-    console.log('City confirmed:', isCorrect, detectedCity)
+  const handleCityConfirm = useCallback((isCorrect: boolean) => {
+    console.log('City confirmed:', isCorrect, hookDetectedCity)
 
-    if (isCorrect && detectedCity && detectedCity.name) {
-      confirmCity(detectedCity)
-      setSelectedCity(detectedCity.name)
-      setIsInitialized(true)
-    } else if (!isCorrect) {
-      console.log('User said no, showing city selector')
+    if (isCorrect && hookDetectedCity && hookDetectedCity.name) {
+      confirmCity(hookDetectedCity)
     }
     cityModal.closeModal()
-  }
+  }, [confirmCity, cityModal, hookDetectedCity])
 
-  const handleCitySelect = (city: string) => {
-    console.log('City selected:', city)
-    selectCity(city)
-    setSelectedCity(city)
-    setIsInitialized(true)
+  const handleCitySelect = useCallback((cityName: string) => {
+    console.log('City selected:', cityName)
+    selectCity(cityName)
     cityModal.closeModal()
-  }
+  }, [selectCity, cityModal])
 
-  const handleCityChange = () => {
+  const handleCityChange = useCallback(() => {
     console.log('Changing city')
-    localStorage.removeItem('selectedCity')
-    setSelectedCity(null)
-    setIsInitialized(false)
+    clearCity()
+    locationCheckStarted.current = false
+    cityDetectionStarted.current = false
+    permissionListenerSet.current = false
     cityModal.openModal()
-  }
+  }, [clearCity, cityModal])
 
-  // Не рендерим на сервере
   if (!isClient) return null
 
   return (
     <>
       <CityDisplay
-        selectedCity={selectedCity}
+        selectedCity={selectedCity?.name || null}
         onCityChange={handleCityChange}
         isLoading={geoLoading || cityLoading}
       />
@@ -221,7 +225,7 @@ export default function GeolocationClient() {
 
       <ModalWrapper id="city_confirmation" title="Подтверждение города">
         <CityConfirmationModal
-          detectedCity={detectedCity}
+          detectedCity={hookDetectedCity}
           citiesList={citiesList}
           loading={cityLoading}
           onConfirm={handleCityConfirm}
@@ -232,7 +236,6 @@ export default function GeolocationClient() {
   )
 }
 
-// Вспомогательная функция проверки разрешения
 async function checkGeolocationPermission(): Promise<boolean> {
   if (!navigator.permissions) return false
 

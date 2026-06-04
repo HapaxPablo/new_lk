@@ -69,8 +69,8 @@ export function CityDisplay({
           onClick={() => setIsOpen(!isOpen)}
           className={styles.cityButton}
         >
-          <Navigation className={styles.geoIcon} />
-          <span className={styles.citySelectedText}>{selectedCity}</span>
+          <Navigation className={styles.geoIcon + ' ' + (isOpen ? styles.geoIconActive : '')} />
+          {/* <span className={styles.citySelectedText}>{selectedCity}</span> */}
         </button>
 
         {/* Дропдаун меню */}

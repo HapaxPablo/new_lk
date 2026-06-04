@@ -59,16 +59,13 @@ export default function PlacesMap({
   const popup = useRef<Popup | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [isLoaded, setIsLoaded] = useState(false)
-  const [showMobileMap, setShowMobileMap] = useState(false)
+
 
   useEffect(() => {
     if (!mapContainer.current) return
 
     const initMap = async () => {
       try {
-        // const styleUrl =
-        //   process.env.NEXT_PUBLIC_MAP_STYLE_URL ||
-        //   'http://192.168.0.8:7777/styles/basic/style.json' dev
 
         const styleUrl = process.env.NEXT_PUBLIC_MAP_STYLE_URL
         console.log('Using map style URL:', styleUrl)
@@ -80,17 +77,9 @@ export default function PlacesMap({
         map.current = new maplibre.Map({
           container: mapContainer.current!,
           style: styleUrl,
-          center: [37.62, 55.75],
+          center: [92.52, 56.00],
+          attributionControl: false,
           zoom: 10,
-          // transformRequest: (url) => {
-          //   if (url.startsWith('/')) {
-          //     const tileBase =
-          //       process.env.NEXT_PUBLIC_MAP_TILE_SERVER_URL ||
-          //       'http://192.168.0.8:7777'
-          //     return { url: `${tileBase}${url}` }
-          //   }
-          //   return { url }
-          // }, dev
           transformRequest: (url) => {
             if (url.startsWith('/')) {
               const tileBase = process.env.NEXT_PUBLIC_MAP_TILE_SERVER_URL
@@ -102,10 +91,32 @@ export default function PlacesMap({
           },
         })
 
-        // once('idle') вместо on('load') — срабатывает даже если отдельные
-        // source упали с ошибкой (например, vector tiles 404)
         map.current.once('idle', () => {
           if (!map.current) return
+
+          const style = map.current.getStyle()
+          const layers = style?.layers || []
+
+          const hidePatterns = [
+
+            'landcover',     // покрытие земли
+            'aeroway',       // аэропорты
+            'contour',       // горизонтали
+            'hillshade',     // тени рельефа
+          ]
+
+          layers.forEach((layer: any) => {
+            const layerId = layer.id.toLowerCase()
+            const shouldHide = hidePatterns.some(pattern => layerId.includes(pattern))
+
+            if (shouldHide && layer.type !== 'background') {
+              try {
+                map.current?.setLayoutProperty(layer.id, 'visibility', 'none')
+              } catch (e) {
+                // Пропускаем слои, которые нельзя изменить
+              }
+            }
+          })
 
           const geojson = buildGeoJSON(places)
 
@@ -117,6 +128,7 @@ export default function PlacesMap({
             clusterRadius: 50,
           })
 
+          // Кластеры — кружки
           map.current.addLayer({
             id: 'clusters',
             type: 'circle',
@@ -124,11 +136,22 @@ export default function PlacesMap({
             filter: ['has', 'point_count'],
             paint: {
               'circle-color': '#3b82f6',
-              'circle-radius': ['step', ['get', 'point_count'], 20, 100, 30, 750, 40],
+              'circle-radius': [
+                'interpolate', ['linear'], ['zoom'],
+                // zoom 0-10: маленькие кластеры
+                0, 15,
+                10, ['step', ['get', 'point_count'], 20, 100, 30, 750, 40],
+                // zoom 10-15: увеличиваются
+                12, ['step', ['get', 'point_count'], 30, 100, 45, 750, 60],
+                // zoom 15+: ещё больше
+                15, ['step', ['get', 'point_count'], 40, 100, 60, 750, 80],
+                18, ['step', ['get', 'point_count'], 55, 100, 80, 750, 100],
+              ],
               'circle-opacity': 0.8,
             },
           })
 
+          // Количество внутри кластеров
           map.current.addLayer({
             id: 'cluster-count',
             type: 'symbol',
@@ -137,12 +160,19 @@ export default function PlacesMap({
             layout: {
               'text-field': ['get', 'point_count'],
               'text-font': ['Open Sans Semibold', 'Arial Unicode MS Bold'],
-              'text-size': 12,
+              'text-size': [
+                'interpolate', ['linear'], ['zoom'],
+                0, 10,
+                10, 12,
+                14, 16,
+                18, 22,
+              ],
               'text-allow-overlap': true,
             },
             paint: { 'text-color': '#fff' },
           })
 
+          // Одиночные точки — кружки побольше
           map.current.addLayer({
             id: 'unclustered-point',
             type: 'circle',
@@ -150,41 +180,139 @@ export default function PlacesMap({
             filter: ['!', ['has', 'point_count']],
             paint: {
               'circle-color': '#ef4444',
-              'circle-radius': 8,
-              'circle-opacity': 0.8,
-              'circle-stroke-width': 2,
+              'circle-radius': [
+                'interpolate', ['linear'], ['zoom'],
+                0, 10,    // на минимальном зуме — маленький
+                10, 20,   // средний зум
+                14, 30,   // большой зум
+                18, 45,   // максимальный зум
+              ],
+              'circle-opacity': 0.85,
+              'circle-stroke-width': [
+                'interpolate', ['linear'], ['zoom'],
+                0, 1,
+                14, 2,
+                18, 3,
+              ],
               'circle-stroke-color': '#fff',
             },
           })
 
-          map.current.on('click', 'clusters', (e) => {
-            const clusterId = (e.features?.[0]?.properties as any)?.cluster_id
-            const source = map.current?.getSource('places') as any
-            if (!source || !clusterId) return
-            source.getClusterExpansionZoom(clusterId, (err: any, zoom: number) => {
-              if (err || !map.current || !e.features?.[0]) return
-              map.current.easeTo({
-                center: (e.features[0].geometry as any).coordinates,
-                zoom,
-              })
+          // Текст nameForFront внутри одиночных кружков
+          map.current.addLayer({
+            id: 'unclustered-point-label',
+            type: 'symbol',
+            source: 'places',
+            filter: ['!', ['has', 'point_count']],
+            layout: {
+              'text-field': ['get', 'title'],
+              'text-font': ['Open Sans Semibold', 'Arial Unicode MS Bold'],
+              'text-size': [
+                'interpolate', ['linear'], ['zoom'],
+                0, 7,     // мелкий текст на дальнем зуме
+                10, 9,
+                14, 11,
+                18, 14,   // крупный текст на близком зуме
+              ],
+              'text-max-width': [
+                'interpolate', ['linear'], ['zoom'],
+                0, 6,     // мало места — сильнее обрезаем
+                10, 8,
+                14, 12,
+                18, 15,   // много места — показываем больше текста
+              ],
+              'text-line-height': 1.1,
+              'text-allow-overlap': false,
+              'text-optional': false,
+              'text-ignore-placement': false,
+            },
+            paint: {
+              'text-color': 'black',
+              'text-halo-color': [
+                'interpolate', ['linear'], ['zoom'],
+                0, '#ef4444',
+                14, 'rgba(239, 68, 68, 0.5)',
+                18, 'rgba(239, 68, 68, 0)',
+              ],
+              'text-halo-width': [
+                'interpolate', ['linear'], ['zoom'],
+                0, 1.5,
+                18, 0,
+              ],
+            },
+          })
+
+
+          // Универсальный обработчик клика по карте
+          map.current.on('click', (e) => {
+            if (!map.current) return
+
+            // Ищем кластеры под курсором
+            const clusterFeatures = map.current.queryRenderedFeatures(e.point, {
+              layers: ['clusters']
             })
-          })
 
-          map.current.on('click', 'unclustered-point', (e) => {
-            if (!map.current || !e.features?.[0]) return
-            const feature = e.features[0]
-            const coordinates = (feature.geometry as any).coordinates
-            const props = feature.properties as any
-            popup.current?.remove()
-            popup.current = new Popup({ offset: 25, closeButton: true })
-              .setLngLat(coordinates)
-              .setHTML(
-                `<div class="text-sm"><strong>${props.address || props.title}</strong><br/><span class="text-gray-600">${props.brand}</span></div>`
+            // Ищем одиночные точки под курсором
+            const pointFeatures = map.current.queryRenderedFeatures(e.point, {
+              layers: ['unclustered-point']
+            })
+
+            // Если есть кластер и кликнули именно по нему (не мимо)
+            if (clusterFeatures.length > 0) {
+              const feature = clusterFeatures[0]
+
+              // Дополнительная проверка: расстояние от центра кружка до точки клика
+              const coordinates = (feature.geometry as any).coordinates
+              const clickPoint = map.current.project(coordinates)
+              const distance = Math.sqrt(
+                Math.pow(e.point.x - clickPoint.x, 2) +
+                Math.pow(e.point.y - clickPoint.y, 2)
               )
-              .addTo(map.current)
-            onPlaceSelect?.(props.id)
+
+              // Радиус кружка кластера (возьмите из вашего circle-radius, примерно)
+              const radius = 25
+
+              if (distance <= radius && feature.properties?.cluster_id) {
+                const source = map.current.getSource('places') as any
+                if (!source) return
+
+                source.getClusterExpansionZoom(
+                  feature.properties.cluster_id,
+                  (err: any, expansionZoom: number) => {
+                    if (err || !map.current) return
+
+                    const currentZoom = map.current.getZoom()
+                    const targetZoom = Math.min(currentZoom + 2, expansionZoom)
+
+                    map.current.easeTo({
+                      center: coordinates,
+                      zoom: targetZoom,
+                      duration: 500,
+                    })
+                  }
+                )
+              }
+              return // Если кликнули по кластеру — выходим
+            }
+
+            // Если есть одиночная точка
+            if (pointFeatures.length > 0) {
+              const feature = pointFeatures[0]
+              const coordinates = (feature.geometry as any).coordinates
+              const props = feature.properties as any
+
+              popup.current?.remove()
+              popup.current = new Popup({ offset: 25, closeButton: true })
+                .setLngLat(coordinates)
+                .setHTML(
+                  `<div class="text-sm"><strong>${props.address || props.title}</strong><br/><span class="text-gray-600">${props.brand}</span></div>`
+                )
+                .addTo(map.current)
+              onPlaceSelect?.(props.id)
+            }
           })
 
+          // Курсоры
           map.current.on('mouseenter', 'clusters', () => {
             if (map.current) map.current.getCanvas().style.cursor = 'pointer'
           })

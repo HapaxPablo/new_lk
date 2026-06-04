@@ -1,4 +1,6 @@
-import { useState, useCallback } from 'react'
+// hooks/useGeolocation.ts
+import { useState, useCallback, useRef } from 'react'
+import { useGeoStore } from '@/store/geoStore'
 
 interface Coordinates {
   latitude: number
@@ -10,14 +12,22 @@ export function useGeolocation() {
   const [coordinates, setCoordinates] = useState<Coordinates | null>(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const requestInProgress = useRef(false) // Флаг для предотвращения повторных запросов
 
   const getLocation = useCallback(() => {
+    // Предотвращаем повторные запросы
+    if (requestInProgress.current) {
+      console.log('GEO request already in progress, skipping')
+      return
+    }
+
     if (!navigator.geolocation) {
       setError('Геолокация не поддерживается вашим браузером')
       return
     }
 
     console.log('=== GEO REQUEST START ===')
+    requestInProgress.current = true
     setLoading(true)
     setError(null)
 
@@ -28,12 +38,20 @@ export function useGeolocation() {
           position.coords.latitude,
           position.coords.longitude
         )
-        setCoordinates({
+
+        const newCoordinates = {
           latitude: position.coords.latitude,
           longitude: position.coords.longitude,
           accuracy: position.coords.accuracy,
-        })
+        }
+
+        setCoordinates(newCoordinates)
+
+        // Сохраняем координаты в Zustand store
+        useGeoStore.getState().setCoordinates(newCoordinates)
+
         setLoading(false)
+        requestInProgress.current = false
       },
       (err) => {
         console.error('GEO ERROR:', err.code, err.message)
@@ -53,6 +71,7 @@ export function useGeolocation() {
 
         setError(errorMessage)
         setLoading(false)
+        requestInProgress.current = false
       },
       {
         enableHighAccuracy: false,
@@ -61,7 +80,7 @@ export function useGeolocation() {
       }
     )
     console.log('GEO requested, timeout 8s')
-  }, [])
+  }, []) // Пустой массив зависимостей, так как используем ref
 
   return {
     coordinates,
