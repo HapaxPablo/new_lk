@@ -19,45 +19,65 @@ export function generateNomenclatureMetadata({
     article,
     pricePerMonth,
     nameForFront,
+    formattedAddress,
   } = nomenclature
 
-  const fullTitle = `${nameForFront} | Агентство активной рекламы КрасРМ`
-  const canonicalUrl = `${SITE_URL}/nomenclatures/${id}`
+  // Получаем адрес из main_info или других полей
+  const address = formattedAddress.name || ''
+  const fullName = address ? `${nameForFront} ${address}` : nameForFront
 
-  const metaDescription = main_info.description
-    ? `${main_info.description.substring(0, 160)}${main_info.description.length > 160 ? '...' : ''}`
-    : `Информация о номенклатуре ${main_info.name}. ${brand ? `Бренд: ${brand.name}.` : ''} Артикул: ${article}.`
+  // Шаблонный title для карточки товара
+  const title = `Размещение Indoor рекламы в помещении ${fullName}`
+
+  // Шаблонный h1 (будет использоваться на странице)
+  const h1 = `Размещение ролика на радио ${fullName}`
+
+  // Шаблонный description
+  const phoneNumber = '8 800 222 59 38' // Можно вынести в конфиг
+  const description = main_info.description
+    ? main_info.description.substring(0, 160)
+    : `Размещение аудио и видеорекламы в помещении по адресу ${fullName}. Звоните: ☎ ${phoneNumber}`
+
+  const canonicalUrl = `${SITE_URL}/nomenclatures/${id}`
 
   const images = [...exterior, ...interior]
   const mainImage = images.length > 0 ? images[0].source : null
 
   return {
-    title: fullTitle,
-    description: metaDescription,
+    title,
+    description,
+    // Передаем h1 через другие метаданные для использования на странице
+    other: {
+      'page-h1': h1,
+      'og:price:amount': pricePerMonth || '0',
+      'og:price:currency': 'RUB',
+    },
     keywords: [
+      'indoor реклама',
+      'реклама в помещении',
+      fullName,
       main_info.name,
       String(article),
       brand?.name || '',
-      'номенклатура',
-      'реклама',
-      'места размещения',
-      'КрасРМ',
+      'размещение рекламы',
+      'Красноярск',
+      'RMC',
       nomenclature.contentType,
       nomenclature.typeOfPlace,
     ].filter(Boolean),
     openGraph: {
-      title: fullTitle,
-      description: metaDescription,
-      type: 'website', // ✅ Измено с 'article' на 'website'
+      title,
+      description,
+      type: 'website',
       url: canonicalUrl,
-      siteName: 'КрасРМ',
+      siteName: 'RMC',
       images: mainImage
         ? [
             {
               url: mainImage,
               width: 800,
               height: 600,
-              alt: main_info.name,
+              alt: fullName,
               type: 'image/jpeg',
             },
           ]
@@ -66,17 +86,16 @@ export function generateNomenclatureMetadata({
               url: `${SITE_URL}/logo_footer.svg`,
               width: 1200,
               height: 630,
-              alt: 'КрасРМ',
+              alt: 'RMC Indoor реклама',
             },
           ],
       locale: 'ru_RU',
     },
     twitter: {
       card: 'summary_large_image',
-      title: fullTitle,
-      description: metaDescription,
+      title,
+      description,
       images: mainImage ? [mainImage] : [`${SITE_URL}/logo_footer.svg`],
-      creator: '@krasrm', // ← Опционально, если есть Twitter аккаунт
     },
     alternates: {
       canonical: canonicalUrl,
@@ -92,18 +111,14 @@ export function generateNomenclatureMetadata({
         'max-snippet': -1,
       },
     },
-    other: {
-      'og:price:amount': pricePerMonth || '0',
-      'og:price:currency': 'RUB',
-      'article:author': 'Команда АРЭМСИ 24', // ← Альтернативное место для автора
-    },
   }
 }
 
 export function generateNotFoundMetadata(): Metadata {
   return {
-    title: 'Номенклатура не найдена | RMC',
-    description: 'Запрошенная номенклатура не найдена в системе.',
+    title: 'Indoor реклама не найдена | RMC',
+    description:
+      'Запрошенная страница с indoor рекламой не найдена. Свяжитесь с нами: ☎ 8 800 222 59 38',
     robots: {
       index: false,
       follow: false,

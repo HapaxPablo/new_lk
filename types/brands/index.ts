@@ -30,6 +30,7 @@ export interface IBrandDetail {
   created: string
   is_deleted: string
   deleted_at: string
+  priceMin: string
 }
 
 interface IBrandNomenclatureExterior {

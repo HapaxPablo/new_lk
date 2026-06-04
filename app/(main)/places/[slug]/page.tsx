@@ -43,8 +43,7 @@ export async function generateMetadata(props: PlacesPageProps): Promise<Metadata
     const cityName = city?.name || 'города'
     return {
         title: `Indoor реклама в торговых центрах и магазинах в ${cityName} | «RMC»`,
-        description: `Размещение индор рекламы в магазинах и торговых центрах в ${city}. Звуковая и видео
-        реклама внутри помещений. Звоните: ☎ 8 800 222 59 38`,
+        description: `Размещение индор рекламы в магазинах и торговых центрах в ${city?.name}. Звуковая и видео реклама внутри помещений. Звоните: ☎ 8 800 222 59 38`,
     }
 }
 
