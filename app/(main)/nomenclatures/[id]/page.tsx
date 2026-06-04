@@ -254,9 +254,9 @@ export default async function NomenclatureDetailPage(
                   </>
                 )}
                 {nameForFront && (
-                  <span className="text-sm sm:text-2xl font-bold text-[#1E3961] mb-2 whitespace-pre-line">
+                  <h1 className="text-sm sm:text-2xl font-bold text-[#1E3961] whitespace-pre-line">
                     {nameForFront}
-                  </span>
+                  </h1>
                 )}
               </div>
               <div className="flex flex-wrap gap-4 text-sm text-gray-600">
