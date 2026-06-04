@@ -16,9 +16,9 @@ export const TenantItems: React.FC<TenantItemsProps> = ({
 }) => {
   const router = useRouter()
 
-  // const handleClickCard = (id: string) => {
-  //   router.push(`/tenants/${id}`)
-  // }
+  const handleClickCard = (id: string) => {
+    router.push(`/tenants/${id}`)
+  }
 
   return (
     <div className={styles.cardGrid}>
@@ -27,7 +27,7 @@ export const TenantItems: React.FC<TenantItemsProps> = ({
           key={`${tenant.brandId}-${key}`}
           className={className}
           item={tenant}
-        // onClick={() => handleClickCard(tenant.tenantId)}
+          onClick={() => handleClickCard(tenant.tenantId)}
         />
       ))}
     </div>
