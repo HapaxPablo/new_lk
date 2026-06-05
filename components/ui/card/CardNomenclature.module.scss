@@ -6,7 +6,6 @@
   border-radius: 8px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
   transition: all 0.2s ease-in-out;
-  cursor: pointer;
   overflow: hidden;
   display: flex;
   flex-direction: column;
@@ -18,6 +17,20 @@
 
   &:active {
     transform: translateY(0);
+  }
+}
+
+.cardLink {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  text-decoration: none;
+  color: inherit;
+  cursor: pointer;
+
+  &:hover {
+    text-decoration: none;
+    color: inherit;
   }
 }
 
@@ -106,7 +119,7 @@
   display: flex;
   flex-direction: column;
   gap: 6px;
-  min-width: 0; // Для правильного обрезания текста
+  min-width: 0;
 }
 
 .infoRow {
@@ -118,10 +131,7 @@
 }
 
 .icon {
-  // display: flex;
   flex-shrink: 0;
-  // justify-content: center;
-  // align-items: center;
   color: #6b7280;
   margin-top: 1px;
 }
@@ -170,13 +180,11 @@
 }
 
 .button {
-  font-size: var(--text-xs); /* 0.875rem (14px) */
-  line-height: var(--text-xs--line-height); /* 1.25rem (20px) */
-  // min-width: 9rem;
+  font-size: var(--text-xs);
+  line-height: var(--text-xs--line-height);
   min-height: 1.5rem;
 }
 
-// Мобильная адаптация
 @media (max-width: 768px) {
   .card {
     width: 100%;
@@ -206,10 +214,6 @@
   .secondaryText,
   .priceText {
     font-size: 10px;
-  }
-
-  .actionsSection {
-    // height: 32px;
   }
 }
 

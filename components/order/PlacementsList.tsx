@@ -1,14 +1,13 @@
-import { useNomenclatureStore } from '@/store/useNomenclatureStore'
+'use client'
+
 import { CardNomenclature } from '@/components/ui/card/CardNomenclature'
 import styles from '@/app/(main)/order/OrderCreate.module.scss'
 import { useOrderCreate } from '@/providers/order/OrderCreateContext'
+import { useNomenclatureStore } from '@/store/useNomenclatureStore'
 
 export function PlacementsList() {
     const { ids, items } = useNomenclatureStore()
     const { order: { errors } } = useOrderCreate()
-
-    const handleClick = (id: string) =>
-        window.open(`/nomenclatures/${id}`, '_blank')
 
     return (
         <div className={styles.placements}>
@@ -35,12 +34,9 @@ export function PlacementsList() {
                         Нет выбранных мест размещения
                     </div>
                 ) : (
-                    items.map((item) => (
-                        <CardNomenclature
-                            key={item.id}
-                            item={item}
-                            onClick={() => handleClick(item.id)}
-                        />
+                    items.map((item, key) => (
+
+                        <CardNomenclature item={item} key={`${item.id}-${key}`} />
                     ))
                 )}
             </div>
