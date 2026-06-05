@@ -23,7 +23,7 @@ export const NAV_ITEMS: NavItem[] = [
     icon: MapPin,
   },
   {
-    title: 'Бренды',
+    title: 'Бренды мест',
     path: '/brands',
     icon: Star,
   },

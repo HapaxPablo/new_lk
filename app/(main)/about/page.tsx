@@ -8,6 +8,7 @@ import ContactButton from './ContactButton'
 import { headers } from 'next/headers'
 import { SITE_URL } from '@/lib/configs/config-meta/configMetaData'
 import { BreadcrumbJsonLd } from '@/components/seo/BreadcrumbJsonLd'
+import BreadcrumbsSetter from '@/components/ui/breadcrumbs/BreadcrumbsSetter'
 
 export const metadata: Metadata = {
   title: 'О компании RMC — Indoor реклама',
@@ -32,7 +33,6 @@ export default async function AboutPage() {
   ]
   return (
     <>
-      <BreadcrumbJsonLd items={breadcrumbItems} />
 
       <main className={styles.page}>
         <script
@@ -41,6 +41,8 @@ export default async function AboutPage() {
         />
 
         {/* HERO */}
+        <BreadcrumbJsonLd items={breadcrumbItems} />
+        <BreadcrumbsSetter title="О нас" />
         <div className={styles.hero}>
           <div className={styles.container}>
             <h1 className={styles.title}>Indoor-реклама, которая продаёт</h1>

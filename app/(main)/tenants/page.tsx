@@ -6,6 +6,9 @@ import { cookies } from 'next/headers'
 import dynamic from 'next/dynamic'
 import { EcommerceTracker } from '@/components/ecommerce/EcommerceTracker'
 import PageDevelop from '@/components/page-development/PageDevelop'
+import { SITE_URL } from '@/lib/configs/config-meta/configMetaData'
+import { BreadcrumbJsonLd } from '@/components/seo/BreadcrumbJsonLd'
+import BreadcrumbsSetter from '@/components/ui/breadcrumbs/BreadcrumbsSetter'
 
 const Toolbar = dynamic(
   () =>
@@ -64,6 +67,11 @@ export default async function TenantsPage(props: TenantsPageProps) {
       `api/tenants/grouped/?${queryString}`
     )
 
+    const breadcrumbItems = [
+      { name: 'Главная', url: SITE_URL },
+      { name: 'Арендаторы', url: `${SITE_URL}/tenants` },
+    ]
+
     return (
       <>
         <EcommerceTracker
@@ -73,6 +81,8 @@ export default async function TenantsPage(props: TenantsPageProps) {
             price: '',
           }}
         />
+        <BreadcrumbJsonLd items={breadcrumbItems} />
+        <BreadcrumbsSetter title="Арендаторы" />
         <div className="flex h-full w-full flex-col gap-2 p-1">
           <h1 className="ml-4 mb-3 text-xl! font-semibold md:text-2xl">
             Арендаторы

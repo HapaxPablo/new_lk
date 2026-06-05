@@ -1,4 +1,6 @@
 import { EcommerceTracker } from '@/components/ecommerce/EcommerceTracker'
+import { BreadcrumbJsonLd } from '@/components/seo/BreadcrumbJsonLd'
+import BreadcrumbsSetter from '@/components/ui/breadcrumbs/BreadcrumbsSetter'
 import LoaderSkeleton from '@/components/ui/loader/LoaderSkeleton'
 import { SITE_URL } from '@/lib/configs/config-meta/configMetaData'
 import { generateNomenclaturesListMetadata } from '@/lib/configs/config-meta/nomenclatures'
@@ -94,6 +96,11 @@ export default async function NomenclaturesPage(props: NomenclaturesPageProps) {
 
     const data: INomenclatureResponse = await response.json()
 
+    const breadcrumbItems = [
+      { name: 'Главная', url: SITE_URL },
+      { name: 'Места для рекламы', url: `${SITE_URL}/nomenclatures` },
+    ]
+
     return (
       <>
         <EcommerceTracker
@@ -103,7 +110,8 @@ export default async function NomenclaturesPage(props: NomenclaturesPageProps) {
             price: '',
           }}
         />
-
+        <BreadcrumbJsonLd items={breadcrumbItems} />
+        <BreadcrumbsSetter title="Места для рекламы" />
         <div className="flex flex-col h-full w-full p-1 gap-2">
           <h1 className="text-xl! md:text-2xl ml-4 font-semibold mb-3">Выберите места для вашей радио-рекламы</h1>
           <Toolbar totalItems={data.count} />

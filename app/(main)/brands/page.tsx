@@ -1,6 +1,9 @@
 import { EcommerceTracker } from "@/components/ecommerce/EcommerceTracker"
 import { SearchForm } from "@/components/search-form/SearchForm"
+import { BreadcrumbJsonLd } from "@/components/seo/BreadcrumbJsonLd"
+import BreadcrumbsSetter from "@/components/ui/breadcrumbs/BreadcrumbsSetter"
 import LoaderSkeleton from "@/components/ui/loader/LoaderSkeleton"
+import { SITE_URL } from "@/lib/configs/config-meta/configMetaData"
 import { IBrandListResponse } from "@/types/brands"
 import { Metadata } from "next"
 import dynamic from "next/dynamic"
@@ -70,6 +73,11 @@ export default async function BrandsPage(props: BrandsPageProps) {
 
         const data: IBrandListResponse = await response.json()
 
+        const breadcrumbItems = [
+            { name: 'Главная', url: SITE_URL },
+            { name: 'Бренды мест', url: `${SITE_URL}/brands` },
+        ]
+
         return (
             <>
                 <EcommerceTracker
@@ -79,6 +87,8 @@ export default async function BrandsPage(props: BrandsPageProps) {
                         price: '',
                     }}
                 />
+                <BreadcrumbJsonLd items={breadcrumbItems} />
+                <BreadcrumbsSetter title="Бренды мест" />
                 <div className="flex flex-col h-full w-full p-1 gap-2">
                     <h1 className="text-xl! md:text-2xl ml-4 font-semibold mb-3">
                         Выберите бренды для вашей радио-рекламы
