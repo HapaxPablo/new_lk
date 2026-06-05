@@ -96,7 +96,7 @@ export async function buildSitemapEntries(): Promise<MetadataRoute.Sitemap> {
         url,
         lastModified: generatedAt,
         changeFrequency: 'weekly',
-        priority: 0.8,
+        priority: 0.95,
       })
       nomenclatureAdded++
     }
@@ -122,7 +122,7 @@ export async function buildSitemapEntries(): Promise<MetadataRoute.Sitemap> {
         url,
         lastModified: generatedAt,
         changeFrequency: 'weekly',
-        priority: 0.7,
+        priority: 0.95,
       })
       tenantsAdded++
     }
@@ -148,7 +148,7 @@ export async function buildSitemapEntries(): Promise<MetadataRoute.Sitemap> {
         url,
         lastModified: generatedAt,
         changeFrequency: 'weekly',
-        priority: 0.7,
+        priority: 0.95,
       })
       brandsAdded++
     }
@@ -174,7 +174,7 @@ export async function buildSitemapEntries(): Promise<MetadataRoute.Sitemap> {
         url,
         lastModified: generatedAt,
         changeFrequency: 'daily',
-        priority: 0.8,
+        priority: 0.95,
       })
       placesAdded++
     }
