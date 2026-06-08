@@ -13,6 +13,21 @@ export async function middleware(request: NextRequest) {
   const ua = request.headers.get('user-agent') ?? ''
   const isMobile = /mobile|android|iphone/i.test(ua)
 
+  if (pathname.startsWith('/catalog/')) {
+    // Извлекаем slug: всё после '/catalog/'
+    let slug = pathname.slice('/catalog/'.length)
+    // Удаляем возможный конечный слеш (старые URL часто оканчивались на '/')
+    if (slug.endsWith('/')) {
+      slug = slug.slice(0, -1)
+    }
+    if (slug) {
+      // Постоянный редирект 301 (permanent)
+      const newUrl = new URL(`/nomenclatures/${slug}`, request.url)
+      return NextResponse.redirect(newUrl, 301)
+    }
+    // Если slug пустой (например, /catalog/), редиректим на общий каталог
+    return NextResponse.redirect(new URL('/nomenclatures', request.url), 301)
+  }
   // ✅ Маршруты авторизации
   const authRoutes = ['/login', '/registration']
   const isAuthRoute = authRoutes.some((route) => pathname.startsWith(route))
