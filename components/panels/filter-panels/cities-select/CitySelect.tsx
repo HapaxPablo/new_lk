@@ -287,12 +287,12 @@ export const CitySelect = forwardRef(
                                         )
                                     })}
 
-                                    {loadingMore && (
+                                    {/* {loadingMore && (
                                         <div className={styles.loadingMore}>
                                             <div className={styles.loadingSpinner}></div>
                                             Загрузка...
                                         </div>
-                                    )}
+                                    )} */}
 
                                     {!hasMore && cities.length > 0 && (
                                         <div className={styles.endOfList}>

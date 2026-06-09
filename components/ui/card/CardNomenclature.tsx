@@ -46,9 +46,10 @@ export const CardNomenclature: React.FC<CardNomenclatureProps> = ({
     )
   }
 
+
   return (
     <article className={`${styles.card} ${className}`}>
-      <Link href={`/nomenclatures/${item.id}`} className={styles.cardLink} onClick={handleCardClick}>
+      <Link href={`/nomenclatures/${item.oldCatalogSlug ? item.oldCatalogSlug : item.id}`} className={styles.cardLink} onClick={handleCardClick}>
         <div className={styles.cardContent}>
           <div className={styles.mediaSection}>
             <div className={styles.imageWrapper}>

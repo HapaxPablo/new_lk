@@ -5,14 +5,15 @@ import { UserInfoSkeleton } from '../ui/loader/UserInfoSkeleton'
 import { useFetchUserById } from '@/lib/api-client/useFetchUserById'
 import dynamic from 'next/dynamic'
 import { UserInfoContent } from './components/userInfoContent/UserInfoContent'
+import { LoginFormMobile } from '../auth/login/mobile/LoginFormMobile'
 
-const LoginForm = dynamic(
-  () =>
-    import('@/components/auth/login/mobile/LoginFormMobile').then((mod) => ({
-      default: mod.LoginFormMobile,
-    })),
-  { ssr: false, loading: () => <div>Loading...</div> }
-)
+// const LoginForm = dynamic(
+//   () =>
+//     import('@/components/auth/login/mobile/LoginFormMobile').then((mod) => ({
+//       default: mod.LoginFormMobile,
+//     })),
+//   { ssr: false, loading: () => <div>Loading...</div> }
+// )
 
 interface Props {
   userId: string
@@ -28,7 +29,7 @@ export default function UserInfoModalView({ userId }: Props) {
   if (!isAuthenticated)
     return (
       <div>
-        <LoginForm />
+        <LoginFormMobile />
         <div className="text-red-500 mt-2">Пользователь не авторизован.</div>
       </div>
     )

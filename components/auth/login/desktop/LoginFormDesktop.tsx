@@ -114,7 +114,7 @@ export function LoginFormDesktop() {
           </Link>
         </div>
         <Button type="submit" variant="primary" isLoading={isLoading} fullWidth>
-          {isLoading ? 'Загрузка...' : 'Войти'}
+          {/* {isLoading ? 'Загрузка...' : 'Войти'} */}
         </Button>
 
         <div className={styles.loginWrapper}>

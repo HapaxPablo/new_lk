@@ -4,7 +4,7 @@ import { useCallback, useEffect, useRef, useState, useTransition } from 'react'
 import { useDebounceCallback } from 'usehooks-ts'
 import { Button } from '../ui/button/Button'
 import { X } from 'lucide-react'
-import { Loader } from '../ui/loader/Loader'
+// import { Loader } from '../ui/loader/Loader'
 
 interface SearchFormProps {
   /**
@@ -177,7 +177,7 @@ export function SearchForm({
   return (
     <>
 
-      {isPending && <Loader size="large" variant="primary" />}
+      {/* {isPending && <Loader size="large" variant="primary" />} */}
 
       <form
         onSubmit={handleSubmit}

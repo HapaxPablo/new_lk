@@ -118,7 +118,7 @@ export function LoginFormMobile() {
             isLoading={isLoading}
             fullWidth
           >
-            {isLoading ? 'Загрузка...' : 'Войти'}
+            {/* {isLoading ? 'Загрузка...' : 'Войти'} */}
           </Button>
         </div>
       </form>

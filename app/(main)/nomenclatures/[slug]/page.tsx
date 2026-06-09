@@ -5,14 +5,12 @@ import {
   TabsWrapper,
 } from '@/components/nomenclatureById'
 import { Radio } from 'lucide-react'
-import { INomenclatureDetailsItem, ITenantsResponse } from '@/types/nomenclature'
-import { Metadata } from 'next'
+import { ITenantsResponse } from '@/types/nomenclature'
 import Image from 'next/image'
 
 import {
   generateNomenclatureMetadata,
   generateNomenclatureStructuredData,
-  generateNotFoundMetadata,
 } from '@/lib/configs/config-meta/nomenclatures'
 import Script from 'next/script'
 import dynamic from 'next/dynamic'
@@ -23,61 +21,48 @@ import BreadcrumbsSetter from '@/components/ui/breadcrumbs/BreadcrumbsSetter'
 import ModalFeedBack from '@/components/nomenclatureById/modalFeedBack/ModalFeedBack'
 import { SITE_URL } from '@/lib/configs/config-meta/configMetaData'
 import { BreadcrumbJsonLd } from '@/components/seo/BreadcrumbJsonLd'
+import { notFound } from 'next/navigation'
+import Slider from '@/components/slider/Slider'
 
 
-const Slider = dynamic(() => import('@/components/slider/Slider'), {
-  ssr: true,
-  loading: () => (
-    <div className="w-full h-full min-h-[320px] bg-gray-100 rounded-md animate-pulse" />
-  ),
-})
+// const Slider = dynamic(() => import('@/components/slider/Slider'), {
+//   ssr: true,
+//   loading: () => (
+//     <div className="w-full h-full min-h-[320px] bg-gray-100 rounded-md animate-pulse" />
+//   ),
+// })
+
 interface NomenclatureDetailPageProps {
   params: Promise<{
-    id: string
+    slug: string
+    // id: string
   }>
 }
 
-async function getNomenclatureById(
-  id: string
-): Promise<INomenclatureDetailsItem | null> {
+async function getNomenclatureById(slug: string) {
   try {
-    if (!process.env.API_1C_URL) {
-      throw new Error('API_1C_URL environment variable is not defined')
+    const response = await fetch(
+      `${process.env.NEXTAUTH_URL}api/nomenclatures/${slug}`,
+      { cache: 'no-store' }
+    )
+
+    console.log('API response status:', response.status)
+    console.log('API response headers:', response)
+
+    if (response.status === 404) {
+      return null
     }
-
-    const baseUrl = new URL('api/nomenclatures/', process.env.API_1C_URL)
-    const finalUrl = new URL(`${id}/`, baseUrl)
-
-    console.log(`Fetching nomenclature from: ${finalUrl.toString()}`)
-
-    const response = await fetch(finalUrl.toString(), {
-      method: 'GET',
-      cache: 'no-store',
-      headers: {
-        'Content-Type': 'application/json',
-        Accept: 'application/json',
-      },
-      next: { revalidate: 0 },
-    })
 
     if (!response.ok) {
-      console.error(`API responded with status: ${response.status}`)
-      if (response.status === 404) {
-        return null
-      }
-      throw new Error(`HTTP error! status: ${response.status}`)
+      console.error('API message:', response.statusText)
+      console.error('API response body:', await response.text())
+      console.error('API error:', response.status)
+      return null
     }
 
-    const data = await response.json()
-    console.log('Nomenclature data fetched successfully:', data)
-    return data
-  } catch (error) {
-    console.error('Error fetching nomenclature:', {
-      message: error,
-      id: id,
-      environment: process.env.NODE_ENV,
-      apiUrl: process.env.API_1C_URL,
-    })
+    return await response.json()
+  } catch (e) {
+    console.error('Network error:', e)
     return null
   }
 }
@@ -102,46 +87,34 @@ async function getTenantsByNomenclatureId(id: string): Promise<ITenantsResponse 
   }
 }
 
-export async function generateMetadata(
-  props: NomenclatureDetailPageProps
-): Promise<Metadata> {
-  const params = await props.params
-  const { id } = params
+export async function generateMetadata(props: any) {
+  console.log('METADATA START')
 
-  const nomenclature = await getNomenclatureById(id)
+  try {
+    const params = await props.params
+    console.log('slug:', params.slug)
 
-  if (!nomenclature) {
-    return generateNotFoundMetadata()
-  }
+    const data = await getNomenclatureById(params.slug)
 
-  const metadata = generateNomenclatureMetadata({ nomenclature, id })
+    console.log('data:', data)
 
-  // Добавить canonical URL
-  return {
-    ...metadata,
-    alternates: {
-      canonical: `${SITE_URL}/nomenclatures/${id}`,
-    },
+    return {}
+  } catch (e) {
+    console.log('METADATA ERROR:', e)
+    return {}
   }
 }
+
 export default async function NomenclatureDetailPage(
   props: NomenclatureDetailPageProps
 ) {
   const params = await props.params
-  const { id } = params
-  const nomenclature = await getNomenclatureById(id)
-  const tenantsData = await getTenantsByNomenclatureId(id)
+  const { slug } = params
+  const tenantsData = await getTenantsByNomenclatureId(slug)
+  const nomenclature = await getNomenclatureById(slug)
+
   if (!nomenclature) {
-    return (
-      <div className="container mx-auto px-4 py-8">
-        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
-          <h1 className="text-xl font-bold mb-2">Номенклатура не найдена</h1>
-          <p>
-            Запрошенная номенклатура с ID {id} не существует или была удалена.
-          </p>
-        </div>
-      </div>
-    )
+    notFound()
   }
 
   const {
@@ -160,20 +133,23 @@ export default async function NomenclatureDetailPage(
 
   const allImages = [...exterior, ...interior]
 
-  const structuredData = generateNomenclatureStructuredData(nomenclature, id)
+  const structuredData = generateNomenclatureStructuredData(nomenclature, slug)
   const breadcrumbItems = [
     { name: 'Главная', url: `${SITE_URL}` },
     { name: 'Места для рекламы', url: `${SITE_URL}/nomenclatures` },
-    { name: nameForFront, url: `${SITE_URL}/nomenclatures/${id}` },
+    { name: nameForFront, url: `${SITE_URL}/nomenclatures/${slug}` },
   ]
-  const nomenclaturesIds = [id]
+
+  console.log('NOMENCLATURE:', nomenclature)
+
+  const nomenclaturesIds = [slug]
   return (
     <>
       <BreadcrumbJsonLd items={breadcrumbItems} />
       {/* E-commerce отслеживание просмотра товара */}
       <EcommerceTracker
         item={{
-          item_id: id,
+          item_id: slug,
           item_name: nameForFront,
           item_category: contentType,
           item_brand: brand?.name,
@@ -183,7 +159,7 @@ export default async function NomenclatureDetailPage(
       <BreadcrumbsSetter title={`${nomenclature.typeOfPlace} ${nomenclature.brand ? nomenclature.brand.name : ''}`} />
       <div className="flex flex-col bg-gray-200 w-full h-full">
         <Script
-          id={`structured-data-${id}`}
+          id={`structured-data-${slug}`}
           type="application/ld+json"
           dangerouslySetInnerHTML={{
             __html: JSON.stringify(structuredData),

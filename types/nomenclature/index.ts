@@ -273,6 +273,7 @@ export interface INomenclatureItem extends INomenclatureBase {
   last_answer: string
   version: string
   formattedAddress: string // сужаем — в каталоге всегда строка
+  oldCatalogSlug: string
 }
 
 export interface INomenclatureDetailsItem extends INomenclatureBase {

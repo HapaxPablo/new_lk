@@ -10,6 +10,7 @@ import styles from './styles/RentersTab.module.scss'
 import SearchClient from '@/components/ui/searchClient/SearchClient'
 import { UserMinus } from 'lucide-react'
 import { useAuth } from '@/providers/auth-provider/AuthProvider'
+import { useInView } from '@/hooks/useInView'
 
 interface RentersTabContentProps {
   nomenclatureId: string
@@ -72,7 +73,10 @@ export const RentersTabContent = ({
   const [hovered, setHovered] = useState<string | null>(null)
 
   const debouncedSearch = useDebounce(inputValue, 500)
-
+  const { ref: viewRef, inView } = useInView({
+    triggerOnce: true,         // загружаем только один раз при первом появлении
+    rootMargin: '200px',       // начинаем загрузку чуть раньше
+  });
   const {
     items,
     hasMore,
@@ -82,7 +86,7 @@ export const RentersTabContent = ({
     size,
     floors,
     mutate,
-  } = useInfinityTenants(nomenclatureId, debouncedSearch, floor, initialTenantsData)
+  } = useInfinityTenants(nomenclatureId, debouncedSearch, floor, initialTenantsData, inView)
 
   const loaderRef = useRef<HTMLDivElement>(null)
   const containerRef = useRef<HTMLDivElement>(null)
@@ -138,8 +142,9 @@ export const RentersTabContent = ({
     if (size !== 1) setSize(1)
   }, [debouncedSearch, floor, setSize])
 
+
   return (
-    <div className={styles.root}>
+    <div className={styles.root} ref={viewRef}>
       {/* Фильтры */}
       <div className={styles.filterBar}>
         <div className={styles.filterWrapper}>
@@ -150,7 +155,7 @@ export const RentersTabContent = ({
             type="text"
           />
           <Select
-            options={floors}
+            options={floors?.data ?? []}
             value={floor}
             onChange={setFloor}
             placeholder="Выбрать этаж"

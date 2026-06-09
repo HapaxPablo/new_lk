@@ -88,7 +88,7 @@ export default async function NomenclaturesPage(props: NomenclaturesPageProps) {
 
     console.log('Making request to:', url.toString())
 
-    const response = await fetch(url.toString(), { cache: 'force-cache' })
+    const response = await fetch(url.toString(), { cache: 'no-cache' })
 
     if (!response.ok) {
       throw new Error(`Ошибка ${response.status}: ${response.statusText}`)

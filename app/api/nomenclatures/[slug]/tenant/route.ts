@@ -17,8 +17,16 @@ export async function GET(
       `api/nomenclatures/${id}/tenant/${query}`
     )
 
+    if (!response.ok) {
+      return Response.json(
+        { error: response.message },
+        { status: response.status }
+      )
+    }
+
     return Response.json(response)
   } catch (error: any) {
+    console.error('Error in [id] tenant API:', error)
     return Response.json(
       { error: error.message || 'Internal server error' },
       { status: error.status || 500 }
