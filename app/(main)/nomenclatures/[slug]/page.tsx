@@ -42,7 +42,7 @@ interface NomenclatureDetailPageProps {
 async function getNomenclatureById(slug: string) {
   try {
     const response = await fetch(
-      `${process.env.NEXTAUTH_URL}api/nomenclatures/${slug}`,
+      `${process.env.API_1C_URL}api/nomenclatures/${slug}`,
       { cache: 'no-store' }
     )
 
