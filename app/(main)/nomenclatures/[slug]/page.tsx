@@ -11,6 +11,7 @@ import Image from 'next/image'
 import {
   generateNomenclatureMetadata,
   generateNomenclatureStructuredData,
+  generateNotFoundMetadata,
 } from '@/lib/configs/config-meta/nomenclatures'
 import Script from 'next/script'
 import dynamic from 'next/dynamic'
@@ -88,21 +89,25 @@ async function getTenantsByNomenclatureId(id: string): Promise<ITenantsResponse 
 }
 
 export async function generateMetadata(props: any) {
-  console.log('METADATA START')
+  const params = await props.params
+  const { id } = params
 
-  try {
-    const params = await props.params
-    console.log('slug:', params.slug)
+  const nomenclature = await getNomenclatureById(id)
 
-    const data = await getNomenclatureById(params.slug)
-
-    console.log('data:', data)
-
-    return {}
-  } catch (e) {
-    console.log('METADATA ERROR:', e)
-    return {}
+  if (!nomenclature) {
+    return generateNotFoundMetadata()
   }
+
+  const metadata = generateNomenclatureMetadata({ nomenclature, id })
+
+  // Добавить canonical URL
+  return {
+    ...metadata,
+    alternates: {
+      canonical: `${SITE_URL}/nomenclatures/${id}`,
+    },
+  }
+
 }
 
 export default async function NomenclatureDetailPage(
