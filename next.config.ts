@@ -111,11 +111,16 @@ const nextConfig: NextConfig = {
                   https://api-maps.yandex.ru
                   https://yastatic.net
                   https://mc.yandex.ru
-                  https://www.googletagmanager.com;
+                  https://www.googletagmanager.com
+                  https://tagmanager.google.com
+                  https://*.googletagmanager.com;
 
                 style-src 'self' 'unsafe-inline'
                   https://fonts.googleapis.com
                   https://yastatic.net;
+                  https://www.googletagmanager.com
+                  https://tagmanager.google.com;
+
 
                 img-src 'self' data: blob:
                   https://*.maps.yandex.net
@@ -125,7 +130,19 @@ const nextConfig: NextConfig = {
                   https://mc.yandex.ru
                   https://www.google-analytics.com
                   https://api1.krasrm.com
-                  http://192.168.0.8:8000;
+                  http://192.168.0.8:8000
+                  https://googletagmanager.com
+                  https://ssl.gstatic.com
+                  https://www.gstatic.com
+                  https://*.google-analytics.com
+                  https://*.analytics.google.com
+                  https://*.googletagmanager.com
+                  https://*.g.doubleclick.net
+                  https://*.google.com
+                  https://*.google.<TLD>;
+
+                font-src 'self'
+                  https://fonts.gstatic.com data;
 
                 connect-src 'self'
                   wss://mc.yandex.ru
@@ -139,7 +156,13 @@ const nextConfig: NextConfig = {
                   http://192.168.0.8:8000
                   ws://192.168.0.8:8000
                   https://log.api-maps.yandex.ru
-                  http://192.168.0.8:7777;
+                  http://192.168.0.8:7777
+                  https://*.google-analytics.com
+                  https://*.analytics.google.com
+                  https://*.googletagmanager.com
+                  https://*.g.doubleclick.net
+                  https://*.google.com
+                  https://*.google.<TLD>;
               `
               .replace(/\s+/g, ' ')
               .trim(),
