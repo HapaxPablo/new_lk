@@ -117,7 +117,7 @@ const nextConfig: NextConfig = {
 
                 style-src 'self' 'unsafe-inline'
                   https://fonts.googleapis.com
-                  https://yastatic.net;
+                  https://yastatic.net
                   https://www.googletagmanager.com
                   https://tagmanager.google.com;
 
