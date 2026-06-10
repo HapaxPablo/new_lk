@@ -18,6 +18,7 @@ export interface IBrandListResponse {
   count: number
   next: string | null
   previous: string | null
+  min_price: number
 }
 
 export interface IBrandDetail {
@@ -30,7 +31,7 @@ export interface IBrandDetail {
   created: string
   is_deleted: string
   deleted_at: string
-  priceMin: string
+  min_price: number
 }
 
 interface IBrandNomenclatureExterior {

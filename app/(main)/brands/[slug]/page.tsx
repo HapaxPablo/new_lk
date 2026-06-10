@@ -74,7 +74,7 @@ export async function generateMetadata(
 
         return {
             title: `Размещение звуковой и видео рекламы внутри помещений ${brand.name} | «RMC»`,
-            description: `Размещение Indoor рекламы в ${brand.name}. По цене от ${brand.priceMin}р. Звуковая и видео реклама внутри помещений. Звоните: ☎ 8 800 222 59 38`,
+            description: `Размещение Indoor рекламы в ${brand.name}. По цене от ${Number(brand.min_price)}р. Звуковая и видео реклама внутри помещений. Звоните: ☎ 8 800 222 59 38`,
             alternates: {
                 canonical: canonicalUrl,
             },
