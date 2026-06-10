@@ -138,8 +138,7 @@ const nextConfig: NextConfig = {
                   https://*.analytics.google.com
                   https://*.googletagmanager.com
                   https://*.g.doubleclick.net
-                  https://*.google.com
-                  https://*.google.<TLD>;
+                  https://*.google.com;
 
                 font-src 'self'
                   https://fonts.gstatic.com data;
@@ -161,8 +160,7 @@ const nextConfig: NextConfig = {
                   https://*.analytics.google.com
                   https://*.googletagmanager.com
                   https://*.g.doubleclick.net
-                  https://*.google.com
-                  https://*.google.<TLD>;
+                  https://*.google.com;
               `
               .replace(/\s+/g, ' ')
               .trim(),
