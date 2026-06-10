@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@hookform/resolvers": "^5.1.1",
+    "@next/third-parties": "^16.2.9",
     "@skbkontur/colors": "^2.1.7",
     "@skbkontur/icons": "^2.0.10",
     "@skbkontur/logos": "^3.0.2",
