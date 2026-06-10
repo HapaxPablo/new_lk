@@ -130,7 +130,6 @@ export default function RootLayout({
   return (
     <html lang="ru">
       <meta charSet="UTF-8" />
-      <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GA_ID!} />
       <head>
         <Script
           id="organization-jsonld"
