@@ -16,6 +16,7 @@ import Breadcrumbs from '@/components/ui/breadcrumbs/Breadcrumbs'
 import { NomenclatureStoreProvider } from '@/providers/nomenclature/NomenclatureStoreProvider'
 import CookieBanner from '@/components/ui/cookies/CookieBanner'
 import { Suspense } from 'react'
+import { GoogleAnalytics } from '@next/third-parties/google'
 
 const montserrat = localFont({
   src: [
@@ -129,6 +130,8 @@ export default function RootLayout({
   return (
     <html lang="ru">
       <meta charSet="UTF-8" />
+      <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GA_ID!} />
+
       <head>
         <Script
           id="organization-jsonld"
