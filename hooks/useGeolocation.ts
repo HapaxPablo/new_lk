@@ -75,7 +75,7 @@ export function useGeolocation() {
       },
       {
         enableHighAccuracy: false,
-        timeout: 8000,
+        timeout: 30000,
         maximumAge: 300000,
       }
     )
