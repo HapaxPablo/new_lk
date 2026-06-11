@@ -179,10 +179,8 @@ export default function GeolocationClient() {
   const handlePermissionGranted = useCallback(() => {
     console.log('Permission granted')
     permissionModal.closeModal()
-    if (!locationCheckStarted.current) {
-      locationCheckStarted.current = true
-      getLocation()
-    }
+
+    getLocation()
   }, [permissionModal, getLocation])
 
   const handleCityConfirm = useCallback((isCorrect: boolean) => {

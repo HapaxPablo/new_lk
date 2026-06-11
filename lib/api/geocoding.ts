@@ -20,6 +20,8 @@ interface NominatimResponse {
 
 // Обратное геокодирование через серверный прокси (обходит CSP/CORS)
 export async function geocodeByLatLng(lat: number, lng: number): Promise<City> {
+  console.log('lng:', lng)
+  console.log('lat:', lat)
   const response = await fetch(`/api/reverse-geocode?lat=${lat}&lng=${lng}`)
 
   if (!response.ok) {
