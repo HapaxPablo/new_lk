@@ -148,7 +148,7 @@ export default async function BrandDetailPage(
                             )}
                         </div>
                         <h1 className={styles.title}>
-                            Indoor реклама в {fullName || 'Бренд'}
+                            Размещение звуковой и видео рекламы внутри помещений {fullName || 'Бренд'}
                         </h1>
                         <ModalFeedBack pathName='brands' brandId={brandId} />
                     </div>
