@@ -23,7 +23,7 @@ const ToolbarBrands = ({ totalItems }: ToolbarProps): JSX.Element => {
             <div className={styles.toolbar}>
                 <div className={styles.mainPanel}>
                     <div className={styles.totalItems}>Всего: {totalItems}</div>
-                    <SearchForm hideButton className={styles.searchForm} placeholder='Напишите здесь название бренда, описание, или сокращение транслитом' />
+                    <SearchForm hideButton className={styles.searchForm} placeholder='Введите название арендатора' />
                 </div>
             </div>
 
