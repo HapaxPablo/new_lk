@@ -1,8 +1,9 @@
 interface IntroProps {
   cityName: string
+  cityNameSecond: string
 }
 
-export function Intro({ cityName }: IntroProps) {
+export function Intro({ cityName, cityNameSecond }: IntroProps) {
   return (
     <section className="bg-white">
       <div className="mx-auto max-w-7xl px-4 py-10">
@@ -14,7 +15,7 @@ export function Intro({ cityName }: IntroProps) {
             </h2>
           </div>
           <p className="text-base leading-8 text-slate-600">
-            Размещение рекламы в торговых центрах {cityName} подходит для федеральных и локальных брендов:
+            Размещение рекламы в торговых центрах {cityNameSecond} подходит для федеральных и локальных брендов:
             магазинов, банков, медицинских центров, застройщиков, ресторанов, служб доставки и сервисных компаний.
             Формат помогает быстро охватить аудиторию, которая уже находится рядом с точками продаж.
           </p>

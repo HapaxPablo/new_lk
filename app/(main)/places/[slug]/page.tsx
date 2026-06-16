@@ -16,6 +16,7 @@ import { SEOText } from "../components/SEOText"
 import { FAQ } from "../components/FAQ"
 import { ICitiesResponse } from "@/types/cities"
 import { BreadcrumbJsonLd } from "@/components/seo/BreadcrumbJsonLd"
+import { declineCity } from "@/utils"
 
 interface PlacesPageProps {
     params: Promise<{
@@ -40,9 +41,12 @@ async function getCityData(slug: string): Promise<{ name: string } | null> {
 export async function generateMetadata(props: PlacesPageProps): Promise<Metadata> {
     const city = await getCityData((await props.params).slug)
     const cityName = city?.name || 'города'
+    const cityGenitive = declineCity(cityName, 'genitive')
+    // console.log('City name for metadata:', cityName)
+    // console.log('City name in genitive:', cityGenitive)
     return {
-        title: `Indoor реклама в торговых центрах и магазинах в ${cityName} | «RMC»`,
-        description: `Размещение индор рекламы в магазинах и торговых центрах в ${city?.name}. Звуковая и видео реклама внутри помещений. Звоните: ☎ 8 800 222 59 38`,
+        title: `Indoor реклама в торговых центрах и магазинах в ${cityGenitive} | «RMC»`,
+        description: `Размещение индор рекламы в магазинах и торговых центрах в ${cityGenitive}. Звуковая и видео реклама внутри помещений. Звоните: ☎ 8 800 222 59 38`,
     }
 }
 
@@ -61,8 +65,11 @@ async function PlacesCityPage(props: PlacesPageProps) {
         const places = data.nomenclatures
         const minPrice = data.minPrice
         const cityFromResponse = data.city
-        console.log('data from API:', data)
-        console.log('minPrice from response:', minPrice)
+        const cityGenitive = declineCity(cityFromResponse, 'genitive')
+        const cityPerp = declineCity(cityFromResponse, 'prepositional')
+
+        // console.log('data from API:', data)
+        // console.log('minPrice from response:', minPrice)
 
         const breadcrumbItems = [
             { name: 'Главная', url: '/' },
@@ -73,24 +80,24 @@ async function PlacesCityPage(props: PlacesPageProps) {
         return (
             <>
                 <BreadcrumbJsonLd items={breadcrumbItems} />
-                <BreadcrumbsSetter title={`Размещение рекламы в ${cityFromResponse}`} />
+                <BreadcrumbsSetter title={`Размещение рекламы в ${cityPerp}`} />
                 <div className="bg-slate-50 text-slate-900 overflow-auto">
 
 
                     {/* <BreadcrumbJsonLd items={breadcrumbItems} /> */}
 
                     {/* <Breadcrumbs cityName={cityFromResponse} /> */}
-                    <Hero cityName={cityFromResponse} placesCount={places.length} minPrice={minPrice} />
-                    <Intro cityName={cityFromResponse} />
-                    <PlacesListing cityName={cityFromResponse} places={places} />
+                    <Hero cityName={cityGenitive || ''} placesCount={places.length} minPrice={minPrice} />
+                    <Intro cityName={cityPerp || ''} cityNameSecond={cityGenitive || ''} />
+                    <PlacesListing cityName={cityPerp || ''} places={places} />
                     <Formats />
                     <Benefits />
-                    <Audience cityName={cityFromResponse} />
-                    <Pricing cityName={cityFromResponse} />
-                    <Steps cityName={cityFromResponse} />
-                    <CTA cityName={cityFromResponse} />
-                    <SEOText cityName={cityFromResponse} />
-                    <FAQ cityName={cityFromResponse} />
+                    <Audience cityName={cityPerp || ''} />
+                    <Pricing cityName={cityPerp || ''} />
+                    <Steps cityName={cityPerp || ''} />
+                    <CTA cityName={cityPerp || ''} />
+                    <SEOText cityName={cityPerp || ''} cityNameSec={cityGenitive || ''} />
+                    <FAQ />
                 </div>
             </>
         )

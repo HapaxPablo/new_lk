@@ -40,7 +40,7 @@ export const NamedTabs = ({ item, initialTenantsData }: NamedTabsProps) => {
     )
   }
 
-  const { tenants = [], exterior = [], interior = [] } = item
+  const { tenants_length = 0, exterior = [], interior = [] } = item
 
   const exteriorCount = exterior.length
   const interiorCount = interior.length
@@ -51,9 +51,9 @@ export const NamedTabs = ({ item, initialTenantsData }: NamedTabsProps) => {
       id: 'renters',
       label: 'Арендаторы',
       icon: <Users size={16} />,
-      count: tenants.length,
+      count: tenants_length,
       content: <RentersTabContent nomenclatureId={item.id} initialTenantsData={initialTenantsData} />,
-      visual: tenants.length > 0 ? true : false,
+      visual: tenants_length > 0 ? true : false,
     },
     {
       id: 'photos',

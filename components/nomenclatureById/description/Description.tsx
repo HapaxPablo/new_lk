@@ -26,12 +26,8 @@ export function Description({ nomenclature }: DescriptionProps) {
     legalEntity = { id: '', name: '' },
     brand,
     contentType = '',
-    typeOfPlace = '',
-    formattedAddress,
-    main_info = {
-      owner: { full_name: '' },
-      name: '',
-    },
+    typeOfPlace = { name: '', abbreviation: '' },
+    address = { city: '', localityType: '', street: '', streetType: '', house: '' },
     external_audio_media,
     external_video_media,
     internal_video_media,
@@ -41,16 +37,16 @@ export function Description({ nomenclature }: DescriptionProps) {
     square,
     possibility,
   } = nomenclature
-
+  const formattedAddress = `${address.city}, ${address.localityType} ${address.street}, ${address.streetType} ${address.house}`
 
   const displayData = {
     article: article ? String(article) : '',
     legalEntity: legalEntity || '',
     brand: brand?.name || '',
     typesOfMedia: contentType || '',
-    typePlace: typeOfPlace || '',
+    typePlace: typeOfPlace?.name || '',
     typeContent: contentType || '',
-    address: formattedAddress?.name || '',
+    address: formattedAddress || '',
     externalAudioMedia: external_audio_media || '',
     externalVideoMedia: external_video_media || '',
     internalVideoMedia: internal_video_media || '',

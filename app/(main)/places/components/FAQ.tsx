@@ -1,8 +1,5 @@
-interface FAQProps {
-  cityName: string
-}
 
-export function FAQ({ cityName }: FAQProps) {
+export function FAQ() {
   return (
     <section className="bg-slate-50">
       <div className="mx-auto max-w-7xl px-4 py-14">

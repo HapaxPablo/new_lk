@@ -17,7 +17,7 @@ export async function GET(request: NextRequest) {
 
     const url = `${backendUrl}/api/cities/?${params.toString()}`
 
-    console.log('Fetching cities from:', url)
+    // console.log('Fetching cities from:', url)
 
     const response = await fetch(url, {
       headers: {

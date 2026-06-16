@@ -24,6 +24,7 @@ import { SITE_URL } from '@/lib/configs/config-meta/configMetaData'
 import { BreadcrumbJsonLd } from '@/components/seo/BreadcrumbJsonLd'
 import { notFound } from 'next/navigation'
 import Slider from '@/components/slider/Slider'
+import { PlaceTitle } from '@/components/nomenclatureById/PlaceTitle'
 
 
 // const Slider = dynamic(() => import('@/components/slider/Slider'), {
@@ -43,32 +44,33 @@ interface NomenclatureDetailPageProps {
 async function getNomenclatureById(slug: string) {
   try {
     const response = await fetch(
-      `${process.env.API_1C_URL}api/nomenclatures/${slug}`,
+      `${process.env.API_1C_URL}api/nomenclatures/web/${slug}`,
       { cache: 'no-store' }
     )
 
-    console.log('API response status:', response.status)
-    console.log('API response headers:', response)
+    // console.log('API response status:', response.status)
+    // console.log('API response headers:', response)
 
     if (response.status === 404) {
       return null
     }
 
     if (!response.ok) {
-      console.error('API message:', response.statusText)
-      console.error('API response body:', await response.text())
-      console.error('API error:', response.status)
+      // console.error('API message:', response.statusText)
+      // console.error('API response body:', await response.text())
+      // console.error('API error:', response.status)
       return null
     }
 
     return await response.json()
   } catch (e) {
-    console.error('Network error:', e)
+    // console.error('Network error:', e)
     return null
   }
 }
 
 async function getTenantsByNomenclatureId(id: string): Promise<ITenantsResponse | null> {
+  // console.log('Fetching tenants for nomenclature ID:', id)
   try {
     const url = new URL(`api/nomenclatures/${id}/tenant/?limit=25&offset=0`, process.env.API_1C_URL)
 
@@ -80,31 +82,36 @@ async function getTenantsByNomenclatureId(id: string): Promise<ITenantsResponse 
       },
     })
 
+    // console.log('Tenants API response headers:', response)
+
     if (!response.ok) return null
     return response.json()
   } catch (error) {
-    console.error('Error fetching tenants:', error)
+    // console.error('Error fetching tenants:', error)
     return null
   }
 }
 
 export async function generateMetadata(props: any) {
+  // console.log('start meta')
   const params = await props.params
-  const { id } = params
+  // console.log('params meta', params)
+  const { slug } = params
+  // console.log('id from params meta', slug)
 
-  const nomenclature = await getNomenclatureById(id)
+  const nomenclature = await getNomenclatureById(slug)
 
   if (!nomenclature) {
     return generateNotFoundMetadata()
   }
 
-  const metadata = generateNomenclatureMetadata({ nomenclature, id })
+  const metadata = generateNomenclatureMetadata({ nomenclature, id: slug })
 
   // Добавить canonical URL
   return {
     ...metadata,
     alternates: {
-      canonical: `${SITE_URL}/nomenclatures/${id}`,
+      canonical: `${SITE_URL}/nomenclatures/${nomenclature.slug}`,
     },
   }
 
@@ -115,7 +122,6 @@ export default async function NomenclatureDetailPage(
 ) {
   const params = await props.params
   const { slug } = params
-  const tenantsData = await getTenantsByNomenclatureId(slug)
   const nomenclature = await getNomenclatureById(slug)
 
   if (!nomenclature) {
@@ -128,13 +134,14 @@ export default async function NomenclatureDetailPage(
     interior,
     pricePerMonth,
     contentType,
-    formattedAddress: address,
+    address,
     responsible,
     nameForFront,
-    main_info
+    // main_info
+    description,
   } = nomenclature
 
-  const { description } = main_info
+  // const { description } = main_info
 
   const allImages = [...exterior, ...interior]
 
@@ -145,7 +152,8 @@ export default async function NomenclatureDetailPage(
     { name: nameForFront, url: `${SITE_URL}/nomenclatures/${slug}` },
   ]
 
-  console.log('NOMENCLATURE:', nomenclature)
+  // console.log('NOMENCLATURE:', nomenclature)
+  const tenantsData = await getTenantsByNomenclatureId(nomenclature.id)
 
   const nomenclaturesIds = [slug]
   return (
@@ -161,7 +169,7 @@ export default async function NomenclatureDetailPage(
           price: pricePerMonth,
         }}
       />
-      <BreadcrumbsSetter title={`${nomenclature.typeOfPlace} ${nomenclature.brand ? nomenclature.brand.name : ''}`} />
+      <BreadcrumbsSetter title={`${nomenclature.typeOfPlace.abbreviation} ${nomenclature.brand ? nomenclature.brand.name : ''}`} />
       <div className="flex flex-col bg-gray-200 w-full h-full">
         <Script
           id={`structured-data-${slug}`}
@@ -234,11 +242,8 @@ export default async function NomenclatureDetailPage(
                     )}
                   </>
                 )}
-                {nameForFront && (
-                  <h1 className="text-sm sm:text-2xl font-bold text-[#1E3961] whitespace-pre-line">
-                    {nameForFront}
-                  </h1>
-                )}
+                <PlaceTitle place={nomenclature} variant="full" />
+
               </div>
               <div className="flex flex-wrap gap-4 text-sm text-gray-600">
                 {contentType && (

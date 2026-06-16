@@ -1,8 +1,9 @@
 interface SEOTextProps {
   cityName: string
+  cityNameSec: string
 }
 
-export function SEOText({ cityName }: SEOTextProps) {
+export function SEOText({ cityName, cityNameSec }: SEOTextProps) {
   return (
     <section className="bg-white">
       <div className="mx-auto max-w-7xl px-4 py-14">
@@ -22,7 +23,7 @@ export function SEOText({ cityName }: SEOTextProps) {
             </p>
 
             <p>
-              На странице собраны рекламные площадки {cityName} с адресами, форматами размещения и ориентировочной
+              На странице собраны рекламные площадки {cityNameSec} с адресами, форматами размещения и ориентировочной
               стоимостью. Такой формат удобен для компаний, которым важно быстро выбрать точки контакта с аудиторией,
               сравнить условия и запустить рекламную кампанию без долгого поиска подрядчиков.
             </p>

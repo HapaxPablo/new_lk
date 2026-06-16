@@ -5,9 +5,9 @@ import { NextRequest } from 'next/server'
 export const revalidate = 3600
 
 export async function GET(request: NextRequest) {
-  console.log('=== API Route Debug ===')
-  console.log('URL:', request.url)
-  console.log('Cookies:', request.cookies.getAll())
+  // console.log('=== API Route Debug ===')
+  // console.log('URL:', request.url)
+  // console.log('Cookies:', request.cookies.getAll())
 
   try {
     const { searchParams } = new URL(request.url)
@@ -28,27 +28,33 @@ export async function GET(request: NextRequest) {
     }
 
     const queryString = new URLSearchParams(paramsFor1C).toString()
-    
-    // Используем HttpClient1C.server с request
-    const response = await HttpClient1C.server(request)
-      .get<ICounterpartyResponse>(`api/counterparties/?${queryString}`)
 
-    console.log('Response from 1C API received, count:', response.count)
-    
+    // Используем HttpClient1C.server с request
+    const response = await HttpClient1C.server(
+      request
+    ).get<ICounterpartyResponse>(`api/counterparties/?${queryString}`)
+
+    // console.log('Response from 1C API received, count:', response.count)
+
     return Response.json(response)
-    
   } catch (error: any) {
     console.error('Error in counterparties API:', error)
-    
-    const status = error.message.includes('Session expired') ? 401 : 
-                  error.message.includes('Request failed') ? 502 : 500
-    
-    return new Response(JSON.stringify({ 
-      error: error.message,
-      details: error.toString()
-    }), {
-      status,
-      headers: { 'Content-Type': 'application/json' },
-    })
+
+    const status = error.message.includes('Session expired')
+      ? 401
+      : error.message.includes('Request failed')
+        ? 502
+        : 500
+
+    return new Response(
+      JSON.stringify({
+        error: error.message,
+        details: error.toString(),
+      }),
+      {
+        status,
+        headers: { 'Content-Type': 'application/json' },
+      }
+    )
   }
 }

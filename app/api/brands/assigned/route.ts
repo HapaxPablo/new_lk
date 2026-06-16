@@ -5,9 +5,9 @@ import { NextRequest } from 'next/server'
 export const revalidate = 3600
 
 export async function GET(request: NextRequest) {
-  console.log('=== API Route Debug ===')
-  console.log('URL:', request.url)
-  console.log('Cookies:', request.cookies.getAll())
+  // console.log('=== API Route Debug ===')
+  // console.log('URL:', request.url)
+  // console.log('Cookies:', request.cookies.getAll())
 
   try {
     const { searchParams } = new URL(request.url)
@@ -30,7 +30,7 @@ export async function GET(request: NextRequest) {
       `api/brands/assigned?${queryString}`
     )
 
-    console.log('Response from 1C API received, count:', response.count)
+    // console.log('Response from 1C API received, count:', response.count)
 
     return Response.json(response)
   } catch (error: any) {

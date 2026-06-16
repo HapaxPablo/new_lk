@@ -34,11 +34,11 @@ export async function POST(request: NextRequest) {
 
       const isProduction = process.env.NODE_ENV === 'production'
 
-      console.log('[Login] Cookie settings:', {
-        isProduction,
-        tokenLength: data.access.length,
-        cookieName: 'access_token',
-      })
+      // console.log('[Login] Cookie settings:', {
+      //   isProduction,
+      //   tokenLength: data.access.length,
+      //   cookieName: 'access_token',
+      // })
 
       // Устанавливаем куку с правильными настройками для продакшена
       // Не указываем domain явно - Next.js определит его автоматически
@@ -53,7 +53,7 @@ export async function POST(request: NextRequest) {
         expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 7), // 7 дней
       })
 
-      console.log('[Login] Cookie set successfully')
+      // console.log('[Login] Cookie set successfully')
 
       return res
     }

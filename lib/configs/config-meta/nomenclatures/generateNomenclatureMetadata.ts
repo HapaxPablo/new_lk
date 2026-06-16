@@ -1,12 +1,13 @@
 import { INomenclatureDetailsItem } from '@/types/nomenclature'
 import { SITE_URL } from '@/lib/configs/config-meta/configMetaData'
+import { formatPlaceTitle } from '@/utils'
 
 export function generateNomenclatureStructuredData(
   nomenclature: INomenclatureDetailsItem,
   id: string
 ) {
   const {
-    main_info,
+    // main_info,
     brand,
     exterior,
     interior,
@@ -15,6 +16,10 @@ export function generateNomenclatureStructuredData(
     created_at,
     updated_at,
   } = nomenclature
+  const fullName = formatPlaceTitle(nomenclature, 'full')
+  // console.log('fullName generateNomenclatureStructuredData', fullName)
+  const phoneNumber = '8 800 222 59 38' // Можно вынести в конфиг
+  const description = `Размещение аудио и видеорекламы в помещении по адресу ${fullName}. Звоните: ☎ ${phoneNumber}`
   const images = [...exterior, ...interior]
     .map((img) => img.source)
     .filter(Boolean)
@@ -24,8 +29,8 @@ export function generateNomenclatureStructuredData(
     '@context': 'https://schema.org',
     '@type': 'Product',
     '@id': productUrl,
-    name: main_info.name,
-    description: main_info.description || undefined,
+    // name: main_info.name,
+    description: description || undefined,
     sku: String(article),
     productID: id,
     url: productUrl,

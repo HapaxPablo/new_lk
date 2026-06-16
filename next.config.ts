@@ -56,8 +56,8 @@ const nextConfig: NextConfig = {
         ? 'http://192.168.0.8:8000/api/:path*'
         : 'https://api1.krasrm.com/api/:path*'
 
-    console.log('🔧 Rewrites enabled, API URL:', apiUrl)
-    console.log('Current NODE_ENV:', process.env.NODE_ENV)
+    // console.log('🔧 Rewrites enabled, API URL:', apiUrl)
+    // console.log('Current NODE_ENV:', process.env.NODE_ENV)
 
     return [
       {

@@ -30,7 +30,7 @@ export async function POST(request: NextRequest) {
         maxAge: 60 * 60 * 24 * 7, // 7 дней (в секундах)
         expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 7), // 7 дней
       })
-      console.log('res reg', res)
+      // console.log('res reg', res)
       return res
     }
     return NextResponse.json(data)

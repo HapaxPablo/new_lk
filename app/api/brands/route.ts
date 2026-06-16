@@ -31,7 +31,7 @@ export async function GET(request: NextRequest) {
       apiUrl.searchParams.set('page', page)
     }
 
-    console.log('API URL:', apiUrl.toString())
+    // console.log('API URL:', apiUrl.toString())
 
     const response = await fetch(apiUrl.toString(), {
       headers: {

@@ -86,7 +86,7 @@ export default async function NomenclaturesPage(props: NomenclaturesPageProps) {
     if (status) url.searchParams.set('status', status)
     if (typeOfPlace) url.searchParams.set('type_of_place', typeOfPlace)
 
-    console.log('Making request to:', url.toString())
+    // console.log('Making request to:', url.toString())
 
     const response = await fetch(url.toString(), { cache: 'no-cache' })
 

@@ -17,8 +17,8 @@ export interface IBrand {
   slug?: string
 }
 
-export interface ITypeOfPlace {
-  id: string
+/*export interface ITypeOfPlace {
+ id: string
   name: string
   tariff: string
   tariff_single: string
@@ -26,7 +26,7 @@ export interface ITypeOfPlace {
   code1c: string
   is_mall: boolean
   is_active: boolean
-}
+}*/
 
 export interface ITypeOfPlaceResponse {
   results: ITypeOfPlace[]
@@ -258,10 +258,9 @@ export interface INomenclatureBase {
   code1c: string
   brand: IBrand
   exterior: { source: string }[]
-  formattedAddress: string | IFormattedAddress // union в базе
   legalEntity: ILegalEntity
   contentType: string
-  typeOfPlace: string
+  typeOfPlace: ITypeOfPlace
   pricePerMonth: string
 }
 
@@ -276,16 +275,31 @@ export interface INomenclatureItem extends INomenclatureBase {
   oldCatalogSlug: string
 }
 
+export interface IAddress {
+  city: string
+  localityType?: string
+  street?: string
+  streetType?: string
+  house?: string
+}
+
+export interface ITypeOfPlace {
+  name: string
+  abbreviation?: string
+}
+
 export interface INomenclatureDetailsItem extends INomenclatureBase {
   article: number
   formattedAddress: IFormattedAddress // сужаем — в деталях всегда объект
+  tenants_length: number
   interior: IImage[]
   exterior: IImage[]
-  settings: IWeekSettings
-  hw_info: IHardwareInfo
-  main_info: IMainInfo
+  description: string
+  address: IAddress
+  // settings: IWeekSettings
+  // hw_info: IHardwareInfo
+  // main_info: IMainInfo
   responsible: TResponsiblePersons
-  tenants: ITenantsListItem[]
   external_video_media: string
   external_audio_media: string
   internal_video_media: string

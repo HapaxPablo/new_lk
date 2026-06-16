@@ -16,7 +16,7 @@ export async function GET(
 ) {
   try {
     const { slug } = await params
-    console.log('Nomenclature detail API called for slug:', slug)
+    // console.log('Nomenclature detail API called for slug:', slug)
 
     if (!slug) {
       return Response.json({ error: 'Slug is required' }, { status: 400 })
@@ -24,15 +24,15 @@ export async function GET(
 
     const response = await HttpClient1C.server(request).get<
       ApiResult<INomenclatureDetailsItem>
-    >(`api/nomenclatures/${slug}`)
+    >(`api/nomenclatures/web/${slug}`)
 
-    console.log('Route response:', JSON.stringify(response))
-    console.log('Route response.ok:', (response as any).ok)
-    console.log('Route response.status:', (response as any).status)
+    // console.log('Route response:', JSON.stringify(response))
+    // console.log('Route response.ok:', (response as any).ok)
+    // console.log('Route response.status:', (response as any).status)
 
     if (!(response as any).ok) {
       const errorStatus = (response as any).status || 404
-      console.log('Returning error response with status:', errorStatus)
+      // console.log('Returning error response with status:', errorStatus)
       return Response.json(
         { error: (response as any).message },
         { status: errorStatus }
@@ -42,8 +42,8 @@ export async function GET(
     return Response.json(response)
   } catch (error: any) {
     console.error('Error in nomenclature detail API:', error)
-    console.log('STATUS:', error.status)
-    console.log('MESSAGE:', error.message)
+    // console.log('STATUS:', error.status)
+    // console.log('MESSAGE:', error.message)
     // Более детальная обработка ошибок
     let status = 500
     let message = error.message || 'Internal server error'

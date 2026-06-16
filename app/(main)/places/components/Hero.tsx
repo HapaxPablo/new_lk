@@ -5,7 +5,7 @@ interface HeroProps {
 }
 
 export function Hero({ cityName, placesCount, minPrice }: HeroProps) {
-  console.log('minPrice in Hero:', minPrice)
+  // console.log('minPrice in Hero:', minPrice)
   return (
     <section className="relative overflow-hidden bg-gradient-to-br from-slate-900 via-[#18335f] to-[#ef5350]">
       <div className="absolute inset-0 opacity-10">

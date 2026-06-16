@@ -63,7 +63,7 @@ export default async function BrandsPage(props: BrandsPageProps) {
             url.searchParams.set('page', '1') // Сбросить пагинацию при новом поисковом запросе
         }
 
-        console.log('Making request to:', url.toString())
+        // console.log('Making request to:', url.toString())
 
         const response = await fetch(url.toString(), { cache: 'no-store' })
 

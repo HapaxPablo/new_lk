@@ -1,6 +1,7 @@
 import { Metadata } from 'next'
 import { INomenclatureDetailsItem } from '@/types/nomenclature'
 import { SITE_URL } from '@/lib/configs/config-meta/configMetaData'
+import { formatPlaceTitle } from '@/utils'
 
 interface GenerateMetadataParams {
   nomenclature: INomenclatureDetailsItem
@@ -12,31 +13,27 @@ export function generateNomenclatureMetadata({
   id,
 }: GenerateMetadataParams): Metadata {
   const {
-    main_info,
+    // main_info,
     brand,
     exterior,
     interior,
     article,
     pricePerMonth,
-    nameForFront,
-    formattedAddress,
   } = nomenclature
 
   // Получаем адрес из main_info или других полей
-  const address = formattedAddress.name || ''
-  const fullName = address ? `${nameForFront} ${address}` : nameForFront
+  const fullName = formatPlaceTitle(nomenclature, 'full')
+  // console.log('fullName generateNomenclatureStructuredData', fullName)
 
   // Шаблонный title для карточки товара
   const title = `Размещение Indoor рекламы в помещении ${fullName}`
 
   // Шаблонный h1 (будет использоваться на странице)
-  const h1 = `Размещение ролика на радио ${fullName}`
+  const h1 = fullName
 
   // Шаблонный description
   const phoneNumber = '8 800 222 59 38' // Можно вынести в конфиг
-  const description = main_info.description
-    ? main_info.description.substring(0, 160)
-    : `Размещение аудио и видеорекламы в помещении по адресу ${fullName}. Звоните: ☎ ${phoneNumber}`
+  const description = `Размещение аудио и видеорекламы в помещении по адресу ${fullName}. Звоните: ☎ ${phoneNumber}`
 
   const canonicalUrl = `${SITE_URL}/nomenclatures/${id}`
 
@@ -56,14 +53,14 @@ export function generateNomenclatureMetadata({
       'indoor реклама',
       'реклама в помещении',
       fullName,
-      main_info.name,
+      // main_info.name,
       String(article),
       brand?.name || '',
       'размещение рекламы',
       'Красноярск',
       'RMC',
       nomenclature.contentType,
-      nomenclature.typeOfPlace,
+      nomenclature.typeOfPlace.name,
     ].filter(Boolean),
     openGraph: {
       title,

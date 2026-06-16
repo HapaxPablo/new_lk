@@ -17,7 +17,7 @@ async function getPromotionById(id: string): Promise<IPromotionDetails | null> {
   try {
     const cookieStore = await cookies()
 
-    console.log('Fetching counterparty details for ID:', id)
+    // console.log('Fetching counterparty details for ID:', id)
 
     // Правильный эндпоинт с ID в пути
     const data = await httpClient1CServer.get<IPromotionDetails>(
@@ -84,12 +84,12 @@ export default async function PromotionDetailPage(
 
   const formattedDate = promotion.created
     ? new Date(promotion.created).toLocaleDateString('ru-RU', {
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit',
-      })
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+    })
     : '—'
 
   return (
