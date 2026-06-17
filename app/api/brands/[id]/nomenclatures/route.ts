@@ -16,11 +16,9 @@ export async function GET(
     }
 
     const searchParams = request.nextUrl.searchParams
-    const limit = searchParams.get('limit') ?? '15'
-    const offset = searchParams.get('offset') ?? '0'
 
     const response = await HttpClient1C.server(request).get<IBrandDetail>(
-      `api/brands/${id}/nomenclatures?limit=${limit}&offset=${offset}`
+      `api/brands/${id}/nomenclatures`
     )
 
     return Response.json(response)

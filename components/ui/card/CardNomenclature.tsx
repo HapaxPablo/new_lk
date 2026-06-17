@@ -20,7 +20,12 @@ export const CardNomenclature: React.FC<CardNomenclatureProps> = ({
   codeMP = null,
 }) => {
   const { brand, exterior, typeOfPlace, pricePerMonth, brandName } = item
-  const mainImage = exterior?.[0]?.source || exterior
+  const mainImage =
+    Array.isArray(exterior)
+      ? exterior[0]?.source
+      : exterior
+
+  const hasImage = Boolean(mainImage)
   const logoSrc = brand?.logotype
 
   const formattedPrice = pricePerMonth
@@ -53,7 +58,7 @@ export const CardNomenclature: React.FC<CardNomenclatureProps> = ({
         <div className={styles.cardContent}>
           <div className={styles.mediaSection}>
             <div className={styles.imageWrapper}>
-              {mainImage.length > 0 ? (
+              {hasImage ? (
                 <Image
                   src={mainImage}
                   alt={`Фасад ${brand?.name || 'места'}`}
