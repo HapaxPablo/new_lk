@@ -105,6 +105,7 @@ const nextConfig: NextConfig = {
             key: 'Content-Security-Policy',
             value: `
                 default-src 'self' 'unsafe-inline' 'unsafe-eval';
+                worker-src blob:;
 
                 script-src 'self' 'unsafe-inline' 'unsafe-eval'
                   https://*.yastatic.net
