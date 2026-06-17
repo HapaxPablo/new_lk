@@ -102,7 +102,7 @@ async function PlacesCityPage(props: PlacesPageProps) {
             </>
         )
     } catch (error) {
-        console.error('Error fetching nomenclatures:', error)
+        // console.error('Error fetching nomenclatures:', error)
         if (error instanceof Error) {
             throw error
         } else {
