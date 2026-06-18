@@ -16,7 +16,7 @@ interface PlacesMapProps {
 interface GeoJSONFeature {
   type: 'Feature'
   geometry: { type: 'Point'; coordinates: [number, number] }
-  properties: { id: string; title: string; address: string | null; brand: string }
+  properties: { id: string; title: string; address: string | null; brand: string, exterior: any }
 }
 
 const normalizeCoordinates = (place: ICity): [number, number] | null => {
@@ -42,6 +42,7 @@ const buildGeoJSON = (places: ICity[]) => {
         title: place.nameForFront,
         address: place.formattedAddress.name,
         brand: place.brand.name,
+        exterior: place.exterior
       },
     })
   })
@@ -300,12 +301,42 @@ export default function PlacesMap({
               const feature = pointFeatures[0]
               const coordinates = (feature.geometry as any).coordinates
               const props = feature.properties as any
-
+              console.log('props.exterior', props.exterior)
               popup.current?.remove()
-              popup.current = new Popup({ offset: 25, closeButton: true })
+              popup.current = new Popup({ anchor: 'top', closeButton: true })
                 .setLngLat(coordinates)
                 .setHTML(
-                  `<div class="text-sm"><strong>${props.address || props.title}</strong><br/><span class="text-gray-600">${props.brand}</span></div>`
+                  `<div class="text-sm flex flex-col gap-2">
+          <div class="flex flex-col items-center justify-center gap-2">
+            <img
+              src=${Array.isArray(props.exterior)
+                    ? props.exterior[0]?.source
+                    : props.exterior}
+              alt="Фасад"
+              style="
+                width:160px;
+                height:80px;
+                object-fit:cover;
+                border-radius:8px;
+                display:block;"
+            />
+            <img
+              src=${props.brand.logotype}
+              alt="Логотип"
+              style="
+                width:80px;
+                height:25px;
+                object-fit:cover;
+                display:block;"
+            />
+          </div>
+          <strong>
+            ${props.formattedAddress || props.nameForFront}
+          </strong>
+          <span class="text-gray-600">
+            ${props.brand.name}
+          </span>
+        </div>`
                 )
                 .addTo(map.current)
               onPlaceSelect?.(props.id)
@@ -371,12 +402,44 @@ export default function PlacesMap({
     if (!place) return
     const coords = normalizeCoordinates(place)
     if (!coords) return
-    map.current.flyTo({ center: coords, zoom: 15, duration: 1000 })
+    map.current.flyTo({ center: coords, zoom: 13, duration: 2000 })
+    console.log('place.exterior', place.exterior)
+
     popup.current?.remove()
-    popup.current = new Popup({ offset: 25, closeButton: true })
+    popup.current = new Popup({ anchor: 'top', closeButton: true })
       .setLngLat(coords)
       .setHTML(
-        `<div class="text-sm"><strong>${place.formattedAddress.name || place.nameForFront}</strong><br/><span class="text-gray-600">${place.brand.name}</span></div>`
+        `<div class="text-sm flex flex-col gap-2">
+          <div class="flex flex-col items-center justify-center gap-2">
+            <img
+              src=${Array.isArray(place.exterior)
+          ? place.exterior[0]?.source
+          : place.exterior}
+              alt="Фасад"
+              style="
+                width:160px;
+                height:80px;
+                object-fit:cover;
+                border-radius:8px;
+                display:block;"
+            />
+            <img
+              src=${place.brand.logotype}
+              alt="Логотип"
+              style="
+                width:80px;
+                height:25px;
+                object-fit:cover;
+                display:block;"
+            />
+          </div>
+          <strong>
+            ${place.formattedAddress.name || place.nameForFront}
+          </strong>
+          <span class="text-gray-600">
+            ${place.brand.name}
+          </span>
+        </div>`
       )
       .addTo(map.current)
   }, [selectedPlaceId, places, isLoaded])
