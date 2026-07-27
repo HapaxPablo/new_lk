@@ -13,6 +13,7 @@ export type ModalType =
   | 'playlist'
   | 'files'
   | 'ad_order'
+  | 'bg_order'
 
 type ModalContextType = {
   openModal: (id: ModalType, key?: string) => void

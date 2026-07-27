@@ -1,7 +1,8 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
-import maplibre, { Map, Popup, LngLatBounds } from 'maplibre-gl'
+// import maplibre, { Map, Popup, LngLatBounds } from 'maplibre-gl'
+import * as maplibre from 'maplibre-gl'
 import 'maplibre-gl/dist/maplibre-gl.css'
 
 import { ICity } from '@/types/cities'
@@ -16,7 +17,13 @@ interface PlacesMapProps {
 interface GeoJSONFeature {
   type: 'Feature'
   geometry: { type: 'Point'; coordinates: [number, number] }
-  properties: { id: string; title: string; address: string | null; brand: string, exterior: any }
+  properties: {
+    id: string
+    title: string
+    address: string | null
+    brand: string
+    exterior: any
+  }
 }
 
 const normalizeCoordinates = (place: ICity): [number, number] | null => {
@@ -42,7 +49,7 @@ const buildGeoJSON = (places: ICity[]) => {
         title: place.nameForFront,
         address: place.formattedAddress.name,
         brand: place.brand.name,
-        exterior: place.exterior
+        exterior: place.exterior,
       },
     })
   })
@@ -56,18 +63,16 @@ export default function PlacesMap({
   onPlaceSelect,
 }: PlacesMapProps) {
   const mapContainer = useRef<HTMLDivElement>(null)
-  const map = useRef<Map | null>(null)
-  const popup = useRef<Popup | null>(null)
+  const map = useRef<maplibre.Map | null>(null)
+  const popup = useRef<maplibre.Popup | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [isLoaded, setIsLoaded] = useState(false)
-
 
   useEffect(() => {
     if (!mapContainer.current) return
 
     const initMap = async () => {
       try {
-
         const styleUrl = process.env.NEXT_PUBLIC_MAP_STYLE_URL
         // console.log('Using map style URL:', styleUrl)
         if (!styleUrl) {
@@ -78,7 +83,7 @@ export default function PlacesMap({
         map.current = new maplibre.Map({
           container: mapContainer.current!,
           style: styleUrl,
-          center: [92.52, 56.00],
+          center: [92.52, 56.0],
           attributionControl: false,
           zoom: 10,
           transformRequest: (url) => {
@@ -99,16 +104,17 @@ export default function PlacesMap({
           const layers = style?.layers || []
 
           const hidePatterns = [
-
-            'landcover',     // покрытие земли
-            'aeroway',       // аэропорты
-            'contour',       // горизонтали
-            'hillshade',     // тени рельефа
+            'landcover', // покрытие земли
+            'aeroway', // аэропорты
+            'contour', // горизонтали
+            'hillshade', // тени рельефа
           ]
 
           layers.forEach((layer: any) => {
             const layerId = layer.id.toLowerCase()
-            const shouldHide = hidePatterns.some(pattern => layerId.includes(pattern))
+            const shouldHide = hidePatterns.some((pattern) =>
+              layerId.includes(pattern)
+            )
 
             if (shouldHide && layer.type !== 'background') {
               try {
@@ -138,15 +144,22 @@ export default function PlacesMap({
             paint: {
               'circle-color': '#3b82f6',
               'circle-radius': [
-                'interpolate', ['linear'], ['zoom'],
+                'interpolate',
+                ['linear'],
+                ['zoom'],
                 // zoom 0-10: маленькие кластеры
-                0, 15,
-                10, ['step', ['get', 'point_count'], 20, 100, 30, 750, 40],
+                0,
+                15,
+                10,
+                ['step', ['get', 'point_count'], 20, 100, 30, 750, 40],
                 // zoom 10-15: увеличиваются
-                12, ['step', ['get', 'point_count'], 30, 100, 45, 750, 60],
+                12,
+                ['step', ['get', 'point_count'], 30, 100, 45, 750, 60],
                 // zoom 15+: ещё больше
-                15, ['step', ['get', 'point_count'], 40, 100, 60, 750, 80],
-                18, ['step', ['get', 'point_count'], 55, 100, 80, 750, 100],
+                15,
+                ['step', ['get', 'point_count'], 40, 100, 60, 750, 80],
+                18,
+                ['step', ['get', 'point_count'], 55, 100, 80, 750, 100],
               ],
               'circle-opacity': 0.8,
             },
@@ -162,11 +175,17 @@ export default function PlacesMap({
               'text-field': ['get', 'point_count'],
               'text-font': ['Open Sans Semibold', 'Arial Unicode MS Bold'],
               'text-size': [
-                'interpolate', ['linear'], ['zoom'],
-                0, 10,
-                10, 12,
-                14, 16,
-                18, 22,
+                'interpolate',
+                ['linear'],
+                ['zoom'],
+                0,
+                10,
+                10,
+                12,
+                14,
+                16,
+                18,
+                22,
               ],
               'text-allow-overlap': true,
             },
@@ -182,18 +201,29 @@ export default function PlacesMap({
             paint: {
               'circle-color': '#ef4444',
               'circle-radius': [
-                'interpolate', ['linear'], ['zoom'],
-                0, 10,    // на минимальном зуме — маленький
-                10, 20,   // средний зум
-                14, 30,   // большой зум
-                18, 45,   // максимальный зум
+                'interpolate',
+                ['linear'],
+                ['zoom'],
+                0,
+                10, // на минимальном зуме — маленький
+                10,
+                20, // средний зум
+                14,
+                30, // большой зум
+                18,
+                45, // максимальный зум
               ],
               'circle-opacity': 0.85,
               'circle-stroke-width': [
-                'interpolate', ['linear'], ['zoom'],
-                0, 1,
-                14, 2,
-                18, 3,
+                'interpolate',
+                ['linear'],
+                ['zoom'],
+                0,
+                1,
+                14,
+                2,
+                18,
+                3,
               ],
               'circle-stroke-color': '#fff',
             },
@@ -209,18 +239,30 @@ export default function PlacesMap({
               'text-field': ['get', 'title'],
               'text-font': ['Open Sans Semibold', 'Arial Unicode MS Bold'],
               'text-size': [
-                'interpolate', ['linear'], ['zoom'],
-                0, 7,     // мелкий текст на дальнем зуме
-                10, 9,
-                14, 11,
-                18, 14,   // крупный текст на близком зуме
+                'interpolate',
+                ['linear'],
+                ['zoom'],
+                0,
+                7, // мелкий текст на дальнем зуме
+                10,
+                9,
+                14,
+                11,
+                18,
+                14, // крупный текст на близком зуме
               ],
               'text-max-width': [
-                'interpolate', ['linear'], ['zoom'],
-                0, 6,     // мало места — сильнее обрезаем
-                10, 8,
-                14, 12,
-                18, 15,   // много места — показываем больше текста
+                'interpolate',
+                ['linear'],
+                ['zoom'],
+                0,
+                6, // мало места — сильнее обрезаем
+                10,
+                8,
+                14,
+                12,
+                18,
+                15, // много места — показываем больше текста
               ],
               'text-line-height': 1.1,
               'text-allow-overlap': false,
@@ -230,19 +272,27 @@ export default function PlacesMap({
             paint: {
               'text-color': 'black',
               'text-halo-color': [
-                'interpolate', ['linear'], ['zoom'],
-                0, '#ef4444',
-                14, 'rgba(239, 68, 68, 0.5)',
-                18, 'rgba(239, 68, 68, 0)',
+                'interpolate',
+                ['linear'],
+                ['zoom'],
+                0,
+                '#ef4444',
+                14,
+                'rgba(239, 68, 68, 0.5)',
+                18,
+                'rgba(239, 68, 68, 0)',
               ],
               'text-halo-width': [
-                'interpolate', ['linear'], ['zoom'],
-                0, 1.5,
-                18, 0,
+                'interpolate',
+                ['linear'],
+                ['zoom'],
+                0,
+                1.5,
+                18,
+                0,
               ],
             },
           })
-
 
           // Универсальный обработчик клика по карте
           map.current.on('click', (e) => {
@@ -250,12 +300,12 @@ export default function PlacesMap({
 
             // Ищем кластеры под курсором
             const clusterFeatures = map.current.queryRenderedFeatures(e.point, {
-              layers: ['clusters']
+              layers: ['clusters'],
             })
 
             // Ищем одиночные точки под курсором
             const pointFeatures = map.current.queryRenderedFeatures(e.point, {
-              layers: ['unclustered-point']
+              layers: ['unclustered-point'],
             })
 
             // Если есть кластер и кликнули именно по нему (не мимо)
@@ -267,7 +317,7 @@ export default function PlacesMap({
               const clickPoint = map.current.project(coordinates)
               const distance = Math.sqrt(
                 Math.pow(e.point.x - clickPoint.x, 2) +
-                Math.pow(e.point.y - clickPoint.y, 2)
+                  Math.pow(e.point.y - clickPoint.y, 2)
               )
 
               // Радиус кружка кластера (возьмите из вашего circle-radius, примерно)
@@ -303,15 +353,20 @@ export default function PlacesMap({
               const props = feature.properties as any
               console.log('props.exterior', props.exterior)
               popup.current?.remove()
-              popup.current = new Popup({ anchor: 'top', closeButton: true })
+              popup.current = new maplibre.Popup({
+                anchor: 'top',
+                closeButton: true,
+              })
                 .setLngLat(coordinates)
                 .setHTML(
                   `<div class="text-sm flex flex-col gap-2">
           <div class="flex flex-col items-center justify-center gap-2">
             <img
-              src=${Array.isArray(props.exterior)
-                    ? props.exterior[0]?.source
-                    : props.exterior}
+              src=${
+                Array.isArray(props.exterior)
+                  ? props.exterior[0]?.source
+                  : props.exterior
+              }
               alt="Фасад"
               style="
                 width:160px;
@@ -365,9 +420,13 @@ export default function PlacesMap({
           if (validCoords.length > 0) {
             const bounds = validCoords.reduce(
               (acc, coord) => acc.extend(coord),
-              new LngLatBounds(validCoords[0], validCoords[0])
+              new maplibre.LngLatBounds(validCoords[0], validCoords[0])
             )
-            map.current.fitBounds(bounds, { padding: 60, maxZoom: 14, duration: 0 })
+            map.current.fitBounds(bounds, {
+              padding: 60,
+              maxZoom: 14,
+              duration: 0,
+            })
           }
 
           setIsLoaded(true)
@@ -406,15 +465,17 @@ export default function PlacesMap({
     console.log('place.exterior', place.exterior)
 
     popup.current?.remove()
-    popup.current = new Popup({ anchor: 'top', closeButton: true })
+    popup.current = new maplibre.Popup({ anchor: 'top', closeButton: true })
       .setLngLat(coords)
       .setHTML(
         `<div class="text-sm flex flex-col gap-2">
           <div class="flex flex-col items-center justify-center gap-2">
             <img
-              src=${Array.isArray(place.exterior)
-          ? place.exterior[0]?.source
-          : place.exterior}
+              src=${
+                Array.isArray(place.exterior)
+                  ? place.exterior[0]?.source
+                  : place.exterior
+              }
               alt="Фасад"
               style="
                 width:160px;
@@ -448,16 +509,19 @@ export default function PlacesMap({
     return (
       <div className="w-full h-full flex flex-col items-center justify-center bg-gray-100 rounded-lg p-4">
         <p className="text-gray-600 text-center">{error}</p>
-        <p className="text-sm text-gray-500 mt-2">Попробуйте обновить страницу позже.</p>
+        <p className="text-sm text-gray-500 mt-2">
+          Попробуйте обновить страницу позже.
+        </p>
       </div>
     )
   }
 
   return (
     <div className="block h-full">
-      <div ref={mapContainer} className="w-full h-full rounded-lg overflow-hidden" />
+      <div
+        ref={mapContainer}
+        className="w-full h-full rounded-lg overflow-hidden"
+      />
     </div>
-
-
   )
 }

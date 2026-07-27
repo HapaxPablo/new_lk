@@ -215,16 +215,16 @@ a {
   color: var(--second-text-color-light);
   text-decoration: none;
   cursor: pointer;
+}
 
-  &:hover {
-    color: var(--main-text-color);
-    text-decoration: underline;
-  }
+a:hover {
+  color: var(--main-text-color);
+  text-decoration: underline;
+}
 
-  &:focus {
-    outline: none;
-    box-shadow: var(--focus-ring);
-  }
+a:focus {
+  outline: none;
+  box-shadow: var(--focus-ring);
 }
 
 /* Формы */
@@ -236,12 +236,14 @@ select {
   border-radius: 0.25rem;
   width: 100%;
   max-width: 100%;
+}
 
-  &:focus {
-    outline: none;
-    border-color: var(--main-color);
-    box-shadow: var(--focus-ring);
-  }
+input:focus,
+textarea:focus,
+select:focus {
+  outline: none;
+  border-color: var(--main-color);
+  box-shadow: var(--focus-ring);
 }
 
 input:focus {
@@ -256,46 +258,42 @@ input:focus {
   background-color: white;
   box-shadow: var(--shadow-sm);
   overflow: hidden;
-
-  &:hover {
-    box-shadow: var(--shadow-md);
-  }
 }
 
-.rounded {
-  &-sm {
-    border-radius: 0.125rem;
-  }
-
-  &-md {
-    border-radius: 0.375rem;
-  }
-
-  &-lg {
-    border-radius: 0.5rem;
-  }
-
-  &-full {
-    border-radius: 9999px;
-  }
+.card:hover {
+  box-shadow: var(--shadow-md);
 }
 
-.shadow {
-  &-sm {
-    box-shadow: var(--shadow-sm);
-  }
+.rounded-sm {
+  border-radius: 0.125rem;
+}
 
-  &-md {
-    box-shadow: var(--shadow-md);
-  }
+.rounded-md {
+  border-radius: 0.375rem;
+}
 
-  &-lg {
-    box-shadow: var(--shadow-lg);
-  }
+.rounded-lg {
+  border-radius: 0.5rem;
+}
 
-  &-none {
-    box-shadow: none;
-  }
+.rounded-full {
+  border-radius: 9999px;
+}
+
+.shadow-sm {
+  box-shadow: var(--shadow-sm);
+}
+
+.shadow-md {
+  box-shadow: var(--shadow-md);
+}
+
+.shadow-lg {
+  box-shadow: var(--shadow-lg);
+}
+
+.shadow-none {
+  box-shadow: none;
 }
 
 /* Ховер-эффекты */

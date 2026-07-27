@@ -32,7 +32,7 @@ const FilesListPage = async ({
   const countFiles = listFiles.count ? listFiles.count : 0
   console.log(countFiles)
   return (
-    <div>
+    <div className="overflow-auto">
       <h1>Файлы</h1>
       <div className="overflow-auto">
         <FilesTable initialData={listFiles} />

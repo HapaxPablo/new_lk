@@ -1,20 +1,10 @@
 'use client'
 
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { Button } from '@/components/ui/button/Button'
 import { ModalWrapper } from '@/components/modal/ModalWrapper'
 import { useModal } from '@/providers/modal/ModalProvider'
 import { useToast } from '@/hooks/useToast'
-
-const broadcastTypes = [
-  { value: '0', label: '0 — по режиму работы точки' },
-  { value: '1', label: '1 — от начала работы + delta' },
-  { value: '2', label: '2 — от delta до окончания' },
-  { value: '3', label: '3 — конкретное время' },
-  { value: '4', label: '4 — от начала до фиксированного времени' },
-  { value: '5', label: '5 — от фиксированного времени до окончания' },
-  { value: '6', label: '6 — по событию' },
-]
 
 const PLAYLIST_PAGE_LIMIT = 15
 const CLIENT_PAGE_LIMIT = 20
@@ -29,12 +19,6 @@ const formatDateForApi = (value: string) => {
     date.getDate()
   )} ${pad2(date.getHours())}:${pad2(date.getMinutes())}:00`
 }
-
-const parseIds = (value: string) =>
-  value
-    .split(/[\n\r,]+/)
-    .map((item) => item.trim())
-    .filter(Boolean)
 
 interface IPlaylistItem {
   id: string
@@ -108,8 +92,8 @@ const fetchClientsPage = async (
   }
 }
 
-export function ModalAddAdOrder() {
-  const adOrderModal = useModal('ad_order')
+export function ModalAddBgOrder() {
+  const bgOrderModal = useModal('bg_order')
   const { showToast } = useToast()
 
   const [playlists, setPlaylists] = useState<IPlaylistItem[]>([])
@@ -130,26 +114,9 @@ export function ModalAddAdOrder() {
 
   const [name, setName] = useState('')
   const [description, setDescription] = useState('')
-  const [broadcastType, setBroadcastType] = useState('0')
   const [lower, setLower] = useState('')
   const [upper, setUpper] = useState('')
-  const [timesInHour, setTimesInHour] = useState('1')
-  const [timedelta, setTimedelta] = useState('00:00:00')
-
-  const [startTime, setStartTime] = useState('')
-  const [endTime, setEndTime] = useState('')
-  const [weight, setWeight] = useState('50')
   const [isSubmitting, setIsSubmitting] = useState(false)
-
-  const parameters = useMemo(() => {
-    const params: Record<string, number | string> = {}
-    if (weight) params.weight = Number(weight)
-    if (timesInHour) params.times_in_hour = Number(timesInHour)
-    if (timedelta && timedelta !== '00:00:00') params.timedelta = timedelta
-    if (startTime) params.start_time = startTime
-    if (endTime) params.end_time = endTime
-    return params
-  }, [weight, timesInHour, timedelta, startTime, endTime])
 
   const playlistDropdownRef = useRef<HTMLDivElement | null>(null)
   const playlistObserverRef = useRef<HTMLDivElement | null>(null)
@@ -173,17 +140,11 @@ export function ModalAddAdOrder() {
 
     setName('')
     setDescription('')
-    setBroadcastType('0')
     setLower('')
     setUpper('')
-    setTimesInHour('1')
-    setTimedelta('0')
-    setStartTime('')
-    setEndTime('')
-    setWeight('50')
   }
 
-  const isModalOpen = adOrderModal.isOpen
+  const isModalOpen = bgOrderModal.isOpen
 
   const loadPlaylists = useCallback(
     async (page: number, search: string) => {
@@ -227,6 +188,7 @@ export function ModalAddAdOrder() {
     if (!isModalOpen) return
     loadPlaylists(1, playlistSearch)
     loadClients(1, clientSearch)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isModalOpen, loadPlaylists, loadClients, playlistSearch, clientSearch])
 
   useEffect(() => {
@@ -286,7 +248,7 @@ export function ModalAddAdOrder() {
 
   const handleSubmit = async () => {
     if (!playlist.trim()) {
-      showToast('Укажите playlist', 'error')
+      showToast('Укажите плейлист', 'error')
       return
     }
 
@@ -314,14 +276,14 @@ export function ModalAddAdOrder() {
         lower: formatDateForApi(lower),
         upper: formatDateForApi(upper),
       },
-      broadcast_type: Number(broadcastType),
-      parameters,
+      parameters: {},
+      order_type: 0,
     }
 
     setIsSubmitting(true)
 
     try {
-      const response = await fetch('/api/adorders/', {
+      const response = await fetch('/api/bgorders/', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -332,16 +294,19 @@ export function ModalAddAdOrder() {
       const result = await response.json()
 
       if (!response.ok) {
-        showToast(result.error || 'Ошибка при создании AD заказа', 'error')
+        showToast(
+          result.error || 'Ошибка при создании заказа фоновой музыки',
+          'error'
+        )
         return
       }
 
-      showToast('AD заказ успешно создан', 'success')
+      showToast('Заказ фоновой музыки успешно создан', 'success')
       resetForm()
-      adOrderModal.closeModal()
+      bgOrderModal.closeModal()
     } catch (error) {
-      console.error('AD order create error:', error)
-      showToast('Ошибка при создании AD заказа', 'error')
+      console.error('BG order create error:', error)
+      showToast('Ошибка при создании заказа фоновой музыки', 'error')
     } finally {
       setIsSubmitting(false)
     }
@@ -349,12 +314,14 @@ export function ModalAddAdOrder() {
 
   return (
     <>
-      <Button onClick={adOrderModal.openModal}>Создать рекламный заказ</Button>
-      <ModalWrapper id="ad_order" title="Создать рекламный заказ">
+      <Button onClick={bgOrderModal.openModal}>
+        Создать заказ фоновой музыки
+      </Button>
+      <ModalWrapper id="bg_order" title="Создать заказ фоновой музыки">
         <div className="grid gap-4">
           <div className="grid gap-2">
             <label className="text-sm font-medium text-gray-700">
-              Playlist
+              Плейлист
             </label>
             <div className="relative">
               <button
@@ -412,7 +379,7 @@ export function ModalAddAdOrder() {
           </div>
 
           <div className="grid gap-2">
-            <label className="text-sm font-medium text-gray-700">Clients</label>
+            <label className="text-sm font-medium text-gray-700">Клиенты</label>
             <div className="grid gap-2 rounded-2xl border border-gray-200 bg-white p-3">
               <div className="flex flex-wrap gap-2">
                 {selectedClients.map((item) => (
@@ -516,94 +483,8 @@ export function ModalAddAdOrder() {
             </div>
           </div>
 
-          <div className="grid gap-2 sm:grid-cols-2">
-            <div className="grid gap-2">
-              <label className="text-sm font-medium text-gray-700">
-                Тип вещания
-              </label>
-              <select
-                className="rounded-2xl border border-gray-200 bg-white px-4 py-3 text-sm outline-none transition focus:border-blue-500"
-                value={broadcastType}
-                onChange={(event) => setBroadcastType(event.target.value)}
-              >
-                {broadcastTypes.map((type) => (
-                  <option key={type.value} value={type.value}>
-                    {type.label}
-                  </option>
-                ))}
-              </select>
-            </div>
-            <div className="grid gap-2">
-              <label className="text-sm font-medium text-gray-700">
-                Приоритет (weight)
-              </label>
-              <input
-                type="number"
-                min={0}
-                max={100}
-                className="rounded-2xl border border-gray-200 bg-white px-4 py-3 text-sm outline-none transition focus:border-blue-500"
-                value={weight}
-                onChange={(event) => setWeight(event.target.value)}
-              />
-            </div>
-          </div>
-
-          <div className="grid gap-2 sm:grid-cols-3">
-            <div className="grid gap-2">
-              <label className="text-sm font-medium text-gray-700">
-                Выходов в час
-              </label>
-              <select
-                className="rounded-2xl border border-gray-200 bg-white px-4 py-3 text-sm outline-none transition focus:border-blue-500"
-                value={timesInHour}
-                onChange={(event) => setTimesInHour(event.target.value)}
-              >
-                {[1, 2, 3, 4, 6, 12].map((v) => (
-                  <option key={v} value={v}>
-                    {v}
-                  </option>
-                ))}
-              </select>
-            </div>
-            <div className="grid gap-2">
-              <label className="text-sm font-medium text-gray-700">
-                Смещение (ЧЧ:ММ:СС)
-              </label>
-              <input
-                type="time"
-                step="1"
-                className="rounded-2xl border border-gray-200 bg-white px-4 py-3 text-sm outline-none transition focus:border-blue-500"
-                value={timedelta}
-                onChange={(event) => setTimedelta(event.target.value)}
-              />
-            </div>
-            <div className="grid gap-2">
-              <label className="text-sm font-medium text-gray-700">
-                Start/End time
-              </label>
-              <div className="grid gap-2">
-                <input
-                  type="time"
-                  step="1"
-                  className="rounded-2xl border border-gray-200 bg-white px-4 py-3 text-sm outline-none transition focus:border-blue-500"
-                  value={startTime}
-                  onChange={(event) => setStartTime(event.target.value)}
-                  placeholder="HH:MM:SS"
-                />
-                <input
-                  type="time"
-                  step="1"
-                  className="rounded-2xl border border-gray-200 bg-white px-4 py-3 text-sm outline-none transition focus:border-blue-500"
-                  value={endTime}
-                  onChange={(event) => setEndTime(event.target.value)}
-                  placeholder="HH:MM:SS"
-                />
-              </div>
-            </div>
-          </div>
-
           <div className="flex justify-end gap-3 pt-2">
-            <Button variant="default" onClick={adOrderModal.closeModal}>
+            <Button variant="default" onClick={bgOrderModal.closeModal}>
               Отменить
             </Button>
             <Button onClick={handleSubmit} isLoading={isSubmitting}>
