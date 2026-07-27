@@ -205,25 +205,31 @@ export default async function NomenclatureDetailPage(
           <div className="mx-auto grid max-w-7xl gap-8 px-4 py-8 lg:grid-cols-[0.95fr_1.05fr]">
             {/* Gallery + characteristics */}
             <div>
-              <div className="overflow-hidden rounded-3xl bg-white shadow-sm ring-1 ring-slate-200">
-                <div className="relative h-[280px] sm:h-[360px] lg:h-[420px] min-h-[240px]">
-                  {allImages.length > 0 ? (
-                    <Slider images={allImages} autoPlay autoPlayTime={15000} />
-                  ) : (
-                    <div className="flex h-full w-full items-center justify-center bg-gray-100 p-4">
-                      {brand && (
-                        <Image
-                          src={brand.logotype || '/og-logo.jpg'}
-                          alt="Логотип"
-                          width={200}
-                          height={100}
-                          className="max-h-full w-auto object-contain"
-                          loading="lazy"
-                        />
-                      )}
-                    </div>
-                  )}
-                </div>
+              <div>
+                {/* <div className="relative h-[280px] sm:h-[360px] lg:h-[420px] min-h-[240px]"> */}
+                {allImages.length > 0 ? (
+                  <Slider
+                    images={allImages}
+                    autoPlay
+                    autoPlayTime={15000}
+                    // width="50%"
+                    // height="70%"
+                  />
+                ) : (
+                  <div className="flex h-full w-full items-center justify-center bg-gray-100 p-4">
+                    {brand && (
+                      <Image
+                        src={brand.logotype || '/og-logo.jpg'}
+                        alt="Логотип"
+                        width={200}
+                        height={100}
+                        className="max-h-full w-auto object-contain"
+                        loading="lazy"
+                      />
+                    )}
+                  </div>
+                )}
+                {/* </div> */}
               </div>
 
               <div className="mt-5 overflow-hidden rounded-3xl bg-white shadow-sm ring-1 ring-slate-200">

@@ -18,7 +18,7 @@ interface ISliderProps {
 
 const THUMBNAIL_SIZE = 80
 const MOBILE_THUMBNAIL_SIZE = 60
-const MAX_VISIBLE_THUMBNAILS = 5
+const MAX_VISIBLE_THUMBNAILS = 2
 
 const SliderClient = function ({
   width = '100%',
@@ -255,8 +255,9 @@ const SliderClient = function ({
             return (
               <div
                 key={actualIndex}
-                className={`${styles.thumbnails_img} ${isActive ? styles.thumbnails_img_active : ''
-                  } relative aspect-video`}
+                className={`${styles.thumbnails_img} ${
+                  isActive ? styles.thumbnails_img_active : ''
+                } relative aspect-video`}
                 onClick={() => handleThumbnailClick(actualIndex)}
               >
                 {image.source && (
@@ -265,8 +266,7 @@ const SliderClient = function ({
                     alt={`Миниатюра ${actualIndex + 1}`}
                     fill
                     loading="lazy"
-
-                    sizes="80px"
+                    sizes="100px"
                   />
                 )}
               </div>
@@ -304,7 +304,6 @@ const SliderClient = function ({
               alt={`Изображение ${selectedIndex + 1}`}
               fill
               loading="lazy"
-
               sizes="(max-width: 768px) 100vw, 60vw"
             />
           </div>
@@ -316,7 +315,6 @@ const SliderClient = function ({
               width={200}
               height={100}
               loading="lazy"
-
               className="object-contain"
             />
           </div>
