@@ -1,11 +1,12 @@
+// app/(main)/nomenclatures/[slug]/page.tsx
 import {
-  Description,
   MapPlacement,
   ResponsibleCard,
   TabsWrapper,
+  Description,
 } from '@/components/nomenclatureById'
 import { Radio } from 'lucide-react'
-import { ITenantsResponse } from '@/types/nomenclature'
+import { INomenclatureItem, ITenantsResponse } from '@/types/nomenclature'
 import Image from 'next/image'
 
 import {
@@ -14,7 +15,6 @@ import {
   generateNotFoundMetadata,
 } from '@/lib/configs/config-meta/nomenclatures'
 import Script from 'next/script'
-import dynamic from 'next/dynamic'
 import { formatPrice } from '@/utils/nomenclatureUtils'
 import { EcommerceTracker } from '@/components/ecommerce/EcommerceTracker'
 import { AddButtonToOrder } from '@/components/ui/button/AddButtonToOrder'
@@ -26,18 +26,19 @@ import { notFound } from 'next/navigation'
 import Slider from '@/components/slider/Slider'
 import { PlaceTitle } from '@/components/nomenclatureById/PlaceTitle'
 
-
-// const Slider = dynamic(() => import('@/components/slider/Slider'), {
-//   ssr: true,
-//   loading: () => (
-//     <div className="w-full h-full min-h-[320px] bg-gray-100 rounded-md animate-pulse" />
-//   ),
-// })
+import { QuickStats } from '@/components/nomenclatureById/detail/QuickStats'
+import { PricingTable } from '@/components/nomenclatureById/detail/PricingTable'
+import { WhyThisPlace } from '@/components/nomenclatureById/detail/WhyThisPlace'
+import { SuitableBusinesses } from '@/components/nomenclatureById/detail/SuitableBusinesses'
+import { HowToStartSection } from '@/components/nomenclatureById/detail/HowToStartSection'
+import { CTABriefSection } from '@/components/nomenclatureById/detail/CTABriefSection'
+import { SimilarPlacements } from '@/components/nomenclatureById/detail/SimilarPlacements'
+import { NomenclatureSEOText } from '@/components/nomenclatureById/detail/NomenclatureSEOText'
+import { NomenclatureFAQ } from '@/components/nomenclatureById/detail/NomenclatureFAQ'
 
 interface NomenclatureDetailPageProps {
   params: Promise<{
     slug: string
-    // id: string
   }>
 }
 
@@ -48,31 +49,28 @@ async function getNomenclatureById(slug: string) {
       { cache: 'no-store' }
     )
 
-    // console.log('API response status:', response.status)
-    // console.log('API response headers:', response)
-
     if (response.status === 404) {
       return null
     }
 
     if (!response.ok) {
-      // console.error('API message:', response.statusText)
-      // console.error('API response body:', await response.text())
-      // console.error('API error:', response.status)
       return null
     }
 
     return await response.json()
   } catch (e) {
-    // console.error('Network error:', e)
     return null
   }
 }
 
-async function getTenantsByNomenclatureId(id: string): Promise<ITenantsResponse | null> {
-  // console.log('Fetching tenants for nomenclature ID:', id)
+async function getTenantsByNomenclatureId(
+  id: string
+): Promise<ITenantsResponse | null> {
   try {
-    const url = new URL(`api/nomenclatures/${id}/tenant/?limit=25&offset=0`, process.env.API_1C_URL)
+    const url = new URL(
+      `api/nomenclatures/${id}/tenant/?limit=25&offset=0`,
+      process.env.API_1C_URL
+    )
 
     const response = await fetch(url.toString(), {
       method: 'GET',
@@ -82,22 +80,41 @@ async function getTenantsByNomenclatureId(id: string): Promise<ITenantsResponse 
       },
     })
 
-    // console.log('Tenants API response headers:', response)
-
     if (!response.ok) return null
     return response.json()
   } catch (error) {
-    // console.error('Error fetching tenants:', error)
     return null
   }
 }
 
+async function getSimilarNomenclatures(
+  typeOfPlaceName: string | undefined,
+  excludeId: string
+): Promise<INomenclatureItem[]> {
+  if (!typeOfPlaceName) return []
+
+  try {
+    const url = new URL('api/nomenclatures/', process.env.API_1C_URL)
+    url.searchParams.set('type_of_place', typeOfPlaceName)
+    url.searchParams.set('limit', '4')
+
+    const response = await fetch(url.toString(), { cache: 'no-store' })
+    if (!response.ok) return []
+
+    const data = await response.json()
+    const results: INomenclatureItem[] = Array.isArray(data?.results)
+      ? data.results
+      : []
+
+    return results.filter((item) => item.id !== excludeId)
+  } catch {
+    return []
+  }
+}
+
 export async function generateMetadata(props: any) {
-  // console.log('start meta')
   const params = await props.params
-  // console.log('params meta', params)
   const { slug } = params
-  // console.log('id from params meta', slug)
 
   const nomenclature = await getNomenclatureById(slug)
 
@@ -107,14 +124,12 @@ export async function generateMetadata(props: any) {
 
   const metadata = generateNomenclatureMetadata({ nomenclature, id: slug })
 
-  // Добавить canonical URL
   return {
     ...metadata,
     alternates: {
       canonical: `${SITE_URL}/nomenclatures/${nomenclature.slug}`,
     },
   }
-
 }
 
 export default async function NomenclatureDetailPage(
@@ -137,11 +152,8 @@ export default async function NomenclatureDetailPage(
     address,
     responsible,
     nameForFront,
-    // main_info
     description,
   } = nomenclature
-
-  // const { description } = main_info
 
   const allImages = [...exterior, ...interior]
 
@@ -152,14 +164,19 @@ export default async function NomenclatureDetailPage(
     { name: nameForFront, url: `${SITE_URL}/nomenclatures/${slug}` },
   ]
 
-  // console.log('NOMENCLATURE:', nomenclature)
   const tenantsData = await getTenantsByNomenclatureId(nomenclature.id)
+  const similarPlaces = await getSimilarNomenclatures(
+    nomenclature.typeOfPlace?.name,
+    nomenclature.id
+  )
 
   const nomenclaturesIds = [slug]
+  const formattedAddress: string | undefined =
+    nomenclature.formattedAddress?.name
+
   return (
     <>
       <BreadcrumbJsonLd items={breadcrumbItems} />
-      {/* E-commerce отслеживание просмотра товара */}
       <EcommerceTracker
         item={{
           item_id: slug,
@@ -169,152 +186,158 @@ export default async function NomenclatureDetailPage(
           price: pricePerMonth,
         }}
       />
-      <BreadcrumbsSetter title={`${nomenclature.typeOfPlace.abbreviation} ${nomenclature.brand ? nomenclature.brand.name : ''}`} />
-      <div className="flex flex-col bg-gray-200 w-full h-full">
-        <Script
-          id={`structured-data-${slug}`}
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{
-            __html: JSON.stringify(structuredData),
-          }}
-          strategy="afterInteractive"
-        />
-        <div className="flex flex-col sm:flex-row gap-1 p-2 w-full h-full overflow-auto bg-[var(--background)]">
-          <div className="flex flex-col gap-2 w-full sm:w-3/5 h-auto">
-            {/* Слайдер с изображениями или логотип */}
-            <div className="w-full min-h-80 sm:h-70 rounded-md shadow-sm overflow-hidden relative">
-              {allImages.length > 0 ? (
-                <Slider images={allImages} autoPlay={true} autoPlayTime={15000} />
-              ) : (
-                <div className="w-full h-full min-h-[320px] bg-gray-100 flex items-center justify-center p-4">
-                  {brand && (
-                    <>
-                      {brand.logotype ? (
+      <BreadcrumbsSetter
+        title={`${nomenclature.typeOfPlace?.abbreviation || ''} ${brand ? brand.name : ''}`}
+      />
+
+      <Script
+        id={`structured-data-${slug}`}
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(structuredData),
+        }}
+        strategy="afterInteractive"
+      />
+
+      <div className="bg-slate-50 text-slate-900 overflow-auto">
+        {/* Hero / main placement */}
+        <section className="bg-slate-50">
+          <div className="mx-auto grid max-w-7xl gap-8 px-4 py-8 lg:grid-cols-[0.95fr_1.05fr]">
+            {/* Gallery + characteristics */}
+            <div>
+              <div className="overflow-hidden rounded-3xl bg-white shadow-sm ring-1 ring-slate-200">
+                <div className="relative h-[280px] sm:h-[360px] lg:h-[420px] min-h-[240px]">
+                  {allImages.length > 0 ? (
+                    <Slider images={allImages} autoPlay autoPlayTime={15000} />
+                  ) : (
+                    <div className="flex h-full w-full items-center justify-center bg-gray-100 p-4">
+                      {brand && (
                         <Image
-                          src={brand.logotype}
+                          src={brand.logotype || '/og-logo.jpg'}
                           alt="Логотип"
                           width={200}
                           height={100}
-                          className="object-contain max-h-full w-auto"
-                          loading="lazy"
-                        />
-                      ) : (
-                        <Image
-                          src="/og-logo.jpg"
-                          alt="Логотип"
-                          width={200}
-                          height={100}
-                          className="object-contain"
+                          className="max-h-full w-auto object-contain"
                           loading="lazy"
                         />
                       )}
-                    </>
+                    </div>
                   )}
+                </div>
+              </div>
 
+              <div className="mt-5 overflow-hidden rounded-3xl bg-white shadow-sm ring-1 ring-slate-200">
+                <div className="border-b px-6 py-4">
+                  <h2 className="text-xl font-black text-slate-900">
+                    Характеристики площадки
+                  </h2>
+                </div>
+                <div className="p-4">
+                  <Description nomenclature={nomenclature} />
+                </div>
+              </div>
+            </div>
+
+            {/* Main info */}
+            <div className="space-y-5">
+              <div className="rounded-3xl bg-white p-6 shadow-sm ring-1 ring-slate-200">
+                {brand?.name && (
+                  <div className="mb-3 inline-flex rounded-full bg-orange-50 px-4 py-2 text-sm font-black text-orange-500">
+                    {brand.name}
+                  </div>
+                )}
+
+                <PlaceTitle place={nomenclature} variant="full" />
+
+                {description && (
+                  <p className="mt-4 max-w-3xl whitespace-pre-line text-base leading-8 text-slate-600">
+                    {description}
+                  </p>
+                )}
+
+                <div className="mt-6 flex flex-wrap gap-3">
+                  {contentType && (
+                    <span className="rounded-xl bg-blue-50 px-4 py-3 text-sm font-black text-blue-700">
+                      {contentType}
+                    </span>
+                  )}
+                  {pricePerMonth && (
+                    <span className="rounded-xl bg-amber-50 px-4 py-3 text-sm font-bold text-amber-700">
+                      Стоимость: от {formatPrice(pricePerMonth)}/день
+                    </span>
+                  )}
+                  <span className="rounded-xl bg-slate-100 px-4 py-3 text-sm font-bold text-slate-700">
+                    При размещении от 1 месяца
+                  </span>
+                </div>
+
+                <div className="mt-6 flex flex-col gap-3 sm:flex-row">
+                  <AddButtonToOrder item={nomenclature} />
+                  <ModalFeedBack
+                    pathName="nomenclatures"
+                    nomenclaturesIds={nomenclaturesIds}
+                  />
+                </div>
+              </div>
+              <QuickStats
+                possibility={nomenclature.possibility}
+                contentType={contentType}
+              />
+
+              {/* <div className="rounded-3xl bg-white p-6 shadow-sm ring-1 ring-slate-200">
+                <h2 className="text-2xl font-black text-slate-900">
+                  Стоимость размещения
+                </h2>
+                <PricingTable pricePerDay={pricePerMonth} />
+              </div> */}
+              {responsible?.ad && (
+                <div className="rounded-3xl bg-violet-50 p-6 ring-1 ring-violet-100">
+                  <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                    <div>
+                      <h2 className="text-2xl font-black text-slate-900">
+                        Ответственный за размещение
+                      </h2>
+                      <div className="rounded-2xl bg-white p-4 shadow-sm">
+                        <ResponsibleCard
+                          label="за размещения"
+                          icon={<Radio size={16} />}
+                          phoneNumber={responsible?.ad?.phone_number}
+                          name={responsible?.ad?.full_name || 'Не указан'}
+                          color=""
+                        />
+                      </div>
+                      <p className="mt-2 text-sm text-slate-600">
+                        Поможет уточнить условия, сроки запуска и подготовить
+                        медиаплан.
+                      </p>
+                    </div>
+                  </div>
                 </div>
               )}
             </div>
-
-            <div className="w-full hidden md:block">
-              <Description nomenclature={nomenclature} />
-            </div>
-
-
-
           </div>
+        </section>
 
-          <div className="flex flex-col w-full sm:overflow-y-auto rounded-md shadow-xl">
-            <div className="p-4 border-b">
-              <div className='flex flex-row gap-3 items-center mb-2'>
-                {brand && (
-                  <>
-                    {brand.logotype && (
-                      <span className="items-center flex">
-                        <Image
-                          src={brand.logotype}
-                          alt="Логотип"
-                          width={180}
-                          height={60}
-                          className="object-contain max-h-full w-auto"
-                          loading='lazy'
-                        />
-                      </span>
-                    )}
-                  </>
+        <WhyThisPlace placeName={nameForFront} />
+        <SuitableBusinesses />
+
+        {/* Map + tenants */}
+        <section className="bg-white">
+          <div className="mx-auto grid max-w-7xl gap-8 px-4 py-14 lg:grid-cols-[0.95fr_1.05fr]">
+            {/* <div>
+              <div className="mb-5">
+                <div className="text-sm font-bold uppercase tracking-wider text-[#ef5350]">
+                  На карте
+                </div>
+                <h2 className="mt-2 text-3xl font-black text-slate-900">
+                  Адрес размещения
+                </h2>
+                {formattedAddress && (
+                  <p className="mt-3 text-slate-600">{formattedAddress}</p>
                 )}
-                <PlaceTitle place={nomenclature} variant="full" />
-
               </div>
-              <div className="flex flex-wrap gap-4 text-sm text-gray-600">
-                {contentType && (
-                  <span className="bg-blue-100 text-blue-800 px-2 py-1 rounded items-center flex">
-                    {contentType}
-                  </span>
-                )}
-                {pricePerMonth && (
-                  <div className="flex flex-col bg-orange-100 rounded gap-0 px-2 py-1 items-center justify-center">
-                    <span className="text-lg">
-                      Стоимость: от {formatPrice(pricePerMonth)}/день
-                    </span>
-                    <span className="text-xs">*при размещении от 1 месяца</span>
-                  </div>
-                )}
-                <AddButtonToOrder item={nomenclature} />
-                <ModalFeedBack pathName='nomenclatures' nomenclaturesIds={nomenclaturesIds} />
-              </div>
-            </div>
-            {description && (
-              <>
-                {/* <hr className="solid ml-4 mr-4" /> */}
-                <div className="p-4">
-                  <h2 className="text-xl font-semibold text-[#1E3961]">
-                    Описание
-                  </h2>
-                  <span className="px-2 py-1 rounded items-center flex text-base sm:text-lg text-gray-700 whitespace-pre-line">
-                    {description}
-                  </span>
-                </div>
-                <hr className="solid ml-4 mr-4" />
-              </>
-            )}
-            {responsible?.ad && (
-              <>
-                <div className="p-4">
-                  <h2 className="text-xl font-semibold text-[#1E3961]">
-                    Ответственный
-                  </h2>
 
-                  <div className="flex flex-col gap-4">
-                    <ResponsibleCard
-                      label="за размещения"
-                      icon={<Radio size={16} />}
-                      phoneNumber={responsible?.ad?.phone_number}
-                      name={responsible?.ad?.full_name || 'Не указан'}
-                      color="bg-purple-100"
-                    />
-                  </div>
-                </div>
-
-                <hr className="solid ml-4 mr-4" />
-              </>
-            )}
-            {nomenclature && (
-              <div>
-                <div className="w-full h-full sm:h-2/3 block md:hidden p-4">
-                  <Description nomenclature={nomenclature} />
-
-                </div>
-              </div>
-            )}
-
-            {/* Место вещания */}
-            {address && (
-              <div className="flex flex-col gap-4 p-4">
-                <div className="flex flex-row items-center gap-12">
-                  <h2 className="text-xl font-semibold text-[#1E3961]">
-                    На карте
-                  </h2>
-                </div>
+              <div className="relative h-[430px] overflow-hidden rounded-3xl bg-slate-200 shadow-sm ring-1 ring-slate-200">
                 <MapPlacement
                   lat={
                     address?.coordinates?.latitude
@@ -326,12 +349,53 @@ export default async function NomenclatureDetailPage(
                       ? Number(address.coordinates.longitude)
                       : 92.814753
                   }
+                  className="h-full"
                 />
               </div>
-            )}
-            <TabsWrapper item={nomenclature} initialTenantsData={tenantsData} />
+            </div> */}
+
+            <div className="mb-5">
+              <div className="text-sm font-bold uppercase tracking-wider text-[#ef5350]">
+                Арендаторы
+              </div>
+              <h2 className="mt-2 text-3xl font-black text-slate-900">
+                Кто представлен в ТЦ
+              </h2>
+              <p className="mt-3 text-slate-600">
+                Блок арендаторов усиливает доверие к площадке и помогает понять
+                тип аудитории.
+              </p>
+            </div>
+
+            <div className="overflow-hidden rounded-3xl bg-white shadow-sm ring-1 ring-slate-200">
+              <TabsWrapper
+                item={nomenclature}
+                initialTenantsData={tenantsData}
+              />
+            </div>
           </div>
-        </div>
+        </section>
+
+        <HowToStartSection />
+
+        <CTABriefSection
+          placeName={nameForFront}
+          nomenclaturesIds={nomenclaturesIds}
+        />
+
+        <SimilarPlacements places={similarPlaces} />
+
+        <NomenclatureSEOText
+          placeName={nameForFront}
+          address={formattedAddress}
+          contentType={contentType}
+        />
+
+        <NomenclatureFAQ
+          placeName={nameForFront}
+          pricePerDay={pricePerMonth}
+          contentType={contentType}
+        />
       </div>
     </>
   )

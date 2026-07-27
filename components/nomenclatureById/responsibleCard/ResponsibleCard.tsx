@@ -22,13 +22,12 @@ export function ResponsibleCard({
 
   return (
     <article className={`${styles.wrapper} ${color}`}>
-      <header className={styles.wrapper__header}>
-        {icon}
-        <h3 className="font-medium">{label}</h3>
-      </header>
-
       <div className={styles.wrapper__content}>
         <div>{name}</div>
+        <header className={styles.wrapper__header}>
+          {icon}
+          <h3 className="font-medium">{label}</h3>
+        </header>
       </div>
       {phoneNumber?.length ? (
         <div className={styles.phones}>

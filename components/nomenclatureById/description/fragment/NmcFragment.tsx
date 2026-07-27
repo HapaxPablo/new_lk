@@ -16,7 +16,7 @@ export function NmcFragment({
   return (
     <>
       {text && (
-        <div className="w-full h-full flex flex-col sm:flex-row items-center gap-0.5 sm:gap-2">
+        <div className="w-full h-full flex flex-col sm:flex-row items-start sm:items-center gap-0.5 sm:gap-2">
           <FieldLabel text={type} ariaLabel={`${type} ${text}`} />
           <FieldValue
             text={`${text}`.trim()}

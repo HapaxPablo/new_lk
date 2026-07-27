@@ -1,3 +1,5 @@
+'use client'
+
 import Image from 'next/image'
 import { MapPin, MapPinHouse, RussianRuble } from 'lucide-react'
 import styles from './CardNomenclature.module.scss'
@@ -20,10 +22,7 @@ export const CardNomenclature: React.FC<CardNomenclatureProps> = ({
   codeMP = null,
 }) => {
   const { brand, exterior, typeOfPlace, pricePerMonth, brandName } = item
-  const mainImage =
-    Array.isArray(exterior)
-      ? exterior[0]?.source
-      : exterior
+  const mainImage = Array.isArray(exterior) ? exterior[0]?.source : exterior
 
   const hasImage = Boolean(mainImage)
   const logoSrc = brand?.logotype
@@ -35,7 +34,7 @@ export const CardNomenclature: React.FC<CardNomenclatureProps> = ({
   const formattedAddress =
     typeof item.formattedAddress === 'string'
       ? item.formattedAddress
-      : item.formattedAddress?.name ?? 'Адрес не указан'
+      : (item.formattedAddress?.name ?? 'Адрес не указан')
 
   const handleCardClick = () => {
     // Отслеживаем клик в Яндекс.Метрику
@@ -51,10 +50,13 @@ export const CardNomenclature: React.FC<CardNomenclatureProps> = ({
     )
   }
 
-
   return (
     <article className={`${styles.card} ${className}`}>
-      <Link href={`/nomenclatures/${item.oldCatalogSlug ? item.oldCatalogSlug : item.id}`} className={styles.cardLink} onClick={handleCardClick}>
+      <Link
+        href={`/nomenclatures/${item.oldCatalogSlug ? item.oldCatalogSlug : item.id}`}
+        className={styles.cardLink}
+        onClick={handleCardClick}
+      >
         <div className={styles.cardContent}>
           <div className={styles.mediaSection}>
             <div className={styles.imageWrapper}>
