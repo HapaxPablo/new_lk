@@ -40,20 +40,27 @@ export default function FilesTable({
 
   useEffect(() => {
     const element = observerRef.current
-    if (!element || !viewportRef.current) {
+    const viewport = viewportRef.current
+
+    if (!element || !viewport) {
       return
     }
+
     const observer = new IntersectionObserver(
       ([entry]) => {
-        if (entry.isIntersecting && data?.at(-1)?.next) {
+        const hasMore = Boolean(data?.at(-1)?.next)
+
+        if (entry.isIntersecting && hasMore && !isValidating) {
           setSize((prev) => prev + 1)
         }
       },
-      { root: viewportRef.current, rootMargin: '200px' }
+      { root: viewport, rootMargin: '200px 0px' }
     )
+
     observer.observe(element)
+
     return () => observer.disconnect()
-  }, [data, setSize])
+  }, [data, isValidating, setSize])
 
   const toggleRow = (id: string) =>
     setSelection((current) =>
@@ -199,6 +206,7 @@ export default function FilesTable({
             )}
           </Table.Tbody>
         </Table>
+        <div ref={observerRef} style={{ height: 1 }} />
       </div>
       <ModalWrapper id="playlist" title="Создать плейлист">
         <div style={{ display: 'grid', gap: 12 }}>
