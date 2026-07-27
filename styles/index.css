@@ -1,0 +1,339 @@
+@import 'tailwindcss';
+/* //TODO настроить базовый классы для тайлвинда по аналогии с цветами  постараться использовать их*/
+/* или использовать классы из root, для переиспользуемых компонентов делать модульные стили */
+@theme {
+  --gap-1: 1rem;
+  --color-main-text: var(--main-text-color);
+  --color-main: var(--main-color);
+  --color-primary: var(--primary-color);
+  --color-success: var(--success-color);
+  --color-warning: var(--warning-color);
+  --color-error: var(--error-color);
+}
+
+:root {
+  --background: oklch(0.9755 0.0045 258.32);
+  --background-secondary: oklch(77.649% 0.00885 271.308);
+  --background-opacity: oklch(77.649% 0.00885 271.308 / 40%);
+  --background-light-green: oklch(0.9443 0.0417 149.6);
+  --background-white: oklch(1 0 0);
+
+  /* Основные цвета */
+  --main-color: oklch(0.6546 0.1801 23.49);
+  --main-color-light: oklch(0.7546 0.1501 23.49);
+  --main-color-dark: oklch(0.5546 0.2001 23.49);
+
+  /* Цвета состояний */
+
+  --primary-color: oklch(0.445 0.0778 258.12);
+  --primary-color-light: oklch(0.5752 0.0938 257.75);
+  --primary-color-dark: oklch(0.2427 0.0668 258.75);
+
+  --success-color: oklch(0.7046 0.2201 142.49);
+  --success-color-light: oklch(0.8046 0.2001 142.49);
+  --success-color-dark: oklch(0.6046 0.2401 142.49);
+
+  --warning-color: oklch(0.8046 0.1801 62.49);
+  --warning-color-light: oklch(0.9046 0.1601 62.49);
+  --warning-color-dark: oklch(0.7046 0.2001 62.49);
+
+  --error-color: oklch(0.6546 0.2501 12.49);
+  --error-color-light: oklch(0.7546 0.2301 12.49);
+  --error-color-dark: oklch(0.5546 0.2701 12.49);
+
+  /* Текст и фон */
+  --main-text-color: oklch(0.345 0.0778 258.12);
+  --second-text-color: oklch(0.5675 0.0454 250.85);
+  --second-text-color-light: oklch(91.041% 0.0088 248.194);
+
+  /* Состояния */
+  --hover-overlay: oklch(0 0 0 / 0.05);
+  --active-overlay: oklch(0 0 0 / 0.1);
+  --focus-ring: oklch(0.7 0.25 250);
+  /* Цвета для рамок*/
+  --border-color: oklch(66.58% 0.01044 197.307);
+  --border-color-light: oklch(92.188% 0.00434 198.414);
+  --border-color-dark: oklch(45.317% 0.00513 197.53);
+
+  /* Тени */
+  --shadow-sm: 0 1px 2px 0 oklch(0 0 0 / 0.05);
+  --shadow-md: 0 4px 6px -1px oklch(0 0 0 / 0.1);
+  --shadow-lg: 0 10px 15px -3px oklch(0 0 0 / 0.2);
+
+  /* Размеры шрифтов (базовые) */
+  --text-xs: 0.75rem;
+  --text-sm: 0.875rem;
+  --text-base: 1rem;
+  --text-lg: 1.125rem;
+  --text-xl: 1.25rem;
+  --text-2xl: 1.5rem;
+  --text-3xl: 1.875rem;
+  --text-4xl: 2.25rem;
+  --text-5xl: 3rem;
+}
+
+hr.solid {
+  border-top: 2px solid #e0e6ef;
+}
+
+/* Медиа-запросы для адаптивной типографики */
+@media (max-width: 480px) {
+  :root {
+    --text-xs: 0.625rem;
+    --text-sm: 0.75rem;
+    --text-base: 0.8125rem;
+    --text-lg: 0.9375rem;
+    --text-xl: 1.0625rem;
+    --text-2xl: 1.25rem;
+    --text-3xl: 1.5rem;
+    --text-4xl: 1.75rem;
+    --text-5xl: 2rem;
+  }
+}
+
+@media (min-width: 481px) and (max-width: 767px) {
+  :root {
+    --text-base: 0.875rem;
+    --text-lg: 1rem;
+    --text-xl: 1.125rem;
+    --text-2xl: 1.375rem;
+    --text-3xl: 1.625rem;
+    --text-4xl: 2rem;
+    --text-5xl: 2.25rem;
+  }
+}
+
+@media (min-width: 768px) and (max-width: 1079px) {
+  :root {
+    --text-base: 0.9375rem;
+    --text-lg: 1.0625rem;
+    --text-xl: 1.1875rem;
+    --text-2xl: 1.4375rem;
+    --text-3xl: 1.75rem;
+    --text-4xl: 2.125rem;
+    --text-5xl: 2.5rem;
+  }
+}
+
+@media (min-width: 1080px) and (max-width: 1399px) {
+  :root {
+    --text-base: 1rem;
+    --text-lg: 1.125rem;
+    --text-xl: 1.25rem;
+    --text-2xl: 1.5rem;
+    --text-3xl: 1.875rem;
+    --text-4xl: 2.25rem;
+    --text-5xl: 2.75rem;
+  }
+}
+
+@media (min-width: 1400px) {
+  :root {
+    --text-base: 1.0625rem;
+    --text-lg: 1.1875rem;
+    --text-xl: 1.3125rem;
+    --text-2xl: 1.5625rem;
+    --text-3xl: 1.9375rem;
+    --text-4xl: 2.375rem;
+    --text-5xl: 3rem;
+  }
+}
+
+html,
+body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow: hidden; /* Убираем скролл у всей страницы */
+}
+
+body {
+  color: var(--main-text-color);
+  background-color: var(--background);
+  font-family: 'Montserrat', sans-serif;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  font-weight: 500;
+  line-height: 1.5;
+  font-size: var(--text-base);
+}
+
+h1 {
+  font-size: 24px;
+}
+
+/* Основная структура layout */
+.layout {
+  display: flex;
+  flex-direction: column;
+  height: 100vh; /* Используем 100vh */
+  width: 100%;
+  overflow: hidden;
+}
+
+/* Контент занимает всё доступное пространство */
+.content {
+  flex: 1; /* Занимает всё свободное пространство */
+  display: flex;
+  flex-direction: column;
+  min-height: 0; /* Критически важно для flex-контейнеров с overflow */
+  overflow: hidden; /* Скрываем overflow на уровне контента */
+  width: 100%;
+}
+
+/* Хедер и футер остаются на своих местах */
+header,
+footer {
+  flex-shrink: 0; /* Не сжимаются */
+}
+
+/* Стили для скроллбара контента */
+.content::-webkit-scrollbar {
+  width: 8px;
+}
+
+.content::-webkit-scrollbar-track {
+  background: var(--background-secondary);
+}
+
+.content::-webkit-scrollbar-thumb {
+  background-color: var(--border-color);
+  border-radius: 4px;
+}
+
+/* Базовые стили для интерактивных элементов */
+a,
+input,
+textarea,
+select {
+  transition: all 0.15s ease-in-out;
+}
+
+/* Ссылки */
+a {
+  color: var(--second-text-color-light);
+  text-decoration: none;
+  cursor: pointer;
+
+  &:hover {
+    color: var(--main-text-color);
+    text-decoration: underline;
+  }
+
+  &:focus {
+    outline: none;
+    box-shadow: var(--focus-ring);
+  }
+}
+
+/* Формы */
+input,
+textarea,
+select {
+  padding: 0.5rem 0.75rem;
+  border: 1px solid var(--border-color);
+  border-radius: 0.25rem;
+  width: 100%;
+  max-width: 100%;
+
+  &:focus {
+    outline: none;
+    border-color: var(--main-color);
+    box-shadow: var(--focus-ring);
+  }
+}
+
+input:focus {
+  border-color: var(--main-color);
+  box-shadow: var(--focus-ring);
+}
+
+/* Карточки */
+.card {
+  border-radius: 0.5rem;
+  border: 1px solid var(--border-color);
+  background-color: white;
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+
+  &:hover {
+    box-shadow: var(--shadow-md);
+  }
+}
+
+.rounded {
+  &-sm {
+    border-radius: 0.125rem;
+  }
+
+  &-md {
+    border-radius: 0.375rem;
+  }
+
+  &-lg {
+    border-radius: 0.5rem;
+  }
+
+  &-full {
+    border-radius: 9999px;
+  }
+}
+
+.shadow {
+  &-sm {
+    box-shadow: var(--shadow-sm);
+  }
+
+  &-md {
+    box-shadow: var(--shadow-md);
+  }
+
+  &-lg {
+    box-shadow: var(--shadow-lg);
+  }
+
+  &-none {
+    box-shadow: none;
+  }
+}
+
+/* Ховер-эффекты */
+@media (hover: hover) {
+  .hover\:bg-primary:hover {
+    background-color: var(--main-color-light);
+  }
+
+  .hover\:text-primary:hover {
+    color: var(--main-text-color-light);
+  }
+}
+
+/* Переопределение основного тоста */
+.Toastify__toast {
+  border-radius: 12px;
+  font-family: 'Inter', sans-serif;
+  font-size: 14px;
+  padding: 16px;
+}
+
+/* Разные цвета для типов */
+.Toastify__toast--success {
+  background: #22c55e;
+  color: white;
+}
+
+.Toastify__toast.Toastify__toast--error {
+  background-color: #000 !important;
+  color: #fff !important;
+}
+
+.Toastify__toast--info {
+  background: #3b82f6;
+  color: white;
+}
+
+.Toastify__toast--warning {
+  background: #facc15;
+  color: black;
+}

@@ -1,0 +1,78 @@
+.paginationContainer {
+  width: 100%;
+  padding: 1rem 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+.paginationContent {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+   @media (max-width: 640px) {
+    flex-direction: column;
+  }
+}
+.pageNumber{
+    display: flex;
+}
+
+.navButton {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.5rem 1rem;
+}
+
+.buttonText {
+  @media (max-width: 640px) {
+    display: none;
+  }
+}
+
+.pageNumbers {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  margin: 0 0.5rem;
+}
+
+.pageButton {
+  min-width: 40px;
+  height: 40px;
+  padding: 0;
+  font-weight: 500;
+  
+  &.active {
+    font-weight: 700;
+  }
+}
+
+.ellipsis {
+  padding: 0 0.5rem;
+  color: #6b7280;
+  user-select: none;
+}
+
+.pageInfo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+  text-align: center;
+  color: #4b5563;
+  font-size: 0.875rem;
+}
+
+.infoText {
+  display: flex;
+  gap: 0.25rem;
+}
+
+.totalText {
+  font-size: 0.75rem;
+  color: #6b7280;
+}

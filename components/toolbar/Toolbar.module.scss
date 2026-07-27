@@ -1,0 +1,182 @@
+.toolbar {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  // margin-bottom: 1rem;
+  background: var(--primary-color);
+  padding: 0.5rem;
+  border-radius: 0.2rem;
+  box-shadow: var(--shadow-md);
+}
+
+.mainPanel {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1rem;
+}
+
+.tooltipContainer {
+  position: relative;
+  display: inline-block;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  &:hover::after {
+    content: attr(data-tooltip);
+    position: absolute;
+    top: -26px;
+    right: 50%;
+    // transform: translateX(-50%);
+    background-color: var(--background);
+    color: var(--main-text-color);
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    white-space: nowrap;
+    z-index: 100;
+    opacity: 0.9;
+  }
+}
+
+.icon {
+  transition: color 0.2s ease;
+  color: var(--background);
+
+  &:hover {
+    color: var(--main-text-color);
+  }
+}
+
+.activeIcon {
+  color: var(--main-text-color);
+}
+
+.sortContainer,
+.limitContainer,
+.typeOfPlaceContainer {
+  position: relative;
+}
+
+.dropdown {
+  position: absolute;
+  padding: 0.2rem;
+  top: 100%;
+  right: 0;
+  background: var(--background);
+  border: 1px solid var(--border-color-light);
+  border-radius: 0.375rem;
+  z-index: 10;
+  box-shadow: var(--shadow-md);
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  min-width: 8rem;
+}
+
+.dropdownItem {
+  text-wrap: nowrap;
+  text-align: center;
+  padding: 0.5rem;
+  border-radius: 0.25rem;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+
+  &:hover {
+    background-color: var(--background);
+    box-shadow: inset var(--shadow-md);
+  }
+
+  &.active {
+    outline: solid var(--focus-ring);
+    box-shadow: inset var(--shadow-lg);
+  }
+}
+
+.totalItems {
+  margin-right: auto;
+  font-size: 0.875rem;
+  color: var(--background);
+}
+
+.filtersPanel {
+  width: 100%;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--border-color-light);
+}
+
+.filterGroup {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.searchForm {
+  flex: 1;
+  background: var(--background);
+}
+
+@media (min-width: 768px) {
+  .mainPanel {
+    gap: 2rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .mainPanel {
+    flex-wrap: nowrap;
+  }
+
+  // .tooltipContainer[data-tooltip='Фильтры'] {
+  //   display: none;
+  // }
+}
+
+.typeOfPlaceDropdown {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  z-index: 200;
+  width: 280px;
+
+  transform-origin: top center;
+  animation: dropDown 0.18s ease forwards;
+}
+
+@keyframes dropDown {
+  from {
+    opacity: 0;
+    transform: scaleY(0.85) translateY(-6px);
+  }
+  to {
+    opacity: 1;
+    transform: scaleY(1) translateY(0);
+  }
+}
+
+.tcButton {
+  padding: 3px 10px;
+  border-radius: 4px;
+  border: 1px solid var(--background);
+  // background: transparent;
+  color: var(--background);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    background 0.15s,
+    color 0.15s;
+  line-height: 1.5;
+
+  &:hover {
+    background: var(--background);
+    color: var(--primary-color);
+  }
+
+  &.tcButtonActive {
+    background: var(--background);
+    color: var(--primary-color);
+  }
+}

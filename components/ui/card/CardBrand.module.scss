@@ -1,0 +1,236 @@
+.card {
+  width: 100%;
+  min-height: 180px;
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  transition: all 0.2s ease-in-out;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+
+  &:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    transform: translateY(-2px);
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+}
+
+.cardLink {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  text-decoration: none;
+  color: inherit;
+  cursor: pointer;
+
+  &:hover {
+    text-decoration: none;
+    color: inherit;
+  }
+}
+
+.cardContent {
+  display: flex;
+  flex: 1;
+  padding: 2px;
+  gap: 4px;
+}
+
+.mediaSection {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex-shrink: 0;
+}
+
+.imageWrapper {
+  position: relative;
+  width: 100%;
+  // height: 60px;
+  flex: 1;
+  border-radius: 6px;
+  overflow: hidden;
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  aspect-ratio: 16/9;
+}
+
+.image {
+  object-fit: contain;
+}
+
+.imagePlaceholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: #f3f4f6;
+  color: #6b7280;
+  font-size: 10px;
+  text-align: center;
+  gap: 4px;
+
+  svg {
+    color: #9ca3af;
+  }
+}
+
+.logoWrapper {
+  position: relative;
+  width: 80px;
+  height: 32px;
+  border-radius: 4px;
+  overflow: hidden;
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+}
+
+.logo {
+  object-fit: contain;
+  padding: 2px;
+}
+
+.logoPlaceholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f3f4f6;
+  color: #6b7280;
+  font-size: 9px;
+  gap: 2px;
+
+  svg {
+    color: #9ca3af;
+  }
+}
+
+.infoSection {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0; // Для правильного обрезания текста
+}
+
+.infoRow {
+  display: flex;
+  align-items: center;
+  justify-content: start;
+  padding-left: 4px;
+  gap: 6px;
+}
+
+.icon {
+  // display: flex;
+  flex-shrink: 0;
+  // justify-content: center;
+  // align-items: center;
+  color: #6b7280;
+  margin-top: 1px;
+}
+
+.textContent {
+  flex: 1;
+  min-width: 0;
+  padding-left: 4px;
+}
+
+.primaryText {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--main-text-color);
+  line-height: 1.3;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.secondaryText {
+  font-size: 0.8rem;
+  color: var(--second-text-color);
+  line-height: 1.3;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.priceText {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--main-color);
+  line-height: 1.3;
+}
+
+.actionsSection {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  border-top: 1px solid #e5e7eb;
+  height: fit-content;
+  padding: 0.2rem 0.4rem;
+}
+
+.button {
+  font-size: var(--text-xs); /* 0.875rem (14px) */
+  line-height: var(--text-xs--line-height); /* 1.25rem (20px) */
+  // min-width: 9rem;
+  min-height: 1.5rem;
+}
+
+// Мобильная адаптация
+@media (max-width: 768px) {
+  .card {
+    width: 100%;
+    max-width: 320px;
+    margin: 0 auto;
+  }
+
+  .cardContent {
+    padding: 10px;
+    gap: 10px;
+  }
+
+  .imageWrapper {
+    width: 70px;
+    height: 52px;
+  }
+
+  .logoWrapper {
+    width: 70px;
+    height: 22px;
+  }
+
+  .primaryText {
+    font-size: 11px;
+  }
+
+  .secondaryText,
+  .priceText {
+    font-size: 10px;
+  }
+
+  .actionsSection {
+    // height: 32px;
+  }
+}
+
+@media (max-width: 480px) {
+  .cardContent {
+    padding: 8px;
+  }
+
+  .mediaSection {
+    gap: 6px;
+  }
+}

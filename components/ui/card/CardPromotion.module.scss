@@ -1,0 +1,151 @@
+.card {
+    // width: 320px;
+    min-height: 200px;
+    background: var(--background);
+    border: 1px solid var(--border-color-light);
+    border-radius: 8px;
+    box-shadow: var(--shadow-sm);
+    transition: all 0.2s ease-in-out;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+
+    &:hover {
+        box-shadow: var(--shadow-md);
+        transform: translateY(-2px);
+    }
+
+    &:active {
+        transform: translateY(0);
+    }
+}
+
+.cardLink {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  text-decoration: none;
+  color: inherit;
+  cursor: pointer;
+
+  &:hover {
+    text-decoration: none;
+    color: inherit;
+  }
+}
+
+.cardContent {
+    display: flex;
+    flex: 1;
+    padding: 12px;
+    gap: 12px;
+}
+
+.infoSection {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    min-width: 0;
+}
+
+.headerRow {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.statusBadge {
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: 500;
+
+    &.active {
+        background: var(--success-color-light);
+        color: var(--success-color-dark);
+    }
+
+    &.inactive {
+        background: var(--background-secondary);
+        color: var(--second-text-color);
+    }
+}
+
+.nameText {
+    font-size: var(--text-base);
+    font-weight: 600;
+    color: var(--main-text-color);
+    line-height: 1.3;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.secondaryText {
+    font-size: var(--text-sm);
+    color: var(--second-text-color);
+    line-height: 1.3;
+}
+
+.periodText {
+    font-size: var(--text-sm);
+    color: var(--main-text-color);
+    line-height: 1.3;
+    font-weight: 500;
+}
+
+.codeText {
+    font-size: var(--text-xs);
+    color: var(--border-color-dark);
+    line-height: 1.3;
+}
+
+.descriptionText {
+    font-size: var(--text-xs);
+    color: var(--second-text-color);
+    line-height: 1.3;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.actionsSection {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    border-top: 1px solid var(--border-color-light);
+    height: fit-content;
+    padding: 8px 12px;
+}
+
+.button {
+    min-width: 9rem;
+    min-height: 1.5rem;
+}
+
+@media (max-width: 768px) {
+    .card {
+        width: 100%;
+        max-width: 320px;
+        margin: 0 auto;
+    }
+
+    .cardContent {
+        padding: 10px;
+        gap: 10px;
+    }
+
+    .nameText {
+        font-size: var(--text-sm);
+    }
+
+    .secondaryText,
+    .codeText,
+    .periodText,
+    .descriptionText {
+        font-size: var(--text-xs);
+    }
+}

@@ -1,0 +1,267 @@
+.selectContainer {
+  position: relative;
+  width: 100%;
+}
+
+.hiddenSelect {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+  width: 1px;
+  height: 1px;
+  top: 0;
+  left: 0;
+}
+
+.customSelect {
+  position: relative;
+  width: 100%;
+  padding: 0.5rem;
+  border: 1px solid var(--border-color-light);
+  border-radius: 0.375rem;
+  background: var(--background);
+  color: var(--main-text-color);
+  font-size: 0.875rem;
+  cursor: pointer;
+  user-select: none;
+  transition: all 0.2s ease;
+  outline: none;
+
+  &:focus {
+    outline: none;
+    border-color: var(--border-color);
+    box-shadow: 0 0 0 2px rgba(var(--primary-color-rgb), 0.2);
+  }
+
+  &:hover:not(.disabled) {
+    border-color: var(--primary-color);
+  }
+
+  &.open {
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+    border-color: var(--primary-color);
+    z-index: 10;
+  }
+
+  &.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    background: var(--background);
+  }
+}
+
+.selectedValue {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.selectedIcon {
+  font-size: 0.875rem;
+  line-height: 1;
+}
+
+.selectedLabel {
+  flex: 1;
+  text-align: left;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.arrow {
+  transition: transform 0.2s ease;
+  font-size: 0.75rem;
+  color: var(--border-color);
+
+  &.arrowDown {
+    transform: rotate(0deg);
+  }
+
+  &.arrowUp {
+    transform: rotate(180deg);
+  }
+}
+
+.dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: var(--background);
+  border: 1px solid var(--primary-color);
+  border-top: none;
+  border-radius: 0 0 0.375rem 0.375rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  z-index: 20;
+  max-height: 250px;
+  overflow-y: auto;
+  animation: fadeIn 0.2s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.option {
+  display: flex;
+  align-items: center;
+  padding: 0.625rem 0.75rem;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  gap: 0.5rem;
+
+  &:hover {
+    background-color: var(--background-opacity);
+  }
+
+  &.selected {
+    background-color: var(--background-opacity);
+    font-weight: 500;
+
+    .checkmark {
+      opacity: 1;
+    }
+  }
+
+  &:focus {
+    outline: none;
+    // background-color: var(--background-focus);
+  }
+}
+
+.optionIcon {
+  font-size: 0.875rem;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.optionLabel {
+  flex: 1;
+  text-align: left;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.checkmark {
+  opacity: 0;
+  color: var(--primary-color);
+  font-weight: bold;
+  transition: opacity 0.2s ease;
+  flex-shrink: 0;
+}
+
+// Стили для разных статусов
+.allStatus {
+  .optionIcon {
+    color: #3b82f6;
+  }
+
+  .optionLabel {
+    color: #3b82f6;
+  }
+
+  &.selected {
+    background-color: rgba(59, 130, 246, 0.1);
+  }
+}
+
+.online {
+  .optionIcon {
+    color: #10b981;
+  }
+
+  .optionLabel {
+    color: #10b981;
+  }
+
+  &.selected {
+    background-color: rgba(16, 185, 129, 0.1);
+  }
+}
+
+.offline5min {
+  .optionIcon {
+    color: #f59e0b;
+  }
+
+  .optionLabel {
+    color: #f59e0b;
+  }
+
+  &.selected {
+    background-color: rgba(245, 158, 11, 0.1);
+  }
+}
+
+.offline1h {
+  .optionIcon {
+    color: #ef4444;
+  }
+
+  .optionLabel {
+    color: #ef4444;
+  }
+
+  &.selected {
+    background-color: rgba(239, 68, 68, 0.1);
+  }
+}
+
+.unknown {
+  .optionIcon {
+    color: #6b7280;
+  }
+
+  .optionLabel {
+    color: #6b7280;
+  }
+
+  &.selected {
+    background-color: rgba(107, 114, 128, 0.1);
+  }
+}
+
+// Стилизация скроллбара
+.dropdown::-webkit-scrollbar {
+  width: 6px;
+}
+
+.dropdown::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.dropdown::-webkit-scrollbar-thumb {
+  background: var(--scrollbar-color, #c1c1c1);
+  border-radius: 3px;
+
+  &:hover {
+    background: var(--scrollbar-hover-color, #a1a1a1);
+  }
+}
+
+// Адаптация для мобильных устройств
+@media (max-width: 768px) {
+  .customSelect {
+    padding: 0.75rem;
+  }
+
+  .option {
+    padding: 0.875rem 1rem;
+  }
+
+  .dropdown {
+    max-height: 300px;
+  }
+}

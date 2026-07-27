@@ -1,0 +1,25 @@
+.footer_desktop {
+  display: block;
+
+  @media (max-width: 767px) {
+    display: none;
+  }
+
+  // Скрыть desktop на мобильных в landscape (маленькая высота)
+  @media (max-height: 600px) and (orientation: landscape) {
+    display: none;
+  }
+}
+
+.footer_mobile {
+  display: none;
+
+  @media (max-width: 767px) {
+    display: block;
+  }
+
+  // Показать mobile в landscape
+  @media (max-height: 600px) and (orientation: landscape) {
+    display: block;
+  }
+}

@@ -1,0 +1,158 @@
+.content {
+    text-align: center;
+}
+
+.loadingSpinner {
+    height: 1.25rem;
+    width: 1.25rem;
+    animation: spin 1s linear infinite;
+    border: 2px solid rgb(37, 99, 235);
+    border-top-color: transparent;
+    border-radius: 50%;
+}
+
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: rgb(17, 24, 39); // gray-900
+    margin-bottom: 1rem;
+}
+
+.subtitle {
+    margin-top: 1rem;
+    font-size: 0.875rem;
+    color: rgb(107, 114, 128); // gray-500
+}
+
+.cityName {
+    font-weight: 600;
+}
+
+.searchInput {
+    width: 100%;
+    border-radius: 0.5rem;
+    border: 1px solid rgb(209, 213, 219); // gray-300
+    padding: 0.5rem 1rem;
+    transition: all 0.2s;
+
+    &:focus {
+        outline: none;
+        border-color: rgb(59, 130, 246); // blue-500
+        box-shadow: 0 0 0 1px rgb(59, 130, 246);
+    }
+}
+
+.cityList {
+    margin-top: 0.75rem;
+    max-height: 15rem;
+    overflow-y: auto;
+    border: 1px solid rgb(229, 231, 235); // gray-200
+    border-radius: 0.5rem;
+}
+
+.cityItem {
+    width: 100%;
+    text-align: left;
+    padding: 0.5rem 1rem;
+    border-bottom: 1px solid rgb(229, 231, 235); // gray-100
+    transition: all 0.2s;
+
+    &:hover {
+        background-color: rgb(239, 246, 255); // blue-50
+        color: rgb(30, 64, 175); // blue-900
+    }
+
+    &:last-child {
+        border-bottom: none;
+    }
+}
+
+.emptyState {
+    padding: 0.75rem 1rem;
+    color: rgb(107, 114, 128); // gray-500
+    text-align: center;
+}
+
+.buttonsContainer {
+    display: flex;
+    gap: 0.75rem;
+    margin-top: 1.5rem;
+}
+
+.button {
+    flex: 1;
+    border-radius: 0.5rem;
+    padding: 0.5rem 1rem;
+    font-weight: 500;
+    transition: all 0.2s;
+    border: none;
+    cursor: pointer;
+}
+
+.primaryButton {
+    background-color: rgb(37, 99, 235); // blue-600
+    color: white;
+
+    &:hover {
+        background-color: rgb(29, 78, 216); // blue-700
+    }
+
+    &:focus {
+        outline: none;
+        box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.5);
+    }
+}
+
+.secondaryButton {
+    color: rgb(55, 65, 81); // gray-700
+    border: 1px solid rgb(209, 213, 219); // gray-300
+    background-color: white;
+
+    &:hover {
+        background-color: rgb(249, 250, 251); // gray-50
+    }
+
+    &:focus {
+        outline: none;
+        box-shadow: 0 0 0 2px rgba(107, 114, 128, 0.5);
+    }
+}
+
+.backButton {
+    @extend .secondaryButton;
+    margin-top: 1rem;
+}
+
+.loadingContainer {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    padding: 2rem;
+}
+
+.selectorContainer {
+    width: 100%;
+}
+
+.loadingContainer {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    padding: 2rem 1.5rem;
+}
+
+.cityName {
+    font-weight: 600;
+}

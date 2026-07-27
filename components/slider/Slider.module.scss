@@ -1,0 +1,139 @@
+.gallery {
+  display: flex;
+  flex-direction: row;
+  gap: 0.5rem;
+  width: 100%;
+  height: 100%;
+  position: relative;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+  }
+}
+
+.thumbnails {
+  width: 25%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  gap: 2px;
+  order: 1; // Десктоп - первый
+  overflow: hidden;
+
+  @media (max-width: 768px) {
+    height: 30%;
+    flex-direction: row;
+    width: 100%;
+    order: 2;
+  }
+}
+
+.thumbnails__list {
+  position: relative;
+  padding: 2px;
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+
+  &::-webkit-scrollbar-track {
+    display: none;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    display: none;
+  }
+
+  @media (max-width: 768px) {
+    height: 100%;
+    flex-direction: row;
+    width: calc(100% - 80px);
+    gap: 6px;
+    overflow-x: auto;
+    overflow-y: hidden;
+  }
+}
+
+.thumbnails_img {
+  position: relative;
+  overflow: visible;
+  border-radius: 0.375rem;
+  width: calc(100% - 4px);
+  height: 77px;
+  flex-shrink: 0;
+
+  @media (max-width: 768px) {
+    height: calc(100% - 4px);
+    width: 77px;
+  }
+
+  img {
+    background-position: center;
+    object-fit: cover;
+    border-radius: 0.375rem;
+  }
+}
+
+.thumbnails_img_active {
+  outline: 3px solid var(--primary-color) !important;
+  outline-offset: 0;
+  box-shadow: 0 0 8px rgba(30, 64, 116, 0.4);
+  transition: all 0.2s ease-in-out;
+  border-radius: 0.375rem;
+}
+
+.main {
+  width: 75%;
+  height: 100%;
+  order: 2;
+  overflow: hidden;
+  border-radius: 0.375rem;
+
+  @media (max-width: 768px) {
+    border-radius: 0 0 0.375rem 0.375rem;
+    width: 100%;
+    height: 70%;
+    order: 1;
+  }
+}
+
+.main__image {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  aspect-ratio: 16/9;
+
+  img {
+    background-position: center;
+    object-fit: cover;
+  }
+}
+
+.arrow_up {
+  width: 100%;
+  height: 100%;
+}
+
+.rotate {
+  @media (max-width: 768px) {
+    rotate: -90deg;
+  }
+}
+
+.arrow_down {
+  width: 100%;
+  height: 100%;
+}

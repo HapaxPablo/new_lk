@@ -1,0 +1,50 @@
+.phone {
+  &_container {
+    display: flex;
+    order: 3;
+    justify-content: center;
+    text-wrap: nowrap;
+  }
+
+  & {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: none;
+    border: none;
+    color: var(--second-text-color-light);
+    font: inherit;
+    cursor: pointer;
+    padding: 0.2rem;
+    transition: background-color 0.2s;
+
+    &:hover {
+     color: (--main-text-color);
+    }
+
+    &:focus {
+      outline: 2px solid #0070f3;
+      outline-offset: 2px;
+    }
+  }
+
+  &__desktop {
+    @media (max-width: 768px) {
+      display: none;
+    }
+     // отдельное правило для текста в десктопе
+    @media (min-width: 769px) {
+      .phone:hover & {
+        color: var(--main-text-color);
+      }
+    }
+  }
+
+  &__mobile {
+    display: none;
+
+    @media (max-width: 768px) {
+      display: block;
+    }
+  }
+}

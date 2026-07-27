@@ -1,0 +1,226 @@
+.filterWrapper {
+  display: flex;
+  flex-direction: row;
+  gap: 0.5rem;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+}
+
+.header {
+  display: grid;
+  grid-template-columns: 40px 1fr 100px;
+  padding: 8px 14px;
+
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+
+  color: #6b7280;
+
+  position: sticky;
+  top: 0;
+  background: #f9fafb;
+  z-index: 2;
+}
+
+.body {
+  display: flex;
+  flex-direction: column;
+  height: 384px;
+  overflow: auto;
+}
+
+.row {
+  display: grid;
+  grid-template-columns: 40px 1fr 100px;
+  align-items: center;
+
+  padding: 8px 14px;
+  border-radius: 6px;
+
+  transition: background 0.12s ease;
+
+  &:hover {
+    background: #f3f4f6;
+  }
+}
+
+.colIndex {
+  text-align: center;
+  font-size: 12px;
+  color: #9ca3af;
+  &:hover {
+    cursor: pointer;
+    color: var(--error-color-dark);
+  }
+}
+
+.colMain {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.colFloor {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ─── СКЕЛЕТОН ──────────────────────────────────────── */
+
+@keyframes shimmer {
+  0% {
+    background-position: -400px 0;
+  }
+  100% {
+    background-position: 400px 0;
+  }
+}
+
+%skeleton-base {
+  border-radius: 4px;
+  background: linear-gradient(90deg, #eee 25%, #f5f5f5 50%, #eee 75%);
+  background-size: 800px 100%;
+  animation: shimmer 1.4s ease-in-out infinite;
+}
+
+.skeletonRow {
+  display: grid;
+  grid-template-columns: 40px 1fr 100px;
+  align-items: center;
+  padding: 8px 14px;
+}
+
+.skeletonIndex {
+  @extend %skeleton-base;
+  width: 16px;
+  height: 10px;
+}
+
+.skeletonAvatar {
+  @extend %skeleton-base;
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  flex-shrink: 0;
+}
+
+.skeletonTitle {
+  @extend %skeleton-base;
+  width: 120px;
+  height: 12px;
+}
+
+.skeletonSub {
+  @extend %skeleton-base;
+  width: 40px;
+  height: 16px;
+}
+
+/* ─── ЛОАДЕР / СПИННЕР ──────────────────────────────── */
+
+.loaderAnchor {
+  height: 1px; // минимальная высота чтобы IntersectionObserver его видел
+  flex-shrink: 0;
+}
+
+.spinnerWrapper {
+  display: flex;
+  justify-content: center;
+  padding: 10px 0;
+}
+
+.spinner {
+  width: 20px;
+  height: 20px;
+  border: 2px solid #e5e7eb;
+  border-top-color: #6b7280;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ─── ПУСТОЕ СОСТОЯНИЕ ──────────────────────────────── */
+
+.emptyState {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  color: #9ca3af;
+  font-size: 14px;
+}
+
+/* ─── ЛОГОТИП ───────────────────────────────────────── */
+
+.tenantLogoWrapper {
+  width: 120px;
+  height: 60px;
+  border-radius: 8px;
+
+  overflow: hidden;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background: #fff;
+  border: 1px solid var(--color-border, #e5e7eb);
+
+  flex-shrink: 0;
+}
+
+.tenantLogo {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+/* ─── FALLBACK (инициалы) ───────────────────────────── */
+
+.tenantAvatarFallback {
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  flex-shrink: 0;
+
+  span {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--color-text-secondary, #6b7280);
+    letter-spacing: 0.04em;
+  }
+}
+
+/* ─── BADGE ЭТАЖА ───────────────────────────────────── */
+
+.floorBadge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 2px 8px;
+  border-radius: 999px;
+
+  font-size: 11px;
+  font-weight: 500;
+  color: #374151;
+  background: #f3f4f6;
+  border: 1px solid #e5e7eb;
+}

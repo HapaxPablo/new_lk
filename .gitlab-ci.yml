@@ -1,0 +1,99 @@
+stages:
+  - build_test
+  - push_test
+  - deploy_test
+  - cleanup
+
+variables:
+  DOCKER_HOST: 'unix:///var/run/docker.sock'
+  REMOTE_SERVER_IP: $SERVER_IP
+  REMOTE_SERVER_USER: $SERVER_USER
+  CACHE_BUST: $CI_PIPELINE_ID
+  BUILD_DATE: $CI_COMMIT_TIMESTAMP
+
+build_test:
+  image: docker:27
+  stage: build_test
+  only:
+    - test
+  script:
+    - docker info
+    - docker system prune -f
+    - |
+      docker build \
+        --build-arg API_1C_URL="$API_1C_URL" \
+        --build-arg CRYPTO_SECRET_KEY="$CRYPTO_SECRET_KEY" \
+        --build-arg CRYPTO_IV="$CRYPTO_IV" \
+        --build-arg SECRET_COOKIE_PASSWORD="$SECRET_COOKIE_PASSWORD" \
+        --build-arg CACHE_BUST="$CACHE_BUST" \
+        --build-arg BUILD_DATE="$BUILD_DATE" \
+        --build-arg NEXT_PUBLIC_SITE_URL="$NEXT_PUBLIC_SITE_URL" \
+        --build-arg NEXT_PUBLIC_API_1C_URL="$NEXT_PUBLIC_API_1C_URL" \
+        --build-arg NEXT_PUBLIC_YANDEX_METRICA_ID="$NEXT_PUBLIC_YANDEX_METRICA_ID" \
+        --build-arg SITE_URL="$SITE_URL" \
+        --build-arg NEXT_PUBLIC_MAP_STYLE_URL="$NEXT_PUBLIC_MAP_STYLE_URL" \
+        --build-arg MAP_STYLE_URL="$MAP_STYLE_URL" \
+        --build-arg NEXT_PUBLIC_MAP_TILE_SERVER_URL="$NEXT_PUBLIC_MAP_TILE_SERVER_URL" \
+        --build-arg MAP_TILE_SERVER_URL="$MAP_TILE_SERVER_URL" \
+        --build-arg NEXT_PUBLIC_GA_ID="$NEXT_PUBLIC_GA_ID" \
+        --no-cache \
+        -t $CI_REGISTRY_IMAGE:latest \
+        -t $CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA \
+        .
+
+push_test:
+  image: docker:27
+  stage: push_test
+  only:
+    - test
+  script:
+    - docker login $CI_REGISTRY -u $DOCKER_USER -p $DOCKER_TOKEN
+    - docker push $CI_REGISTRY_IMAGE:latest
+    - docker push $CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA
+
+deploy_test:
+  image: debian:stable-slim
+  stage: deploy_test
+  only:
+    - test
+  before_script:
+    - apt update
+    - apt install -y openssh-client
+    - echo "$ID_RSA" > /tmp/deploy_key.pem
+    - chmod 600 /tmp/deploy_key.pem
+    - export SSH_CMD="ssh -i /tmp/deploy_key.pem -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP"
+  script:
+    - $SSH_CMD "docker image prune -f"
+    - $SSH_CMD "echo $DOCKER_TOKEN | docker login $CI_REGISTRY -u $DOCKER_USER --password-stdin"
+    - $SSH_CMD "docker pull $CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA"
+    - $SSH_CMD "docker container rm -f new-lk || true"
+    - |
+      $SSH_CMD "docker run --restart unless-stopped -d \
+        -p 3000:3000 \
+        --name new-lk \
+        -e API_1C_URL=\"$API_1C_URL\" \
+        -e CRYPTO_SECRET_KEY=\"$CRYPTO_SECRET_KEY\" \
+        -e CRYPTO_IV=\"$CRYPTO_IV\" \
+        -e SECRET_COOKIE_PASSWORD=\"$SECRET_COOKIE_PASSWORD\" \
+        -e NEXT_PUBLIC_SITE_URL=\"$NEXT_PUBLIC_SITE_URL\" \
+        -e NEXT_PUBLIC_API_1C_URL=\"$NEXT_PUBLIC_API_1C_URL\" \
+        -e NEXT_PUBLIC_YANDEX_METRICA_ID=\"$NEXT_PUBLIC_YANDEX_METRICA_ID\" \
+        -e SITE_URL=\"$SITE_URL\" \
+        -e NEXT_PUBLIC_GA_ID="$NEXT_PUBLIC_GA_ID" \
+        $CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA"
+  after_script:
+    - rm -f /tmp/deploy_key.pem
+
+cleanup:
+  image: docker:27
+  stage: cleanup
+  when: manual
+  before_script:
+    - apk add --no-cache openssh-client
+    - echo "$ID_RSA" > /tmp/deploy_key.pem
+    - chmod 600 /tmp/deploy_key.pem
+  script:
+    - docker system prune -a -f --volumes
+    - ssh -i /tmp/deploy_key.pem -o StrictHostKeyChecking=no $SERVER_USER@$REMOTE_SERVER_IP "docker system prune -a -f"
+  after_script:
+    - rm -f /tmp/deploy_key.pem

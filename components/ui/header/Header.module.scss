@@ -1,0 +1,125 @@
+.header {
+  position: sticky;
+  top: 0;
+  display: flex;
+  flex-direction: row;
+  min-height: 52px;
+  width: 100%;
+  background-color: var(--main-color);
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.1rem;
+  gap: 1rem;
+  z-index: 1000;
+
+  will-change: transform;
+  backface-visibility: hidden;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+
+  // Гарантируем, что хедер выше других элементов
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: inherit;
+    z-index: -1;
+  }
+}
+
+.header__logo {
+  object-fit: contain;
+  margin-left: 10px;
+  object-position: left center;
+  height: auto;
+  width: auto;
+  // cursor: pointer;
+  z-index: 1;
+}
+
+.header__logo_wrapper {
+  display: flex;
+  max-width: max-content;
+  padding: 0.2rem;
+  align-items: center;
+  justify-content: flex-start;
+  z-index: 1;
+}
+
+.wrapper_menu {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+}
+
+.wrapper_info_user {
+  display: flex;
+  flex-direction: row;
+  gap: 1rem;
+  // z-index: 1;
+}
+
+.basket_wrapper {
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--background);
+
+  position: relative;
+
+  transition:
+    color 0.3s ease,
+    transform 0.2s ease;
+
+  &:hover {
+    color: var(--primary-color-light);
+    cursor: pointer;
+    transform: scale(1.08);
+  }
+
+  &:hover .basket_wrapper__count {
+    transform: translateY(-2px);
+  }
+
+  &__count {
+    height: 100%;
+    display: flex;
+    align-items: flex-end;
+    justify-content: flex-end;
+    font-weight: 600;
+    color: var(--background);
+    transition: color 0.3s ease;
+    font-size: var(--text-sm);
+    line-height: var(--text-sm--line-height);
+    cursor: pointer;
+  }
+}
+@media screen and (max-width: 900px) {
+  .header {
+    height: 52px;
+    min-height: 52px;
+    z-index: 1000;
+
+    .wrapper_menu {
+      display: flex;
+      flex-direction: row;
+      width: 100%;
+      height: 100%;
+      z-index: 1;
+    }
+
+    &__logo {
+      display: none;
+    }
+  }
+
+  .wrapper_info_user {
+    gap: 0.5rem;
+  }
+}

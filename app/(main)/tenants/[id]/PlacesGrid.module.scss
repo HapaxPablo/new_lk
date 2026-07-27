@@ -1,0 +1,48 @@
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+  gap: 16px;
+}
+
+.count {
+  font-size: var(--text-sm);
+  color: var(--second-text-color);
+}
+
+.grid {
+  display: grid;
+  gap: 0.5rem;
+  max-height: 400px;
+  overflow-y: auto;
+
+  // Мобилка — 1 колонка
+  grid-template-columns: 1fr;
+
+  // Планшет
+  @media (min-width: 600px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  // Планшет landscape / небольшой десктоп
+  @media (min-width: 900px) {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  // Десктоп
+  @media (min-width: 1200px) {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+.empty {
+  font-size: var(--text-sm);
+  color: var(--second-text-color);
+}

@@ -1,0 +1,13 @@
+.inputSearch {
+  width: 100%;
+  padding-inline: 1rem;
+  padding-block: 0.5rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.375rem;
+  font-size: 0.875rem;
+  &:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px #93c5fd;
+    background-color: white;
+  }
+}
