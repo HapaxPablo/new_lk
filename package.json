@@ -10,6 +10,8 @@
   },
   "dependencies": {
     "@hookform/resolvers": "^5.1.1",
+    "@mantine/core": "^9.4.2",
+    "@mantine/hooks": "^9.4.2",
     "@next/third-parties": "^16.2.9",
     "@skbkontur/colors": "^2.1.7",
     "@skbkontur/icons": "^2.0.10",

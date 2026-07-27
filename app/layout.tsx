@@ -1,7 +1,10 @@
 import Footer from '@/components/ui/footer/Footer'
 import Header from '@/components/ui/header/Header'
 import { TooltipModal } from '@/components/ui/tooltip/TooltipModal'
-import { metaDataConfigLayout, SITE_URL } from '@/lib/configs/config-meta/configMetaData'
+import {
+  metaDataConfigLayout,
+  SITE_URL,
+} from '@/lib/configs/config-meta/configMetaData'
 import { AuthProvider } from '@/providers/auth-provider/AuthProvider'
 import { ModalProvider } from '@/providers/modal/ModalProvider'
 import { ToastProvider } from '@/providers/toast/ToastProvider'
@@ -17,7 +20,8 @@ import { NomenclatureStoreProvider } from '@/providers/nomenclature/Nomenclature
 import CookieBanner from '@/components/ui/cookies/CookieBanner'
 import { Suspense } from 'react'
 import { GoogleAnalytics } from '@next/third-parties/google'
-
+import { MantineProvider } from '@/providers/mantine/MantineProvider'
+import '@mantine/core/styles.css'
 const montserrat = localFont({
   src: [
     {
@@ -75,56 +79,56 @@ export default function RootLayout({
     },
     openingHoursSpecification: [
       {
-        "@type": "OpeningHoursSpecification",
+        '@type': 'OpeningHoursSpecification',
         dayOfWeek: [
-          "Monday",
-          "Tuesday",
-          "Wednesday",
-          "Thursday",
-          "Friday",
-          "Saturday",
-          "Sunday"
+          'Monday',
+          'Tuesday',
+          'Wednesday',
+          'Thursday',
+          'Friday',
+          'Saturday',
+          'Sunday',
         ],
-        opens: "09:00",
-        closes: "18:00"
+        opens: '09:00',
+        closes: '18:00',
       },
       {
-        "@type": "OpeningHoursSpecification",
+        '@type': 'OpeningHoursSpecification',
         dayOfWeek: [
-          "Понедельник",
-          "Вторник",
-          "Среда",
-          "Четверг",
-          "Пятница",
-          "Суббота",
-          "Воскресенье"
+          'Понедельник',
+          'Вторник',
+          'Среда',
+          'Четверг',
+          'Пятница',
+          'Суббота',
+          'Воскресенье',
         ],
-        opens: "09:00",
-        closes: "18:00"
+        opens: '09:00',
+        closes: '18:00',
       },
     ],
     geo: {
-      "@type": "GeoCoordinates",
+      '@type': 'GeoCoordinates',
       latitude: 56.014468,
-      longitude: 92.854937
+      longitude: 92.854937,
     },
-    priceRange: "$$",
+    priceRange: '$$',
     logo: `${SITE_URL}/logo.svg`,
     founder: {
-      "@type": "Person",
-      name: "Говядин Антон Иванович",
-      sameAs: "https://vk.com/antongovyadin"
+      '@type': 'Person',
+      name: 'Говядин Антон Иванович',
+      sameAs: 'https://vk.com/antongovyadin',
     },
     areaServed: {
-      "@type": "GeoCircle",
+      '@type': 'GeoCircle',
       geoMidpoint: {
-        "@type": "GeoCoordinates",
+        '@type': 'GeoCoordinates',
         latitude: 56.014468,
-        longitude: 92.854937
+        longitude: 92.854937,
       },
-      geoRadius: 1000
+      geoRadius: 1000,
     },
-    sameAs: "https://vk.com/krasrm",
+    sameAs: 'https://vk.com/krasrm',
   }
 
   return (
@@ -145,33 +149,33 @@ export default function RootLayout({
         </Suspense>
 
         <AuthProvider>
-          <ModalProvider>
-            <TooltipProvider>
-              <ToastProvider>
-                <SWRProvider>
-                  <NomenclatureStoreProvider>
-                    <div className="layout">
-                      <Header />
+          <MantineProvider>
+            <ModalProvider>
+              <TooltipProvider>
+                <ToastProvider>
+                  <SWRProvider>
+                    <NomenclatureStoreProvider>
+                      <div className="layout">
+                        <Header />
 
-                      <Suspense fallback={null}>
-                        <Breadcrumbs />
-                      </Suspense>
+                        <Suspense fallback={null}>
+                          <Breadcrumbs />
+                        </Suspense>
 
-                      <main className="content">
-                        {children}
-                      </main>
+                        <main className="content">{children}</main>
 
-                      <Footer />
-                      <TooltipModal />
-                      <Suspense fallback={null}>
-                        <CookieBanner />
-                      </Suspense>
-                    </div>
-                  </NomenclatureStoreProvider>
-                </SWRProvider>
-              </ToastProvider>
-            </TooltipProvider>
-          </ModalProvider>
+                        <Footer />
+                        <TooltipModal />
+                        <Suspense fallback={null}>
+                          <CookieBanner />
+                        </Suspense>
+                      </div>
+                    </NomenclatureStoreProvider>
+                  </SWRProvider>
+                </ToastProvider>
+              </TooltipProvider>
+            </ModalProvider>
+          </MantineProvider>
         </AuthProvider>
       </body>
     </html>

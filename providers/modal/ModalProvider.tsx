@@ -10,6 +10,9 @@ export type ModalType =
   | 'city_confirmation'
   | 'feedback'
   | 'auth'
+  | 'playlist'
+  | 'files'
+  | 'ad_order'
 
 type ModalContextType = {
   openModal: (id: ModalType, key?: string) => void

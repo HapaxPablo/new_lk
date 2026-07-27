@@ -32,21 +32,22 @@ export const NAV_ITEMS: NavItem[] = [
     path: '/tenants',
     icon: Users,
   },
+
+  // {
+  //   title: 'Площадки',
+  //   path: '/places',
+  //   icon: MapPin,
+  // },
+  // {
+  //   title: 'Заказы',
+  //   path: '/orders',
+  //   icon: Star,
+  // },
   {
     title: 'О нас',
     path: '/about',
     icon: Info,
   },
-  {
-    title: 'Площадки',
-    path: '/places',
-    icon: MapPin,
-  },
-  // {
-  //   title: 'Мои места',
-  //   path: '/my-place',
-  //   icon: Star,
-  // },
   // {
   //   title: 'Ролики',
   //   path: '/content',
