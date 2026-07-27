@@ -1,6 +1,6 @@
 'use client'
 
-import { type ChangeEvent, useState } from 'react'
+import { type ChangeEvent, useEffect, useRef, useState } from 'react'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { useToast } from '@/hooks/useToast'
 import { Button } from '@/components/ui/button/Button'
@@ -25,21 +25,32 @@ export function ModalAddFile({ onSuccess }: { onSuccess?: () => void }) {
   const [source, setSource] = useState<string>('')
   const [tags, setTags] = useState<string>('')
   const { showToast } = useToast()
+  const fileInputRef = useRef<HTMLInputElement | null>(null)
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null)
 
   const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
     const selectedFile = event.target.files?.[0]
     if (!selectedFile) return
+
     setFile(selectedFile)
     setFileName(selectedFile.name)
 
-    // конвертируем файл в base64 для возможного использования
+    // очистка старого preview
+    if (previewUrl) {
+      URL.revokeObjectURL(previewUrl)
+    }
+
+    // создаём preview
+    const url = URL.createObjectURL(selectedFile)
+    setPreviewUrl(url)
+
+    // конвертация в base64 для отправки
     convertBase64(selectedFile)
       .then((b64) => setFileBase64(b64))
       .catch((err) => {
         console.error('convertBase64 error:', err)
       })
   }
-
   const isOpen = searchParams.get('modal') === 'open'
 
   const handleOpen = () => {
@@ -48,6 +59,17 @@ export function ModalAddFile({ onSuccess }: { onSuccess?: () => void }) {
   }
 
   const handleClose = () => {
+    if (previewUrl) {
+      URL.revokeObjectURL(previewUrl)
+      setPreviewUrl(null)
+    }
+
+    setFile(null)
+    setFileName('Файл не выбран')
+    setFileBase64('')
+    setTags('')
+    setUploadType('')
+
     const newUrl = `${pathname}?page=1&limit=20`
     router.push(newUrl, { scroll: false })
   }
@@ -100,6 +122,14 @@ export function ModalAddFile({ onSuccess }: { onSuccess?: () => void }) {
     }
   }
 
+  useEffect(() => {
+    return () => {
+      if (previewUrl) {
+        URL.revokeObjectURL(previewUrl)
+      }
+    }
+  }, [previewUrl])
+
   return (
     <div style={{ display: 'flex', justifyContent: 'center', width: '100%' }}>
       <Button
@@ -142,8 +172,71 @@ export function ModalAddFile({ onSuccess }: { onSuccess?: () => void }) {
             <div style={{ display: 'grid', gap: 12 }}>
               <label style={{ display: 'grid', gap: 6 }}>
                 <span style={{ fontSize: 14, color: '#111' }}>Файл</span>
-                <input type="file" onChange={handleFileChange} />
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  onChange={handleFileChange}
+                  style={{ display: 'none' }}
+                />
+
+                <Button
+                  variant="primary"
+                  onClick={() => fileInputRef.current?.click()}
+                >
+                  Выбрать файл
+                </Button>
+
                 <div style={{ fontSize: 13, color: '#666' }}>{fileName}</div>
+                {previewUrl && (
+                  <div
+                    style={{
+                      marginTop: 12,
+                      borderRadius: 8,
+                      overflow: 'hidden',
+                      border: '1px solid #ddd',
+                      padding: 8,
+                    }}
+                  >
+                    {file?.type.startsWith('image/') && (
+                      <img
+                        src={previewUrl}
+                        alt={file.name}
+                        style={{
+                          width: '100%',
+                          maxHeight: 200,
+                          objectFit: 'contain',
+                        }}
+                      />
+                    )}
+
+                    {file?.type.startsWith('video/') && (
+                      <video
+                        src={previewUrl}
+                        controls
+                        style={{
+                          width: '100%',
+                          maxHeight: 200,
+                        }}
+                      />
+                    )}
+
+                    {file?.type.startsWith('audio/') && (
+                      <audio
+                        src={previewUrl}
+                        controls
+                        style={{
+                          width: '100%',
+                        }}
+                      />
+                    )}
+
+                    {!file?.type.startsWith('image/') &&
+                      !file?.type.startsWith('video/') &&
+                      !file?.type.startsWith('audio/') && (
+                        <div>📄 {file?.name}</div>
+                      )}
+                  </div>
+                )}
               </label>
 
               <label style={{ display: 'grid', gap: 6 }}>
