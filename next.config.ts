@@ -141,6 +141,8 @@ const nextConfig: NextConfig = {
                   https://*.g.doubleclick.net
                   https://*.google.com;
 
+                media-src 'self' https://api1.krasrm.com;
+
                 font-src 'self'
                   https://fonts.gstatic.com data;
 
