@@ -209,3 +209,44 @@ export async function POST(request: NextRequest) {
     )
   }
 }
+
+export async function GET(request: NextRequest) {
+  try {
+    const { searchParams } = new URL(request.url)
+
+    const apiUrl = new URL(`${process.env.API_1C_URL}api/adorders/`)
+
+    searchParams.forEach((value, key) => {
+      apiUrl.searchParams.set(key, value)
+    })
+
+    const apiResponse = await fetch(apiUrl.toString(), {
+      method: 'GET',
+      headers: {
+        Authorization: `access_token ${request.cookies.get('access_token')?.value || ''}`,
+        Cookie: `access_token=${request.cookies.get('access_token')?.value || ''}`,
+        'User-Agent': request.headers.get('user-agent') || '',
+      },
+      cache: 'no-store',
+    })
+
+    const responseData = await apiResponse.json().catch(() => null)
+
+    if (!apiResponse.ok) {
+      return NextResponse.json(responseData, {
+        status: apiResponse.status,
+      })
+    }
+
+    return NextResponse.json(responseData, {
+      status: apiResponse.status,
+    })
+  } catch (error: any) {
+    console.error('Error in /api/adorders GET handler:', error)
+
+    return NextResponse.json(
+      { error: 'Ошибка получения списка AD заказов' },
+      { status: 500 }
+    )
+  }
+}
