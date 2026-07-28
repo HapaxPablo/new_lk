@@ -9,12 +9,16 @@ import { Button } from '@/components/ui/button/Button'
 import { ModalAddAdOrder } from './components/ModalAddAdOrder'
 import { ModalAddBgOrder } from './components/ModalAddBgOrder'
 import OrdersTable from './components/Orderstable'
+import Link from 'next/link'
 
 export default function Page() {
   const [type, setType] = useState<'ad' | 'bg'>('ad')
 
   return (
     <div className="flex flex-col gap-4 p-6">
+      <Link href="/" className="text-sm text-blue-600!">
+        На главную
+      </Link>
       <h1>Заказы</h1>
 
       <div className="flex flex-wrap gap-4">

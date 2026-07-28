@@ -33,8 +33,10 @@ const FilesListPage = async ({
   const countFiles = listFiles.count ? listFiles.count : 0
   console.log(countFiles)
   return (
-    <div className="overflow-auto">
-      <Link href="/orders">Назад к заказам</Link>
+    <div className="overflow-auto p-6">
+      <Link href="/orders" className="text-sm text-blue-600!">
+        Назад к заказам
+      </Link>
 
       <h1>Файлы</h1>
       <div className="overflow-auto">
