@@ -2,7 +2,6 @@
 import { clearCookie, writeCookie } from '@/lib/constants'
 import { INomenclatureBase } from '@/types/nomenclature'
 import { create } from 'zustand'
-import { persist } from 'zustand/middleware'
 
 interface Item extends INomenclatureBase {
   id: string
@@ -20,23 +19,21 @@ interface State {
   getTotalPrice: () => number
   toggleAllItems: (items: any[]) => void
 }
-export const useNomenclatureStore = create<State>()(
-  persist(
-    (set, get) => ({
-      ids: [],
-      items: [],
+export const useNomenclatureStore = create<State>()((set, get) => ({
+  ids: [],
+  items: [],
 
-      toggle: (item) => {
-        const { items } = get()
-        const exists = items.some((i) => i.id === item.id)
-        const updated = exists
-          ? items.filter((i) => i.id !== item.id)
-          : [...items, item]
+  toggle: (item) => {
+    const { items } = get()
+    const exists = items.some((i) => i.id === item.id)
+    const updated = exists
+      ? items.filter((i) => i.id !== item.id)
+      : [...items, item]
 
-        writeCookie(updated.map((i) => i.id)) // ← было и раньше
+    writeCookie(updated.map((i) => i.id))
 
-        set({ items: updated, ids: updated.map((i) => i.id) })
-      },
+    set({ items: updated, ids: updated.map((i) => i.id) })
+  },
       toggleAllItems: (newItems: any[]) => {
         const { ids, items: currentItems } = get()
         const newItemIds = newItems.map((i) => i.id)
@@ -99,19 +96,5 @@ export const useNomenclatureStore = create<State>()(
           return sum + (Number.isFinite(price) ? price : 0)
         }, 0)
       },
-    }),
-
-    {
-      name: 'nomenclature-storage',
-      partialize: (state) => ({
-        ids: state.ids,
-        items: state.items,
-      }),
-      merge: (persisted: any, current) => ({
-        ...current,
-        ids: Array.isArray(persisted?.ids) ? persisted.ids : [],
-        items: Array.isArray(persisted?.items) ? persisted.items : [],
-      }),
-    }
+    })
   )
-)

@@ -33,7 +33,6 @@ class HttpClient1CServer {
       const res = new Response()
       const cookieHeader = request.headers.get('cookie')
       if (!cookieHeader) {
-        console.log('No cookies in request, returning null')
         return null
       }
 
@@ -51,7 +50,6 @@ class HttpClient1CServer {
       })
       return session
     } catch (error) {
-      console.error('Error getting session:', error)
       return null
     }
   }
@@ -87,7 +85,6 @@ class HttpClient1CServer {
 
       return session
     } catch (error) {
-      console.error('Error getting session from cookies:', error)
       return null
     }
   }
@@ -163,11 +160,6 @@ class HttpClient1CServer {
       rawCookieHeader
     )
 
-    console.log('Auth data:', {
-      token: token ? 'present' : 'missing',
-      xrmcCookie: xrmcCookie ? 'present' : 'missing',
-    })
-
     const headers: Record<string, string> = {}
 
     if (token) {
@@ -211,31 +203,15 @@ class HttpClient1CServer {
       config.body = JSON.stringify({})
     }
 
-    console.log('Request to 1C:', {
-      method,
-      url: `${this.baseUrl}${endpoint}`,
-      headers: {
-        ...headers,
-        Authorization: headers.Authorization ? '***' : undefined,
-        Cookie: headers.Cookie ? '***' : undefined,
-      },
-    })
 
     const response = await fetch(`${this.baseUrl}${endpoint}`, config)
 
-    console.log('Response from 1C:', {
-      status: response.status,
-      statusText: response.statusText,
-    })
-
     if (response.status === 401) {
-      console.log('401 Error - Session expired')
       throw new Error('Session expired')
     }
 
     if (!response.ok) {
       const error = await response.text()
-      console.log('Error response body:', error)
       throw new Error(`Request failed: ${error}`)
     }
 

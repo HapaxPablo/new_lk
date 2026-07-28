@@ -22,6 +22,7 @@ import BreadcrumbsSetter from '@/components/ui/breadcrumbs/BreadcrumbsSetter'
 import ModalFeedBack from '@/components/nomenclatureById/modalFeedBack/ModalFeedBack'
 import { SITE_URL } from '@/lib/configs/config-meta/configMetaData'
 import { BreadcrumbJsonLd } from '@/components/seo/BreadcrumbJsonLd'
+import { cache } from 'react'
 import { notFound } from 'next/navigation'
 import Slider from '@/components/slider/Slider'
 import { PlaceTitle } from '@/components/nomenclatureById/PlaceTitle'
@@ -42,11 +43,13 @@ interface NomenclatureDetailPageProps {
   }>
 }
 
-async function getNomenclatureById(slug: string) {
+const getNomenclatureById = cache(async (slug: string) => {
   try {
     const response = await fetch(
       `${process.env.API_1C_URL}api/nomenclatures/web/${slug}`,
-      { cache: 'no-store' }
+      {
+        cache: 'no-store',
+      }
     )
 
     if (response.status === 404) {
@@ -57,11 +60,11 @@ async function getNomenclatureById(slug: string) {
       return null
     }
 
-    return await response.json()
+    return response.json()
   } catch (e) {
     return null
   }
-}
+})
 
 async function getTenantsByNomenclatureId(
   id: string

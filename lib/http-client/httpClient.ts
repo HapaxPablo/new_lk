@@ -7,7 +7,6 @@ class HttpClient1CClient {
 
   constructor() {
     this.baseUrl = process.env.NEXT_PUBLIC_API_1C_URL || ''
-    console.log('baseUrl:', this.baseUrl)
   }
 
   private async request<T = any>(
@@ -16,19 +15,9 @@ class HttpClient1CClient {
     data?: any,
     isFile: boolean = false
   ): Promise<T> {
-    // Get token from cookie directly in client
     const cookies = document.cookie.split('; ')
     const tokenCookie = cookies.find((c) => c.startsWith('access_token='))
     const token = tokenCookie ? tokenCookie.split('=')[1] : null
-
-    console.log('token client', token)
-
-    console.log('Making request to 1C API:', {
-      method,
-      endpoint,
-      isFile,
-      hasToken: !!token,
-    })
 
     // Проверяем, является ли эндпоинт публичным (GET запрос к nomenclatures, counterparties или promotions)
     const isPublicEndpoint =

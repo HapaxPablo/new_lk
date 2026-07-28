@@ -5,6 +5,7 @@ import dynamic from 'next/dynamic'
 import { useRef } from 'react'
 import FiltersPanel from '../panels/filter-panels/FiltersPanels'
 import ScrollButton from '../ui/button/ScrollButton'
+import { ListWrapper } from '@/components/ui/list/ListWrapper'
 import LoaderSkeleton from '../ui/loader/LoaderSkeleton'
 import styles from './PromotionsWrapper.module.scss'
 
@@ -48,38 +49,35 @@ export const PromotionsWrapper = ({
   const cardsWrapperRef = useRef<HTMLDivElement>(null)
 
   return (
-    <div className={styles.displayWrapper}>
-      <div className={styles.filtersContainer}>
-        <FiltersPanel />
-      </div>
-
-      <div className={styles.contentContainer}>
-        <div ref={cardsWrapperRef} className={styles.cardsWrapper}>
-          {promotionsData.length <= 0 ? (
-            'Акции не найдены'
-          ) : (
-            <PromotionCards item={promotionsData} />
-          )}
-
-          {page !== undefined && page >= 1 && (
-            <div className={styles.paginationContainer}>
-              <Pagination
-                limit={limit ?? 150}
-                page={page}
-                total={count ?? 0}
-                showPageNumbers={true}
-              />
-            </div>
-          )}
-
-          <ScrollButton
-            scrollContainerRef={cardsWrapperRef}
-            showAfterScroll={500}
-            position="bottom-right"
-            size="md"
+    <ListWrapper
+      filters={<FiltersPanel />}
+      pagination={
+        page !== undefined && page >= 1 ? (
+          <Pagination
+            limit={limit ?? 150}
+            page={page}
+            total={count ?? 0}
+            showPageNumbers={true}
           />
-        </div>
-      </div>
-    </div>
+        ) : undefined
+      }
+      cardsWrapperRef={cardsWrapperRef}
+      className={styles.displayWrapper}
+      contentClassName={styles.contentContainer}
+      cardsWrapperClassName={styles.cardsWrapper}
+    >
+      {promotionsData.length <= 0 ? (
+        'Акции не найдены'
+      ) : (
+        <PromotionCards item={promotionsData} />
+      )}
+
+      <ScrollButton
+        scrollContainerRef={cardsWrapperRef}
+        showAfterScroll={500}
+        position="bottom-right"
+        size="md"
+      />
+    </ListWrapper>
   )
 }
