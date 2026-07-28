@@ -22,7 +22,9 @@ const PlaylistsListPage = async ({
 
   return (
     <div className="p-6">
-      <Link href="/orders">Назад к заказам</Link>
+      <Link href="/orders" className="text-sm text-blue-600!">
+        Назад к заказам
+      </Link>
       <h1>Плейлисты</h1>
       <div className="overflow-auto">
         <PlaylistsTable initialData={listPlaylists} />

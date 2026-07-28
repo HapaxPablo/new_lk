@@ -60,7 +60,7 @@ export default async function OrderDetailPage({
 
   return (
     <div className="overflow-auto p-6">
-      <Link href="/orders" className="text-sm text-blue-600 pb-2 inline-block">
+      <Link href="/orders" className="text-sm text-blue-600! pb-2 inline-block">
         Назад к заказам
       </Link>
 
@@ -132,7 +132,7 @@ export default async function OrderDetailPage({
                 {order.playlist?.id && (
                   <Link
                     href={`/orders/playlists/${order.playlist.id}`}
-                    className="text-blue-600 hover:underline"
+                    className="text-blue-600! hover:underline"
                     target="_blank"
                   >
                     Открыть плейлист →
