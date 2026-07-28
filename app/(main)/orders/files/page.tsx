@@ -2,6 +2,7 @@
 import { Metadata } from 'next'
 import { getFilesList } from './api'
 import FilesTable from './components/FilesTable'
+import Link from 'next/link'
 
 export const metadata: Metadata = {
   title: 'Файлы',
@@ -33,6 +34,8 @@ const FilesListPage = async ({
   console.log(countFiles)
   return (
     <div className="overflow-auto">
+      <Link href="/orders">Назад к заказам</Link>
+
       <h1>Файлы</h1>
       <div className="overflow-auto">
         <FilesTable initialData={listFiles} />

@@ -1,6 +1,7 @@
 import { Metadata } from 'next'
 import { getPlaylistsList } from './api'
 import PlaylistsTable from './components/PlaylistsTable'
+import Link from 'next/link'
 
 export const metadata: Metadata = {
   title: 'Плейлисты',
@@ -21,6 +22,7 @@ const PlaylistsListPage = async ({
 
   return (
     <div className="p-6">
+      <Link href="/orders">Назад к заказам</Link>
       <h1>Плейлисты</h1>
       <div className="overflow-auto">
         <PlaylistsTable initialData={listPlaylists} />

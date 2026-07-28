@@ -34,15 +34,12 @@ export default async function PlaylistDetailPage({
   }
 
   return (
-    <div className="overflow-auto p-6">
-      <Link href="/orders/playlists" className="text-sm text-blue-600 pb-2">
-        Назад к плейлистам
-      </Link>
-
+    <div className="p-6">
       {errorMessage ? (
         <div className="text-red-600">{errorMessage}</div>
       ) : playlist ? (
         <div className="space-y-6">
+          <Link href="/orders/playlists">Назад к плейлистам</Link>
           <div className="space-y-2 rounded-3xl border border-gray-200 bg-white p-6 shadow-sm">
             <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
               <div>

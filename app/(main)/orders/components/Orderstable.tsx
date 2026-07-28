@@ -3,6 +3,7 @@
 import { Loader, Table } from '@mantine/core'
 import useSWRInfinite from 'swr/infinite'
 import { useEffect, useRef } from 'react'
+import { useRouter } from 'next/navigation'
 
 const fetcher = (url: string) => fetch(url).then((r) => r.json())
 
@@ -11,6 +12,7 @@ interface Props {
 }
 
 export default function OrdersTable({ type }: Props) {
+  const router = useRouter()
   const observerRef = useRef<HTMLDivElement>(null)
   const viewportRef = useRef<HTMLDivElement>(null)
 
@@ -19,20 +21,16 @@ export default function OrdersTable({ type }: Props) {
   const { data, setSize, isValidating } = useSWRInfinite(
     (pageIndex, previousPage) => {
       if (previousPage && !previousPage.next) return null
-
       return `/api/${endpoint}?page=${pageIndex + 1}&limit=20`
     },
     fetcher,
-    {
-      revalidateFirstPage: false,
-    }
+    { revalidateFirstPage: false }
   )
 
   const orders = data?.flatMap((page) => page.results) ?? []
 
   useEffect(() => {
     const element = observerRef.current
-
     if (!element || !viewportRef.current) return
 
     const observer = new IntersectionObserver(
@@ -41,25 +39,15 @@ export default function OrdersTable({ type }: Props) {
           setSize((prev) => prev + 1)
         }
       },
-      {
-        root: viewportRef.current,
-        rootMargin: '200px',
-      }
+      { root: viewportRef.current, rootMargin: '200px' }
     )
 
     observer.observe(element)
-
     return () => observer.disconnect()
   }, [data, setSize])
 
   return (
-    <div
-      ref={viewportRef}
-      style={{
-        height: 600,
-        overflowY: 'auto',
-      }}
-    >
+    <div ref={viewportRef} style={{ height: 600, overflowY: 'auto' }}>
       <Table striped highlightOnHover>
         <Table.Thead>
           <Table.Tr>
@@ -72,7 +60,11 @@ export default function OrdersTable({ type }: Props) {
 
         <Table.Tbody>
           {orders.map((order: any) => (
-            <Table.Tr key={order.id}>
+            <Table.Tr
+              key={order.id}
+              onClick={() => router.push(`/orders/${type}/${order.id}`)}
+              style={{ cursor: 'pointer' }}
+            >
               <Table.Td>{order.id}</Table.Td>
               <Table.Td>{order.name}</Table.Td>
               <Table.Td>{order.status}</Table.Td>
