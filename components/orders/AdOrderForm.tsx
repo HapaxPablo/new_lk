@@ -4,16 +4,16 @@ import { useMemo, useState } from 'react'
 import {
   ClientsMultiSelect,
   IClientOption,
-} from '@/app/(main)/orders/components/ClientsMultiSelect'
-import { PlaylistSelect } from '@/app/(main)/orders/components/PlaylistSelect'
-import { OrderNameFields } from '@/app/(main)/orders/components/OrderNameFields'
-import { BroadcastIntervalFields } from '@/app/(main)/orders/components/BroadcastIntervalFields'
+} from '@/components/orders/supporting-components/ClientsMultiSelect'
+import { PlaylistSelect } from '@/components/orders/supporting-components/PlaylistSelect'
+import { OrderNameFields } from '@/components/orders/supporting-components/OrderNameFields'
+import { BroadcastIntervalFields } from '@/components/orders/supporting-components/BroadcastIntervalFields'
 import {
   AdBroadcastSettings,
   REQUIRES_END_TIME,
   REQUIRES_START_TIME,
   REQUIRES_TIMEDELTA,
-} from '@/app/(main)/orders/components/AdBroadcastSettings'
+} from '@/components/orders/supporting-components/AdBroadcastSettings'
 import {
   fetchClientsPage,
   fetchPlaylistsPage,

@@ -4,10 +4,10 @@ import { useState } from 'react'
 import {
   ClientsMultiSelect,
   IClientOption,
-} from '@/app/(main)/orders/components/ClientsMultiSelect'
-import { PlaylistSelect } from '@/app/(main)/orders/components/PlaylistSelect'
-import { OrderNameFields } from '@/app/(main)/orders/components/OrderNameFields'
-import { BroadcastIntervalFields } from '@/app/(main)/orders/components/BroadcastIntervalFields'
+} from '@/components/orders/supporting-components/ClientsMultiSelect'
+import { PlaylistSelect } from '@/components/orders/supporting-components/PlaylistSelect'
+import { OrderNameFields } from '@/components/orders/supporting-components/OrderNameFields'
+import { BroadcastIntervalFields } from '@/components/orders/supporting-components/BroadcastIntervalFields'
 import {
   fetchClientsPage,
   fetchPlaylistsPage,
@@ -130,7 +130,7 @@ export function BgOrderForm() {
           <select
             value={form.orderType}
             onChange={(e) => updateField('orderType', e.target.value)}
-            className="rounded-2xl border border-gray-200 bg-white px-4 py-3 text-sm outline-none transition focus:border-blue-500"
+            className="rounded-2xl border border-gray-200! bg-white px-4 py-3 text-sm outline-none transition focus:border-blue-500"
           >
             {Object.entries(ORDER_TYPE_LABELS).map(([value, label]) => (
               <option key={value} value={value}>

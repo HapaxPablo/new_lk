@@ -1,5 +1,5 @@
-import { IClientOption } from '../components/ClientsMultiSelect'
-import { IPlaylistOption } from '../components/PlaylistSelect'
+import { IClientOption } from '../../../../components/orders/supporting-components/ClientsMultiSelect'
+import { IPlaylistOption } from '../../../../components/orders/supporting-components/PlaylistSelect'
 
 const PLAYLIST_PAGE_LIMIT = 15
 const CLIENT_PAGE_LIMIT = 20

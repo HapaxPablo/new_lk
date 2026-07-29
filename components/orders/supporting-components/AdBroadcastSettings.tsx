@@ -58,7 +58,7 @@ export function AdBroadcastSettings({
   const needsEndTime = REQUIRES_END_TIME.includes(broadcastType)
 
   return (
-    <div className="grid gap-4 rounded-2xl border border-gray-200 bg-gray-50/60 p-4">
+    <div className="grid gap-4 rounded-2xl border border-gray-200! bg-gray-50/60 p-4">
       <div className="grid gap-2 sm:grid-cols-2">
         <div className="grid gap-2">
           <label className="text-sm font-medium text-gray-700">
@@ -67,7 +67,7 @@ export function AdBroadcastSettings({
           <select
             value={broadcastType}
             onChange={(event) => onBroadcastTypeChange(event.target.value)}
-            className="rounded-2xl border border-gray-200 bg-white px-4 py-3 text-sm outline-none transition focus:border-blue-500"
+            className="rounded-2xl border border-gray-200! bg-white px-4 py-3 text-sm outline-none transition focus:border-blue-500"
           >
             {BROADCAST_TYPES.map((type) => (
               <option key={type.value} value={type.value}>
@@ -86,7 +86,7 @@ export function AdBroadcastSettings({
             max={100}
             value={weight}
             onChange={(event) => onWeightChange(event.target.value)}
-            className="rounded-2xl border border-gray-200 bg-white px-4 py-3 text-sm outline-none transition focus:border-blue-500"
+            className="rounded-2xl border border-gray-200! bg-white px-4 py-3 text-sm outline-none transition focus:border-blue-500"
           />
         </div>
       </div>
@@ -99,7 +99,7 @@ export function AdBroadcastSettings({
           <select
             value={timesInHour}
             onChange={(event) => onTimesInHourChange(event.target.value)}
-            className="rounded-2xl border border-gray-200 bg-white px-4 py-3 text-sm outline-none transition focus:border-blue-500"
+            className="rounded-2xl border border-gray-200! bg-white px-4 py-3 text-sm outline-none transition focus:border-blue-500"
           >
             {[1, 2, 3, 4, 6, 12].map((value) => (
               <option key={value} value={value}>
@@ -119,7 +119,7 @@ export function AdBroadcastSettings({
               step="1"
               value={timedelta}
               onChange={(event) => onTimedeltaChange(event.target.value)}
-              className="rounded-2xl border border-gray-200 bg-white px-4 py-3 text-sm outline-none transition focus:border-blue-500"
+              className="rounded-2xl border border-gray-200! bg-white px-4 py-3 text-sm outline-none transition focus:border-blue-500"
             />
           </div>
         )}
@@ -134,7 +134,7 @@ export function AdBroadcastSettings({
               step="1"
               value={startTime}
               onChange={(event) => onStartTimeChange(event.target.value)}
-              className="rounded-2xl border border-gray-200 bg-white px-4 py-3 text-sm outline-none transition focus:border-blue-500"
+              className="rounded-2xl border border-gray-200! bg-white px-4 py-3 text-sm outline-none transition focus:border-blue-500"
             />
           </div>
         )}
@@ -149,7 +149,7 @@ export function AdBroadcastSettings({
               step="1"
               value={endTime}
               onChange={(event) => onEndTimeChange(event.target.value)}
-              className="rounded-2xl border border-gray-200 bg-white px-4 py-3 text-sm outline-none transition focus:border-blue-500"
+              className="rounded-2xl border border-gray-200! bg-white px-4 py-3 text-sm outline-none transition focus:border-blue-500"
             />
           </div>
         )}

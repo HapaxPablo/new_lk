@@ -1,9 +1,10 @@
 'use client'
 import { useRef, useState } from 'react'
-import { Check, ChevronDown, Search } from 'lucide-react'
+import { Check, ChevronDown, Eye, Search } from 'lucide-react'
 import { usePaginatedSearch } from '@/hooks/usePaginatedSearch'
 import { useClickOutside } from '@/hooks/useClickOutside'
 import { InfiniteScrollSentinel } from './InfiniteScrollSentinel'
+import Link from 'next/link'
 
 export interface IPlaylistOption {
   id: string
@@ -29,6 +30,7 @@ export function PlaylistSelect({
   onError,
 }: Props) {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false)
+  const [visible, setVisible] = useState<string | null>(null)
   const wrapperRef = useRef<HTMLDivElement>(null)
   const listRef = useRef<HTMLDivElement>(null)
 
@@ -42,7 +44,6 @@ export function PlaylistSelect({
   useClickOutside([wrapperRef], () => setIsDropdownOpen(false), isDropdownOpen)
 
   const selected = items.find((item) => item.id === value)
-
   return (
     <div className="grid gap-2" ref={wrapperRef}>
       <label className="text-sm font-medium text-gray-700">Плейлист</label>
@@ -78,22 +79,45 @@ export function PlaylistSelect({
             </div>
 
             <div ref={listRef} className="max-h-64 overflow-y-auto">
-              {items.map((item) => (
-                <button
-                  key={item.id}
-                  type="button"
-                  onClick={() => {
-                    onChange(item.id)
-                    setIsDropdownOpen(false)
-                  }}
-                  className="flex w-full items-center justify-between border-b border-gray-100 px-4 py-3 text-left text-sm text-gray-900 last:border-0 hover:bg-gray-50"
-                >
-                  <span className="text-wrap">{item.name}</span>
-                  {item.id === value && (
-                    <Check size={14} className="text-blue-600" />
-                  )}
-                </button>
-              ))}
+              {items.map((item) => {
+                return (
+                  <div
+                    key={item.id}
+                    onMouseEnter={() => setVisible(item.id)}
+                    onMouseLeave={() => setVisible(null)}
+                    className={`flex w-full items-center justify-between border-b border-gray-100 px-4 py-3 hover:bg-gray-50 ${
+                      item.id === value ? 'bg-blue-50' : 'text-gray-900'
+                    }`}
+                  >
+                    <button
+                      type="button"
+                      onClick={() => {
+                        onChange(item.id)
+                        setIsDropdownOpen(false)
+                      }}
+                      className={`flex w-full items-center justify-between border-b border-gray-100 text-left text-sm last:border-0 hover:bg-gray-50 `}
+                    >
+                      <span>{item.name}</span>
+                    </button>
+
+                    {visible === item.id && (
+                      <Link
+                        href={`/orders/playlists/${item.id}`}
+                        target="_blank"
+                      >
+                        <Eye
+                          size={20}
+                          className="text-gray-400 hover:cursor-pointer"
+                        />
+                      </Link>
+                    )}
+
+                    {item.id === value && (
+                      <Check size={14} className="ml-2 text-blue-600" />
+                    )}
+                  </div>
+                )
+              })}
 
               {!isLoading && items.length === 0 && (
                 <div className="px-4 py-3 text-sm text-gray-500">
