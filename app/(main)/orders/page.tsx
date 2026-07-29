@@ -2,12 +2,7 @@
 
 import { useState } from 'react'
 import { SegmentedControl } from '@mantine/core'
-
 import { Button } from '@/components/ui/button/Button'
-
-// import OrdersTable from './components/OrdersTable'
-import { ModalAddAdOrder } from './components/ModalAddAdOrder'
-import { ModalAddBgOrder } from './components/ModalAddBgOrder'
 import OrdersTable from './components/Orderstable'
 import Link from 'next/link'
 
@@ -22,24 +17,26 @@ export default function Page() {
       <h1>Заказы</h1>
 
       <div className="flex flex-wrap gap-4">
-        <Button href="/orders/files">Файлы</Button>
-        <Button href="/orders/playlists">Плейлисты</Button>
-        <ModalAddAdOrder />
-        <ModalAddBgOrder />
+        <Button href="/orders/files" target="_blank">
+          Файлы
+        </Button>
+        <Button href="/orders/playlists" target="_blank">
+          Плейлисты
+        </Button>
+        <Button href="/orders/ad/create" target="_blank">
+          Создать рекламный заказ
+        </Button>
+        <Button href="/orders/bg/create" target="_blank">
+          Создать заказ фоновой музыки
+        </Button>
       </div>
 
       <SegmentedControl
         value={type}
         onChange={(value) => setType(value as 'ad' | 'bg')}
         data={[
-          {
-            value: 'ad',
-            label: 'Реклама',
-          },
-          {
-            value: 'bg',
-            label: 'Фон',
-          },
+          { value: 'ad', label: 'Реклама' },
+          { value: 'bg', label: 'Фон' },
         ]}
       />
 

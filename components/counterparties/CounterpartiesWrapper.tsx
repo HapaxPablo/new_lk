@@ -5,6 +5,7 @@ import dynamic from 'next/dynamic'
 import { useRef } from 'react'
 import FiltersPanel from '../panels/filter-panels/FiltersPanels'
 import ScrollButton from '../ui/button/ScrollButton'
+import { ListWrapper } from '@/components/ui/list/ListWrapper'
 import LoaderSkeleton from '../ui/loader/LoaderSkeleton'
 import styles from './CounterpartiesWrapper.module.scss'
 
@@ -48,39 +49,36 @@ export const CounterpartiesWrapper = ({
   const cardsWrapperRef = useRef<HTMLDivElement>(null)
 
   return (
-    <div className={styles.displayWrapper}>
-      <div className={styles.filtersContainer}>
-        <FiltersPanel />
-      </div>
-
-      <div className={styles.contentContainer}>
-        <div ref={cardsWrapperRef} className={styles.cardsWrapper}>
-          {counterpartiesData.length <= 0 ? (
-            'Контрагенты не найдены'
-          ) : (
-            <CounterpartyCards item={counterpartiesData} />
-          )}
-
-          {page !== undefined && page >= 1 && (
-            <div className={styles.paginationContainer}>
-              <Pagination
-                limit={limit ?? 150}
-                page={page}
-                total={count ?? 0}
-                showPageNumbers={true}
-              />
-            </div>
-          )}
-
-          <ScrollButton
-            scrollContainerRef={cardsWrapperRef}
-            showAfterScroll={500}
-            position="bottom-right"
-            size="md"
+    <ListWrapper
+      filters={<FiltersPanel />}
+      pagination={
+        page !== undefined && page >= 1 ? (
+          <Pagination
+            limit={limit ?? 150}
+            page={page}
+            total={count ?? 0}
+            showPageNumbers={true}
           />
-        </div>
-      </div>
-    </div>
+        ) : undefined
+      }
+      cardsWrapperRef={cardsWrapperRef}
+      className={styles.displayWrapper}
+      contentClassName={styles.contentContainer}
+      cardsWrapperClassName={styles.cardsWrapper}
+    >
+      {counterpartiesData.length <= 0 ? (
+        'Контрагенты не найдены'
+      ) : (
+        <CounterpartyCards item={counterpartiesData} />
+      )}
+
+      <ScrollButton
+        scrollContainerRef={cardsWrapperRef}
+        showAfterScroll={500}
+        position="bottom-right"
+        size="md"
+      />
+    </ListWrapper>
   )
 }
 

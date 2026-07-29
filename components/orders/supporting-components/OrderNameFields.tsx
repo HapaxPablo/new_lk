@@ -23,7 +23,8 @@ export function OrderNameFields({
           value={name}
           onChange={(event) => onNameChange(event.target.value)}
           placeholder="Наименование заказа"
-          className="rounded-2xl border border-gray-200 bg-white px-4 py-3 text-sm outline-none transition focus:border-blue-500"
+          // className="rounded-2xl border border-gray-200 bg-white px-4 py-3 text-sm outline-none transition focus:border-blue-500"
+          className="flex w-full items-center justify-between rounded-2xl border border-gray-200! bg-white px-4 py-3 text-left text-sm text-gray-900 outline-none transition focus:border-blue-500"
         />
       </div>
       <div className="grid gap-2">
@@ -32,7 +33,7 @@ export function OrderNameFields({
           value={description}
           onChange={(event) => onDescriptionChange(event.target.value)}
           placeholder="Необязательно"
-          className="min-h-20 rounded-2xl border border-gray-200 bg-white px-4 py-3 text-sm outline-none transition focus:border-blue-500"
+          className="min-h-20 flex w-full items-center justify-between rounded-2xl border border-gray-200! bg-white px-4 py-3 text-left text-sm text-gray-900 outline-none transition focus:border-blue-500"
         />
       </div>
     </>

@@ -1,17 +1,11 @@
-import { Metadata } from 'next'
 import { INomenclatureDetailsItem } from '@/types/nomenclature'
 import { SITE_URL } from '@/lib/configs/config-meta/configMetaData'
 import { formatPlaceTitle } from '@/utils'
 
-interface GenerateMetadataParams {
-  nomenclature: INomenclatureDetailsItem
+export function generateNomenclatureStructuredData(
+  nomenclature: INomenclatureDetailsItem,
   id: string
-}
-
-export function generateNomenclatureMetadata({
-  nomenclature,
-  id,
-}: GenerateMetadataParams): Metadata {
+) {
   const {
     // main_info,
     brand,
@@ -19,106 +13,73 @@ export function generateNomenclatureMetadata({
     interior,
     article,
     pricePerMonth,
+    created_at,
+    updated_at,
   } = nomenclature
-
-  // Получаем адрес из main_info или других полей
   const fullName = formatPlaceTitle(nomenclature, 'full')
   // console.log('fullName generateNomenclatureStructuredData', fullName)
-
-  // Шаблонный title для карточки товара
-  const title = `Размещение Indoor рекламы в помещении ${fullName}`
-
-  // Шаблонный h1 (будет использоваться на странице)
-  const h1 = fullName
-
-  // Шаблонный description
   const phoneNumber = '8 800 222 59 38' // Можно вынести в конфиг
   const description = `Размещение аудио и видеорекламы в помещении по адресу ${fullName}. Звоните: ☎ ${phoneNumber}`
-
-  const canonicalUrl = `${SITE_URL}/nomenclatures/${id}`
-
   const images = [...exterior, ...interior]
-  const mainImage = images.length > 0 ? images[0].source : null
+    .map((img) => img.source)
+    .filter(Boolean)
+  const productUrl = `${SITE_URL}/nomenclatures/${id}`
 
   return {
-    title,
-    description,
-    // Передаем h1 через другие метаданные для использования на странице
-    other: {
-      'page-h1': h1,
-      'og:price:amount': pricePerMonth || '0',
-      'og:price:currency': 'RUB',
+    '@context': 'https://schema.org',
+    '@type': 'Product',
+    '@id': productUrl,
+    // name: main_info.name,
+    description: description || undefined,
+    sku: String(article),
+    productID: id,
+    url: productUrl,
+    datePublished: created_at ? new Date(created_at).toISOString() : undefined, // ✅ Добавлено
+    dateModified: updated_at ? new Date(updated_at).toISOString() : undefined, // ✅ Добавлено
+    author: {
+      '@type': 'Organization',
+      name: 'Агентство активной рекламы КрасРМ',
+      url: SITE_URL,
     },
-    keywords: [
-      'indoor реклама',
-      'реклама в помещении',
-      fullName,
-      // main_info.name,
-      String(article),
-      brand?.name || '',
-      'размещение рекламы',
-      'Красноярск',
-      'RMC',
-      nomenclature.contentType,
-      nomenclature.typeOfPlace.name,
-    ].filter(Boolean),
-    openGraph: {
-      title,
-      description,
-      type: 'website',
-      url: canonicalUrl,
-      siteName: 'RMC',
-      images: mainImage
-        ? [
-            {
-              url: mainImage,
-              width: 800,
-              height: 600,
-              alt: fullName,
-              type: 'image/jpeg',
-            },
-          ]
-        : [
-            {
-              url: `${SITE_URL}/logo_footer.svg`,
-              width: 1200,
-              height: 630,
-              alt: 'RMC Indoor реклама',
-            },
-          ],
-      locale: 'ru_RU',
-    },
-    twitter: {
-      card: 'summary_large_image',
-      title,
-      description,
-      images: mainImage ? [mainImage] : [`${SITE_URL}/logo_footer.svg`],
-    },
-    alternates: {
-      canonical: canonicalUrl,
-    },
-    robots: {
-      index: true,
-      follow: true,
-      googleBot: {
-        index: true,
-        follow: true,
-        'max-video-preview': -1,
-        'max-image-preview': 'large',
-        'max-snippet': -1,
+    brand: brand
+      ? {
+          '@type': 'Brand',
+          name: brand.name,
+          logo: brand.logotype || undefined,
+        }
+      : undefined,
+    image: images.length > 0 ? images : undefined,
+    offers: {
+      '@type': 'Offer',
+      price: pricePerMonth || '0',
+      priceCurrency: 'RUB',
+      availability: 'https://schema.org/InStock',
+      url: productUrl,
+      seller: {
+        '@type': 'Organization',
+        name: 'Агентство активной рекламы КрасРМ',
       },
     },
-  }
-}
-
-export function generateNotFoundMetadata(): Metadata {
-  return {
-    title: 'Indoor реклама не найдена | RMC',
-    description:
-      'Запрошенная страница с indoor рекламой не найдена. Свяжитесь с нами: ☎ 8 800 222 59 38',
-    robots: {
-      index: false,
-      follow: false,
-    },
+    additionalProperty: [
+      {
+        '@type': 'PropertyValue',
+        name: 'Тип контента',
+        value: nomenclature.contentType,
+      },
+      {
+        '@type': 'PropertyValue',
+        name: 'Тип места',
+        value: nomenclature.typeOfPlace,
+      },
+      ...(nomenclature.legalEntity?.name
+        ? [
+            {
+              '@type': 'PropertyValue' as const,
+              name: 'Юридическое лицо',
+              value: nomenclature.legalEntity.name,
+            },
+          ]
+        : []),
+    ],
   }
 }

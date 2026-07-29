@@ -6,6 +6,7 @@ import FiltersPanel from '../panels/filter-panels/FiltersPanels'
 import ScrollButton from '../ui/button/ScrollButton'
 import LoaderSkeleton from '../ui/loader/LoaderSkeleton'
 import styles from './BrandsWrapper.module.scss'
+import { ListWrapper } from '@/components/ui/list/ListWrapper'
 import { useBrands } from '@/hooks/useBrands'
 import { IBrandListItem } from '@/types/brands'
 import { BrandItems as BrandCards } from './card/BrandItem'
@@ -63,27 +64,28 @@ export const BrandsWrapper = ({
   }, [hasMore, isLoadingMore, size, setSize, cardsWrapperRef])
 
   return (
-    <div className={styles.displayWrapper}>
-      <div className={styles.contentContainer}>
-        <div ref={cardsWrapperRef} className={styles.cardsWrapper}>
-          {isLoadingInitial ? (
-            <LoaderSkeleton />
-          ) : items.length === 0 ? (
-            <p>Бренды не найдены</p>
-          ) : (
-            <BrandCards item={items} />
-          )}
+    <ListWrapper
+      cardsWrapperRef={cardsWrapperRef}
+      className={styles.displayWrapper}
+      contentClassName={styles.contentContainer}
+      cardsWrapperClassName={styles.cardsWrapper}
+    >
+      {isLoadingInitial ? (
+        <LoaderSkeleton />
+      ) : items.length === 0 ? (
+        <p>Бренды не найдены</p>
+      ) : (
+        <BrandCards item={items} />
+      )}
 
-          <div ref={loaderRef}>{isLoadingMore && <LoaderSkeleton />}</div>
+      <div ref={loaderRef}>{isLoadingMore && <LoaderSkeleton />}</div>
 
-          <ScrollButton
-            scrollContainerRef={cardsWrapperRef}
-            showAfterScroll={500}
-            position="bottom-right"
-            size="md"
-          />
-        </div>
-      </div>
-    </div>
+      <ScrollButton
+        scrollContainerRef={cardsWrapperRef}
+        showAfterScroll={500}
+        position="bottom-right"
+        size="md"
+      />
+    </ListWrapper>
   )
 }

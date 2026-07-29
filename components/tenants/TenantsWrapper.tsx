@@ -6,6 +6,7 @@ import { useEffect, useRef } from 'react'
 import ScrollButton from '../ui/button/ScrollButton'
 import LoaderSkeleton from '../ui/loader/LoaderSkeleton'
 import { TenantItems } from './card/TenantItems'
+import { ListWrapper } from '@/components/ui/list/ListWrapper'
 import styles from './TenantsWrapper.module.scss'
 
 interface TenantsWrapperProps {
@@ -50,27 +51,28 @@ export const TenantsWrapper = ({
   }, [hasMore, isLoadingMore, size, setSize])
 
   return (
-    <div className={styles.displayWrapper}>
-      <div className={styles.contentContainer}>
-        <div ref={cardsWrapperRef} className={styles.cardsWrapper}>
-          {isLoadingInitial ? (
-            <LoaderSkeleton />
-          ) : items.length === 0 ? (
-            <p className={styles.emptyText}>Арендаторы не найдены</p>
-          ) : (
-            <TenantItems item={items} />
-          )}
+    <ListWrapper
+      cardsWrapperRef={cardsWrapperRef}
+      className={styles.displayWrapper}
+      contentClassName={styles.contentContainer}
+      cardsWrapperClassName={styles.cardsWrapper}
+    >
+      {isLoadingInitial ? (
+        <LoaderSkeleton />
+      ) : items.length === 0 ? (
+        <p className={styles.emptyText}>Арендаторы не найдены</p>
+      ) : (
+        <TenantItems item={items} />
+      )}
 
-          <div ref={loaderRef}>{isLoadingMore && <LoaderSkeleton />}</div>
+      <div ref={loaderRef}>{isLoadingMore && <LoaderSkeleton />}</div>
 
-          <ScrollButton
-            scrollContainerRef={cardsWrapperRef}
-            showAfterScroll={500}
-            position="bottom-right"
-            size="md"
-          />
-        </div>
-      </div>
-    </div>
+      <ScrollButton
+        scrollContainerRef={cardsWrapperRef}
+        showAfterScroll={500}
+        position="bottom-right"
+        size="md"
+      />
+    </ListWrapper>
   )
 }

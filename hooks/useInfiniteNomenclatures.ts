@@ -1,19 +1,6 @@
-import useSWRInfinite from 'swr/infinite'
 import { useSearchParams } from 'next/navigation'
 import { INomenclatureItem, INomenclatureResponse } from '@/types/nomenclature'
-
-const getNomenclaturesFetcher = async (
-  endpoint: string
-): Promise<INomenclatureResponse> => {
-  const res = await fetch(endpoint, {
-    credentials: 'include',
-    cache: 'no-store',
-  })
-  if (!res.ok) {
-    throw new Error(`HTTP ${res.status}: ${await res.text()}`)
-  }
-  return res.json()
-}
+import { useInfinitePaginatedResource } from './data/useInfinitePaginatedResource'
 
 export const useInfiniteNomenclatures = (
   initialData?: INomenclatureItem[],
@@ -33,7 +20,6 @@ export const useInfiniteNomenclatures = (
     pageIndex: number,
     previousData: INomenclatureResponse | null
   ): string | null => {
-    // Если предыдущая страница вернула next: null — данные кончились
     if (previousData && previousData.next === null) return null
 
     const params = new URLSearchParams({
@@ -48,32 +34,11 @@ export const useInfiniteNomenclatures = (
     return `/api/nomenclatures/?${params.toString()}`
   }
 
-  const { data, error, size, setSize, isValidating } =
-    useSWRInfinite<INomenclatureResponse>(getKey, getNomenclaturesFetcher, {
-      revalidateOnFocus: false,
-      revalidateIfStale: false,
-      revalidateFirstPage: false,
-      keepPreviousData: true,
-    })
-
-  const items = data ? data.flatMap((page) => page.results) : initialData || []
-  const totalCount = data?.[0]?.count || initialServerCount || 0
-
-  // hasMore — смотрим на next последней загруженной страницы
-  const lastPage = data?.[data.length - 1]
-  const hasMore = !error && !!lastPage && lastPage.next !== null
-
-  const isLoadingInitial = !data && !error
-  const isLoadingMore = isValidating && size > 1
-
-  return {
-    items,
-    totalCount,
-    hasMore,
-    error,
-    isLoadingInitial,
-    isLoadingMore,
-    size,
-    setSize,
-  }
+  return useInfinitePaginatedResource<INomenclatureItem, INomenclatureResponse>(
+    {
+      getKey,
+      initialData,
+      initialCount: initialServerCount,
+    }
+  )
 }

@@ -8,7 +8,10 @@ import {
   TOrderKind,
 } from '@/types/orders'
 import { getAdOrderDetail, getBgOrderDetail } from '@/app/api/orders/route'
-import { formatDateTime, formatTimedelta } from '../formatters'
+import {
+  formatDateTime,
+  formatTimedelta,
+} from '../../../../../utils/formatters'
 
 interface OrderDetailPageProps {
   params: Promise<{
@@ -17,7 +20,7 @@ interface OrderDetailPageProps {
   }>
 }
 
-function isValidType(type: string): type is TOrderKind {
+export function isValidType(type: string): type is TOrderKind {
   return type === 'ad' || type === 'bg'
 }
 

@@ -21,7 +21,7 @@ export function BroadcastIntervalFields({
           type="datetime-local"
           value={lower}
           onChange={(event) => onLowerChange(event.target.value)}
-          className="rounded-2xl border border-gray-200 bg-white px-4 py-3 text-sm outline-none transition focus:border-blue-500"
+          className="rounded-2xl border border-gray-200! bg-white px-4 py-3 text-sm outline-none transition focus:border-blue-500"
         />
       </div>
       <div className="grid gap-2">
@@ -30,7 +30,7 @@ export function BroadcastIntervalFields({
           type="datetime-local"
           value={upper}
           onChange={(event) => onUpperChange(event.target.value)}
-          className="rounded-2xl border border-gray-200 bg-white px-4 py-3 text-sm outline-none transition focus:border-blue-500"
+          className="rounded-2xl border border-gray-200! bg-white px-4 py-3 text-sm outline-none transition focus:border-blue-500"
         />
       </div>
     </div>

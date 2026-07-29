@@ -10,6 +10,7 @@ import { useMediaQuery } from 'usehooks-ts'
 import FiltersPanel from '../panels/filter-panels/FiltersPanels'
 import ScrollButton from '../ui/button/ScrollButton'
 import LoaderSkeleton from '../ui/loader/LoaderSkeleton'
+import { ListWrapper } from '@/components/ui/list/ListWrapper'
 import styles from './NomenclatureWrapper.module.scss'
 import { SelectAllButton } from './select-all-button/SelectAllButton'
 
@@ -153,8 +154,12 @@ export const NomenclatureWrapperContent = ({
   const displayTotal = hookTotalCount || count || 0
 
   return (
-    <div className={styles.displayWrapper}>
-      <div className={styles.contentContainer}>
+    <ListWrapper
+      className={styles.displayWrapper}
+      contentClassName={styles.contentContainer}
+      cardsWrapperClassName={styles.cardsWrapper}
+      cardsWrapperRef={cardsWrapperRef}
+    >
 
         {/* Хедер снаружи скроллируемого контейнера — всегда виден */}
         {displayItems.length > 0 && (
@@ -204,8 +209,7 @@ export const NomenclatureWrapperContent = ({
             position="bottom-right"
             size="md"
           />
-        </div>
       </div>
-    </div>
+    </ListWrapper>
   )
 }

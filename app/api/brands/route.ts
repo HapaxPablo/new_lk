@@ -1,20 +1,18 @@
-import { NextRequest, NextResponse } from 'next/server'
+import { NextRequest } from 'next/server'
+import { withApiErrorHandling } from '@/lib/http-client/errors'
 
 export async function GET(request: NextRequest) {
-  try {
+  return withApiErrorHandling(async () => {
     const { searchParams } = new URL(request.url)
 
-    // Получаем все возможные параметры
     const search = searchParams.get('search') || searchParams.get('name') || ''
     const code1c = searchParams.get('code1c') || ''
     const isDeleted = searchParams.get('is_deleted') || 'false'
     const limit = searchParams.get('limit') || '50'
     const page = searchParams.get('page') || '1'
 
-    // Формируем URL для 1C API
     const apiUrl = new URL('https://api1.krasrm.com/api/brands/')
 
-    // Добавляем параметры поиска
     if (search) {
       apiUrl.searchParams.set('name', search)
     }
@@ -31,8 +29,6 @@ export async function GET(request: NextRequest) {
       apiUrl.searchParams.set('page', page)
     }
 
-    // console.log('API URL:', apiUrl.toString())
-
     const response = await fetch(apiUrl.toString(), {
       headers: {
         'Content-Type': 'application/json',
@@ -40,19 +36,15 @@ export async function GET(request: NextRequest) {
     })
 
     if (!response.ok) {
-      return NextResponse.json(
-        { error: 'Failed to fetch brands' },
-        { status: response.status }
-      )
+      throw new Error(`Request failed: ${await response.text()}`)
     }
 
     const data = await response.json()
-    return NextResponse.json(data)
-  } catch (error) {
-    console.error('Error in brands API route:', error)
-    return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
-    )
-  }
+    return new Response(JSON.stringify(data), {
+      status: 200,
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    })
+  })
 }
