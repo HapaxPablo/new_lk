@@ -54,6 +54,16 @@ export default function PlaylistsTable({
     router.push(`/orders/playlists/${id}`)
   }
 
+  console.log(
+    'files length:',
+    data?.map((item) => item.results.map((file) => file.files?.length))
+  )
+
+  console.log(
+    'data:',
+    data?.map((item) => item.results)
+  )
+
   return (
     <div
       style={{
@@ -98,13 +108,7 @@ export default function PlaylistsTable({
               >
                 <Table.Td>{playlist.name}</Table.Td>
                 <Table.Td>{playlist.description || '-'}</Table.Td>
-                <Table.Td>
-                  {Array.isArray(playlist.files)
-                    ? playlist.files.length
-                    : playlist.files
-                      ? String(playlist.files)
-                      : '-'}
-                </Table.Td>
+                <Table.Td>{playlist.files_count}</Table.Td>
                 <Table.Td>{playlist.created || '-'}</Table.Td>
               </Table.Tr>
             ))}

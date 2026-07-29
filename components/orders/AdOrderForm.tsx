@@ -34,7 +34,7 @@ const AD_FORM_DEFAULT = {
   timedelta: '00:00:00',
   startTime: '',
   endTime: '',
-  weight: '50',
+  weight: '70',
 }
 
 export function AdOrderForm() {

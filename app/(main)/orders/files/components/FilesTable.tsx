@@ -211,7 +211,7 @@ export default function FilesTable({
       <ModalWrapper id="playlist" title="Создать плейлист">
         <div style={{ display: 'grid', gap: 12 }}>
           <TextInput
-            label="Описание плейлиста"
+            label="Название плейлиста"
             value={playlistName}
             onChange={(event) => setPlaylistName(event.currentTarget.value)}
             placeholder="Введите имя плейлиста"

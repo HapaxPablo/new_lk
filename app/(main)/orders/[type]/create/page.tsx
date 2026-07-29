@@ -14,7 +14,7 @@ export async function generateMetadata({
 }: CreateOrderPageProps): Promise<Metadata> {
   const { type } = await params
   return {
-    title: `Создание ${type === 'ad' ? 'рекламного' : 'фонового'} заказа }`,
+    title: `Создание ${type === 'ad' ? 'рекламного' : 'фонового'} заказа`,
   }
 }
 
