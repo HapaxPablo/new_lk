@@ -17,10 +17,18 @@ export default function Page() {
       <h1>Заказы</h1>
 
       <div className="flex flex-wrap gap-4">
-        <Button href="/orders/files">Файлы</Button>
-        <Button href="/orders/playlists">Плейлисты</Button>
-        <Button href="/orders/ad/create">Создать рекламный заказ</Button>
-        <Button href="/orders/bg/create">Создать заказ фоновой музыки</Button>
+        <Button href="/orders/files" target="_blank">
+          Файлы
+        </Button>
+        <Button href="/orders/playlists" target="_blank">
+          Плейлисты
+        </Button>
+        <Button href="/orders/ad/create" target="_blank">
+          Создать рекламный заказ
+        </Button>
+        <Button href="/orders/bg/create" target="_blank">
+          Создать заказ фоновой музыки
+        </Button>
       </div>
 
       <SegmentedControl

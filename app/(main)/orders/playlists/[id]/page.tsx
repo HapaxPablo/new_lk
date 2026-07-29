@@ -13,8 +13,9 @@ interface PlaylistPageProps {
 export async function generateMetadata({
   params,
 }: PlaylistPageProps): Promise<Metadata> {
+  const playlist = await getPlaylistDetail(params.id)
   return {
-    title: `Расшифровка плейлиста ${params.id}`,
+    title: `Расшифровка плейлиста ${playlist.name}`,
   }
 }
 
