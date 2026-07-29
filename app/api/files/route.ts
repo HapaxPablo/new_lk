@@ -30,18 +30,28 @@ export async function POST(request: NextRequest) {
         body: JSON.stringify({ source, tags, type }),
       })
 
-      let responseData: any
+      // читаем тело один раз как текст, потом пробуем распарсить в JSON
+      const rawText = await apiResponse.text()
+      let responseData: any = null
       try {
-        responseData = await apiResponse.json()
+        responseData = rawText ? JSON.parse(rawText) : null
       } catch {
         responseData = null
       }
 
+      console.log('[api/files] upstream status:', apiResponse.status)
+      console.log('[api/files] upstream body:', rawText)
+
       if (!apiResponse.ok) {
         return NextResponse.json(
           {
-            error: 'Ошибка при загрузке файла',
-            detail: responseData || 'Не удалось разобрать ответ сервера',
+            error:
+              responseData?.detail ||
+              responseData?.message ||
+              responseData?.error ||
+              rawText ||
+              `Ошибка ${apiResponse.status}`,
+            detail: responseData ?? rawText,
           },
           { status: apiResponse.status }
         )
@@ -82,18 +92,27 @@ export async function POST(request: NextRequest) {
       body: formData,
     })
 
-    let responseData: any
+    const rawText = await apiResponse.text()
+    let responseData: any = null
     try {
-      responseData = await apiResponse.json()
+      responseData = rawText ? JSON.parse(rawText) : null
     } catch {
       responseData = null
     }
 
+    console.log('[api/files] upstream status:', apiResponse.status)
+    console.log('[api/files] upstream body:', rawText)
+
     if (!apiResponse.ok) {
       return NextResponse.json(
         {
-          error: 'Ошибка при загрузке файла',
-          detail: responseData || 'Не удалось разобрать ответ сервера',
+          error:
+            responseData?.detail ||
+            responseData?.message ||
+            responseData?.error ||
+            rawText ||
+            `Ошибка ${apiResponse.status}`,
+          detail: responseData ?? rawText,
         },
         { status: apiResponse.status }
       )
@@ -104,9 +123,7 @@ export async function POST(request: NextRequest) {
     })
   } catch (error) {
     console.error('File upload error:', error)
-    return NextResponse.json(
-      { error: 'Ошибка при загрузке файла' },
-      { status: 500 }
-    )
+    const message = error instanceof Error ? error.message : 'Unknown error'
+    return NextResponse.json({ error: message }, { status: 500 })
   }
 }
