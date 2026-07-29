@@ -2,6 +2,13 @@ import type { NextConfig } from 'next'
 
 const nextConfig: NextConfig = {
   trailingSlash: false,
+  experimental: {
+    // Accepts standard byte strings (e.g., '20mb', '100mb', '1gb')
+    middlewareClientMaxBodySize: '50mb',
+  },
+  serverActions: {
+    bodySizeLimit: '50mb', // For Server Action executions
+  },
   env: {
     CRYPTO_SECRET_KEY: process.env.CRYPTO_SECRET_KEY,
     CRYPTO_IV: process.env.CRYPTO_IV,
