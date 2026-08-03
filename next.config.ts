@@ -112,7 +112,6 @@ const nextConfig: NextConfig = {
             key: 'Content-Security-Policy',
             value: `
                 default-src 'self' 'unsafe-inline' 'unsafe-eval';
-                worker-src blob:;
 
                 script-src 'self' 'unsafe-inline' 'unsafe-eval'
                   https://*.yastatic.net
@@ -129,6 +128,7 @@ const nextConfig: NextConfig = {
                   https://www.googletagmanager.com
                   https://tagmanager.google.com;
 
+                worker-src 'self' blob: 'wasm-unsafe-eval' 'unsafe-eval';
 
                 img-src 'self' data: blob:
                   https://*.maps.yandex.net

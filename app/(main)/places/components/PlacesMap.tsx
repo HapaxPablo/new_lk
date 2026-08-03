@@ -1,8 +1,7 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
-// import maplibre, { Map, Popup, LngLatBounds } from 'maplibre-gl'
-import * as maplibre from 'maplibre-gl'
+import maplibre, { Map, Popup, LngLatBounds } from 'maplibre-gl'
 import 'maplibre-gl/dist/maplibre-gl.css'
 
 import { ICity } from '@/types/cities'
@@ -63,8 +62,8 @@ export default function PlacesMap({
   onPlaceSelect,
 }: PlacesMapProps) {
   const mapContainer = useRef<HTMLDivElement>(null)
-  const map = useRef<maplibre.Map | null>(null)
-  const popup = useRef<maplibre.Popup | null>(null)
+  const map = useRef<Map | null>(null)
+  const popup = useRef<Popup | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [isLoaded, setIsLoaded] = useState(false)
 
@@ -353,10 +352,7 @@ export default function PlacesMap({
               const props = feature.properties as any
               console.log('props.exterior', props.exterior)
               popup.current?.remove()
-              popup.current = new maplibre.Popup({
-                anchor: 'top',
-                closeButton: true,
-              })
+              popup.current = new Popup({ anchor: 'top', closeButton: true })
                 .setLngLat(coordinates)
                 .setHTML(
                   `<div class="text-sm flex flex-col gap-2">
@@ -420,7 +416,7 @@ export default function PlacesMap({
           if (validCoords.length > 0) {
             const bounds = validCoords.reduce(
               (acc, coord) => acc.extend(coord),
-              new maplibre.LngLatBounds(validCoords[0], validCoords[0])
+              new LngLatBounds(validCoords[0], validCoords[0])
             )
             map.current.fitBounds(bounds, {
               padding: 60,
@@ -465,7 +461,7 @@ export default function PlacesMap({
     console.log('place.exterior', place.exterior)
 
     popup.current?.remove()
-    popup.current = new maplibre.Popup({ anchor: 'top', closeButton: true })
+    popup.current = new Popup({ anchor: 'top', closeButton: true })
       .setLngLat(coords)
       .setHTML(
         `<div class="text-sm flex flex-col gap-2">
