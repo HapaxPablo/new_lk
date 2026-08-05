@@ -25,6 +25,7 @@ const BG_FORM_DEFAULT = {
   lower: '',
   upper: '',
   orderType: '0',
+  isPermanent: false,
 }
 
 export function BgOrderForm() {
@@ -37,7 +38,7 @@ export function BgOrderForm() {
 
   const updateField = <K extends keyof typeof BG_FORM_DEFAULT>(
     key: K,
-    value: string
+    value: string | boolean
   ) => setForm((prev) => ({ ...prev, [key]: value }))
 
   const toggleClient = (item: IClientOption) =>
@@ -77,6 +78,7 @@ export function BgOrderForm() {
           },
           parameters: {},
           order_type: Number(form.orderType),
+          is_permanent: form.isPermanent,
         }),
       })
     )
@@ -139,6 +141,17 @@ export function BgOrderForm() {
             ))}
           </select>
         </div>
+      </FormRow>
+      <FormRow>
+        <label className="flex items-center gap-2 text-sm font-medium text-gray-700">
+          <input
+            type="checkbox"
+            checked={form.isPermanent}
+            onChange={(e) => updateField('isPermanent', e.target.checked)}
+            className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+          />
+          Бессрочный заказ
+        </label>
       </FormRow>
     </OrderFormShell>
   )
