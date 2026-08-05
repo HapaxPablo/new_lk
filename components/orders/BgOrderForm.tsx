@@ -143,15 +143,17 @@ export function BgOrderForm() {
         </div>
       </FormRow>
       <FormRow>
-        <label className="flex items-center gap-2 text-sm font-medium text-gray-700">
-          <input
-            type="checkbox"
-            checked={form.isPermanent}
-            onChange={(e) => updateField('isPermanent', e.target.checked)}
-            className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
-          />
-          Бессрочный заказ
-        </label>
+        <div className="flex flex-row gap-3">
+          <label className="flex items-center gap-2 text-sm font-medium text-gray-700">
+            <input
+              type="checkbox"
+              checked={form.isPermanent}
+              onChange={(e) => updateField('isPermanent', e.target.checked)}
+              className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+            />
+            Бессрочный заказ
+          </label>
+        </div>
       </FormRow>
     </OrderFormShell>
   )

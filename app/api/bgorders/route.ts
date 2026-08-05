@@ -11,6 +11,7 @@ interface BgOrderPayload {
   }
   parameters?: Record<string, any>
   order_type: number
+  is_permanent: boolean
 }
 
 export async function POST(request: NextRequest) {
@@ -60,6 +61,8 @@ export async function POST(request: NextRequest) {
       broadcast_interval: body.broadcast_interval,
       parameters: body.parameters || {},
       order_type: typeof body.order_type === 'number' ? body.order_type : 0,
+      is_permanent:
+        typeof body.is_permanent === 'boolean' ? body.is_permanent : false,
     }
 
     const apiUrl = `${process.env.API_1C_URL}api/bgorders/`

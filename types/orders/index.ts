@@ -62,6 +62,7 @@ export interface IAdOrderDetail {
   status: number
   created: string
   client: IOrderClient
+  is_permanent?: boolean
 }
 
 export interface IBgOrderDetail {
@@ -76,6 +77,7 @@ export interface IBgOrderDetail {
   status: number
   created: string
   client: IOrderClient
+  is_permanent: boolean
 }
 
 export type TOrderKind = 'ad' | 'bg'

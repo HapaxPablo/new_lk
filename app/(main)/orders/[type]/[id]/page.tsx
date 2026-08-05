@@ -104,6 +104,12 @@ export default async function OrderDetailPage({
                   <span className="font-medium text-gray-900">Статус: </span>
                   {ORDER_STATUS_LABELS[order.status] ?? order.status}
                 </div>
+                <div>
+                  <span className="font-medium text-gray-900">
+                    Бессрочный:{' '}
+                  </span>
+                  {order?.is_permanent ? 'Да' : 'Нет'}
+                </div>
               </div>
             </div>
           </div>
