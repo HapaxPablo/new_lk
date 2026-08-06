@@ -4,6 +4,7 @@ import { Loader, Table } from '@mantine/core'
 import useSWRInfinite from 'swr/infinite'
 import { useEffect, useRef } from 'react'
 import { useRouter } from 'next/navigation'
+import { ORDER_STATUS_LABELS } from '@/types/orders'
 
 const fetcher = (url: string) => fetch(url).then((r) => r.json())
 
@@ -46,6 +47,8 @@ export default function OrdersTable({ type }: Props) {
     return () => observer.disconnect()
   }, [data, setSize])
 
+  console.log('orders', orders)
+
   return (
     <div ref={viewportRef} style={{ height: 600, overflowY: 'auto' }}>
       <Table striped highlightOnHover>
@@ -67,8 +70,10 @@ export default function OrdersTable({ type }: Props) {
             >
               <Table.Td>{order.id}</Table.Td>
               <Table.Td>{order.name}</Table.Td>
-              <Table.Td>{order.status}</Table.Td>
-              <Table.Td>{order.created}</Table.Td>
+              <Table.Td>
+                {ORDER_STATUS_LABELS[order.status] ?? order.status}
+              </Table.Td>
+              <Table.Td>{order.owner}</Table.Td>
             </Table.Tr>
           ))}
 

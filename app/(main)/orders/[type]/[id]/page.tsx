@@ -5,9 +5,11 @@ import {
   BROADCAST_TYPE_LABELS,
   ORDER_STATUS_LABELS,
   ORDER_TYPE_LABELS,
+  type TTaskType,
   TOrderKind,
 } from '@/types/orders'
 import { getAdOrderDetail, getBgOrderDetail } from '@/app/api/orders/route'
+import { OrderActions } from './OrderActions'
 import {
   formatDateTime,
   formatTimedelta,
@@ -22,6 +24,13 @@ interface OrderDetailPageProps {
 
 export function isValidType(type: string): type is TOrderKind {
   return type === 'ad' || type === 'bg'
+}
+
+const BG_CANCEL_TASK_TYPES: Partial<Record<number, TTaskType>> = {
+  0: 5,
+  1: 6,
+  2: 7,
+  3: 8,
 }
 
 export async function generateMetadata({
@@ -60,6 +69,12 @@ export default async function OrderDetailPage({
   }
 
   const order = adOrder || bgOrder
+  const cancelTaskType: TTaskType | undefined =
+    type === 'ad'
+      ? 9
+      : bgOrder
+        ? BG_CANCEL_TASK_TYPES[bgOrder.order_type]
+        : undefined
 
   return (
     <div className="overflow-auto p-6">
@@ -88,6 +103,15 @@ export default async function OrderDetailPage({
                 </p>
               </div>
               <div className="grid gap-2 text-sm text-gray-600 sm:text-right">
+                {cancelTaskType && order.client?.id && (
+                  <div className="mb-1 flex justify-end">
+                    <OrderActions
+                      nomenclatureId={order.client.id}
+                      orderId={order.id}
+                      taskType={cancelTaskType}
+                    />
+                  </div>
+                )}
                 <div>
                   <span className="font-medium text-gray-900">ID: </span>
                   <span className="font-mono text-xs">{order.id}</span>

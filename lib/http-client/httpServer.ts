@@ -203,7 +203,6 @@ class HttpClient1CServer {
       config.body = JSON.stringify({})
     }
 
-
     const response = await fetch(`${this.baseUrl}${endpoint}`, config)
 
     if (response.status === 401) {
@@ -212,7 +211,11 @@ class HttpClient1CServer {
 
     if (!response.ok) {
       const error = await response.text()
-      throw new Error(`Request failed: ${error}`)
+      const requestError = new Error(`Request failed: ${error}`) as Error & {
+        status: number
+      }
+      requestError.status = response.status
+      throw requestError
     }
 
     if (isFile) {

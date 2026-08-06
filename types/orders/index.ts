@@ -32,6 +32,7 @@ export const ORDER_TYPE_LABELS: Record<number, string> = {
   0: 'Фоновая музыка',
   1: 'Фоновые видео',
   2: 'Фоновые картинки',
+  3: 'Бегущая строка',
 }
 
 export const ORDER_STATUS_LABELS: Record<number, string> = {
@@ -39,7 +40,18 @@ export const ORDER_STATUS_LABELS: Record<number, string> = {
   1: 'В эфире',
   2: 'Завершён',
   3: 'Отменён',
+  4: 'Ошибка',
 }
+
+export const TASK_TYPES = {
+  5: 'CANCEL_BGMUSIC',
+  6: 'CANCEL_BGVIDEO',
+  7: 'CANCEL_BGIMAGE',
+  8: 'CANCEL_TICKER',
+  9: 'CANCEL_AD',
+} as const
+
+export type TTaskType = keyof typeof TASK_TYPES
 
 export interface IAdOrderParameters {
   times_in_hour?: number
