@@ -1,21 +1,26 @@
 'use client'
 
-import { Table, Loader } from '@mantine/core'
+import { Table, Loader, TextInput } from '@mantine/core'
 import useSWRInfinite from 'swr/infinite'
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { IPlaylistsListResponse } from '@/types/playlists'
+import { useDebounce } from '@/hooks/useDebounce'
 
 const fetcher = (url: string) => fetch(url).then((res) => res.json())
 
 export default function PlaylistsTable({
   initialData,
+  initialSearch = '',
 }: {
   initialData: IPlaylistsListResponse
+  initialSearch?: string
 }) {
   const router = useRouter()
   const observerRef = useRef<HTMLDivElement | null>(null)
   const viewportRef = useRef<HTMLDivElement>(null)
+  const [searchInput, setSearchInput] = useState(initialSearch)
+  const search = useDebounce(searchInput, 400)
 
   const { data, setSize, isValidating } =
     useSWRInfinite<IPlaylistsListResponse>(
@@ -23,7 +28,12 @@ export default function PlaylistsTable({
         if (previousPageData && !previousPageData.next) {
           return null
         }
-        return `/api/playlists/list?page=${pageIndex + 1}&limit=20`
+        const params = new URLSearchParams({
+          page: String(pageIndex + 1),
+          limit: '20',
+        })
+        if (search) params.set('search', search)
+        return `/api/playlists/list?${params.toString()}`
       },
       fetcher,
       { fallbackData: [initialData], revalidateFirstPage: false }
@@ -54,16 +64,6 @@ export default function PlaylistsTable({
     router.push(`/orders/playlists/${id}`)
   }
 
-  console.log(
-    'files length:',
-    data?.map((item) => item.results.map((file) => file.files?.length))
-  )
-
-  console.log(
-    'data:',
-    data?.map((item) => item.results)
-  )
-
   return (
     <div
       style={{
@@ -84,6 +84,13 @@ export default function PlaylistsTable({
           borderBottom: '1px solid rgba(0,0,0,0.08)',
         }}
       >
+        <TextInput
+          value={searchInput}
+          onChange={(event) => setSearchInput(event.currentTarget.value)}
+          placeholder="Поиск по названию плейлиста или файла"
+          aria-label="Поиск по плейлистам"
+          mb="sm"
+        />
         <div style={{ fontSize: 14, color: '#111' }}>
           Нажмите строку, чтобы перейти к расшифровке плейлиста
         </div>

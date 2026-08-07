@@ -7,19 +7,24 @@ import { ModalWrapper } from '@/components/modal/ModalWrapper'
 import { useModal } from '@/providers/modal/ModalProvider'
 import { useToast } from '@/hooks/useToast'
 import { ModalAddFile } from './ModalAddFile/ModalAddFile'
+import { useDebounce } from '@/hooks/useDebounce'
 
 const fetcher = (url: string) => fetch(url).then((res) => res.json())
 
 export default function FilesTable({
   initialData,
+  initialSearch = '',
 }: {
   initialData: IFilesListResponse
+  initialSearch?: string
 }) {
   const observerRef = useRef<HTMLDivElement | null>(null)
   const viewportRef = useRef<HTMLDivElement>(null)
   const [selection, setSelection] = useState<string[]>([])
   const [playlistName, setPlaylistName] = useState('')
   const [playlistDescription, setPlaylistDescription] = useState('')
+  const [searchInput, setSearchInput] = useState(initialSearch)
+  const search = useDebounce(searchInput, 400)
   const playlistModal = useModal('playlist')
   const filesModal = useModal('files')
   const { showToast } = useToast()
@@ -30,7 +35,12 @@ export default function FilesTable({
         if (previousPageData && !previousPageData.next) {
           return null
         }
-        return `/api/files/list?page=${pageIndex + 1}&limit=20`
+        const params = new URLSearchParams({
+          page: String(pageIndex + 1),
+          limit: '20',
+        })
+        if (search) params.set('search', search)
+        return `/api/files/list?${params.toString()}`
       },
       fetcher,
       { fallbackData: [initialData], revalidateFirstPage: false }
@@ -131,6 +141,13 @@ export default function FilesTable({
           alignItems: 'center',
         }}
       >
+        <TextInput
+          value={searchInput}
+          onChange={(event) => setSearchInput(event.currentTarget.value)}
+          placeholder="Поиск по названию файла или тэгу"
+          aria-label="Поиск по файлам"
+          mb="sm"
+        />
         <ModalAddFile onSuccess={() => mutate()} />
         <div style={{ display: 'grid', gap: 12 }}>
           {selection.length > 0 && (

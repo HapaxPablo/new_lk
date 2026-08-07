@@ -14,6 +14,7 @@ export async function getFilesList(queryParams: {
   page: number
   limit: number
   name: string
+  search?: string
   file_type: string
   tags: string[]
 }): Promise<IFilesListResponse> {
@@ -21,8 +22,12 @@ export async function getFilesList(queryParams: {
   const stringifiedQueryParams: Record<string, any> = {
     page: queryParams.page.toString(),
     limit: queryParams.limit.toString(),
-    name: queryParams.name.toString(),
     file_type: queryParams.file_type.toString(),
+  }
+
+  const search = queryParams.search ?? queryParams.name
+  if (search) {
+    stringifiedQueryParams.search = search.toString()
   }
 
   if (queryParams.tags.length > 0) {

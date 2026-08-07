@@ -7,8 +7,9 @@ export async function GET(request: NextRequest) {
     const page = Number(params.get('page') ?? 1)
     const limit = Number(params.get('limit') ?? 20)
     const name = params.get('name') ?? ''
+    const search = params.get('search') ?? ''
 
-    const data = await getPlaylistsList({ page, limit, name })
+    const data = await getPlaylistsList({ page, limit, name, search })
     return NextResponse.json(data)
   } catch (error) {
     console.error('Error in /api/playlists/list:', error)

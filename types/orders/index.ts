@@ -13,6 +13,8 @@ export interface IOrderClient {
   name: string
 }
 
+export type IOrderNomenclature = string
+
 export interface IBroadcastInterval {
   lower: string
   upper: string
@@ -74,6 +76,7 @@ export interface IAdOrderDetail {
   status: number
   created: string
   client: IOrderClient
+  nomenclature?: IOrderNomenclature
   is_permanent?: boolean
 }
 
@@ -89,6 +92,7 @@ export interface IBgOrderDetail {
   status: number
   created: string
   client: IOrderClient
+  nomenclature?: IOrderNomenclature
   is_permanent: boolean
 }
 

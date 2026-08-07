@@ -16,6 +16,7 @@ const FilesListPage = async ({
     page: number
     limit: number
     name: string
+    search: string
     file_type: string
     tags: string[]
   }
@@ -24,11 +25,19 @@ const FilesListPage = async ({
     page = 1,
     limit = 20,
     name = '',
+    search = '',
     file_type = '',
     tags = [],
   } = (await searchParams) ?? {}
 
-  const listFiles = await getFilesList({ page, limit, name, file_type, tags })
+  const listFiles = await getFilesList({
+    page,
+    limit,
+    name,
+    search: search || name,
+    file_type,
+    tags,
+  })
   const dataFiles = listFiles.results ? listFiles.results : []
   const countFiles = listFiles.count ? listFiles.count : 0
   console.log(countFiles)
@@ -40,7 +49,7 @@ const FilesListPage = async ({
 
       <h1>Файлы</h1>
       <div className="overflow-auto">
-        <FilesTable initialData={listFiles} />
+        <FilesTable initialData={listFiles} initialSearch={search || name} />
       </div>
     </div>
   )

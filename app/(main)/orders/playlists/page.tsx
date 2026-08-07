@@ -15,10 +15,17 @@ const PlaylistsListPage = async ({
     page: number
     limit: number
     name: string
+    search: string
   }
 }) => {
-  const { page = 1, limit = 20, name = '' } = (await searchParams) ?? {}
-  const listPlaylists = await getPlaylistsList({ page, limit, name })
+  const { page = 1, limit = 20, name = '', search = '' } =
+    (await searchParams) ?? {}
+  const listPlaylists = await getPlaylistsList({
+    page,
+    limit,
+    name,
+    search: search || name,
+  })
 
   return (
     <div className="p-6">
@@ -27,7 +34,10 @@ const PlaylistsListPage = async ({
       </Link>
       <h1>Плейлисты</h1>
       <div className="overflow-auto">
-        <PlaylistsTable initialData={listPlaylists} />
+        <PlaylistsTable
+          initialData={listPlaylists}
+          initialSearch={search || name}
+        />
       </div>
     </div>
   )

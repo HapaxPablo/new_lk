@@ -9,6 +9,7 @@ export async function getPlaylistsList(queryParams: {
   page: number
   limit: number
   name?: string
+  search?: string
 }): Promise<IPlaylistsListResponse> {
   const cookieStore = await cookies()
   const stringifiedQueryParams: Record<string, string | string[]> = {
@@ -16,8 +17,9 @@ export async function getPlaylistsList(queryParams: {
     limit: queryParams.limit.toString(),
   }
 
-  if (queryParams.name) {
-    stringifiedQueryParams.name = queryParams.name.toString()
+  const search = queryParams.search ?? queryParams.name
+  if (search) {
+    stringifiedQueryParams.search = search.toString()
   }
 
   const queryString = new URLSearchParams(

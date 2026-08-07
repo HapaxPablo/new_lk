@@ -1,10 +1,11 @@
 'use client'
 
-import { Loader, Table } from '@mantine/core'
+import { Loader, Table, TextInput } from '@mantine/core'
 import useSWRInfinite from 'swr/infinite'
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { ORDER_STATUS_LABELS } from '@/types/orders'
+import { useDebounce } from '@/hooks/useDebounce'
 
 const fetcher = (url: string) => fetch(url).then((r) => r.json())
 
@@ -16,13 +17,20 @@ export default function OrdersTable({ type }: Props) {
   const router = useRouter()
   const observerRef = useRef<HTMLDivElement>(null)
   const viewportRef = useRef<HTMLDivElement>(null)
+  const [searchInput, setSearchInput] = useState('')
+  const search = useDebounce(searchInput, 400)
 
   const endpoint = type === 'ad' ? 'adorders' : 'bgorders'
 
   const { data, setSize, isValidating } = useSWRInfinite(
     (pageIndex, previousPage) => {
       if (previousPage && !previousPage.next) return null
-      return `/api/${endpoint}?page=${pageIndex + 1}&limit=20`
+      const params = new URLSearchParams({
+        page: String(pageIndex + 1),
+        limit: '20',
+      })
+      if (search) params.set('nomenclature', search)
+      return `/api/${endpoint}?${params.toString()}`
     },
     fetcher,
     { revalidateFirstPage: false }
@@ -47,15 +55,21 @@ export default function OrdersTable({ type }: Props) {
     return () => observer.disconnect()
   }, [data, setSize])
 
-  console.log('orders', orders)
-
   return (
     <div ref={viewportRef} style={{ height: 600, overflowY: 'auto' }}>
+      <div className="mb-3">
+        <TextInput
+          value={searchInput}
+          onChange={(event) => setSearchInput(event.currentTarget.value)}
+          placeholder="Поиск по номенклатуре: бренд, населённый пункт или улица"
+          aria-label="Поиск по номенклатуре"
+        />
+      </div>
       <Table striped highlightOnHover>
         <Table.Thead>
           <Table.Tr>
-            <Table.Th>ID</Table.Th>
-            <Table.Th>Название</Table.Th>
+            {/* <Table.Th>Название</Table.Th> */}
+            <Table.Th>Номенклатура</Table.Th>
             <Table.Th>Статус</Table.Th>
             <Table.Th>Создан</Table.Th>
           </Table.Tr>
@@ -68,8 +82,10 @@ export default function OrdersTable({ type }: Props) {
               onClick={() => router.push(`/orders/${type}/${order.id}`)}
               style={{ cursor: 'pointer' }}
             >
-              <Table.Td>{order.id}</Table.Td>
-              <Table.Td>{order.name}</Table.Td>
+              {/* <Table.Td>{order.name}</Table.Td> */}
+              <Table.Td>
+                {order.nomenclature || order.client?.name || '-'}
+              </Table.Td>
               <Table.Td>
                 {ORDER_STATUS_LABELS[order.status] ?? order.status}
               </Table.Td>
@@ -79,7 +95,7 @@ export default function OrdersTable({ type }: Props) {
 
           {isValidating && (
             <Table.Tr>
-              <Table.Td colSpan={4}>
+              <Table.Td colSpan={5}>
                 <Loader size="sm" />
               </Table.Td>
             </Table.Tr>

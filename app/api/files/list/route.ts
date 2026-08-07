@@ -17,6 +17,7 @@ export async function GET(req: NextRequest) {
       page: Number(params.get('page') ?? 1),
       limit: Number(params.get('limit') ?? 20),
       name: params.get('name') ?? '',
+      search: params.get('search') ?? '',
       file_type: params.get('file_type') ?? '',
       tags: params.getAll('tags'),
     })
