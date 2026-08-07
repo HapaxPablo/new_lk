@@ -36,13 +36,21 @@ export const CardNomenclature: React.FC<CardNomenclatureProps> = ({
       ? item.formattedAddress
       : (item.formattedAddress?.name ?? 'Адрес не указан')
 
+  // The API returns this field as an object for nomenclature details, while
+  // some list responses still contain a string. React cannot render the
+  // object directly, which caused error #31 on the order page.
+  const typeOfPlaceLabel =
+    typeof typeOfPlace === 'string'
+      ? typeOfPlace
+      : (typeOfPlace?.name || typeOfPlace?.abbreviation || 'Тип не указан')
+
   const handleCardClick = () => {
     // Отслеживаем клик в Яндекс.Метрику
     trackSelectItem(
       {
         item_id: item.id,
         item_name: item.nameForFront,
-        item_category: item.typeOfPlace,
+        item_category: typeOfPlaceLabel,
         item_brand: item.brand?.name,
         price: item.pricePerMonth,
       },
@@ -101,7 +109,7 @@ export const CardNomenclature: React.FC<CardNomenclatureProps> = ({
               <MapPinHouse className={styles.icon} size={16} />
               <div className={styles.textContent}>
                 <span className={styles.primaryText}>
-                  {typeOfPlace || 'Тип не указан'}
+                  {typeOfPlaceLabel}
                   {brand?.name ? ` • ${brand.name}` : ''}
                   {brandName && ` • ${brandName}`}
                 </span>
