@@ -52,7 +52,6 @@ COPY . .
 # DEBUG (временно можно оставить)
 RUN echo "Build date: ${BUILD_DATE}"
 # Сборка
-RUN npm ls react react-dom @mantine/core
 RUN npm run build
 
 
