@@ -146,7 +146,8 @@ const nextConfig: NextConfig = {
                   https://*.analytics.google.com
                   https://*.googletagmanager.com
                   https://*.g.doubleclick.net
-                  https://*.google.com;
+                  https://*.google.com
+                  https://api.maptiler.com;
 
                 media-src 'self' blob: https://api1.krasrm.com http://localhost:3000;
 
@@ -170,7 +171,8 @@ const nextConfig: NextConfig = {
                   https://*.analytics.google.com
                   https://*.googletagmanager.com
                   https://*.g.doubleclick.net
-                  https://*.google.com;
+                  https://*.google.com
+                  https://api.maptiler.com;
               `
               .replace(/\s+/g, ' ')
               .trim(),

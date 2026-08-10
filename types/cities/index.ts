@@ -1,6 +1,6 @@
 export interface ICity {
   id: string
-  nameForFront: string
+  title?: string
   formattedAddress: {
     name: string | null
     coordinates: {
@@ -9,6 +9,7 @@ export interface ICity {
     }
   }
   pricePerMonth: string
+  typeOfPlace: string
   exterior: {
     source: string
     id: string

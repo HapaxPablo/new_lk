@@ -34,11 +34,6 @@ export function WhyThisPlace({ placeName }: WhyThisPlaceProps) {
             <h2 className="mt-2 text-3xl font-black text-slate-900">
               Почему стоит разместить рекламу в {placeName}
             </h2>
-            <p className="mt-4 leading-8 text-slate-600">
-              Страница места объясняет не только цену, но и ценность площадки:
-              кто здесь бывает, какой формат контакта получает рекламодатель и
-              для каких задач подходит размещение.
-            </p>
           </div>
 
           <div className="grid gap-4 sm:grid-cols-2">

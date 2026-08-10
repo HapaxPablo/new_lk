@@ -1,12 +1,17 @@
 // app/(main)/nomenclatures/[slug]/page.tsx
 import {
-  MapPlacement,
   ResponsibleCard,
   TabsWrapper,
   Description,
 } from '@/components/nomenclatureById'
 import { Radio } from 'lucide-react'
-import { INomenclatureItem, ITenantsResponse } from '@/types/nomenclature'
+import {
+  IAddress,
+  INomenclatureDetailsItem,
+  INomenclatureItem,
+  ITenantsResponse,
+  IWebNomenclatureDetailsItem,
+} from '@/types/nomenclature'
 import Image from 'next/image'
 
 import {
@@ -15,7 +20,11 @@ import {
   generateNotFoundMetadata,
 } from '@/lib/configs/config-meta/nomenclatures'
 import Script from 'next/script'
-import { formatPrice } from '@/utils/nomenclatureUtils'
+import {
+  formatNomenclatureAddress,
+  formatPrice,
+  getNomenclatureTitle,
+} from '@/utils/nomenclatureUtils'
 import { EcommerceTracker } from '@/components/ecommerce/EcommerceTracker'
 import { AddButtonToOrder } from '@/components/ui/button/AddButtonToOrder'
 import BreadcrumbsSetter from '@/components/ui/breadcrumbs/BreadcrumbsSetter'
@@ -36,6 +45,8 @@ import { CTABriefSection } from '@/components/nomenclatureById/detail/CTABriefSe
 import { SimilarPlacements } from '@/components/nomenclatureById/detail/SimilarPlacements'
 import { NomenclatureSEOText } from '@/components/nomenclatureById/detail/NomenclatureSEOText'
 import { NomenclatureFAQ } from '@/components/nomenclatureById/detail/NomenclatureFAQ'
+import PlacesSimpleMap from '@/app/(main)/places/components/PlacesSimpleMap'
+import { ICity } from '@/types/cities'
 
 interface NomenclatureDetailPageProps {
   params: Promise<{
@@ -43,28 +54,71 @@ interface NomenclatureDetailPageProps {
   }>
 }
 
-const getNomenclatureById = cache(async (slug: string) => {
-  try {
-    const response = await fetch(
-      `${process.env.API_1C_URL}api/nomenclatures/web/${slug}`,
-      {
-        cache: 'no-store',
-      }
-    )
+const EMPTY_ADDRESS: IAddress = {
+  city: '',
+  localityType: '',
+  street: '',
+  streetType: '',
+  house: '',
+}
 
-    if (response.status === 404) {
-      return null
-    }
+function normalizeNomenclature(
+  nomenclature: IWebNomenclatureDetailsItem
+): INomenclatureDetailsItem {
+  const address = nomenclature.address ?? EMPTY_ADDRESS
+  const addressName =
+    nomenclature.formattedAddress?.name || formatNomenclatureAddress(address)
 
-    if (!response.ok) {
-      return null
-    }
-
-    return response.json()
-  } catch (e) {
-    return null
+  return {
+    ...nomenclature,
+    article: nomenclature.article ?? 0,
+    formattedAddress: {
+      name: addressName,
+      coordinates: nomenclature.formattedAddress?.coordinates ?? {
+        latitude: address.coordinates?.latitude ?? '',
+        longitude: address.coordinates?.longitude ?? '',
+      },
+    },
+    square: nomenclature.square ?? '',
+    address,
+    exterior: nomenclature.exterior ?? [],
+    interior: nomenclature.interior ?? [],
   }
-})
+}
+
+const getNomenclatureById = cache(
+  async (slug: string): Promise<INomenclatureDetailsItem | null> => {
+    let lastError: unknown
+
+    for (let attempt = 0; attempt < 2; attempt += 1) {
+      try {
+        const response = await fetch(
+          `${process.env.API_1C_URL}api/nomenclatures/web/${slug}`,
+          {
+            cache: 'no-store',
+          }
+        )
+
+        if (response.status === 404) {
+          return null
+        }
+
+        if (!response.ok) {
+          throw new Error(
+            `Nomenclature request failed with status ${response.status}`
+          )
+        }
+
+        const nomenclature: IWebNomenclatureDetailsItem = await response.json()
+        return normalizeNomenclature(nomenclature)
+      } catch (error) {
+        lastError = error
+      }
+    }
+
+    throw lastError
+  }
+)
 
 async function getTenantsByNomenclatureId(
   id: string
@@ -130,7 +184,7 @@ export async function generateMetadata(props: any) {
   return {
     ...metadata,
     alternates: {
-      canonical: `${SITE_URL}/nomenclatures/${nomenclature.slug}`,
+      canonical: `${SITE_URL}/nomenclatures/${slug}`,
     },
   }
 }
@@ -154,9 +208,11 @@ export default async function NomenclatureDetailPage(
     contentType,
     address,
     responsible,
-    nameForFront,
     description,
   } = nomenclature
+
+  const nameForFront = getNomenclatureTitle(nomenclature)
+  const nameWhyPlace = `${nomenclature.typeOfPlace?.abbreviation || ''} "${brand ? brand.name : ''}"`
 
   const allImages = [...exterior, ...interior]
 
@@ -176,6 +232,32 @@ export default async function NomenclatureDetailPage(
   const nomenclaturesIds = [slug]
   const formattedAddress: string | undefined =
     nomenclature.formattedAddress?.name
+  const mapPlace: ICity = {
+    id: nomenclature.id,
+    title: nameWhyPlace,
+    formattedAddress: {
+      name: formattedAddress ?? null,
+      coordinates: {
+        latitude: address.coordinates?.latitude ?? null,
+        longitude: address.coordinates?.longitude ?? null,
+      },
+    },
+    pricePerMonth,
+    typeOfPlace:
+      nomenclature.typeOfPlace?.abbreviation ||
+      nomenclature.typeOfPlace?.name ||
+      '',
+    exterior: exterior.map((image, index) => ({
+      source: image.source,
+      id: `${nomenclature.id}-${index}`,
+    })),
+    brand: {
+      id: brand?.id ?? '',
+      name: brand?.name ?? '',
+      logotype: brand?.logotype ?? '',
+      slug: brand?.slug ?? '',
+    },
+  }
 
   return (
     <>
@@ -327,13 +409,13 @@ export default async function NomenclatureDetailPage(
           </div>
         </section>
 
-        <WhyThisPlace placeName={nameForFront} />
+        <WhyThisPlace placeName={nameWhyPlace} />
         <SuitableBusinesses />
 
         {/* Map + tenants */}
         <section className="bg-white">
           <div className="mx-auto grid max-w-7xl gap-8 px-4 py-14 lg:grid-cols-[0.95fr_1.05fr]">
-            {/* <div>
+            <div>
               <div className="mb-5">
                 <div className="text-sm font-bold uppercase tracking-wider text-[#ef5350]">
                   На карте
@@ -347,21 +429,10 @@ export default async function NomenclatureDetailPage(
               </div>
 
               <div className="relative h-[430px] overflow-hidden rounded-3xl bg-slate-200 shadow-sm ring-1 ring-slate-200">
-                <MapPlacement
-                  lat={
-                    address?.coordinates?.latitude
-                      ? Number(address.coordinates.latitude)
-                      : 56.011152
-                  }
-                  lng={
-                    address?.coordinates?.longitude
-                      ? Number(address.coordinates.longitude)
-                      : 92.814753
-                  }
-                  className="h-full"
-                />
+                <PlacesSimpleMap places={[mapPlace]} cityName={address.city} />
               </div>
-            </div> */}
+
+            </div>
 
             <div className="mb-5">
               <div className="text-sm font-bold uppercase tracking-wider text-[#ef5350]">
@@ -370,17 +441,13 @@ export default async function NomenclatureDetailPage(
               <h2 className="mt-2 text-3xl font-black text-slate-900">
                 Кто представлен в ТЦ
               </h2>
-              <p className="mt-3 text-slate-600">
-                Блок арендаторов усиливает доверие к площадке и помогает понять
-                тип аудитории.
-              </p>
-            </div>
 
-            <div className="overflow-hidden rounded-3xl bg-white shadow-sm ring-1 ring-slate-200">
-              <TabsWrapper
-                item={nomenclature}
-                initialTenantsData={tenantsData}
-              />
+              <div className="overflow-hidden rounded-3xl bg-white shadow-sm ring-1 ring-slate-200">
+                <TabsWrapper
+                  item={nomenclature}
+                  initialTenantsData={tenantsData}
+                />
+              </div>
             </div>
           </div>
         </section>
@@ -388,20 +455,20 @@ export default async function NomenclatureDetailPage(
         <HowToStartSection />
 
         <CTABriefSection
-          placeName={nameForFront}
+          placeName={nameWhyPlace}
           nomenclaturesIds={nomenclaturesIds}
         />
 
         <SimilarPlacements places={similarPlaces} />
 
         <NomenclatureSEOText
-          placeName={nameForFront}
+          placeName={nameWhyPlace}
           address={formattedAddress}
           contentType={contentType}
         />
 
         <NomenclatureFAQ
-          placeName={nameForFront}
+          placeName={nameWhyPlace}
           pricePerDay={pricePerMonth}
           contentType={contentType}
         />

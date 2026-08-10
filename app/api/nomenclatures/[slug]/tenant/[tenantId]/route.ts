@@ -3,10 +3,10 @@ import { NextRequest } from 'next/server'
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: Promise<{ id: string; tenantId: string }> }
+  { params }: { params: Promise<{ slug: string; tenantId: string }> }
 ) {
   try {
-    const { id, tenantId } = await params
+    const { slug: id, tenantId } = await params
 
     const response = await HttpClient1C.server(request).get(
       `api/nomenclatures/${id}/tenant/${tenantId}/`
@@ -23,10 +23,10 @@ export async function GET(
 
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: Promise<{ id: string; tenantId: string }> }
+  { params }: { params: Promise<{ slug: string; tenantId: string }> }
 ) {
   try {
-    const { id, tenantId } = await params
+    const { slug: id, tenantId } = await params
     const body = await request.json()
 
     const response = await HttpClient1C.server(request).patch(
@@ -45,12 +45,12 @@ export async function PATCH(
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: Promise<{ id: string; tenantId: string }> }
+  { params }: { params: Promise<{ slug: string; tenantId: string }> }
 ) {
   console.log('COOKIE HEADER:', request.headers.get('cookie'))
   console.log('ALL COOKIES:', request.cookies.getAll())
   try {
-    const { id, tenantId } = await params
+    const { slug: id, tenantId } = await params
 
     await HttpClient1C.server(request).delete(
       `api/nomenclatures/${id}/tenant/${tenantId}/`

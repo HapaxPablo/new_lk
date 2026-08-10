@@ -19,7 +19,7 @@ interface EcommerceTrackerProps {
  *       <EcommerceTracker
  *         item={{
  *           item_id: params.id,
- *           item_name: nomenclature.nameForFront,
+ *           item_name: getNomenclatureTitle(nomenclature),
  *           item_category: nomenclature.typeOfPlace,
  *           item_brand: nomenclature.brand?.name,
  *           price: nomenclature.pricePerMonth,

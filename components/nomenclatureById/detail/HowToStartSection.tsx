@@ -33,10 +33,6 @@ export function HowToStartSection() {
           <h2 className="mt-2 text-3xl font-black">
             Как разместить рекламу на этой площадке
           </h2>
-          <p className="mt-4 leading-8 text-white/70">
-            Этот блок закрывает коммерческие вопросы пользователя и помогает
-            довести его до заявки.
-          </p>
         </div>
 
         <div className="mt-8 grid gap-5 md:grid-cols-4">

@@ -1,5 +1,6 @@
 import { IClientOption } from '../../../../components/orders/supporting-components/ClientsMultiSelect'
 import { IPlaylistOption } from '../../../../components/orders/supporting-components/PlaylistSelect'
+import { getNomenclatureTitle } from '@/utils/nomenclatureUtils'
 
 const PLAYLIST_PAGE_LIMIT = 15
 const CLIENT_PAGE_LIMIT = 20
@@ -53,6 +54,6 @@ export const fetchClientsPage = (page: number, search: string) => {
   if (search) url.searchParams.set('search', search)
   return fetchPage<IClientOption>(url, (item) => ({
     id: item.id,
-    name: item.name || item.nameForFront || item.id,
+    name: item.name || getNomenclatureTitle(item) || item.id,
   }))
 }

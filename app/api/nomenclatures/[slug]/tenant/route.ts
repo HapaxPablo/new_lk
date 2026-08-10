@@ -5,10 +5,10 @@ export const dynamic = 'force-dynamic'
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ slug: string }> }
 ) {
   try {
-    const { id } = await params
+    const { slug: id } = await params
     console.log('❗ [id] route called with id:', id)
     const searchParams = request.nextUrl.searchParams.toString()
     const query = searchParams ? `?${searchParams}` : ''
@@ -16,13 +16,6 @@ export async function GET(
     const response = await HttpClient1C.server(request).get(
       `api/nomenclatures/${id}/tenant/${query}`
     )
-
-    if (!response.ok) {
-      return Response.json(
-        { error: response.message },
-        { status: response.status }
-      )
-    }
 
     return Response.json(response)
   } catch (error: any) {
@@ -36,10 +29,10 @@ export async function GET(
 
 export async function POST(
   request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ slug: string }> }
 ) {
   try {
-    const { id } = await params
+    const { slug: id } = await params
     const body = await request.json()
 
     const response = await HttpClient1C.server(request).post(

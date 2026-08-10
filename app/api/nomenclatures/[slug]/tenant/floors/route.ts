@@ -3,10 +3,10 @@ import { NextRequest } from 'next/server'
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ slug: string }> }
 ) {
   try {
-    const { id } = await params
+    const { slug: id } = await params
 
     const response = await HttpClient1C.server(request).get(
       `api/nomenclatures/${id}/tenant/floors/`

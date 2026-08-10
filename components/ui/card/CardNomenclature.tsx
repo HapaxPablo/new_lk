@@ -3,7 +3,7 @@
 import Image from 'next/image'
 import { MapPin, MapPinHouse, RussianRuble } from 'lucide-react'
 import styles from './CardNomenclature.module.scss'
-import { formatPrice } from '@/utils'
+import { formatPrice, getNomenclatureTitle } from '@/utils'
 import { LinkButton } from '../button/LinkButton'
 import Link from 'next/link'
 import { Button } from '../button/Button'
@@ -49,7 +49,7 @@ export const CardNomenclature: React.FC<CardNomenclatureProps> = ({
     trackSelectItem(
       {
         item_id: item.id,
-        item_name: item.nameForFront,
+        item_name: getNomenclatureTitle(item),
         item_category: typeOfPlaceLabel,
         item_brand: item.brand?.name,
         price: item.pricePerMonth,

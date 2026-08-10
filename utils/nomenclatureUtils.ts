@@ -1,5 +1,6 @@
 import {
   EWeekDays,
+  IAddress,
   IDaySettings,
   INomenclatureDetailsItem,
 } from '@/types/nomenclature'
@@ -64,6 +65,62 @@ export const formatSquare = (square: string): string => {
  * Функция для форматирования проходимости */
 export const formatPossibility = (possibility: string): string => {
   return `${possibility} чел/мес`
+}
+
+type NomenclatureTitleData = {
+  typeOfPlace?:
+    | string
+    | {
+        name?: string | null
+        abbreviation?: string | null
+      }
+    | null
+  brand?: {
+    name?: string | null
+  } | null
+  formattedAddress?:
+    | string
+    | {
+        name?: string | null
+      }
+    | null
+  address?: Partial<IAddress> | null
+}
+
+export function formatNomenclatureAddress(
+  address?: Partial<IAddress> | null
+): string {
+  if (!address) return ''
+
+  const city = [address.localityType, address.city].filter(Boolean).join(' ')
+  const street = [address.streetType, address.street].filter(Boolean).join(' ')
+  const house = address.house ? `д. ${address.house}` : ''
+  const building = address.building ? `стр. ${address.building}` : ''
+
+  return [city, street, house, building].filter(Boolean).join(', ')
+}
+
+/** Формирует единое название площадки из данных, доступных на фронте. */
+export function getNomenclatureTitle(
+  nomenclature: NomenclatureTitleData
+): string {
+  const typeOfPlace =
+    typeof nomenclature.typeOfPlace === 'string'
+      ? nomenclature.typeOfPlace
+      : nomenclature.typeOfPlace?.abbreviation ||
+        nomenclature.typeOfPlace?.name ||
+        ''
+  const formattedAddress =
+    typeof nomenclature.formattedAddress === 'string'
+      ? nomenclature.formattedAddress
+      : nomenclature.formattedAddress?.name ||
+        formatNomenclatureAddress(nomenclature.address)
+
+  return (
+    [typeOfPlace, nomenclature.brand?.name, formattedAddress]
+      .filter(Boolean)
+      .join(', ') || 'Рекламная площадка'
+  )
 }
 
 export type CaseType = 'nominative' | 'genitive' | 'prepositional'

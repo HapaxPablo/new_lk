@@ -111,7 +111,6 @@ export interface IAddressNomenclature {
 // Интерфейс элемента номенклатуры
 // export interface INomenclatureItem {
 //   id: string
-//   nameForFront: string
 //   code1c: string
 //   article: string
 //   name: string
@@ -244,7 +243,7 @@ export interface ITenantsResponse {
   results: ITenantsListItem[]
 }
 
-interface IFormattedAddress {
+export interface IFormattedAddress {
   name: string
   coordinates: {
     latitude: string
@@ -254,7 +253,6 @@ interface IFormattedAddress {
 
 export interface INomenclatureBase {
   id: string
-  nameForFront: string
   code1c: string
   brand: IBrand
   exterior: { source: string }[]
@@ -281,6 +279,11 @@ export interface IAddress {
   street?: string
   streetType?: string
   house?: string
+  building?: string | null
+  coordinates?: {
+    latitude: string
+    longitude: string
+  }
 }
 
 export interface ITypeOfPlace {
@@ -312,10 +315,25 @@ export interface INomenclatureDetailsItem extends INomenclatureBase {
   updated_at?: string
 }
 
+/**
+ * Ответ публичного detail-эндпойнта `api/nomenclatures/web/{slug}`.
+ *
+ * В отличие от внутренней модели, этот API не гарантирует готовые для UI
+ * `formattedAddress`, `article` и `square`. На фронте эти
+ * значения нормализуются перед передачей в компоненты.
+ */
+export type IWebNomenclatureDetailsItem = Omit<
+  INomenclatureDetailsItem,
+  'article' | 'formattedAddress' | 'square'
+> & {
+  article?: number
+  formattedAddress?: IFormattedAddress
+  square?: string
+}
+
 // Основной интерфейс для детальной информации о номенклатуре
 // export interface INomenclatureDetailsItem {
 //   id: string
-//   nameForFront: string
 //   article: number
 //   settings: IWeekSettings
 //   hw_info: IHardwareInfo

@@ -63,7 +63,7 @@ export const useInfinityTenants = (
       console.log('🔍 Full params with floor:', params.toString())
     }
 
-    return `${process.env.API_1C_URL}api/nomenclatures/${nomenclatureId}/tenant/?${params.toString()}`
+    return `/api/nomenclatures/${nomenclatureId}/tenant/?${params.toString()}`
   }
 
   const { data, error, size, setSize, isValidating, mutate } =
@@ -76,7 +76,7 @@ export const useInfinityTenants = (
 
   const { data: floors } = useSWR(
     enabled && nomenclatureId
-      ? `${process.env.API_1C_URL}api/nomenclatures/${nomenclatureId}/tenant/floors/`
+      ? `/api/nomenclatures/${nomenclatureId}/tenant/floors/`
       : null,
     floorFetcher
   )

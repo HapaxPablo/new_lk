@@ -45,7 +45,7 @@ const buildGeoJSON = (places: ICity[]) => {
       geometry: { type: 'Point', coordinates: coords },
       properties: {
         id: place.id,
-        title: place.nameForFront,
+        title: `${place.typeOfPlace} ${place.brand.name}`,
         address: place.formattedAddress.name,
         brand: place.brand.name,
         exterior: place.exterior,
@@ -72,7 +72,7 @@ export default function PlacesMap({
 
     const initMap = async () => {
       try {
-        const styleUrl = process.env.NEXT_PUBLIC_MAP_STYLE_URL
+        const styleUrl = process.env.NEXT_PUBLIC_MAP_LIBRE_STYLE_URL
         // console.log('Using map style URL:', styleUrl)
         if (!styleUrl) {
           setError('Карта временно недоступна')
@@ -491,7 +491,7 @@ export default function PlacesMap({
             />
           </div>
           <strong>
-            ${place.formattedAddress.name || place.nameForFront}
+            ${place.formattedAddress.name || `${place.typeOfPlace} ${place.brand.name}`}
           </strong>
           <span class="text-gray-600">
             ${place.brand.name}

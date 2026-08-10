@@ -41,7 +41,6 @@ interface IBrandNomenclatureExterior {
 
 export interface IBrandNomenclatureShort {
   id: string
-  nameForFront: string
   formattedAddress: string
   exterior: IBrandNomenclatureExterior[]
   typeOfPlace: string
