@@ -1,3 +1,5 @@
+import { EntityCard } from '@/components/ui/card/EntityCard'
+
 interface AudienceProps {
   cityName: string
 }
@@ -14,22 +16,22 @@ export function Audience({ cityName }: AudienceProps) {
         </div>
 
         <div className="mt-8 grid gap-4 md:grid-cols-4">
-          <div className="rounded-2xl border border-slate-200 p-5">
+          <EntityCard className="rounded-2xl p-5">
             <h3 className="font-black">Ритейл и магазины</h3>
             <p className="mt-2 text-sm leading-6 text-slate-600">Акции, скидки, открытие новых отделов.</p>
-          </div>
-          <div className="rounded-2xl border border-slate-200 p-5">
+          </EntityCard>
+          <EntityCard className="rounded-2xl p-5">
             <h3 className="font-black">Медицина и услуги</h3>
             <p className="mt-2 text-sm leading-6 text-slate-600">Клиники, стоматологии, салоны, сервисы.</p>
-          </div>
-          <div className="rounded-2xl border border-slate-200 p-5">
+          </EntityCard>
+          <EntityCard className="rounded-2xl p-5">
             <h3 className="font-black">Банки и финансы</h3>
             <p className="mt-2 text-sm leading-6 text-slate-600">Карты, кредиты, вклады, офисы продаж.</p>
-          </div>
-          <div className="rounded-2xl border border-slate-200 p-5">
+          </EntityCard>
+          <EntityCard className="rounded-2xl p-5">
             <h3 className="font-black">Недвижимость</h3>
             <p className="mt-2 text-sm leading-6 text-slate-600">ЖК, ипотека, застройщики, агентства.</p>
-          </div>
+          </EntityCard>
         </div>
       </div>
     </section>

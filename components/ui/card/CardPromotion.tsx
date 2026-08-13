@@ -4,6 +4,7 @@ import styles from './CardPromotion.module.scss'
 import { LinkButton } from '../button/LinkButton'
 import { InfoRow } from '../InfoRow'
 import Link from 'next/link'
+import { EntityCard } from './EntityCard'
 
 interface CardPromotionProps {
   className?: string
@@ -35,7 +36,7 @@ export const CardPromotion: React.FC<CardPromotionProps> = ({
   }
 
   return (
-    <article className={`${styles.card} ${className}`}>
+    <EntityCard className={className}>
       <Link href={`/promotions/${item.id}`} className={styles.cardLink}>
         <div className={styles.cardContent}>
           <div className={styles.infoSection}>
@@ -92,6 +93,6 @@ export const CardPromotion: React.FC<CardPromotionProps> = ({
           Подробнее
         </LinkButton>
       </div>
-    </article>
+    </EntityCard>
   )
 }

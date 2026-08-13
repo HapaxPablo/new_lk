@@ -39,6 +39,7 @@ import type {
   MapView,
   PlacesSimpleMapProps,
 } from './types'
+import { EntityCard } from '@/components/ui/card/EntityCard'
 import {
   getCollisionFreeLabels,
   loadVectorTileLabels,
@@ -432,7 +433,7 @@ export default function PlacesSimpleMap({
       </div>
 
       {activePlace && (
-        <div className="absolute bottom-4 left-4 right-4 rounded-2xl bg-white/95 p-3 shadow-lg backdrop-blur sm:left-auto sm:w-80">
+        <EntityCard className="absolute bottom-4 left-4 right-4 rounded-2xl bg-white/95 p-3 shadow-lg backdrop-blur sm:left-auto sm:w-80">
           <div className="flex gap-3">
             {activePlace.place.exterior[0]?.source && (
               <img
@@ -452,7 +453,7 @@ export default function PlacesSimpleMap({
               )}
             </div>
           </div>
-        </div>
+        </EntityCard>
       )}
 
       {points.length === 0 && (

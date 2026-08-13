@@ -6,6 +6,7 @@ import { InfoRow } from '@/components/ui/InfoRow'
 import { Tag, Hash, Calendar, Users, Image } from 'lucide-react'
 import { httpClient1CServer } from '@/lib/http-client/httpServer'
 import { notFound } from 'next/navigation'
+import { EntityCard } from '@/components/ui/card/EntityCard'
 
 interface PromotionDetailPageProps {
   params: Promise<{
@@ -94,7 +95,7 @@ export default async function PromotionDetailPage(
 
   return (
     <div className={styles.container}>
-      <div className={styles.card}>
+      <EntityCard className={styles.card}>
         <div className={styles.header}>
           <h1 className={styles.title}>Акция</h1>
         </div>
@@ -127,25 +128,25 @@ export default async function PromotionDetailPage(
           label="Дата создания"
           value={formattedDate}
         />
-      </div>
+      </EntityCard>
 
-      <div className={styles.card}>
+      <EntityCard className={styles.card}>
         <h2 className={styles.sectionTitle}>Временная шкала</h2>
         <InfoRow
           icon={<Calendar size={16} />}
           label=""
           value={promotion.timeline || '-'}
         />
-      </div>
+      </EntityCard>
 
-      <div className={styles.card}>
+      <EntityCard className={styles.card}>
         <h2 className={styles.sectionTitle}>Контрагент</h2>
         <InfoRow
           icon={<Users size={16} />}
           label=""
           value={promotion.counterparty || '-'}
         />
-      </div>
+      </EntityCard>
     </div>
   )
 }

@@ -1,10 +1,11 @@
 'use client'
 
-import { useState } from "react"
-import { CardNomenclature } from "@/components/ui/card/CardNomenclature"
-import { ICity } from "@/types/cities"
-import PlacesMap from "./PlacesMap"
-import styles from "./PlacesListing.module.scss"
+import { useState } from 'react'
+import { CardNomenclature } from '@/components/ui/card/CardNomenclature'
+import { ICity } from '@/types/cities'
+import PlacesMap from './PlacesMap'
+import styles from './PlacesListing.module.scss'
+import { EntityCard } from '@/components/ui/card/EntityCard'
 
 interface PlacesListingProps {
   cityName: string
@@ -22,18 +23,23 @@ export function PlacesListing({ cityName, places }: PlacesListingProps) {
               Площадки для рекламы в {cityName}
             </h2>
             <p className="mt-2 text-slate-600">
-              Выберите торговый центр или оставьте заявку — менеджер предложит оптимальные точки под вашу задачу.
+              Выберите торговый центр или оставьте заявку — менеджер предложит
+              оптимальные точки под вашу задачу.
             </p>
           </div>
 
           <div className="rounded-xl bg-white px-4 py-3 text-sm font-semibold text-slate-700 shadow-sm ring-1 ring-slate-200">
-            Найдено: <span className="text-[#ef5350]">{places.length} площадок</span>
+            Найдено:{' '}
+            <span className="text-[#ef5350]">{places.length} площадок</span>
           </div>
         </div>
 
-        <div className="mb-8 rounded-2xl bg-white p-4 shadow-sm ring-1 ring-slate-200">
+        <EntityCard className="mb-8 rounded-2xl p-4">
           <div className="grid gap-3 md:grid-cols-[1.5fr_1fr_1fr_1fr_auto]">
-            <input className="rounded-xl border border-slate-200 px-4 py-3 text-sm outline-none focus:border-[#ef5350]" placeholder="Поиск по ТЦ или адресу" />
+            <input
+              className="rounded-xl border border-slate-200 px-4 py-3 text-sm outline-none focus:border-[#ef5350]"
+              placeholder="Поиск по ТЦ или адресу"
+            />
             <select className="rounded-xl border border-slate-200 px-4 py-3 text-sm text-slate-500 outline-none focus:border-[#ef5350]">
               <option>Формат рекламы</option>
               <option>Аудиореклама</option>
@@ -55,44 +61,44 @@ export function PlacesListing({ cityName, places }: PlacesListingProps) {
               Найти
             </button>
           </div>
-        </div>
+        </EntityCard>
 
-        <div className="grid gap-8 lg:grid-cols-[1.15fr_0.85fr]">
-          <div className={styles.cardGrid}>
-            {places.map((place, index) => (
-              <CardNomenclature
-                key={index}
-                item={place}
-              />
-            ))}
-          </div>
-
-          <aside className="lg:sticky lg:top-24 lg:self-start">
-            <div className="overflow-hidden rounded-3xl bg-white shadow-sm ring-1 ring-slate-200">
-              <div className="flex items-center justify-between border-b px-5 py-4">
-                <div>
-                  <div className="font-black text-slate-900">Карта площадок</div>
-                  <div className="text-sm text-slate-500">ТЦ и рекламные точки в {cityName}</div>
+        {/* <div className="grid gap-8 lg:grid-cols-[1.15fr_0.85fr]"> */}
+        {/* <aside className="lg:sticky lg:top-24 lg:self-start"> */}
+        <div className="flex flex-col gap-8">
+          <EntityCard className="p-0">
+            <div className="flex items-center justify-between border-b px-5 py-4">
+              <div>
+                <div className="font-black text-slate-900">Карта площадок</div>
+                <div className="text-sm text-slate-500">
+                  ТЦ и рекламные точки в {cityName}
                 </div>
               </div>
-              <div className="relative h-[430px] bg-slate-200 overflow-hidden">
-                <PlacesMap
-                  places={places}
-                  cityName={cityName}
-                  selectedPlaceId={selectedPlaceId}
-                  onPlaceSelect={setSelectedPlaceId}
-                />
-              </div>
             </div>
-          </aside>
-        </div>
-
-        <div className="mt-8 text-center">
-          <button className="rounded-xl border border-slate-300 bg-white px-6 py-3 text-sm font-bold text-slate-800 hover:border-[#ef5350] hover:text-[#ef5350]">
-            Показать ещё площадки
-          </button>
+            <div className="relative h-[320px] bg-slate-200 overflow-hidden">
+              <PlacesMap
+                places={places}
+                cityName={cityName}
+                selectedPlaceId={selectedPlaceId}
+                onPlaceSelect={setSelectedPlaceId}
+              />
+            </div>
+          </EntityCard>
+          {/* </aside> */}
+          <div className={styles.cardGrid}>
+            {places.map((place, index) => (
+              <CardNomenclature key={index} item={place} />
+            ))}
+          </div>
         </div>
       </div>
+
+      <div className="mt-8 text-center">
+        <button className="rounded-xl border border-slate-300 bg-white px-6 py-3 text-sm font-bold text-slate-800 hover:border-[#ef5350] hover:text-[#ef5350]">
+          Показать ещё площадки
+        </button>
+      </div>
+      {/* </div> */}
     </section>
   )
 }

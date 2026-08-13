@@ -1,3 +1,5 @@
+import { EntityCard } from '@/components/ui/card/EntityCard'
+
 export function Benefits() {
   return (
     <section className="bg-slate-900 text-white">
@@ -15,30 +17,30 @@ export function Benefits() {
           </div>
 
           <div className="grid gap-4 sm:grid-cols-2">
-            <div className="rounded-3xl bg-white/10 p-6 ring-1 ring-white/10">
+            <EntityCard tone="inverted" className="p-6">
               <h3 className="font-black">Локальный охват</h3>
               <p className="mt-2 text-sm leading-7 text-white/70">
                 Реклама показывается аудитории конкретного города и района.
               </p>
-            </div>
-            <div className="rounded-3xl bg-white/10 p-6 ring-1 ring-white/10">
+            </EntityCard>
+            <EntityCard tone="inverted" className="p-6">
               <h3 className="font-black">Повторные контакты</h3>
               <p className="mt-2 text-sm leading-7 text-white/70">
                 Посетители слышат или видят рекламу несколько раз за время визита.
               </p>
-            </div>
-            <div className="rounded-3xl bg-white/10 p-6 ring-1 ring-white/10">
+            </EntityCard>
+            <EntityCard tone="inverted" className="p-6">
               <h3 className="font-black">Быстрый запуск</h3>
               <p className="mt-2 text-sm leading-7 text-white/70">
                 Подходит для акций, распродаж, открытий и сезонных кампаний.
               </p>
-            </div>
-            <div className="rounded-3xl bg-white/10 p-6 ring-1 ring-white/10">
+            </EntityCard>
+            <EntityCard tone="inverted" className="p-6">
               <h3 className="font-black">Гибкий бюджет</h3>
               <p className="mt-2 text-sm leading-7 text-white/70">
                 Можно выбрать одну площадку или собрать пакет по нескольким ТЦ.
               </p>
-            </div>
+            </EntityCard>
           </div>
         </div>
       </div>

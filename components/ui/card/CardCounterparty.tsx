@@ -4,6 +4,7 @@ import styles from './CardCounterparty.module.scss'
 import { LinkButton } from '../button/LinkButton'
 import { InfoRow } from '../InfoRow'
 import Link from 'next/link'
+import { EntityCard } from './EntityCard'
 
 interface CardCounterpartyProps {
   className?: string
@@ -19,7 +20,7 @@ export const CardCounterparty: React.FC<CardCounterpartyProps> = ({
     : '—'
 
   return (
-    <article className={`${styles.card} ${className}`}>
+    <EntityCard className={className}>
       <Link href={`/counterparties/${item.id}`} className={styles.cardLink}>
         <div className={styles.cardContent}>
           <div className={styles.infoSection}>
@@ -60,6 +61,6 @@ export const CardCounterparty: React.FC<CardCounterpartyProps> = ({
           Подробнее
         </LinkButton>
       </div>
-    </article>
+    </EntityCard>
   )
 }

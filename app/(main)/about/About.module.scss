@@ -85,11 +85,14 @@
 .card {
   padding: 24px;
   background: white;
-  border-radius: 16px;
+  border-radius: 24px;
   text-align: center;
   font-weight: 500;
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
-  transition: 0.2s;
+  box-shadow: 0 1px 3px rgb(15 23 42 / 0.1);
+  outline: 1px solid #e2e8f0;
+  transition:
+    box-shadow 0.2s ease,
+    transform 0.2s ease;
   justify-content: center;
   align-items: center;
   display: flex;
@@ -99,7 +102,8 @@
   }
 
   &:hover {
-    transform: translateY(-4px);
+    box-shadow: 0 4px 12px rgb(15 23 42 / 0.15);
+    transform: translateY(-2px);
   }
 }
 

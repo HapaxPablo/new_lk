@@ -12,6 +12,7 @@ import {
   FileText,
 } from 'lucide-react'
 import { httpClient1CServer } from '@/lib/http-client/httpServer'
+import { EntityCard } from '@/components/ui/card/EntityCard'
 
 interface CounterpartyDetailPageProps {
   params: Promise<{
@@ -119,7 +120,7 @@ export default async function CounterpartyDetailPage(
 
   return (
     <div className={styles.container}>
-      <div className={styles.card}>
+      <EntityCard className={styles.card}>
         <div className={styles.header}>
           <h1 className={styles.title}>
             {fullName || counterparty.additional_name || 'Контрагент'}
@@ -149,18 +150,18 @@ export default async function CounterpartyDetailPage(
           value={counterparty.code1c || '-'}
           valueClassName={styles.smallText}
         />
-      </div>
+      </EntityCard>
 
-      <div className={styles.card}>
+      <EntityCard className={styles.card}>
         <h2 className={styles.sectionTitle}>Описание</h2>
         <InfoRow
           icon={<FileText size={16} />}
           label=""
           value={counterparty.description || '-'}
         />
-      </div>
+      </EntityCard>
 
-      <div className={styles.card}>
+      <EntityCard className={styles.card}>
         <h2 className={styles.sectionTitle}>Дополнительная информация</h2>
         <div className={styles.grid}>
           <InfoRow
@@ -184,9 +185,9 @@ export default async function CounterpartyDetailPage(
             value={counterparty.broadcast ? 'Включена' : 'Отключена'}
           />
         </div>
-      </div>
+      </EntityCard>
 
-      <div className={styles.card}>
+      <EntityCard className={styles.card}>
         <h2 className={styles.sectionTitle}>Контактные лица</h2>
         <div className={styles.list}>
           {counterparty.contact_persons?.length > 0 ? (
@@ -199,9 +200,9 @@ export default async function CounterpartyDetailPage(
             <p className={styles.listItem}>-</p>
           )}
         </div>
-      </div>
+      </EntityCard>
 
-      <div className={styles.card}>
+      <EntityCard className={styles.card}>
         <h2 className={styles.sectionTitle}>Бренды</h2>
         <div className={styles.list}>
           {counterparty.brands?.length > 0 ? (
@@ -214,7 +215,7 @@ export default async function CounterpartyDetailPage(
             <p className={styles.listItem}>-</p>
           )}
         </div>
-      </div>
+      </EntityCard>
     </div>
   )
 }
