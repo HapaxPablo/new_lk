@@ -8,11 +8,17 @@ import { useUniversalClick } from '@/hooks/useUniversalClick'
 interface AddToCartButtonProps {
     item: any
     isSelected?: boolean
+    className?: string
+    addLabel?: string
+    selectedLabel?: string
 }
 
 export const AddToCartButton = ({
     item,
     isSelected: externalIsSelected,
+    className = '',
+    addLabel = 'Разместить ролик',
+    selectedLabel = 'Убрать из заказа',
 }: AddToCartButtonProps) => {
     const [mounted, setMounted] = useState(false)
 
@@ -34,13 +40,14 @@ export const AddToCartButton = ({
 
     return (
         <Button
-            variant="add"
+            variant="cardAction"
             onClick={(e) => handleUniversalClick(handleAdd, e)}
             isActive={isSelected}
+            className={className}
         >
             {isSelected
-                ? 'Убрать из заказа'
-                : 'Разместить ролик'}
+                ? selectedLabel
+                : addLabel}
         </Button>
     )
 }

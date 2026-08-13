@@ -167,6 +167,23 @@
     }
   }
 
+  &CardAction {
+    background-color: var(--main-color);
+    color: white;
+    border-color: var(--main-color);
+    font-weight: 700;
+
+    &:hover {
+      background-color: #d83c39;
+      border-color: #d83c39;
+    }
+
+    &.buttonActive {
+      background-color: #18335f;
+      border-color: #18335f;
+    }
+  }
+
   // Модификаторы
   &FullWidth {
     width: 100%;
