@@ -35,18 +35,18 @@ export default async function PlaylistDetailPage({
   }
 
   return (
-    <div className="p-6">
+    <div className="mx-auto w-full max-w-7xl px-4 py-6 sm:px-6 lg:px-8 lg:py-10">
       {errorMessage ? (
         <div className="text-red-600">{errorMessage}</div>
       ) : playlist ? (
         <div className="space-y-6">
           <Link href="/orders/playlists">Назад к плейлистам</Link>
-          <div className="space-y-2 rounded-3xl border border-gray-200 bg-white p-6 shadow-sm">
+          <div className="space-y-2 rounded-3xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
             <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
               <div>
-                <h2 className="text-2xl font-semibold text-gray-900">
+                <h1 className="text-2xl font-bold text-slate-900">
                   {playlist.name}
-                </h2>
+                </h1>
                 <p className="mt-2 text-sm text-gray-600">
                   {playlist.description || 'Описание отсутствует'}
                 </p>

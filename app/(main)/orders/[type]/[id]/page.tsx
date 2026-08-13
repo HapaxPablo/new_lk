@@ -77,7 +77,7 @@ export default async function OrderDetailPage({
         : undefined
 
   return (
-    <div className="overflow-auto p-6">
+    <div className="mx-auto w-full max-w-5xl px-4 py-6 sm:px-6 lg:py-10">
       <Link href="/orders" className="text-sm text-blue-600! pb-2 inline-block">
         Назад к заказам
       </Link>
@@ -87,17 +87,17 @@ export default async function OrderDetailPage({
       ) : !order ? (
         <div className="mt-4">Загрузка...</div>
       ) : (
-        <div className="space-y-6 mt-4">
+        <div className="mt-5 space-y-6">
           {/* Основная информация */}
-          <div className="space-y-2 rounded-3xl border border-gray-200 bg-white p-6 shadow-sm">
+          <div className="space-y-2 rounded-3xl border border-slate-200 bg-white p-5 shadow-sm sm:p-7">
             <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
               <div>
                 <div className="mb-2 inline-flex rounded-full bg-blue-50 px-3 py-1 text-xs font-bold text-blue-700">
                   {type === 'ad' ? 'Рекламный заказ' : 'Заказ фоновой музыки'}
                 </div>
-                <h2 className="text-2xl font-semibold text-gray-900">
+                <h1 className="text-2xl font-bold text-slate-900 sm:text-3xl">
                   {order.name}
-                </h2>
+                </h1>
                 <p className="mt-2 text-sm text-gray-600">
                   {order.description || 'Описание отсутствует'}
                 </p>
@@ -139,7 +139,7 @@ export default async function OrderDetailPage({
           </div>
 
           {/* Клиент */}
-          <div className="rounded-3xl border border-gray-200 bg-white p-6 shadow-sm">
+          <div className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
             <h3 className="text-lg font-semibold text-gray-900">Клиент</h3>
             <p className="mt-2 text-sm text-gray-600">
               {order.client?.name || '-'}
@@ -147,7 +147,7 @@ export default async function OrderDetailPage({
           </div>
 
           {/* Плейлист */}
-          <div className="rounded-3xl border border-gray-200 bg-white p-6 shadow-sm">
+          <div className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
             <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
               <div>
                 <h3 className="text-lg font-semibold text-gray-900">
@@ -176,7 +176,7 @@ export default async function OrderDetailPage({
           </div>
 
           {/* Интервал вещания */}
-          <div className="rounded-3xl border border-gray-200 bg-white p-6 shadow-sm">
+          <div className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
             <h3 className="text-lg font-semibold text-gray-900">
               Интервал вещания
             </h3>
@@ -198,7 +198,7 @@ export default async function OrderDetailPage({
 
           {/* Тип заказа / тип вещания — специфично для ad/bg */}
           {type === 'ad' && adOrder && (
-            <div className="rounded-3xl border border-gray-200 bg-white p-6 shadow-sm">
+            <div className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
               <h3 className="text-lg font-semibold text-gray-900">
                 Параметры вещания
               </h3>
@@ -278,7 +278,7 @@ export default async function OrderDetailPage({
           )}
 
           {type === 'bg' && bgOrder && (
-            <div className="rounded-3xl border border-gray-200 bg-white p-6 shadow-sm">
+            <div className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
               <h3 className="text-lg font-semibold text-gray-900">
                 Тип контента
               </h3>

@@ -26,7 +26,6 @@ export default function FilesTable({
   const [searchInput, setSearchInput] = useState(initialSearch)
   const search = useDebounce(searchInput, 400)
   const playlistModal = useModal('playlist')
-  const filesModal = useModal('files')
   const { showToast } = useToast()
 
   const { data, setSize, isValidating, mutate } =
@@ -121,26 +120,8 @@ export default function FilesTable({
   }
 
   return (
-    <div
-      style={{
-        height: 600,
-        overflowY: 'auto',
-      }}
-      ref={viewportRef}
-    >
-      <div
-        style={{
-          position: 'sticky',
-          top: 0,
-          left: 0,
-          right: 0,
-          padding: '12px',
-          background: '#fff',
-          zIndex: 2,
-          borderBottom: '1px solid rgba(0,0,0,0.08)',
-          alignItems: 'center',
-        }}
-      >
+    <div className="h-[600px] overflow-y-auto" ref={viewportRef}>
+      <div className="sticky top-0 z-10 border-b border-slate-100 bg-white px-5 py-4 sm:px-6">
         <TextInput
           value={searchInput}
           onChange={(event) => setSearchInput(event.currentTarget.value)}
@@ -149,10 +130,10 @@ export default function FilesTable({
           mb="sm"
         />
         <ModalAddFile onSuccess={() => mutate()} />
-        <div style={{ display: 'grid', gap: 12 }}>
+        <div className="mt-3 grid gap-3">
           {selection.length > 0 && (
-            <div className="flex justify-between items-center gap-4">
-              <div className="text-sm text-gray-700 flex items-center justify-center">
+            <div className="flex flex-col justify-between gap-3 rounded-xl bg-blue-50 px-4 py-3 sm:flex-row sm:items-center">
+              <div className="text-sm font-medium text-blue-900">
                 {selection.length} выбран
                 {selection.length === 1 ? 'ный' : 'ных'} файл
               </div>
@@ -164,8 +145,8 @@ export default function FilesTable({
         </div>
       </div>
 
-      <div style={{ position: 'relative' }}>
-        <Table striped highlightOnHover>
+      <div className="relative overflow-x-auto">
+        <Table striped highlightOnHover className="min-w-[700px]">
           <Table.Thead>
             <Table.Tr>
               <Table.Th style={{ width: 40 }}>
@@ -193,12 +174,8 @@ export default function FilesTable({
                 <Table.Tr
                   key={file.id}
                   onClick={() => toggleRow(file.id)}
-                  style={{
-                    cursor: 'pointer',
-                    backgroundColor: isSelected
-                      ? 'rgba(0, 131, 255, 0.08)'
-                      : undefined,
-                  }}
+                  style={{ cursor: 'pointer', backgroundColor: isSelected ? 'rgba(0, 131, 255, 0.08)' : undefined }}
+                  className="outline-none"
                 >
                   <Table.Td>
                     <Checkbox
@@ -207,16 +184,16 @@ export default function FilesTable({
                       onClick={(event) => event.stopPropagation()}
                     />
                   </Table.Td>
-                  <Table.Td>{file.name}</Table.Td>
+                  <Table.Td className="font-medium text-slate-800">{file.name}</Table.Td>
                   <Table.Td>{file.size}</Table.Td>
                   <Table.Td>{file.type}</Table.Td>
-                  <Table.Td>{file.tags?.join(', ')}</Table.Td>
+                  <Table.Td className="max-w-xs truncate text-slate-500">{file.tags?.join(', ') || '—'}</Table.Td>
                 </Table.Tr>
               )
             })}
             {isValidating && (
               <Table.Tr>
-                <Table.Td colSpan={5}>
+                <Table.Td colSpan={5} className="py-4">
                   <Loader size="sm" />
                 </Table.Td>
               </Table.Tr>

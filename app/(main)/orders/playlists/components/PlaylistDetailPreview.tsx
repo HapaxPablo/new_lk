@@ -41,8 +41,8 @@ export function PlaylistDetailPreview({ files }: { files: IPlaylistFile[] }) {
   )
 
   return (
-    <div className="flex gap-6 w-full">
-      <div className="space-y-4 w-full">
+    <div className="flex w-full flex-col gap-6 lg:flex-row">
+      <div className="w-full space-y-4 lg:max-w-sm">
         <div className="rounded-3xl border border-gray-200 bg-white p-4 shadow-sm">
           <h3 className="text-lg font-semibold">Файлы плейлиста</h3>
           <p className="mt-2 text-sm text-gray-600">
@@ -50,7 +50,7 @@ export function PlaylistDetailPreview({ files }: { files: IPlaylistFile[] }) {
           </p>
         </div>
 
-        <div className="space-y-3 overflow-auto max-h-[calc(100vh-600px)] w-full">
+        <div className="max-h-[420px] w-full space-y-3 overflow-auto pr-1">
           {files.map((file) => {
             const isActive = file.id === selectedFile?.id
             const filePreviewType = file.url
@@ -93,7 +93,7 @@ export function PlaylistDetailPreview({ files }: { files: IPlaylistFile[] }) {
         </div>
       </div>
 
-      <div className="rounded-4xl border border-gray-200 bg-white p-6 shadow-sm h-full w-full">
+      <div className="h-full w-full rounded-3xl border border-gray-200 bg-white p-5 shadow-sm sm:p-6">
         <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
           <div>
             <h3 className="text-xl font-semibold text-gray-900">

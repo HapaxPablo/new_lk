@@ -65,25 +65,8 @@ export default function PlaylistsTable({
   }
 
   return (
-    <div
-      style={{
-        height: 600,
-        overflowY: 'auto',
-      }}
-      ref={viewportRef}
-    >
-      <div
-        style={{
-          position: 'sticky',
-          top: 0,
-          left: 0,
-          right: 0,
-          padding: '12px',
-          background: '#fff',
-          zIndex: 2,
-          borderBottom: '1px solid rgba(0,0,0,0.08)',
-        }}
-      >
+    <div className="h-[600px] overflow-y-auto" ref={viewportRef}>
+      <div className="sticky top-0 z-10 border-b border-slate-100 bg-white px-5 py-4 sm:px-6">
         <TextInput
           value={searchInput}
           onChange={(event) => setSearchInput(event.currentTarget.value)}
@@ -91,13 +74,13 @@ export default function PlaylistsTable({
           aria-label="Поиск по плейлистам"
           mb="sm"
         />
-        <div style={{ fontSize: 14, color: '#111' }}>
+        <div className="text-sm text-slate-500">
           Нажмите строку, чтобы перейти к расшифровке плейлиста
         </div>
       </div>
 
-      <div style={{ position: 'relative' }}>
-        <Table striped highlightOnHover>
+      <div className="relative overflow-x-auto">
+        <Table striped highlightOnHover className="min-w-[720px]">
           <Table.Thead>
             <Table.Tr>
               <Table.Th>Название</Table.Th>
@@ -112,16 +95,17 @@ export default function PlaylistsTable({
                 key={playlist.id}
                 onClick={() => handleNavigate(playlist.id)}
                 style={{ cursor: 'pointer' }}
+                className="outline-none focus-within:bg-blue-50"
               >
-                <Table.Td>{playlist.name}</Table.Td>
-                <Table.Td>{playlist.description || '-'}</Table.Td>
-                <Table.Td>{playlist.files_count}</Table.Td>
+                <Table.Td className="font-semibold text-slate-800">{playlist.name}</Table.Td>
+                <Table.Td className="max-w-sm truncate text-slate-500">{playlist.description || '—'}</Table.Td>
+                <Table.Td><span className="rounded-full bg-violet-50 px-2.5 py-1 text-xs font-semibold text-violet-700">{playlist.files_count ?? 0}</span></Table.Td>
                 <Table.Td>{playlist.created || '-'}</Table.Td>
               </Table.Tr>
             ))}
             {isValidating && (
               <Table.Tr>
-                <Table.Td colSpan={4}>
+                <Table.Td colSpan={4} className="py-4">
                   <Loader size="sm" />
                 </Table.Td>
               </Table.Tr>
