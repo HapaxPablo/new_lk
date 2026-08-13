@@ -1,4 +1,4 @@
-import type { ElementType, ReactNode } from 'react'
+import type { CSSProperties, ElementType, ReactNode } from 'react'
 
 type EntityCardTone = 'default' | 'muted' | 'inverted'
 
@@ -11,6 +11,7 @@ interface EntityCardProps {
   href?: string
   open?: boolean
   tone?: EntityCardTone
+  style?: CSSProperties
 }
 
 const toneClassNames: Record<EntityCardTone, string> = {
@@ -34,11 +35,13 @@ export const EntityCard = ({
   href,
   open,
   tone = 'default',
+  style,
 }: EntityCardProps) => (
   <Component
     className={`overflow-hidden rounded-3xl transition duration-200 ${toneClassNames[tone]} ${className}`}
     href={href}
     open={open}
+    style={style}
   >
     {children}
     {footer && (

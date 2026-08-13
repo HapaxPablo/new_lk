@@ -14,12 +14,14 @@ interface CardNomenclatureProps {
   className?: string
   item: any
   codeMP?: string | null
+  compact?: boolean
 }
 
 export const CardNomenclature: React.FC<CardNomenclatureProps> = ({
   item,
   className = '',
   codeMP = null,
+  compact = false,
 }) => {
   const { exterior, typeOfPlace, pricePerMonth } = item
   const image = Array.isArray(exterior) ? exterior[0]?.source : exterior
@@ -52,7 +54,8 @@ export const CardNomenclature: React.FC<CardNomenclatureProps> = ({
 
   return (
     <EntityCard
-      className={`${styles.card} ${className}`.trim()}
+      className={`${styles.card} ${compact ? styles.cardCompact : ''} ${className}`.trim()}
+      style={compact ? { height: 'auto' } : undefined}
       footer={
         <>
           <div>
@@ -77,7 +80,7 @@ export const CardNomenclature: React.FC<CardNomenclatureProps> = ({
           )}
         </>
       }
-      footerClassName={styles.footer}
+      footerClassName={`${styles.footer} ${compact ? styles.footerCompact : ''}`.trim()}
     >
       <Link href={href} className={styles.cardLink} onClick={handleCardClick}>
         <div className={styles.media}>

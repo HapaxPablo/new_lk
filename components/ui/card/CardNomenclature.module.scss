@@ -6,6 +6,26 @@
   height: 100%;
 }
 
+.cardCompact {
+  height: auto;
+
+  .cardLink {
+    flex: 0 0 auto;
+  }
+
+  .media {
+    height: 7rem;
+  }
+
+  .content {
+    padding: 0.75rem 1rem;
+  }
+
+  .title {
+    font-size: 1rem;
+  }
+}
+
 .cardLink {
   display: flex;
   min-height: 0;
@@ -136,6 +156,11 @@
   align-items: center;
   justify-content: space-between;
   gap: 1rem;
+}
+
+.footerCompact {
+  padding-top: 0.75rem;
+  padding-bottom: 0.75rem;
 }
 
 .priceLabel {

@@ -36,7 +36,12 @@ export function PlacementsList() {
                 ) : (
                     items.map((item, key) => (
 
-                        <CardNomenclature item={item} key={`${item.id}-${key}`} />
+                        <CardNomenclature
+                            item={item}
+                            key={`${item.id}-${key}`}
+                            className={styles.placements__card}
+                            compact
+                        />
                     ))
                 )}
             </div>

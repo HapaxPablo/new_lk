@@ -234,7 +234,7 @@ export function ModalAddFile({ onSuccess }: { onSuccess?: () => void }) {
         onClick={handleOpen}
         style={{ maxHeight: '52px', height: '100%' }}
       >
-        Добавить файлы
+        Загрузить файлы
       </Button>
 
       {isOpen && (

@@ -35,7 +35,7 @@ export default function Page() {
               href="/orders/bg/create"
               className="inline-flex items-center justify-center gap-2 rounded-xl border border-slate-600 px-4 py-2.5 text-sm font-semibold text-white! transition hover:border-slate-400 hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-white"
             >
-              <Radio size={17} /> Создать фон
+              <Radio size={17} /> Создать фоновый заказ
             </Link>
           </div>
         </div>

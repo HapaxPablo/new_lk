@@ -158,6 +158,8 @@ export default function FilesTable({
                     selection.length > 0 && selection.length < files.length
                   }
                   onChange={toggleAll}
+                  styles={{ input: { borderWidth: 4, borderColor: 'black' } }}
+                  size="md"
                 />
               </Table.Th>
               <Table.Th>Название</Table.Th>
@@ -174,7 +176,12 @@ export default function FilesTable({
                 <Table.Tr
                   key={file.id}
                   onClick={() => toggleRow(file.id)}
-                  style={{ cursor: 'pointer', backgroundColor: isSelected ? 'rgba(0, 131, 255, 0.08)' : undefined }}
+                  style={{
+                    cursor: 'pointer',
+                    backgroundColor: isSelected
+                      ? 'rgba(0, 131, 255, 0.08)'
+                      : undefined,
+                  }}
                   className="outline-none"
                 >
                   <Table.Td>
@@ -184,10 +191,14 @@ export default function FilesTable({
                       onClick={(event) => event.stopPropagation()}
                     />
                   </Table.Td>
-                  <Table.Td className="font-medium text-slate-800">{file.name}</Table.Td>
+                  <Table.Td className="font-medium text-slate-800">
+                    {file.name}
+                  </Table.Td>
                   <Table.Td>{file.size}</Table.Td>
                   <Table.Td>{file.type}</Table.Td>
-                  <Table.Td className="max-w-xs truncate text-slate-500">{file.tags?.join(', ') || '—'}</Table.Td>
+                  <Table.Td className="max-w-xs truncate text-slate-500">
+                    {file.tags?.join(', ') || '—'}
+                  </Table.Td>
                 </Table.Tr>
               )
             })}
