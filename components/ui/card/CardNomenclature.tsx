@@ -1,14 +1,14 @@
 'use client'
 
 import Image from 'next/image'
-import { MapPin, MapPinHouse, RussianRuble } from 'lucide-react'
-import styles from './CardNomenclature.module.scss'
-import { formatPrice, getNomenclatureTitle } from '@/utils'
-import { LinkButton } from '../button/LinkButton'
 import Link from 'next/link'
-import { Button } from '../button/Button'
-import { AddToCartButton } from './AddToCartButton'
+import { MapPin } from 'lucide-react'
+import { formatPrice, getNomenclatureTitle } from '@/utils'
 import { trackSelectItem } from '@/lib/ecommerce/ecommerceHelpers'
+import { AddToCartButton } from './AddToCartButton'
+import { EntityCard } from './EntityCard'
+import styles from './CardNomenclature.module.scss'
+import { usePathname } from 'next/navigation'
 
 interface CardNomenclatureProps {
   className?: string
@@ -21,131 +21,110 @@ export const CardNomenclature: React.FC<CardNomenclatureProps> = ({
   className = '',
   codeMP = null,
 }) => {
-  const { brand, exterior, typeOfPlace, pricePerMonth, brandName } = item
-  const mainImage = Array.isArray(exterior) ? exterior[0]?.source : exterior
-
-  const hasImage = Boolean(mainImage)
-  const logoSrc = brand?.logotype
-
-  const formattedPrice = pricePerMonth
-    ? `от ${formatPrice(pricePerMonth)}/день`
-    : 'Цена не указана'
-
-  const formattedAddress =
+  const { exterior, typeOfPlace, pricePerMonth } = item
+  const image = Array.isArray(exterior) ? exterior[0]?.source : exterior
+  const brandLogo = item.brand?.logotype
+  const address =
     typeof item.formattedAddress === 'string'
       ? item.formattedAddress
-      : (item.formattedAddress?.name ?? 'Адрес не указан')
-
-  // The API returns this field as an object for nomenclature details, while
-  // some list responses still contain a string. React cannot render the
-  // object directly, which caused error #31 on the order page.
-  const typeOfPlaceLabel =
+      : item.formattedAddress?.name || 'Адрес уточняется'
+  const placeType =
     typeof typeOfPlace === 'string'
       ? typeOfPlace
-      : (typeOfPlace?.name || typeOfPlace?.abbreviation || 'Тип не указан')
+      : typeOfPlace?.name || typeOfPlace?.abbreviation || 'Рекламная площадка'
+  const href = `/nomenclatures/${item.oldCatalogSlug || item.id}`
 
   const handleCardClick = () => {
-    // Отслеживаем клик в Яндекс.Метрику
     trackSelectItem(
       {
         item_id: item.id,
         item_name: getNomenclatureTitle(item),
-        item_category: typeOfPlaceLabel,
+        item_category: placeType,
         item_brand: item.brand?.name,
-        price: item.pricePerMonth,
+        price: pricePerMonth,
       },
       'Список номенклатур'
     )
   }
 
+  const url = usePathname()
+  console.log('url', url)
+
   return (
-    <article className={`${styles.card} ${className}`}>
-      <Link
-        href={`/nomenclatures/${item.oldCatalogSlug ? item.oldCatalogSlug : item.id}`}
-        className={styles.cardLink}
-        onClick={handleCardClick}
-      >
-        <div className={styles.cardContent}>
-          <div className={styles.mediaSection}>
-            <div className={styles.imageWrapper}>
-              {hasImage ? (
-                <Image
-                  src={mainImage}
-                  alt={`Фасад ${brand?.name || 'места'}`}
-                  fill
-                  className={styles.image}
-                  sizes="80px"
-                />
-              ) : (
-                <div className={styles.imagePlaceholder}>
-                  <Image
-                    src="/og-logo.jpg"
-                    alt="Логотип"
-                    width={200}
-                    height={100}
-                    className="object-contain"
-                    loading="lazy"
-                  />
-                </div>
-              )}
-            </div>
-
-            {logoSrc && mainImage && (
-              <div className={styles.logoWrapper}>
-                <Image
-                  src={logoSrc}
-                  alt={`Логотип ${brand?.name}`}
-                  fill
-                  className={styles.logo}
-                  sizes="80px"
-                  loading="lazy"
-                />
-              </div>
-            )}
-          </div>
-
-          <div className={styles.infoSection}>
-            <div className={styles.infoRow}>
-              <MapPinHouse className={styles.icon} size={16} />
-              <div className={styles.textContent}>
-                <span className={styles.primaryText}>
-                  {typeOfPlaceLabel}
-                  {brand?.name ? ` • ${brand.name}` : ''}
-                  {brandName && ` • ${brandName}`}
-                </span>
-              </div>
-            </div>
-
-            <div className={styles.infoRow}>
-              <MapPin className={styles.icon} size={16} />
-              <div className={styles.textContent}>
-                <span className={styles.secondaryText}>{formattedAddress}</span>
-              </div>
-            </div>
-
-            <div className={styles.infoRow}>
-              <RussianRuble className={styles.icon} size={16} />
-              <div className={styles.textContent}>
-                <span className={styles.priceText}>{formattedPrice}</span>
-              </div>
+    <EntityCard
+      className={`${styles.card} ${className}`.trim()}
+      footer={
+        <>
+          <div>
+            <div className={styles.priceLabel}>Стоимость</div>
+            <div className={styles.price}>
+              {pricePerMonth
+                ? `${formatPrice(pricePerMonth)}/день`
+                : 'По запросу'}
             </div>
           </div>
+          {codeMP ? (
+            <Link href={href} className={styles.selectButton}>
+              Перейти в медиаплан
+            </Link>
+          ) : (
+            <AddToCartButton
+              item={item}
+              addLabel="Выбрать"
+              selectedLabel="В заказе"
+              className={styles.selectButton}
+            />
+          )}
+        </>
+      }
+      footerClassName={styles.footer}
+    >
+      <Link href={href} className={styles.cardLink} onClick={handleCardClick}>
+        <div className={styles.media}>
+          {image ? (
+            <Image
+              src={image}
+              alt={getNomenclatureTitle(item)}
+              fill
+              sizes="(max-width: 767px) 100vw, (max-width: 1280px) 50vw, 420px"
+              className={styles.image}
+            />
+          ) : (
+            <div className={styles.imagePlaceholder}>{placeType}</div>
+          )}
+          <div className={styles.imageOverlay} />
+          {brandLogo && (
+            <span className={styles.brandBadge}>
+              <Image
+                src={brandLogo}
+                alt={`Логотип ${item.brand?.name || 'бренда'}`}
+                width={112}
+                height={40}
+                className={styles.brandLogo}
+                loading="lazy"
+              />
+            </span>
+          )}
+        </div>
+
+        <div className={styles.content}>
+          {url.startsWith('/brands') ? (
+            <h3 className={styles.title}>
+              <MapPin size={18} aria-hidden="true" />
+              <span>{address}</span>
+            </h3>
+          ) : (
+            <h3 className={styles.title}>
+              {getNomenclatureTitle(item, 'small')}
+            </h3>
+          )}
+
+          {/* <p className={styles.address}>
+            <MapPin size={18} aria-hidden="true" />
+            <span>{address}</span>
+          </p> */}
         </div>
       </Link>
-
-      <div className={styles.actionsSection}>
-        <LinkButton href={`/nomenclatures/${item.id}`} variant="default">
-          Подробнее
-        </LinkButton>
-
-        {codeMP ? (
-          <LinkButton href={`/nomenclatures/${item.id}`} variant="navigate">
-            Перейти в медиаплан
-          </LinkButton>
-        ) : (
-          <AddToCartButton item={item} />
-        )}
-      </div>
-    </article>
+    </EntityCard>
   )
 }

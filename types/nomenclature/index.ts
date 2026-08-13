@@ -275,6 +275,7 @@ export interface INomenclatureItem extends INomenclatureBase {
 
 export interface IAddress {
   city: string
+  citySlug?: string
   localityType?: string
   street?: string
   streetType?: string

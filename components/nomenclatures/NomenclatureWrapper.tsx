@@ -5,12 +5,9 @@ import dynamic from 'next/dynamic'
 import { Suspense, useCallback, useEffect, useRef } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useInfiniteNomenclatures } from '@/hooks/useInfiniteNomenclatures'
-import { useMediaQuery } from 'usehooks-ts'
 
-import FiltersPanel from '../panels/filter-panels/FiltersPanels'
 import ScrollButton from '../ui/button/ScrollButton'
 import LoaderSkeleton from '../ui/loader/LoaderSkeleton'
-import { ListWrapper } from '@/components/ui/list/ListWrapper'
 import styles from './NomenclatureWrapper.module.scss'
 import { SelectAllButton } from './select-all-button/SelectAllButton'
 
@@ -64,7 +61,6 @@ export const NomenclatureWrapperContent = ({
 
   const router = useRouter()
   const searchParams = useSearchParams()
-  const isMobile = useMediaQuery('(max-width: 768px)')
 
   const {
     items,
@@ -154,62 +150,56 @@ export const NomenclatureWrapperContent = ({
   const displayTotal = hookTotalCount || count || 0
 
   return (
-    <ListWrapper
-      className={styles.displayWrapper}
-      contentClassName={styles.contentContainer}
-      cardsWrapperClassName={styles.cardsWrapper}
-      cardsWrapperRef={cardsWrapperRef}
-    >
+    <div className={styles.displayWrapper}>
+      {/* Хедер остаётся за пределами прокручиваемого списка. */}
+      {displayItems.length > 0 && (
+        <div className={styles.header}>
+          <div>Всего найдено: {displayTotal}</div>
+          <SelectAllButton items={displayItems} />
+        </div>
+      )}
 
-        {/* Хедер снаружи скроллируемого контейнера — всегда виден */}
-        {displayItems.length > 0 && (
-          <div className={styles.header}>
-            <div>Всего найдено: {displayTotal}</div>
-            <SelectAllButton items={displayItems} />
+      <div ref={cardsWrapperRef} className={styles.cardsWrapper}>
+        {displayItems.length <= 0 ? (
+          <div className={styles.emptyState}>
+            <p>Места размещения не найдены</p>
+          </div>
+        ) : (
+          <NomenclatureCards item={displayItems} />
+        )}
+
+        <div
+          ref={sentinelRef}
+          className={styles.sentinel}
+          aria-hidden="true"
+        />
+
+        {isLoadingMore && (
+          <div className={styles.loadingMore}>
+            <LoaderSkeleton />
+            <span className={styles.loadingText}>
+              Загрузка дополнительных мест...
+            </span>
           </div>
         )}
 
-        <div ref={cardsWrapperRef} className={styles.cardsWrapper}>
-          {displayItems.length <= 0 ? (
-            <div className={styles.emptyState}>
-              <p>Места размещения не найдены</p>
-            </div>
-          ) : (
-            <NomenclatureCards item={displayItems} />
-          )}
-
-          <div
-            ref={sentinelRef}
-            className={styles.sentinel}
-            aria-hidden="true"
+        <div className={styles.paginationContainer}>
+          <Pagination
+            limit={limit ?? 24}
+            page={size}
+            total={displayTotal}
+            infiniteScroll={true}
+            showPageNumbers={false}
           />
+        </div>
 
-          {isLoadingMore && (
-            <div className={styles.loadingMore}>
-              <LoaderSkeleton />
-              <span className={styles.loadingText}>
-                Загрузка дополнительных мест...
-              </span>
-            </div>
-          )}
-
-          <div className={styles.paginationContainer}>
-            <Pagination
-              limit={limit ?? 24}
-              page={size}
-              total={displayTotal}
-              infiniteScroll={true}
-              showPageNumbers={false}
-            />
-          </div>
-
-          <ScrollButton
-            scrollContainerRef={cardsWrapperRef}
-            showAfterScroll={500}
-            position="bottom-right"
-            size="md"
-          />
+        <ScrollButton
+          scrollContainerRef={cardsWrapperRef}
+          showAfterScroll={500}
+          position="bottom-right"
+          size="md"
+        />
       </div>
-    </ListWrapper>
+    </div>
   )
 }

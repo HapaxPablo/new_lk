@@ -3,5 +3,6 @@
 // NomenclatureItems.module.scss
 .cardGrid {
   @include grid.card-grid;
-  place-items: center;
+  align-items: stretch;
+  justify-items: stretch;
 }

@@ -1,6 +1,6 @@
 'use client'
 import { useClickOutside } from '@/hooks/useClickOutside'
-import { Settings, SlidersHorizontal } from 'lucide-react'
+import { SlidersHorizontal } from 'lucide-react'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { JSX, useCallback, useRef, useState } from 'react'
 import FiltersPanel from '../panels/filter-panels/FiltersPanels'
@@ -8,9 +8,9 @@ import { SearchForm } from '../search-form/SearchForm'
 import styles from './Toolbar.module.scss'
 import { Button } from '../ui/button/Button'
 import { useGeoStore } from '@/store/geoStore'
-import dynamic from 'next/dynamic'
-import { LoaderSkeletonRow } from '../ui/loader/LoaderSkeleton'
 import CitiesSlider from './cities/CitiesSlider'
+import { ModalWrapper } from '../modal/ModalWrapper'
+import { useModal } from '@/providers/modal/ModalProvider'
 // const CitiesSlider = dynamic(
 //   () =>
 //     import('./cities/CitiesSlider').then((mod) => ({
@@ -24,14 +24,19 @@ import CitiesSlider from './cities/CitiesSlider'
 
 interface ToolbarProps {
   totalItems: number
+  variant?: 'default' | 'catalog'
 }
 
-const Toolbar = ({ totalItems }: ToolbarProps): JSX.Element => {
+const Toolbar = ({
+  totalItems,
+  variant = 'default',
+}: ToolbarProps): JSX.Element => {
   const router = useRouter()
   const pathname = usePathname()
   const searchParams = useSearchParams()
   const [showFilters, setShowFilters] = useState<boolean>(false)
   const [showLimitOptions, setShowLimitOptions] = useState<boolean>(false)
+  const { openModal: openDevelopmentModal } = useModal('development')
 
   // Получаем город из Zustand store вместо localStorage
   const selectedCity = useGeoStore((state) => state.selectedCity)
@@ -62,6 +67,13 @@ const Toolbar = ({ totalItems }: ToolbarProps): JSX.Element => {
     setShowLimitOptions(!showLimitOptions)
   }
 
+  const resetCatalogFilters = (): void => {
+    const params = new URLSearchParams()
+    const limit = searchParams.get('limit')
+    if (limit) params.set('limit', limit)
+    router.push(`${pathname}${params.size ? `?${params.toString()}` : ''}`)
+  }
+
   const handleTypeOfPlaceChange = (names: string): void => {
     const params = new URLSearchParams(searchParams.toString())
     if (names) {
@@ -75,7 +87,10 @@ const Toolbar = ({ totalItems }: ToolbarProps): JSX.Element => {
 
   const buildTcUrl = useCallback((): string => {
     const current = searchParams.get('type_of_place') || ''
-    const values = current.split(',').map((s) => s.trim()).filter(Boolean)
+    const values = current
+      .split(',')
+      .map((s) => s.trim())
+      .filter(Boolean)
     const isActive = values.includes('Торговый центр')
     const next = isActive
       ? values.filter((s) => s !== 'Торговый центр').join(',')
@@ -109,50 +124,107 @@ const Toolbar = ({ totalItems }: ToolbarProps): JSX.Element => {
 
   return (
     <>
-      <div className={styles.toolbar}>
+      <div
+        className={`${styles.toolbar} ${
+          variant === 'catalog' ? styles.catalogToolbar : ''
+        }`}
+      >
         <div className={styles.mainPanel}>
-          <div className={styles.totalItems}>
-            Всего: {totalItems}
-          </div>
+          <div className={styles.totalItems}>Всего: {totalItems}</div>
           <SearchForm
-            hideButton
+            hideButton={variant !== 'catalog'}
             className={styles.searchForm}
-            placeholder='Напишите здесь город, улицу, название места или название арендатора для отбора'
+            placeholder="Напишите здесь город, улицу, название места или название арендатора для отбора"
+            buttonText="Найти"
+            buttonClassName={
+              variant === 'catalog' ? styles.catalogSearchButton : ''
+            }
           />
 
-          <div className={styles.tooltipContainer} data-tooltip="Фильтры">
+          <button
+            type="button"
+            className={styles.tooltipContainer}
+            data-tooltip="Дополнительные фильтры"
+            onClick={toggleFilters}
+            aria-label="Открыть дополнительные фильтры"
+            aria-expanded={showFilters}
+          >
             <SlidersHorizontal
               size={24}
-              onClick={toggleFilters}
               className={`${styles.icon} ${showFilters ? styles.activeIcon : ''}`}
             />
-          </div>
+          </button>
         </div>
-      </div>
-      <div className="flex flex-row">
-        {/* Быстрый фильтр: Торговый центр */}
-        <div className="flex flex-row items-center gap-4">
 
-
+        <div className={styles.quickFilters}>
           <Button
             href={buildTcUrl()}
             variant={isTcActive ? 'primary' : 'default'}
-            // onClick={handleTcClick}
-            // target="_blank"
             rel="nofollow noopener"
-
+            className={styles.filterChip}
           >
             Торговый центр
           </Button>
 
-          {/* CitiesSlider с правильной обработкой null */}
-          <CitiesSlider name={selectedCity?.name || null} />
+          {variant === 'catalog' && (
+            <>
+              <Button
+                type="button"
+                variant="default"
+                onClick={openDevelopmentModal}
+                className={styles.filterChip}
+              >
+                Аудиореклама
+              </Button>
+              <Button
+                type="button"
+                variant="default"
+                onClick={openDevelopmentModal}
+                className={styles.filterChip}
+              >
+                Видеореклама
+              </Button>
+              <Button
+                type="button"
+                variant="default"
+                onClick={openDevelopmentModal}
+                className={styles.filterChip}
+              >
+                До 200 ₽/день
+              </Button>
+            </>
+          )}
+
+          {variant === 'catalog' && (
+            <button
+              type="button"
+              onClick={resetCatalogFilters}
+              className={styles.resetButton}
+            >
+              Сбросить
+            </button>
+          )}
+
+        </div>
+
+        <div className={styles.citiesRow}>
+          <span className={styles.citiesLabel}>Города</span>
+          <div className={styles.citiesWrapper}>
+            <CitiesSlider name={selectedCity?.name || null} />
+          </div>
         </div>
       </div>
       <FiltersPanel
         isOpen={showFilters}
         onClose={() => setShowFilters(false)}
       />
+      {variant === 'catalog' && (
+        <ModalWrapper id="development" title="Функция в разработке">
+          <p className="text-center text-gray-600">
+            Этот фильтр появится после подключения к API.
+          </p>
+        </ModalWrapper>
+      )}
     </>
   )
 }

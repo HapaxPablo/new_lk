@@ -15,6 +15,7 @@ export const useInfiniteNomenclatures = (
   const brandId = searchParams.get('brand_id') || ''
   const status = searchParams.get('status') || ''
   const typeOfPlace = searchParams.get('type_of_place') || ''
+  const citySlug = searchParams.get('city_slug') || ''
 
   const getKey = (
     pageIndex: number,
@@ -31,6 +32,7 @@ export const useInfiniteNomenclatures = (
     if (brandId) params.set('brand_id', brandId)
     if (status) params.set('status', status)
     if (typeOfPlace) params.set('type_of_place', typeOfPlace)
+    if (citySlug) params.set('city_slug', citySlug)
     return `/api/nomenclatures/?${params.toString()}`
   }
 

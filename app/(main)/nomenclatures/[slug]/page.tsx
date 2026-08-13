@@ -35,6 +35,7 @@ import { cache } from 'react'
 import { notFound } from 'next/navigation'
 import Slider from '@/components/slider/Slider'
 import { PlaceTitle } from '@/components/nomenclatureById/PlaceTitle'
+import { EntityCard } from '@/components/ui/card/EntityCard'
 
 import { QuickStats } from '@/components/nomenclatureById/detail/QuickStats'
 import { PricingTable } from '@/components/nomenclatureById/detail/PricingTable'
@@ -146,6 +147,7 @@ async function getTenantsByNomenclatureId(
 
 async function getSimilarNomenclatures(
   typeOfPlaceName: string | undefined,
+  citySlug: string | undefined,
   excludeId: string
 ): Promise<INomenclatureItem[]> {
   if (!typeOfPlaceName) return []
@@ -153,7 +155,8 @@ async function getSimilarNomenclatures(
   try {
     const url = new URL('api/nomenclatures/', process.env.API_1C_URL)
     url.searchParams.set('type_of_place', typeOfPlaceName)
-    url.searchParams.set('limit', '4')
+    if (citySlug) url.searchParams.set('city_slug', citySlug)
+    url.searchParams.set('limit', '6')
 
     const response = await fetch(url.toString(), { cache: 'no-store' })
     if (!response.ok) return []
@@ -226,6 +229,7 @@ export default async function NomenclatureDetailPage(
   const tenantsData = await getTenantsByNomenclatureId(nomenclature.id)
   const similarPlaces = await getSimilarNomenclatures(
     nomenclature.typeOfPlace?.name,
+    nomenclature.address?.citySlug,
     nomenclature.id
   )
 
@@ -317,7 +321,7 @@ export default async function NomenclatureDetailPage(
                 {/* </div> */}
               </div>
 
-              <div className="mt-5 overflow-hidden rounded-3xl bg-white shadow-sm ring-1 ring-slate-200">
+              <EntityCard className="mt-5 p-0">
                 <div className="border-b px-6 py-4">
                   <h2 className="text-xl font-black text-slate-900">
                     Характеристики площадки
@@ -326,12 +330,12 @@ export default async function NomenclatureDetailPage(
                 <div className="p-4">
                   <Description nomenclature={nomenclature} />
                 </div>
-              </div>
+              </EntityCard>
             </div>
 
             {/* Main info */}
             <div className="space-y-5">
-              <div className="rounded-3xl bg-white p-6 shadow-sm ring-1 ring-slate-200">
+              <EntityCard className="p-6">
                 {brand?.name && (
                   <div className="mb-3 inline-flex rounded-full bg-orange-50 px-4 py-2 text-sm font-black text-orange-500">
                     {brand.name}
@@ -369,7 +373,7 @@ export default async function NomenclatureDetailPage(
                     nomenclaturesIds={nomenclaturesIds}
                   />
                 </div>
-              </div>
+              </EntityCard>
               <QuickStats
                 possibility={nomenclature.possibility}
                 contentType={contentType}
@@ -382,13 +386,13 @@ export default async function NomenclatureDetailPage(
                 <PricingTable pricePerDay={pricePerMonth} />
               </div> */}
               {responsible?.ad && (
-                <div className="rounded-3xl bg-violet-50 p-6 ring-1 ring-violet-100">
+                <EntityCard className="bg-violet-50 p-6 ring-violet-100">
                   <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                     <div>
                       <h2 className="text-2xl font-black text-slate-900">
                         Ответственный за размещение
                       </h2>
-                      <div className="rounded-2xl bg-white p-4 shadow-sm">
+                      <div className="mt-4">
                         <ResponsibleCard
                           label="за размещения"
                           icon={<Radio size={16} />}
@@ -403,7 +407,7 @@ export default async function NomenclatureDetailPage(
                       </p>
                     </div>
                   </div>
-                </div>
+                </EntityCard>
               )}
             </div>
           </div>
@@ -428,9 +432,9 @@ export default async function NomenclatureDetailPage(
                 )}
               </div>
 
-              <div className="relative h-[430px] overflow-hidden rounded-3xl bg-slate-200 shadow-sm ring-1 ring-slate-200">
+              <EntityCard tone="muted" className="relative h-[430px] p-0">
                 <PlacesSimpleMap places={[mapPlace]} cityName={address.city} />
-              </div>
+              </EntityCard>
 
             </div>
 
@@ -442,12 +446,12 @@ export default async function NomenclatureDetailPage(
                 Кто представлен в ТЦ
               </h2>
 
-              <div className="overflow-hidden rounded-3xl bg-white shadow-sm ring-1 ring-slate-200">
+              <EntityCard className="p-0">
                 <TabsWrapper
                   item={nomenclature}
                   initialTenantsData={tenantsData}
                 />
-              </div>
+              </EntityCard>
             </div>
           </div>
         </section>
@@ -459,7 +463,11 @@ export default async function NomenclatureDetailPage(
           nomenclaturesIds={nomenclaturesIds}
         />
 
-        <SimilarPlacements places={similarPlaces} />
+        <SimilarPlacements
+          places={similarPlaces}
+          typeOfPlace={nomenclature.typeOfPlace?.name}
+          citySlug={nomenclature.address?.citySlug}
+        />
 
         <NomenclatureSEOText
           placeName={nameWhyPlace}

@@ -14,6 +14,7 @@ export type ModalType =
   | 'files'
   | 'ad_order'
   | 'bg_order'
+  | 'development'
 
 type ModalContextType = {
   openModal: (id: ModalType, key?: string) => void

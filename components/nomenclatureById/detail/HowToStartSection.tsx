@@ -1,4 +1,6 @@
 // components/nomenclatureById/detail/HowToStartSection.tsx
+import { EntityCard } from '@/components/ui/card/EntityCard'
+
 const steps: [string, string, string][] = [
   [
     '01',
@@ -37,14 +39,15 @@ export function HowToStartSection() {
 
         <div className="mt-8 grid gap-5 md:grid-cols-4">
           {steps.map(([number, title, text]) => (
-            <div
+            <EntityCard
               key={number}
-              className="rounded-3xl bg-white/10 p-6 ring-1 ring-white/10"
+              tone="inverted"
+              className="p-6"
             >
               <div className="text-4xl font-black text-[#ffb0ae]">{number}</div>
               <h3 className="mt-4 font-black">{title}</h3>
               <p className="mt-2 text-sm leading-6 text-white/70">{text}</p>
-            </div>
+            </EntityCard>
           ))}
         </div>
       </div>

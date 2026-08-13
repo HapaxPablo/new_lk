@@ -1,6 +1,7 @@
 import styles from './ResponsibleCard.module.scss'
 import { ReactNode } from 'react'
 import { Phone } from 'lucide-react'
+import { EntityCard } from '@/components/ui/card/EntityCard'
 
 interface Props {
   label: string
@@ -15,13 +16,13 @@ export function ResponsibleCard({
   icon,
   name,
   phoneNumber,
-  color = 'bg-gray-100',
+  color = '',
 }: Props) {
   const formatPhoneHref = (phone: string) =>
     `tel:${phone.replace(/[^\d+]/g, '')}`
 
   return (
-    <article className={`${styles.wrapper} ${color}`}>
+    <EntityCard className={`${styles.wrapper} ${color}`}>
       <div className={styles.wrapper__content}>
         <div>{name}</div>
         <header className={styles.wrapper__header}>
@@ -43,6 +44,6 @@ export function ResponsibleCard({
           ))}
         </div>
       ) : null}
-    </article>
+    </EntityCard>
   )
 }

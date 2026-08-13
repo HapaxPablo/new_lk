@@ -102,7 +102,8 @@ export function formatNomenclatureAddress(
 
 /** Формирует единое название площадки из данных, доступных на фронте. */
 export function getNomenclatureTitle(
-  nomenclature: NomenclatureTitleData
+  nomenclature: NomenclatureTitleData,
+  type?: string
 ): string {
   const typeOfPlace =
     typeof nomenclature.typeOfPlace === 'string'
@@ -115,7 +116,12 @@ export function getNomenclatureTitle(
       ? nomenclature.formattedAddress
       : nomenclature.formattedAddress?.name ||
         formatNomenclatureAddress(nomenclature.address)
-
+  if (type === 'small') {
+    return (
+      [typeOfPlace, nomenclature.brand?.name].filter(Boolean).join(' ') ||
+      'Рекламная площадка'
+    )
+  }
   return (
     [typeOfPlace, nomenclature.brand?.name, formattedAddress]
       .filter(Boolean)

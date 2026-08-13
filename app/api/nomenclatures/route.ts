@@ -18,6 +18,7 @@ export async function GET(request: NextRequest) {
     const brand_id = searchParams.get('brand_id') || undefined
     const status = searchParams.get('status') || undefined
     const type_of_place = searchParams.get('type_of_place') || undefined
+    const city_slug = searchParams.get('city_slug') || undefined
 
     const paramsFor1C: Record<string, string> = {
       limit: String(limit),
@@ -29,6 +30,7 @@ export async function GET(request: NextRequest) {
     if (brand_id) paramsFor1C.brand_id = brand_id
     if (status) paramsFor1C.status = status
     if (type_of_place) paramsFor1C.type_of_place = type_of_place
+    if (city_slug) paramsFor1C.city_slug = city_slug
 
     const queryString = new URLSearchParams(paramsFor1C).toString()
 

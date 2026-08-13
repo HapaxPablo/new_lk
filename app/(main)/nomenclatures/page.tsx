@@ -5,6 +5,11 @@ import LoaderSkeleton from '@/components/ui/loader/LoaderSkeleton'
 import { SITE_URL } from '@/lib/configs/config-meta/configMetaData'
 import { generateNomenclaturesListMetadata } from '@/lib/configs/config-meta/nomenclatures'
 import { INomenclatureResponse } from '@/types/nomenclature'
+import { CatalogSidebar } from '@/components/nomenclatures/CatalogSidebar'
+import {
+  NomenclaturesLandingSections,
+  NomenclaturesSeoSections,
+} from '@/components/nomenclatures/NomenclaturesLandingSections'
 import { Metadata } from 'next'
 import dynamic from 'next/dynamic'
 
@@ -39,6 +44,7 @@ interface NomenclaturesPageProps {
     brand_id?: string
     status?: string
     type_of_place?: string
+    city_slug?: string
   }>
 }
 export async function generateMetadata(
@@ -74,6 +80,7 @@ export default async function NomenclaturesPage(props: NomenclaturesPageProps) {
   const brand_id = params.brand_id || ''
   const status = params.status || ''
   const typeOfPlace = params.type_of_place || ''
+  const citySlug = params.city_slug || ''
 
   // console.log('Page params:', { limit, page, search, brand_name, brand_id })
   try {
@@ -85,6 +92,7 @@ export default async function NomenclaturesPage(props: NomenclaturesPageProps) {
     if (brand_id) url.searchParams.set('brand_id', brand_id)
     if (status) url.searchParams.set('status', status)
     if (typeOfPlace) url.searchParams.set('type_of_place', typeOfPlace)
+    if (citySlug) url.searchParams.set('city_slug', citySlug)
 
     // console.log('Making request to:', url.toString())
 
@@ -112,20 +120,47 @@ export default async function NomenclaturesPage(props: NomenclaturesPageProps) {
         />
         <BreadcrumbJsonLd items={breadcrumbItems} />
         <BreadcrumbsSetter title="Места для рекламы" />
-        <div className="flex flex-col h-full w-full p-1 gap-2">
-          <h1 className="text-xl! md:text-2xl ml-4 font-semibold mb-3">Выберите места для вашей радио-рекламы</h1>
-          <Toolbar totalItems={data.count} />
+        <div className="h-full w-full overflow-y-auto bg-slate-50 text-slate-900">
+          <NomenclaturesLandingSections totalItems={data.count} />
 
-          <div className="grow min-h-0 overflow-hidden">
-            <div className="h-full">
-              <NomenclatureWrapper
-                nomenclatureData={data.results}
-                limit={limit}
-                page={page}
-                count={data.count}
-              />
+          <section id="catalog" className="border-y border-slate-200 bg-slate-50">
+            <div className="mx-auto max-w-7xl px-4 py-12">
+              <div className="mb-6 max-w-3xl">
+                <p className="text-sm font-bold uppercase tracking-wider text-[#ef5350]">
+                  Каталог площадок
+                </p>
+                <h2 className="mt-2 text-3xl font-black text-slate-900">
+                  Выберите места для вашей рекламы
+                </h2>
+                <p className="mt-2 text-slate-600">
+                  Поиск, фильтры и список площадок работают в отдельной
+                  прокручиваемой области.
+                </p>
+              </div>
+
+              <div className="space-y-6">
+                <div className="h-[clamp(38rem,calc(100svh-7rem),48rem)]">
+                  <div className="flex h-full min-h-0 flex-col overflow-hidden rounded-3xl bg-white p-3 shadow-sm ring-1 ring-slate-200">
+                    <Toolbar totalItems={data.count} variant="catalog" />
+                    <div className="mt-3 min-h-0 grow">
+                      <NomenclatureWrapper
+                        nomenclatureData={data.results}
+                        limit={limit}
+                        page={page}
+                        count={data.count}
+                      />
+                    </div>
+                  </div>
+                </div>
+                <CatalogSidebar
+                  items={data.results}
+                  cityName={citySlug || undefined}
+                />
+              </div>
             </div>
-          </div>
+          </section>
+
+          <NomenclaturesSeoSections />
         </div>
       </>
     )

@@ -1,5 +1,6 @@
 // components/nomenclatureById/detail/PricingTable.tsx
 import { formatPrice } from '@/utils/nomenclatureUtils'
+import { EntityCard } from '@/components/ui/card/EntityCard'
 
 interface PricingTableProps {
   pricePerDay?: string
@@ -53,7 +54,7 @@ export function PricingTable({ pricePerDay }: PricingTableProps) {
   ]
 
   return (
-    <div className="mt-4 overflow-hidden rounded-2xl border border-slate-200">
+    <EntityCard className="mt-4 rounded-2xl p-0">
       <table className="w-full text-left text-sm">
         <thead className="bg-slate-50 text-slate-500">
           <tr>
@@ -76,6 +77,6 @@ export function PricingTable({ pricePerDay }: PricingTableProps) {
           ))}
         </tbody>
       </table>
-    </div>
+    </EntityCard>
   )
 }

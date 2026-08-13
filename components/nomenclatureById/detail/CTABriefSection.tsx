@@ -1,5 +1,6 @@
 // components/nomenclatureById/detail/CTABriefSection.tsx
 import ModalFeedBack from '@/components/nomenclatureById/modalFeedBack/ModalFeedBack'
+import { EntityCard } from '@/components/ui/card/EntityCard'
 
 interface CTABriefSectionProps {
   placeName: string
@@ -23,12 +24,12 @@ export function CTABriefSection({
           </p>
         </div>
 
-        <div className="rounded-3xl bg-white p-5 shadow-xl">
+        <EntityCard className="p-5 shadow-xl">
           <ModalFeedBack
             pathName="nomenclatures"
             nomenclaturesIds={nomenclaturesIds}
           />
-        </div>
+        </EntityCard>
       </div>
     </section>
   )

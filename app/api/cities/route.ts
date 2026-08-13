@@ -6,16 +6,23 @@ export async function GET(request: NextRequest) {
   try {
     const searchParams = request.nextUrl.searchParams
     const search = searchParams.get('search') || ''
+    const typeOfPlace = searchParams.get('type_of_place') || ''
 
     const backendUrl =
-      process.env.NEXT_PUBLIC_API_URL || 'http://192.168.0.8:8000'
+      process.env.API_1C_URL ||
+      process.env.NEXT_PUBLIC_API_1C_URL ||
+      'http://192.168.0.8:8000/'
     const params = new URLSearchParams()
 
     if (search) {
       params.set('search', search)
     }
+    if (typeOfPlace) {
+      params.set('type_of_place', typeOfPlace)
+    }
 
-    const url = `${backendUrl}/api/cities/?${params.toString()}`
+    const url = new URL('api/cities/', backendUrl)
+    url.search = params.toString()
 
     // console.log('Fetching cities from:', url)
 
