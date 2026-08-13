@@ -5,6 +5,7 @@ export interface IGroupedTenant {
   brandName: string
   count: number
   brandLogotype: string
+  categories: string[]
 }
 
 export interface IGroupedTenantsResponse {
