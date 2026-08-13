@@ -1,6 +1,7 @@
 export const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL!
 
 export const metaDataConfigLayout = {
+  metadataBase: new URL(SITE_URL),
   title: 'Агентство активной рекламы КрасРМ',
   description:
     'Агентство активной рекламы в Красноярске. Реклама, маркетинг, промоции и номенклатуры товаров.',
@@ -13,7 +14,6 @@ export const metaDataConfigLayout = {
   ],
   icons: {
     icon: '/favicon.ico',
-    apple: '/apple-touch-icon.png',
   },
   openGraph: {
     title: 'Агентство активной рекламы КрасРМ',
@@ -22,13 +22,19 @@ export const metaDataConfigLayout = {
     siteName: 'КрасРМ',
     images: [
       {
-        url: `${SITE_URL}/logo_footer.svg`,
+        url: `${SITE_URL}/og-logo.jpg`,
         width: 1200,
         height: 630,
       },
     ],
     locale: 'ru_RU',
     type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Агентство активной рекламы КрасРМ',
+    description: 'Размещение indoor-рекламы в Красноярске и по России.',
+    images: [`${SITE_URL}/og-logo.jpg`],
   },
   robots: {
     index: true,

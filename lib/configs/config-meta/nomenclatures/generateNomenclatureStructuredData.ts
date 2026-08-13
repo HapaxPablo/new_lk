@@ -13,30 +13,28 @@ export function generateNomenclatureStructuredData(
     interior,
     article,
     pricePerMonth,
-    created_at,
-    updated_at,
   } = nomenclature
-  const fullName = formatPlaceTitle(nomenclature, 'full')
-  // console.log('fullName generateNomenclatureStructuredData', fullName)
+  const metaName = formatPlaceTitle(nomenclature, 'meta')
   const phoneNumber = '8 800 222 59 38' // Можно вынести в конфиг
-  const description = `Размещение аудио и видеорекламы в помещении по адресу ${fullName}. Звоните: ☎ ${phoneNumber}`
+  const description = `Размещение аудио и видеорекламы в ${metaName}. Звоните: ☎ ${phoneNumber}`
   const images = [...exterior, ...interior]
     .map((img) => img.source)
     .filter(Boolean)
   const productUrl = `${SITE_URL}/nomenclatures/${id}`
+  const hasPrice =
+    typeof pricePerMonth === 'number' &&
+    Number.isFinite(pricePerMonth) &&
+    pricePerMonth > 0
 
   return {
     '@context': 'https://schema.org',
-    '@type': 'Product',
+    '@type': 'Service',
     '@id': productUrl,
-    // name: main_info.name,
+    name: `Размещение рекламы в ${metaName}`,
     description: description || undefined,
-    sku: String(article),
-    productID: id,
+    identifier: String(article || id),
     url: productUrl,
-    datePublished: created_at ? new Date(created_at).toISOString() : undefined, // ✅ Добавлено
-    dateModified: updated_at ? new Date(updated_at).toISOString() : undefined, // ✅ Добавлено
-    author: {
+    provider: {
       '@type': 'Organization',
       name: 'Агентство активной рекламы КрасРМ',
       url: SITE_URL,
@@ -49,17 +47,18 @@ export function generateNomenclatureStructuredData(
         }
       : undefined,
     image: images.length > 0 ? images : undefined,
-    offers: {
-      '@type': 'Offer',
-      price: pricePerMonth || '0',
-      priceCurrency: 'RUB',
-      availability: 'https://schema.org/InStock',
-      url: productUrl,
-      seller: {
-        '@type': 'Organization',
-        name: 'Агентство активной рекламы КрасРМ',
-      },
-    },
+    offers: hasPrice
+      ? {
+          '@type': 'Offer',
+          price: String(pricePerMonth),
+          priceCurrency: 'RUB',
+          url: productUrl,
+          seller: {
+            '@type': 'Organization',
+            name: 'Агентство активной рекламы КрасРМ',
+          },
+        }
+      : undefined,
     additionalProperty: [
       {
         '@type': 'PropertyValue',
@@ -69,7 +68,7 @@ export function generateNomenclatureStructuredData(
       {
         '@type': 'PropertyValue',
         name: 'Тип места',
-        value: nomenclature.typeOfPlace,
+        value: nomenclature.typeOfPlace.name,
       },
       ...(nomenclature.legalEntity?.name
         ? [

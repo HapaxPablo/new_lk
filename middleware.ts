@@ -37,7 +37,7 @@ export async function middleware(request: NextRequest) {
     const newUrl = new URL('/nomenclatures', request.url)
     newUrl.search = request.nextUrl.search // Сохраняем query параметры
 
-    return NextResponse.redirect(newUrl)
+    return NextResponse.redirect(newUrl, 301)
   }
   if (isAuthRoute && session.user) {
     return NextResponse.redirect(new URL('/nomenclatures', request.url))

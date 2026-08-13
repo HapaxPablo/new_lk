@@ -17,6 +17,7 @@ import { FAQ } from "../components/FAQ"
 import { ICitiesResponse } from "@/types/cities"
 import { BreadcrumbJsonLd } from "@/components/seo/BreadcrumbJsonLd"
 import { declineCity } from "@/utils"
+import { SITE_URL } from '@/lib/configs/config-meta/configMetaData'
 
 interface PlacesPageProps {
     params: Promise<{
@@ -39,14 +40,28 @@ async function getCityData(slug: string): Promise<{ name: string } | null> {
 }
 
 export async function generateMetadata(props: PlacesPageProps): Promise<Metadata> {
-    const city = await getCityData((await props.params).slug)
+    const slug = (await props.params).slug
+    const city = await getCityData(slug)
     const cityName = city?.name || 'города'
     const cityGenitive = declineCity(cityName, 'genitive')
     // console.log('City name for metadata:', cityName)
     // console.log('City name in genitive:', cityGenitive)
+    const canonicalUrl = `${SITE_URL}/places/${slug}`
+    const title = `Indoor реклама в торговых центрах и магазинах в ${cityGenitive} | «RMC»`
+    const description = `Размещение индор рекламы в магазинах и торговых центрах в ${cityGenitive}. Звуковая и видео реклама внутри помещений. Звоните: ☎ 8 800 222 59 38`
+
     return {
-        title: `Indoor реклама в торговых центрах и магазинах в ${cityGenitive} | «RMC»`,
-        description: `Размещение индор рекламы в магазинах и торговых центрах в ${cityGenitive}. Звуковая и видео реклама внутри помещений. Звоните: ☎ 8 800 222 59 38`,
+        title,
+        description,
+        alternates: { canonical: canonicalUrl },
+        openGraph: {
+            title,
+            description,
+            url: canonicalUrl,
+            images: [`${SITE_URL}/og-logo.jpg`],
+            locale: 'ru_RU',
+            type: 'website',
+        },
     }
 }
 
@@ -72,9 +87,9 @@ async function PlacesCityPage(props: PlacesPageProps) {
         // console.log('minPrice from response:', minPrice)
 
         const breadcrumbItems = [
-            { name: 'Главная', url: '/' },
-            { name: 'Площадки для рекламы', url: '/nomenclatures' },
-            { name: cityFromResponse, url: `/places/${slug}` },
+            { name: 'Главная', url: SITE_URL },
+            { name: 'Площадки для рекламы', url: `${SITE_URL}/nomenclatures` },
+            { name: cityFromResponse, url: `${SITE_URL}/places/${slug}` },
         ]
 
         return (

@@ -23,18 +23,15 @@ function staticEntries(): MetadataRoute.Sitemap {
     changeFrequency: MetadataRoute.Sitemap[number]['changeFrequency']
     priority: number
   }> = [
-    { path: '/', changeFrequency: 'weekly', priority: 1 },
     { path: '/nomenclatures', changeFrequency: 'daily', priority: 0.95 },
     { path: '/brands', changeFrequency: 'weekly', priority: 0.85 },
     { path: '/tenants', changeFrequency: 'weekly', priority: 0.75 },
-    { path: '/places', changeFrequency: 'daily', priority: 0.9 },
     { path: '/about', changeFrequency: 'monthly', priority: 0.8 },
     { path: '/accreditation', changeFrequency: 'monthly', priority: 0.85 },
   ]
 
   return routes.map(({ path, changeFrequency, priority }) => ({
     url: absoluteSitePath(path),
-    lastModified: new Date(),
     changeFrequency,
     priority,
   }))
@@ -47,8 +44,6 @@ export async function buildSitemapEntries(): Promise<MetadataRoute.Sitemap> {
   console.info(`[sitemap] Building for ${siteUrl}, API base: ${apiBase}`)
 
   const entries: MetadataRoute.Sitemap = [...staticEntries()]
-  const generatedAt = new Date()
-
   try {
     // Последовательная загрузка для снижения нагрузки на API
     console.info('[sitemap] Step 1/4: Fetching nomenclatures...')
@@ -94,7 +89,6 @@ export async function buildSitemapEntries(): Promise<MetadataRoute.Sitemap> {
       seen.add(url)
       entries.push({
         url,
-        lastModified: generatedAt,
         changeFrequency: 'weekly',
         priority: 0.95,
       })
@@ -120,7 +114,6 @@ export async function buildSitemapEntries(): Promise<MetadataRoute.Sitemap> {
       seen.add(url)
       entries.push({
         url,
-        lastModified: generatedAt,
         changeFrequency: 'weekly',
         priority: 0.95,
       })
@@ -146,7 +139,6 @@ export async function buildSitemapEntries(): Promise<MetadataRoute.Sitemap> {
       seen.add(url)
       entries.push({
         url,
-        lastModified: generatedAt,
         changeFrequency: 'weekly',
         priority: 0.95,
       })
@@ -172,7 +164,6 @@ export async function buildSitemapEntries(): Promise<MetadataRoute.Sitemap> {
       seen.add(url)
       entries.push({
         url,
-        lastModified: generatedAt,
         changeFrequency: 'daily',
         priority: 0.95,
       })

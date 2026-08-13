@@ -14,6 +14,13 @@ export const metadata: Metadata = {
   title: 'О компании RMC — Indoor реклама',
   description:
     'Размещение рекламы в супермаркетах и ТЦ по всей России. Аудио и видеореклама.',
+  alternates: {
+    canonical: `${SITE_URL}/about`,
+  },
+  openGraph: {
+    url: `${SITE_URL}/about`,
+    images: [`${SITE_URL}/og-logo.jpg`],
+  },
 }
 
 export default async function AboutPage() {

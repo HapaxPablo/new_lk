@@ -23,17 +23,18 @@ export function generateNomenclatureMetadata({
 
   // Получаем адрес из main_info или других полей
   const fullName = formatPlaceTitle(nomenclature, 'full')
+  const metaName = formatPlaceTitle(nomenclature, 'meta')
   // console.log('fullName generateNomenclatureStructuredData', fullName)
 
   // Шаблонный title для карточки товара
-  const title = `Размещение Indoor рекламы в помещении ${fullName}`
+  const title = `Размещение Indoor рекламы в помещении ${metaName} | RMC`
 
   // Шаблонный h1 (будет использоваться на странице)
   const h1 = fullName
 
   // Шаблонный description
   const phoneNumber = '8 800 222 59 38' // Можно вынести в конфиг
-  const description = `Размещение аудио и видеорекламы в помещении по адресу ${fullName}. Звоните: ☎ ${phoneNumber}`
+  const description = `Размещение аудио и видеорекламы в ${metaName}. Звоните: ☎ ${phoneNumber}`
 
   const canonicalUrl = `${SITE_URL}/nomenclatures/${id}`
 
@@ -53,6 +54,7 @@ export function generateNomenclatureMetadata({
       'indoor реклама',
       'реклама в помещении',
       fullName,
+      metaName,
       // main_info.name,
       String(article),
       brand?.name || '',
@@ -80,7 +82,7 @@ export function generateNomenclatureMetadata({
           ]
         : [
             {
-              url: `${SITE_URL}/logo_footer.svg`,
+              url: `${SITE_URL}/og-logo.jpg`,
               width: 1200,
               height: 630,
               alt: 'RMC Indoor реклама',
@@ -92,7 +94,7 @@ export function generateNomenclatureMetadata({
       card: 'summary_large_image',
       title,
       description,
-      images: mainImage ? [mainImage] : [`${SITE_URL}/logo_footer.svg`],
+      images: mainImage ? [mainImage] : [`${SITE_URL}/og-logo.jpg`],
     },
     alternates: {
       canonical: canonicalUrl,

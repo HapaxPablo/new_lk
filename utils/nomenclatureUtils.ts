@@ -160,7 +160,7 @@ export function declineCity(city: string, caseType: CaseType) {
   }
 }
 
-export type TitleVariant = 'full' | 'compact'
+export type TitleVariant = 'full' | 'compact' | 'meta'
 
 export function formatPlaceTitle(
   place: INomenclatureDetailsItem,
@@ -185,6 +185,17 @@ export function formatPlaceTitle(
   const house = address.house
   const localityType = address.localityType || 'г.'
   const streetType = address.streetType || 'ул.'
+
+  // Вариант для метаданных: только сущность и город, без повторяющейся
+  // рекламной формулировки и подробного адреса.
+  if (variant === 'meta') {
+    const placeName = brandName ? `${placeType} «${brandName}»` : placeType
+    const cityNominative = declineCity(city, 'nominative')
+
+    return cityNominative
+      ? `${placeName}, ${localityType} ${cityNominative}`
+      : placeName
+  }
 
   // Компактный вариант – только тип места и город (в родительном падеже)
   if (variant === 'compact') {

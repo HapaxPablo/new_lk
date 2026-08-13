@@ -22,11 +22,35 @@ interface BrandsPageProps {
   }>
 }
 
-export async function generateMetadata(): Promise<Metadata> {
+export async function generateMetadata(
+  props: BrandsPageProps
+): Promise<Metadata> {
+  const searchParams = await props.searchParams
+  const hasQueryParameters = Object.values(searchParams).some(
+    (value) => typeof value === 'string' && value.length > 0
+  )
+  const canonicalUrl = `${SITE_URL}/brands`
+
   return {
     title: 'Бренды мест для размещения indoor-рекламы | «RMC»',
     description:
       'Каталог брендов торговых центров, сетей и площадок, где доступно размещение аудио- и видеорекламы.',
+    alternates: {
+      canonical: canonicalUrl,
+    },
+    openGraph: {
+      title: 'Бренды мест для размещения indoor-рекламы | «RMC»',
+      description:
+        'Каталог брендов торговых центров, сетей и площадок для размещения рекламы.',
+      url: canonicalUrl,
+      images: [`${SITE_URL}/og-logo.jpg`],
+      locale: 'ru_RU',
+      type: 'website',
+    },
+    robots: {
+      index: !hasQueryParameters,
+      follow: true,
+    },
   }
 }
 

@@ -92,20 +92,6 @@ export default function RootLayout({
         opens: '09:00',
         closes: '18:00',
       },
-      {
-        '@type': 'OpeningHoursSpecification',
-        dayOfWeek: [
-          'Понедельник',
-          'Вторник',
-          'Среда',
-          'Четверг',
-          'Пятница',
-          'Суббота',
-          'Воскресенье',
-        ],
-        opens: '09:00',
-        closes: '18:00',
-      },
     ],
     geo: {
       '@type': 'GeoCoordinates',

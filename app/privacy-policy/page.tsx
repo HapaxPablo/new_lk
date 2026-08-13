@@ -1,9 +1,13 @@
 import type { Metadata } from 'next'
 import styles from './page.module.scss'
+import { SITE_URL } from '@/lib/configs/config-meta/configMetaData'
 
 export const metadata: Metadata = {
   title: 'Политика конфиденциальности',
   description: 'Политика конфиденциальности и использования cookies на сайте',
+  alternates: {
+    canonical: `${SITE_URL}/privacy-policy`,
+  },
 }
 
 export default function PrivacyPolicy() {

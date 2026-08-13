@@ -85,11 +85,22 @@ export async function generateMetadata(
 
     const canonicalUrl = `${SITE_URL}/brands/${slug}`
 
+    const title = `Размещение звуковой и видео рекламы внутри помещений ${brand.name} | «RMC»`
+    const description = `Размещение Indoor рекламы в ${brand.name}. По цене от ${Number(brand.min_price)}р. Звуковая и видео реклама внутри помещений. Звоните: ☎ 8 800 222 59 38`
+
     return {
-      title: `Размещение звуковой и видео рекламы внутри помещений ${brand.name} | «RMC»`,
-      description: `Размещение Indoor рекламы в ${brand.name}. По цене от ${Number(brand.min_price)}р. Звуковая и видео реклама внутри помещений. Звоните: ☎ 8 800 222 59 38`,
+      title,
+      description,
       alternates: {
         canonical: canonicalUrl,
+      },
+      openGraph: {
+        title,
+        description,
+        url: canonicalUrl,
+        images: [`${SITE_URL}/og-logo.jpg`],
+        locale: 'ru_RU',
+        type: 'website',
       },
     }
   } catch (error) {

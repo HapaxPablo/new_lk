@@ -10,15 +10,16 @@ Disallow: /*.json$
 Disallow: /*?*sort=
 Disallow: /*?*filter=
 
-# Specific rules for Yandex
-User-agent: Yandex
-Allow: /
-Disallow: /api/
-
-# Specific rules for Google
-User-agent: Googlebot
-Allow: /
-Disallow: /api/
+Disallow: /*?*page=
+Disallow: /*?*offset=
+Disallow: /*?*limit=
+Disallow: /*?*search=
+Disallow: /*?*searchValue=
+Disallow: /*?*brand_name=
+Disallow: /*?*brand_id=
+Disallow: /*?*status=
+Disallow: /*?*type_of_place=
+Disallow: /*?*city_slug=
 
 # Sitemap location
 Sitemap: https://krasrm.com/sitemap.xml

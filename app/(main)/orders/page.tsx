@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
-import { FileText, ListMusic, Plus, Radio } from 'lucide-react'
+import { FileText, Import, ListMusic, Plus, Radio } from 'lucide-react'
 import OrdersTable from './components/Orderstable'
 
 export default function Page() {
@@ -35,7 +35,7 @@ export default function Page() {
               href="/orders/bg/create"
               className="inline-flex items-center justify-center gap-2 rounded-xl border border-slate-600 px-4 py-2.5 text-sm font-semibold text-white! transition hover:border-slate-400 hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-white"
             >
-              <Radio size={17} /> Создать фоновый заказ
+              <Plus size={17} /> Создать фоновый заказ
             </Link>
           </div>
         </div>
@@ -48,7 +48,7 @@ export default function Page() {
         >
           <div className="flex items-start gap-4">
             <span className="rounded-xl bg-blue-50 p-3 text-blue-700">
-              <FileText size={22} />
+              <Import size={22} />
             </span>
             <div>
               <h2 className="font-semibold text-slate-900">Файлы</h2>

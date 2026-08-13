@@ -53,7 +53,7 @@ export async function generateMetadata(): Promise<Metadata> {
         ...metadata,
         robots: {
             index: false,  // ← Исключить корзину из индексации
-            follow: true,
+            follow: false,
         },
     }
 }

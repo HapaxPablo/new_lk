@@ -12,6 +12,10 @@ export const metadata: Metadata = {
         description: 'Полная информация о компании ООО "АРЭМСИ 24" для юридических целей и деловых контактов',
         type: 'website',
         url: 'https://krasrm.com/accreditation',
+        images: [`${SITE_URL}/og-logo.jpg`],
+    },
+    alternates: {
+        canonical: `${SITE_URL}/accreditation`,
     },
 }
 

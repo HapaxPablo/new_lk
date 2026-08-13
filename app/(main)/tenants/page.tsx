@@ -31,10 +31,33 @@ interface TenantsPageProps {
   }>
 }
 
-export async function generateMetadata(): Promise<Metadata> {
+export async function generateMetadata(
+  props: TenantsPageProps
+): Promise<Metadata> {
+  const searchParams = await props.searchParams
+  const hasQueryParameters = Object.values(searchParams).some(
+    (value) => typeof value === 'string' && value.length > 0
+  )
+  const canonicalUrl = `${SITE_URL}/tenants`
+
   return {
     title: 'Арендаторы | Личный кабинет',
     description: 'Каталог арендаторов рекламных площадок',
+    alternates: {
+      canonical: canonicalUrl,
+    },
+    openGraph: {
+      title: 'Арендаторы | RMC',
+      description: 'Каталог арендаторов рекламных площадок.',
+      url: canonicalUrl,
+      images: [`${SITE_URL}/og-logo.jpg`],
+      locale: 'ru_RU',
+      type: 'website',
+    },
+    robots: {
+      index: !hasQueryParameters,
+      follow: true,
+    },
   }
 }
 

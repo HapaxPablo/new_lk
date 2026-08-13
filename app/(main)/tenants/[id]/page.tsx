@@ -151,9 +151,22 @@ export async function generateMetadata(
       }
     }
 
+    const canonicalUrl = `${SITE_URL}/tenants/${id}`
+
     return {
       title: `${tenantName} | Арендаторы`,
       description: `Места размещения рекламы, где представлен арендатор «${tenantName}».`,
+      alternates: {
+        canonical: canonicalUrl,
+      },
+      openGraph: {
+        title: `${tenantName} | Арендаторы`,
+        description: `Места размещения рекламы, где представлен арендатор «${tenantName}».`,
+        url: canonicalUrl,
+        images: [`${SITE_URL}/og-logo.jpg`],
+        locale: 'ru_RU',
+        type: 'website',
+      },
     }
   } catch (error) {
     console.error('Error generating tenant metadata:', error)

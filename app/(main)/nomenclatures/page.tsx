@@ -53,6 +53,9 @@ export async function generateMetadata(
   const searchParams = await props.searchParams
   const search = searchParams.search || ''
   const brand_name = searchParams.brand_name || ''
+  const hasQueryParameters = Object.values(searchParams).some(
+    (value) => typeof value === 'string' && value.length > 0
+  )
 
   const metadata = generateNomenclaturesListMetadata({
     search,
@@ -66,6 +69,10 @@ export async function generateMetadata(
     ...metadata,
     alternates: {
       canonical: canonicalUrl,
+    },
+    robots: {
+      index: !hasQueryParameters,
+      follow: true,
     },
   }
 }
