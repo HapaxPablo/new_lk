@@ -94,7 +94,7 @@ const getNomenclatureById = cache(
     for (let attempt = 0; attempt < 2; attempt += 1) {
       try {
         const response = await fetch(
-          `${process.env.API_1C_URL}api/nomenclatures/web/${slug}`,
+          `${process.env.API_1C_URL}api/nomenclatures/web/${encodeURIComponent(slug)}/`,
           {
             cache: 'no-store',
           }

@@ -24,7 +24,7 @@ export async function GET(
 
     const response = await HttpClient1C.server(request).get<
       ApiResult<INomenclatureDetailsItem>
-    >(`api/nomenclatures/web/${slug}`)
+    >(`api/nomenclatures/web/${encodeURIComponent(slug)}/`)
 
     // console.log('Route response:', JSON.stringify(response))
     // console.log('Route response.ok:', (response as any).ok)

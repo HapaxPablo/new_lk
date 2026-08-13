@@ -158,7 +158,13 @@ export default function FilesTable({
                     selection.length > 0 && selection.length < files.length
                   }
                   onChange={toggleAll}
-                  styles={{ input: { borderWidth: 4, borderColor: 'black' } }}
+                  styles={{
+                    input: {
+                      borderWidth: 4,
+                      borderColor: 'black',
+                      cursor: 'pointer',
+                    },
+                  }}
                   size="md"
                 />
               </Table.Th>
@@ -189,6 +195,7 @@ export default function FilesTable({
                       checked={isSelected}
                       onChange={() => toggleRow(file.id)}
                       onClick={(event) => event.stopPropagation()}
+                      styles={{ input: { cursor: 'pointer' } }}
                     />
                   </Table.Td>
                   <Table.Td className="font-medium text-slate-800">
