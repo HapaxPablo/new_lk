@@ -1,5 +1,6 @@
 import Image from 'next/image'
 import { IBrandDetail } from '@/types/brands'
+import { EntityCard } from '@/components/ui/card/EntityCard'
 
 interface HeroProps {
   brand: IBrandDetail
@@ -14,7 +15,7 @@ export function Hero({ brand, placesCount }: HeroProps) {
       </div>
 
       <div className="relative mx-auto grid max-w-7xl gap-10 px-4 py-14 lg:grid-cols-[0.9fr_1.1fr] lg:items-center">
-        <div className="rounded-3xl bg-white p-8 shadow-2xl">
+        <EntityCard className="p-8 shadow-2xl">
           <div className="flex h-48 items-center justify-center rounded-3xl bg-slate-50 ring-1 ring-slate-200">
             {brand.logotype ? (
               <div className="relative h-full w-full">
@@ -29,7 +30,7 @@ export function Hero({ brand, placesCount }: HeroProps) {
               </div>
             ) : (
               <div className="text-center">
-                <div className="text-5xl font-black tracking-wide text-[#18335f]">
+                <div className="text-5xl font-black tracking-wide text-[#18335f]!">
                   {brand.name?.toUpperCase()}
                 </div>
                 <div className="mx-auto mt-3 h-2 w-40 rounded-full bg-sky-400" />
@@ -38,21 +39,21 @@ export function Hero({ brand, placesCount }: HeroProps) {
           </div>
 
           <div className="mt-6 grid grid-cols-3 gap-3">
-            <div className="rounded-2xl bg-slate-50 p-4 text-center ring-1 ring-slate-200">
+            <EntityCard tone="muted" className="rounded-2xl p-4 text-center">
               <div className="text-2xl font-black text-[#ef5350]">
                 {placesCount}
               </div>
               <div className="mt-1 text-xs font-semibold text-slate-500">
                 мест размещения
               </div>
-            </div>
-            <div className="rounded-2xl bg-slate-50 p-4 text-center ring-1 ring-slate-200">
+            </EntityCard>
+            <EntityCard tone="muted" className="rounded-2xl p-4 text-center">
               <div className="text-2xl font-black text-[#ef5350]">Indoor</div>
               <div className="mt-1 text-xs font-semibold text-slate-500">
                 формат рекламы
               </div>
-            </div>
-            <div className="rounded-2xl bg-slate-50 p-4 text-center ring-1 ring-slate-200">
+            </EntityCard>
+            <EntityCard tone="muted" className="rounded-2xl p-4 text-center">
               <div className="text-2xl font-black text-[#ef5350]">
                 {brand.min_price
                   ? `от ${Math.round(Number(brand.min_price))} ₽`
@@ -61,9 +62,9 @@ export function Hero({ brand, placesCount }: HeroProps) {
               <div className="mt-1 text-xs font-semibold text-slate-500">
                 в день
               </div>
-            </div>
+            </EntityCard>
           </div>
-        </div>
+        </EntityCard>
 
         <div>
           <div className="mb-4 inline-flex rounded-full bg-white/15 px-4 py-2 text-sm font-bold text-white ring-1 ring-white/20">
@@ -83,7 +84,7 @@ export function Hero({ brand, placesCount }: HeroProps) {
           <div className="mt-8 flex flex-wrap gap-3">
             <a
               href="#places"
-              className="rounded-xl bg-white px-6 py-3 text-sm font-black text-[#18335f] shadow-lg hover:bg-slate-100"
+              className="rounded-xl bg-white px-6 py-3 text-sm font-black text-[#18335f]! shadow-lg hover:bg-slate-100"
             >
               Смотреть места размещения
             </a>

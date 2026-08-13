@@ -1,4 +1,5 @@
 import ModalFeedBack from '@/components/nomenclatureById/modalFeedBack/ModalFeedBack'
+import { EntityCard } from '@/components/ui/card/EntityCard'
 
 interface CTABriefBrandProps {
   brandName: string
@@ -19,9 +20,9 @@ export function CTABriefBrand({ brandName, brandId }: CTABriefBrandProps) {
           </p>
         </div>
 
-        <div className="rounded-3xl bg-white p-5 shadow-xl">
+        <EntityCard className="p-5 shadow-xl">
           <ModalFeedBack pathName="brands" brandId={brandId} />
-        </div>
+        </EntityCard>
       </div>
     </section>
   )

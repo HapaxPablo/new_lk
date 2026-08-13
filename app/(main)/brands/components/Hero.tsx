@@ -1,4 +1,5 @@
 import { SearchForm } from '@/components/search-form/SearchForm'
+import { EntityCard } from '@/components/ui/card/EntityCard'
 
 interface HeroProps {
   totalBrands: number
@@ -31,7 +32,7 @@ export function Hero({ totalBrands, minPrice }: HeroProps) {
           <div className="mt-8 flex flex-wrap gap-3">
             <a
               href="#brands"
-              className="rounded-xl bg-white px-6 py-3 text-sm font-black text-[#18335f] shadow-lg hover:bg-slate-100"
+              className="rounded-xl bg-white px-6 py-3 text-sm font-black text-[#18335f]! shadow-lg hover:bg-slate-100"
             >
               Смотреть бренды
             </a>
@@ -45,26 +46,26 @@ export function Hero({ totalBrands, minPrice }: HeroProps) {
           </div>
 
           <div className="mt-8 grid max-w-3xl grid-cols-2 gap-3 sm:grid-cols-3">
-            <div className="rounded-2xl bg-white/10 p-4 ring-1 ring-white/15">
+            <EntityCard tone="inverted" className="rounded-2xl p-4">
               <div className="text-2xl font-black text-white">
                 {totalBrands}+
               </div>
               <div className="mt-1 text-xs text-white/75">
                 брендов в каталоге
               </div>
-            </div>
-            <div className="rounded-2xl bg-white/10 p-4 ring-1 ring-white/15">
+            </EntityCard>
+            <EntityCard tone="inverted" className="rounded-2xl p-4">
               <div className="text-2xl font-black text-white">
                 {minPrice ? `от ${Math.round(minPrice)} ₽` : '—'}
               </div>
               <div className="mt-1 text-xs text-white/75">за день рекламы</div>
-            </div>
-            <div className="rounded-2xl bg-white/10 p-4 ring-1 ring-white/15">
+            </EntityCard>
+            <EntityCard tone="inverted" className="rounded-2xl p-4">
               <div className="text-2xl font-black text-white">Indoor</div>
               <div className="mt-1 text-xs text-white/75">
                 формат размещения
               </div>
-            </div>
+            </EntityCard>
           </div>
           {/*
             TODO: в макете есть блок "551+ точка размещения" (суммарное кол-во мест
@@ -73,7 +74,7 @@ export function Hero({ totalBrands, minPrice }: HeroProps) {
           */}
         </div>
 
-        <div className="rounded-3xl bg-white p-6 shadow-2xl">
+        <EntityCard className="p-6 shadow-2xl">
           <div>
             <div className="text-xl font-black text-slate-900">
               Найти бренд площадки
@@ -97,7 +98,7 @@ export function Hero({ totalBrands, minPrice }: HeroProps) {
             Сейчас /api/brands/assigned поддерживает только search, limit, offset —
             нужно добавить city / type_of_place на бэке и в route.ts, чтобы вернуть эти фильтры.
           */}
-        </div>
+        </EntityCard>
       </div>
     </section>
   )

@@ -1,3 +1,5 @@
+import { EntityCard } from '@/components/ui/card/EntityCard'
+
 const items: [string, string][] = [
   [
     'Ритейл и магазины',
@@ -35,13 +37,14 @@ export function BrandAudience({ brandName }: { brandName: string }) {
 
           <div className="grid gap-4 sm:grid-cols-2">
             {items.map(([title, text]) => (
-              <div
+              <EntityCard
                 key={title}
-                className="rounded-3xl bg-slate-50 p-6 ring-1 ring-slate-200"
+                tone="muted"
+                className="p-6"
               >
                 <h3 className="font-black text-slate-900">{title}</h3>
                 <p className="mt-2 text-sm leading-7 text-slate-600">{text}</p>
-              </div>
+              </EntityCard>
             ))}
           </div>
         </div>

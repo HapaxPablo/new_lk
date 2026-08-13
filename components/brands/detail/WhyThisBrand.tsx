@@ -1,3 +1,5 @@
+import { EntityCard } from '@/components/ui/card/EntityCard'
+
 const items: [string, string, string][] = [
   [
     '🎯',
@@ -36,9 +38,9 @@ export function WhyThisBrand({ brandName }: { brandName: string }) {
 
         <div className="mt-8 grid gap-5 md:grid-cols-4">
           {items.map(([icon, title, text], index) => (
-            <div
+            <EntityCard
               key={title}
-              className="rounded-3xl bg-white p-6 shadow-sm ring-1 ring-slate-200"
+              className="p-6"
             >
               <div
                 className={`mb-4 flex h-12 w-12 items-center justify-center rounded-2xl text-xl text-white ${
@@ -55,7 +57,7 @@ export function WhyThisBrand({ brandName }: { brandName: string }) {
               </div>
               <h3 className="font-black text-slate-900">{title}</h3>
               <p className="mt-2 text-sm leading-7 text-slate-600">{text}</p>
-            </div>
+            </EntityCard>
           ))}
         </div>
       </div>

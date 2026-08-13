@@ -1,10 +1,8 @@
-import { IBrandListItem } from '@/types/brands'
-import { Building } from 'lucide-react'
-import styles from './CardBrand.module.scss'
 import Image from 'next/image'
-import { InfoRow } from '../InfoRow'
-import { LinkButton } from '../button/LinkButton'
 import Link from 'next/link'
+import { IBrandListItem } from '@/types/brands'
+import { EntityCard } from './EntityCard'
+import styles from './CardBrand.module.scss'
 
 interface CardBrandProps {
   className?: string
@@ -15,48 +13,51 @@ export const CardBrand: React.FC<CardBrandProps> = ({
   item,
   className = '',
 }) => {
+  const href = `/brands/${item.slug}`
+
   return (
-    <article className={`${styles.card} ${className}`}>
-      <Link href={`/brands/${item.slug}`} className={styles.cardLink}>
-        <div className={styles.cardContent}>
-          <div className={styles.infoSection}>
-            <div className={styles.imageWrapper}>
-              {item.logotype ? (
-                <Image
-                  src={item.logotype}
-                  alt={`Бренд ${item.name || 'Бренд'}`}
-                  fill
-                  loading="lazy"
-                  className={styles.image}
-                />
-              ) : (
-                <div className={styles.imagePlaceholder}>
-                  <Image
-                    src="/og-logo.jpg"
-                    alt="Логотип"
-                    width={200}
-                    height={100}
-                    loading="lazy"
-                    className="object-contain"
-                  />
-                </div>
-              )}
-            </div>
-            <InfoRow
-              icon={<Building size={16} />}
-              label=""
-              value={item.name ? item.name : '-'}
-              valueClassName={styles.nameText}
+    <EntityCard
+      className={`${styles.card} ${className}`.trim()}
+      footer={
+        <>
+          {/* <div>
+            <div className={styles.footerLabel}>Каталог</div>
+            <div className={styles.footerValue}>Площадки</div>
+          </div> */}
+          <Link href={href} className={styles.detailButton}>
+            Подробнее
+          </Link>
+        </>
+      }
+      footerClassName={styles.footer}
+    >
+      <Link href={href} className={styles.cardLink}>
+        <div className={styles.media}>
+          {item.logotype ? (
+            <Image
+              src={item.logotype}
+              alt={`Логотип ${item.name || 'бренда'}`}
+              fill
+              sizes="(max-width: 767px) 100vw, (max-width: 1280px) 50vw, 320px"
+              className={styles.image}
+              loading="lazy"
             />
-          </div>
+          ) : (
+            <span className={styles.imagePlaceholder}>
+              {item.name || 'Бренд'}
+            </span>
+          )}
+          <div className={styles.imageOverlay} />
+          <span className={styles.badge}>Бренд</span>
+        </div>
+
+        <div className={styles.content}>
+          <h3 className={styles.title}>{item.name || 'Бренд'}</h3>
+          <p className={styles.description}>
+            Доступные площадки и адреса для размещения рекламы.
+          </p>
         </div>
       </Link>
-
-      <div className={styles.actionsSection}>
-        <LinkButton href={`/brands/${item.slug}`} variant="default">
-          Подробнее
-        </LinkButton>
-      </div>
-    </article>
+    </EntityCard>
   )
 }

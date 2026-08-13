@@ -1,4 +1,5 @@
 import { BrandNomenclatures } from '@/components/brands/nomenclatures/BrandNomenclaturesWrapper'
+import { EntityCard } from '@/components/ui/card/EntityCard'
 
 interface BrandPlacesSectionProps {
   brandId: string
@@ -27,9 +28,9 @@ export function BrandPlacesSection({
           </div>
         </div>
 
-        <div className="rounded-3xl bg-slate-50 p-4 ring-1 ring-slate-200 md:p-6">
+        <EntityCard tone="muted" className="p-4 md:p-6">
           <BrandNomenclatures brandId={brandId} />
-        </div>
+        </EntityCard>
       </div>
     </section>
   )

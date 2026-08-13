@@ -1,8 +1,9 @@
 import { SearchForm } from '@/components/search-form/SearchForm'
+import { EntityCard } from '@/components/ui/card/EntityCard'
 
 export function BrandsFilterPanel() {
   return (
-    <div className="mb-8 overflow-hidden rounded-3xl bg-white shadow-sm ring-1 ring-slate-200">
+    <EntityCard as="section" className="mb-8">
       <div className="p-4">
         <SearchForm
           placeholder="Введите название бренда"
@@ -21,6 +22,6 @@ export function BrandsFilterPanel() {
         app/api/brands/assigned/route.ts и на стороне 1С API — сейчас там
         принимаются только limit, offset и search, поэтому эти элементы не добавлены.
       */}
-    </div>
+    </EntityCard>
   )
 }

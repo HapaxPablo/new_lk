@@ -1,4 +1,5 @@
 import ModalFeedBack from '@/components/nomenclatureById/modalFeedBack/ModalFeedBack'
+import { EntityCard } from '@/components/ui/card/EntityCard'
 
 export function CTABrands() {
   return (
@@ -14,9 +15,9 @@ export function CTABrands() {
           </p>
         </div>
 
-        <div className="rounded-3xl bg-white p-4 shadow-xl flex justify-center items-center ">
+        <EntityCard className="flex items-center justify-center p-4 shadow-xl">
           <ModalFeedBack pathName="brands" />
-        </div>
+        </EntityCard>
       </div>
       {/*
         TODO: в макете форма заявки содержит select "Интересующий город".

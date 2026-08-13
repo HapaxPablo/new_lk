@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { IBrandListItem, IBrandListResponse } from '@/types/brands'
+import { EntityCard } from '@/components/ui/card/EntityCard'
 
 interface SimilarBrandsProps {
   excludeSlug: string
@@ -49,10 +50,11 @@ export async function SimilarBrands({ excludeSlug }: SimilarBrandsProps) {
 
         <div className="mt-8 grid gap-4 md:grid-cols-4">
           {brands.map((brand) => (
-            <Link
+            <EntityCard
+              as={Link}
               key={brand.id}
               href={`/brands/${brand.slug}`}
-              className="rounded-3xl bg-white p-5 shadow-sm ring-1 ring-slate-200 hover:ring-[#ef5350]"
+              className="block p-5 hover:ring-[#ef5350]"
             >
               <div className="relative flex h-28 items-center justify-center overflow-hidden rounded-2xl bg-slate-50">
                 {brand.logotype ? (
@@ -73,7 +75,7 @@ export async function SimilarBrands({ excludeSlug }: SimilarBrandsProps) {
               <p className="mt-2 text-sm text-slate-500">
                 Indoor-реклама и размещение
               </p>
-            </Link>
+            </EntityCard>
           ))}
         </div>
       </div>

@@ -1,5 +1,7 @@
 // Блок носит справочный характер: у API нет фильтрации брендов по категориям,
 // поэтому карточки ниже не кликабельны и не связаны с queryparams.
+import { EntityCard } from '@/components/ui/card/EntityCard'
+
 const categories: [string, string, string, string][] = [
   [
     'ТЦ',
@@ -44,9 +46,9 @@ export function BrandCategories() {
 
         <div className="mt-8 grid gap-4 md:grid-cols-4">
           {categories.map(([icon, title, text, color]) => (
-            <div
+            <EntityCard
               key={title}
-              className="rounded-3xl bg-white p-6 shadow-sm ring-1 ring-slate-200"
+              className="p-6"
             >
               <div
                 className={`mb-5 flex h-12 w-12 items-center justify-center rounded-2xl text-xl text-white ${color}`}
@@ -55,7 +57,7 @@ export function BrandCategories() {
               </div>
               <h3 className="text-xl font-black">{title}</h3>
               <p className="mt-3 text-sm leading-7 text-slate-600">{text}</p>
-            </div>
+            </EntityCard>
           ))}
         </div>
       </div>

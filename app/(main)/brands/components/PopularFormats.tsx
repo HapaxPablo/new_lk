@@ -1,3 +1,5 @@
+import { EntityCard } from '@/components/ui/card/EntityCard'
+
 export function PopularFormats() {
   return (
     <section className="bg-slate-900 text-white">
@@ -16,7 +18,7 @@ export function PopularFormats() {
         </div>
 
         <div className="mt-8 grid gap-5 md:grid-cols-3">
-          <div className="rounded-3xl bg-white/10 p-6 ring-1 ring-white/10">
+          <EntityCard tone="inverted" className="p-6">
             <div className="mb-5 flex h-12 w-12 items-center justify-center rounded-2xl bg-[#ef5350] text-xl text-white">
               ▶
             </div>
@@ -25,9 +27,9 @@ export function PopularFormats() {
               Трансляция роликов через громкоговорители торговых центров и
               сетевых площадок.
             </p>
-          </div>
+          </EntityCard>
 
-          <div className="rounded-3xl bg-white/10 p-6 ring-1 ring-white/10">
+          <EntityCard tone="inverted" className="p-6">
             <div className="mb-5 flex h-12 w-12 items-center justify-center rounded-2xl bg-[#6d5df6] text-xl text-white">
               ▣
             </div>
@@ -36,9 +38,9 @@ export function PopularFormats() {
               Размещение видеороликов на indoor-экранах внутри торговых центров
               и общественных пространств.
             </p>
-          </div>
+          </EntityCard>
 
-          <div className="rounded-3xl bg-white/10 p-6 ring-1 ring-white/10">
+          <EntityCard tone="inverted" className="p-6">
             <div className="mb-5 flex h-12 w-12 items-center justify-center rounded-2xl bg-white text-xl text-[#18335f]">
               ★
             </div>
@@ -47,7 +49,7 @@ export function PopularFormats() {
               Подбор нескольких площадок одного бренда или разных брендов для
               увеличения охвата.
             </p>
-          </div>
+          </EntityCard>
         </div>
       </div>
     </section>
