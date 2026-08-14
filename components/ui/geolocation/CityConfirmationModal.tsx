@@ -2,15 +2,16 @@
 
 import { useState, useEffect } from 'react'
 import { City } from '@/hooks/useCityDetection'
+import { type PopularCity } from '@/lib/api/geocoding'
 import { useModal } from '@/providers/modal/ModalProvider'
 import styles from './CityConfirmationModal.module.scss'
 
 interface Props {
   detectedCity: City | null
-  citiesList: string[]
+  citiesList: PopularCity[]
   loading: boolean
   onConfirm: (isCorrect: boolean) => void
-  onSelectCity: (city: string) => void
+  onSelectCity: (city: PopularCity) => void
 }
 
 export function CityConfirmationModal({
@@ -22,7 +23,7 @@ export function CityConfirmationModal({
 }: Props) {
   const [showCitySelector, setShowCitySelector] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
-  const [filteredCities, setFilteredCities] = useState<string[]>(citiesList)
+  const [filteredCities, setFilteredCities] = useState<PopularCity[]>(citiesList)
 
   const { closeModal } = useModal('city_confirmation')
 
@@ -32,7 +33,7 @@ export function CityConfirmationModal({
     } else {
       setFilteredCities(
         citiesList.filter((city) =>
-          city.toLowerCase().includes(searchQuery.toLowerCase())
+          city.name.toLowerCase().includes(searchQuery.toLowerCase())
         )
       )
     }
@@ -49,7 +50,8 @@ export function CityConfirmationModal({
     )
   }
 
-  if (showCitySelector) {
+  // Without coordinates, skip confirmation and offer manual city selection.
+  if (showCitySelector || !detectedCity) {
     return (
       <div className={styles.selectorContainer}>
         <h3 className={styles.title}>Выберите ваш город</h3>
@@ -67,14 +69,14 @@ export function CityConfirmationModal({
           {filteredCities.length > 0 ? (
             filteredCities.map((city) => (
               <button
-                key={city}
+                key={city.id}
                 onClick={() => {
                   onSelectCity(city)
                   closeModal()
                 }}
                 className={styles.cityItem}
               >
-                {city}
+                {city.name}
               </button>
             ))
           ) : (

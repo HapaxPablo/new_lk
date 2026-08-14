@@ -4,6 +4,24 @@ export interface City {
   country?: string
 }
 
+export interface PopularCity {
+  id: string
+  name: string
+  region: string
+  locality_type: string
+  timezone: string | null
+  slug: string
+  nomenclature_count: number
+}
+
+const FALLBACK_CITY_NAMES = [
+  'Москва',
+  'Санкт-Петербург',
+  'Новосибирск',
+  'Екатеринбург',
+  'Казань',
+]
+
 interface NominatimResponse {
   address: {
     city?: string
@@ -37,52 +55,32 @@ export async function geocodeByLatLng(lat: number, lng: number): Promise<City> {
 }
 
 // Получение списка популярных городов
-export async function fetchPopularCities(): Promise<string[]> {
-  // Можно получить из API или вернуть статический список
+export async function fetchPopularCities(): Promise<PopularCity[]> {
   try {
-    // Опционально: можно загружать список из вашего API
-    // const response = await fetch('/api/cities/popular');
-    // const data = await response.json();
-    // return data.cities;
+    const response = await fetch('/api/cities/popular/')
 
-    // Пока используем статический список популярных городов России
-    return [
-      'Москва',
-      'Санкт-Петербург',
-      'Новосибирск',
-      'Екатеринбург',
-      'Казань',
-      'Нижний Новгород',
-      'Красноярск',
-      'Челябинск',
-      'Самара',
-      'Уфа',
-      'Ростов-на-Дону',
-      'Омск',
-      'Краснодар',
-      'Воронеж',
-      'Пермь',
-      'Волгоград',
-      'Саратов',
-      'Тюмень',
-      'Тольятти',
-      'Ижевск',
-      'Барнаул',
-      'Иркутск',
-      'Хабаровск',
-      'Ярославль',
-      'Владивосток',
-    ]
+    if (!response.ok) {
+      throw new Error(`Ошибка загрузки городов: ${response.status}`)
+    }
+
+    const data = await response.json()
+
+    if (!Array.isArray(data)) {
+      throw new Error('Некорректный формат списка городов')
+    }
+
+    return data as PopularCity[]
   } catch (error) {
     console.error('Error fetching cities:', error)
-    // Возвращаем базовый список в случае ошибки
-    return [
-      'Москва',
-      'Санкт-Петербург',
-      'Новосибирск',
-      'Екатеринбург',
-      'Казань',
-    ]
+    return FALLBACK_CITY_NAMES.map((name) => ({
+      id: `fallback-${name}`,
+      name,
+      region: '',
+      locality_type: '',
+      timezone: null,
+      slug: name,
+      nomenclature_count: 0,
+    }))
   }
 }
 

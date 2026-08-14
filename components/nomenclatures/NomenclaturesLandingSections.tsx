@@ -1,20 +1,14 @@
 import { EntityCard } from '@/components/ui/card/EntityCard'
+import { type PopularCity } from '@/lib/api/geocoding'
 
 interface NomenclaturesLandingSectionsProps {
   totalItems: number
+  popularCities: PopularCity[]
 }
-
-const cities = [
-  'Красноярск',
-  'Новосибирск',
-  'Москва',
-  'Санкт-Петербург',
-  'Екатеринбург',
-  'Казань',
-]
 
 export function NomenclaturesLandingSections({
   totalItems,
+  popularCities,
 }: NomenclaturesLandingSectionsProps) {
   return (
     <>
@@ -41,7 +35,7 @@ export function NomenclaturesLandingSections({
               </a>
               <a
                 href="#brief"
-                className="rounded-xl border border-white/40 px-6 py-3 text-sm font-bold text-white hover:bg-white/10"
+                className="rounded-xl border border-white/40 px-6 py-3 text-sm font-bold text-white hover:bg-white/10 hover:text-white!"
               >
                 Получить подборку
               </a>
@@ -80,7 +74,7 @@ export function NomenclaturesLandingSections({
             </p>
             <a
               href="#catalog"
-              className="mt-6 block rounded-xl bg-[#ef5350] px-5 py-3 text-center text-sm font-black text-white shadow-md hover:bg-[#e14442]"
+              className="mt-6 block rounded-xl bg-[#ef5350] px-5 py-3 text-center text-sm font-black text-white shadow-md hover:bg-[#e14442] hover:text-white!"
             >
               Перейти к каталогу
             </a>
@@ -126,13 +120,16 @@ export function NomenclaturesLandingSections({
             Популярные города
           </h2>
           <div className="mt-7 flex flex-wrap gap-3">
-            {cities.map((city) => (
+            {popularCities.map((city) => (
               <a
-                key={city}
-                href="#catalog"
-                className="rounded-full bg-white px-5 py-3 text-sm font-bold text-[#18335f]! shadow-sm ring-1 ring-slate-200 hover:bg-[#18335f] hover:text-white"
+                key={city.id}
+                href={`/nomenclatures?city_slug=${encodeURIComponent(city.slug)}#catalog`}
+                className="rounded-full bg-white px-5 py-3 text-sm font-bold text-[#18335f]! shadow-sm ring-1 ring-slate-200 hover:bg-[#18335f] hover:text-white!"
               >
-                {city}
+                {city.name}
+                <span className="ml-1 text-slate-400">
+                  ({city.nomenclature_count})
+                </span>
               </a>
             ))}
           </div>
@@ -290,7 +287,7 @@ export function NomenclaturesSeoSections() {
           </div>
           <a
             href="#brief"
-            className="rounded-xl bg-white px-7 py-4 text-center text-sm font-black text-[#ef5350] shadow-lg hover:bg-slate-100"
+            className="rounded-xl bg-white px-7 py-4 text-center text-sm font-black text-slate-900! shadow-lg hover:bg-slate-100"
           >
             Получить медиаплан
           </a>

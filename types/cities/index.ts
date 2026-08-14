@@ -1,5 +1,6 @@
 export interface ICity {
   id: string
+  nomenclatureSlug?: string
   title?: string
   formattedAddress: {
     name: string | null

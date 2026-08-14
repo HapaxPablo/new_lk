@@ -9,6 +9,7 @@ import {
   useRef,
   useState,
 } from 'react'
+import Link from 'next/link'
 import { ComposableMap } from 'react-simple-maps'
 
 import { getNomenclatureTitle } from '@/utils/nomenclatureUtils'
@@ -62,6 +63,9 @@ export default function PlacesSimpleMap({
   cityName,
   selectedPlaceId,
   onPlaceSelect,
+  initialView: providedInitialView,
+  minZoom = MIN_ZOOM,
+  markerScale = 1,
 }: PlacesSimpleMapProps) {
   const [isMounted, setIsMounted] = useState(false)
   const [activePlaceId, setActivePlaceId] = useState<string | null>(null)
@@ -106,7 +110,10 @@ export default function PlacesSimpleMap({
       }),
     [places]
   )
-  const initialView = useMemo(() => getMapView(points), [points])
+  const initialView = useMemo(
+    () => providedInitialView ?? getMapView(points),
+    [points, providedInitialView]
+  )
   const view = camera ?? initialView
   const currentView = useRef<MapView | null>(null)
   const labelView = useDebouncedValue(view, LABEL_LOAD_DELAY)
@@ -197,11 +204,11 @@ export default function PlacesSimpleMap({
         const baseView = currentCamera ?? initialView
         return {
           ...baseView,
-          zoom: Math.max(MIN_ZOOM, Math.min(MAX_ZOOM, baseView.zoom + delta)),
+          zoom: Math.max(minZoom, Math.min(MAX_ZOOM, baseView.zoom + delta)),
         }
       })
     },
-    [clearLabels, initialView]
+    [clearLabels, initialView, minZoom]
   )
 
   const scheduleCameraUpdate = useCallback((nextView: MapView) => {
@@ -320,6 +327,7 @@ export default function PlacesSimpleMap({
         className={`h-full w-full touch-none ${
           isDragging ? 'cursor-grabbing' : 'cursor-grab'
         }`}
+        preserveAspectRatio="xMidYMid slice"
         projection="geoMercator"
         projectionConfig={{
           center: view.center,
@@ -391,6 +399,7 @@ export default function PlacesSimpleMap({
               point={point}
               isSelected={isSelected}
               isHighlighted={isSelected || hoveredPlaceId === point.place.id}
+              scale={markerScale}
               onSelect={selectPlace}
               onHoverChange={setHoveredPlaceId}
             />
@@ -433,27 +442,34 @@ export default function PlacesSimpleMap({
       </div>
 
       {activePlace && (
-        <EntityCard className="absolute bottom-4 left-4 right-4 rounded-2xl bg-white/95 p-3 shadow-lg backdrop-blur sm:left-auto sm:w-80">
-          <div className="flex gap-3">
-            {activePlace.place.exterior[0]?.source && (
-              <img
-                src={activePlace.place.exterior[0].source}
-                alt="Фасад"
-                className="h-16 w-24 rounded-lg object-cover"
-              />
-            )}
-            <div className="min-w-0">
-              <p className="text-sm font-bold text-slate-900">
-                {activePlace.title}
-              </p>
-              {activePlace.place.formattedAddress.name && (
-                <p className="mt-1 text-xs text-slate-600">
-                  {activePlace.place.formattedAddress.name}
-                </p>
+        <Link
+          href={`/nomenclatures/${
+            activePlace.place.nomenclatureSlug || activePlace.place.id
+          }`}
+          className="absolute bottom-4 left-4 right-4 z-10 sm:left-auto sm:w-80"
+        >
+          <EntityCard className="rounded-2xl bg-white/95 p-3 shadow-lg backdrop-blur">
+            <div className="flex gap-3">
+              {activePlace.place.exterior[0]?.source && (
+                <img
+                  src={activePlace.place.exterior[0].source}
+                  alt="Фасад"
+                  className="h-16 w-24 rounded-lg object-cover"
+                />
               )}
+              <div className="min-w-0">
+                <p className="text-sm font-bold text-slate-900">
+                  {activePlace.title}
+                </p>
+                {activePlace.place.formattedAddress.name && (
+                  <p className="mt-1 text-xs text-slate-600">
+                    {activePlace.place.formattedAddress.name}
+                  </p>
+                )}
+              </div>
             </div>
-          </div>
-        </EntityCard>
+          </EntityCard>
+        </Link>
       )}
 
       {points.length === 0 && (

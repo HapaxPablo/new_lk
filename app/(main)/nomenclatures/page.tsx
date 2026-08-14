@@ -5,6 +5,7 @@ import LoaderSkeleton from '@/components/ui/loader/LoaderSkeleton'
 import { SITE_URL } from '@/lib/configs/config-meta/configMetaData'
 import { generateNomenclaturesListMetadata } from '@/lib/configs/config-meta/nomenclatures'
 import { INomenclatureResponse } from '@/types/nomenclature'
+import { type PopularCity } from '@/lib/api/geocoding'
 import { CatalogSidebar } from '@/components/nomenclatures/CatalogSidebar'
 import {
   NomenclaturesLandingSections,
@@ -77,6 +78,25 @@ export async function generateMetadata(
   }
 }
 
+async function getPopularCities(): Promise<PopularCity[]> {
+  try {
+    const url = new URL('/api/cities/popular/', process.env.API_1C_URL)
+    const response = await fetch(url.toString(), {
+      next: { revalidate: 300 },
+    })
+
+    if (!response.ok) {
+      return []
+    }
+
+    const data = await response.json()
+    return Array.isArray(data) ? data : []
+  } catch (error) {
+    console.error('Error fetching popular cities:', error)
+    return []
+  }
+}
+
 export default async function NomenclaturesPage(props: NomenclaturesPageProps) {
   const searchParams = await props.searchParams
   const params = await searchParams
@@ -103,7 +123,10 @@ export default async function NomenclaturesPage(props: NomenclaturesPageProps) {
 
     // console.log('Making request to:', url.toString())
 
-    const response = await fetch(url.toString(), { cache: 'no-cache' })
+    const [response, popularCities] = await Promise.all([
+      fetch(url.toString(), { cache: 'no-cache' }),
+      getPopularCities(),
+    ])
 
     if (!response.ok) {
       throw new Error(`Ошибка ${response.status}: ${response.statusText}`)
@@ -128,9 +151,15 @@ export default async function NomenclaturesPage(props: NomenclaturesPageProps) {
         <BreadcrumbJsonLd items={breadcrumbItems} />
         <BreadcrumbsSetter title="Места для рекламы" />
         <div className="h-full w-full overflow-y-auto bg-slate-50 text-slate-900">
-          <NomenclaturesLandingSections totalItems={data.count} />
+          <NomenclaturesLandingSections
+            totalItems={data.count}
+            popularCities={popularCities}
+          />
 
-          <section id="catalog" className="border-y border-slate-200 bg-slate-50">
+          <section
+            id="catalog"
+            className="border-y border-slate-200 bg-slate-50"
+          >
             <div className="mx-auto max-w-7xl px-4 py-12">
               <div className="mb-6 max-w-3xl">
                 <p className="text-sm font-bold uppercase tracking-wider text-[#ef5350]">

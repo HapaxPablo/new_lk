@@ -58,7 +58,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           // }
         } else {
           setIsAuthenticated(false)
-
         }
       } catch (err) {
         console.error('Auth check failed:', err)
@@ -91,14 +90,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         setIsAuthenticated(true)
         setError(null)
         setBlockTime(null)
-        console.log('url', url)
         if (url === '/order') {
           return
         }
         if (typeof window !== 'undefined') {
           window.location.href = '/nomenclatures?page=1&limit=24'
-        }
-        else {
+        } else {
           router.push('/nomenclatures?page=1&limit=24')
         }
 

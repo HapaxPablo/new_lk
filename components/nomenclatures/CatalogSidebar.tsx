@@ -10,20 +10,38 @@ interface CatalogSidebarProps {
   cityName?: string
 }
 
+const RUSSIA_MAP_VIEW = {
+  center: [100, 65] as [number, number],
+  zoom: 3,
+}
+
+function getCatalogMapView(places: ICity[]) {
+  const coordinates = places[0]?.formattedAddress.coordinates
+  const latitude = Number.parseFloat(coordinates?.latitude ?? '')
+  const longitude = Number.parseFloat(coordinates?.longitude ?? '')
+
+  if (!Number.isFinite(latitude) || !Number.isFinite(longitude)) {
+    return RUSSIA_MAP_VIEW
+  }
+
+  return {
+    center: [longitude, latitude] as [number, number],
+    zoom: 10,
+  }
+}
+
 function toMapPlace(item: INomenclatureItem): ICity {
-  const formattedAddress = item.formattedAddress as
-    | string
-    | ICity['formattedAddress']
   const address =
-    typeof formattedAddress === 'string'
+    typeof item.formattedAddress === 'string'
       ? {
-          name: formattedAddress,
+          name: item.formattedAddress,
           coordinates: { latitude: null, longitude: null },
         }
-      : formattedAddress
+      : item.formattedAddress
 
   return {
     id: item.id,
+    nomenclatureSlug: item.oldCatalogSlug || item.id,
     title: item.name || item.brand?.name,
     formattedAddress: address,
     pricePerMonth: item.pricePerMonth,
@@ -46,6 +64,7 @@ function toMapPlace(item: INomenclatureItem): ICity {
 
 export function CatalogSidebar({ items, cityName }: CatalogSidebarProps) {
   const places = items.map(toMapPlace)
+  const initialView = getCatalogMapView(places)
 
   return (
     <aside className="space-y-5">
@@ -60,11 +79,17 @@ export function CatalogSidebar({ items, cityName }: CatalogSidebarProps) {
           <PlacesSimpleMap
             places={places}
             cityName={cityName || 'Рекламные площадки'}
+            initialView={initialView}
+            minZoom={3}
+            markerScale={0.4}
           />
         </div>
       </section>
 
-      <section id="brief" className="rounded-3xl bg-white p-2 shadow-sm ring-1 ring-slate-200">
+      <section
+        id="brief"
+        className="rounded-3xl bg-white p-2 shadow-sm ring-1 ring-slate-200"
+      >
         <Feedback
           pathName="nomenclatures"
           nomenclaturesIds={items.map((item) => item.id)}

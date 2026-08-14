@@ -7,6 +7,7 @@ interface PlaceMarkerProps {
   point: MapPoint
   isSelected: boolean
   isHighlighted: boolean
+  scale?: number
   onSelect: (placeId: string) => void
   onHoverChange: (placeId: string | null) => void
 }
@@ -23,6 +24,7 @@ export const PlaceMarker = memo(function PlaceMarker({
   point,
   isSelected,
   isHighlighted,
+  scale = 1,
   onSelect,
   onHoverChange,
 }: PlaceMarkerProps) {
@@ -50,6 +52,7 @@ export const PlaceMarker = memo(function PlaceMarker({
             onSelect(place.id)
           }
         }}
+        transform={scale === 1 ? undefined : `scale(${scale})`}
       >
         <circle r={isHighlighted ? 42 : 36} fill="#ef4444" fillOpacity={0.18} />
         <circle

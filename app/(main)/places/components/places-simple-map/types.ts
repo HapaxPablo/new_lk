@@ -5,6 +5,9 @@ export interface PlacesSimpleMapProps {
   cityName: string
   selectedPlaceId?: string | null
   onPlaceSelect?: (placeId: string) => void
+  initialView?: MapView
+  minZoom?: number
+  markerScale?: number
 }
 
 export interface MapPoint {

@@ -50,7 +50,6 @@ export const CardNomenclature: React.FC<CardNomenclatureProps> = ({
   }
 
   const url = usePathname()
-  console.log('url', url)
 
   return (
     <EntityCard
@@ -117,9 +116,15 @@ export const CardNomenclature: React.FC<CardNomenclatureProps> = ({
               <span>{address}</span>
             </h3>
           ) : (
-            <h3 className={styles.title}>
-              {getNomenclatureTitle(item, 'small')}
-            </h3>
+            <>
+              <h3 className={styles.title}>
+                {getNomenclatureTitle(item, 'small')}
+              </h3>
+              <p className={styles.address}>
+                <MapPin size={18} aria-hidden="true" />
+                <span>{address}</span>
+              </p>
+            </>
           )}
 
           {/* <p className={styles.address}>

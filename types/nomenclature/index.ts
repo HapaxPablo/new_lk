@@ -246,8 +246,8 @@ export interface ITenantsResponse {
 export interface IFormattedAddress {
   name: string
   coordinates: {
-    latitude: string
-    longitude: string
+    latitude: string | null
+    longitude: string | null
   }
 }
 
@@ -269,7 +269,7 @@ export interface INomenclatureItem extends INomenclatureBase {
   status: string
   last_answer: string
   version: string
-  formattedAddress: string // сужаем — в каталоге всегда строка
+  formattedAddress: string | IFormattedAddress
   oldCatalogSlug: string
 }
 

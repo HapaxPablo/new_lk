@@ -1,6 +1,10 @@
 // hooks/useCityDetection.ts
 import { useState, useCallback } from 'react'
-import { geocodeByLatLng, fetchPopularCities } from '@/lib/api/geocoding'
+import {
+  geocodeByLatLng,
+  fetchPopularCities,
+  type PopularCity,
+} from '@/lib/api/geocoding'
 import { useGeoStore } from '@/store/geoStore'
 
 export interface City {
@@ -11,9 +15,25 @@ export interface City {
 
 export function useCityDetection() {
   const [detectedCity, setDetectedCity] = useState<City | null>(null)
-  const [citiesList, setCitiesList] = useState<string[]>([])
+  const [citiesList, setCitiesList] = useState<PopularCity[]>([])
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+
+  const loadCities = useCallback(async () => {
+    setLoading(true)
+    setError(null)
+
+    try {
+      const cities = await fetchPopularCities()
+      console.log('Cities list loaded:', cities.length)
+      setCitiesList(cities)
+    } catch (err) {
+      console.error('Cities loading error:', err)
+      setError('Не удалось загрузить список городов')
+    } finally {
+      setLoading(false)
+    }
+  }, [])
 
   const detectCity = useCallback(
     async (latitude: number, longitude: number) => {
@@ -51,9 +71,9 @@ export function useCityDetection() {
   }, [])
 
   const selectCity = useCallback(
-    (cityName: string) => {
-      console.log('Selecting city:', cityName)
-      const city: City = { name: cityName }
+    (popularCity: PopularCity) => {
+      console.log('Selecting city:', popularCity.name)
+      const city: City = { name: popularCity.name }
       confirmCity(city)
     },
     [confirmCity]
@@ -64,6 +84,7 @@ export function useCityDetection() {
     citiesList,
     loading,
     error,
+    loadCities,
     detectCity,
     confirmCity,
     selectCity,

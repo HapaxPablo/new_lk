@@ -128,6 +128,13 @@ function getMinimumPrice(nomenclatures: INomenclatureItem[]) {
   return prices.length ? Math.min(...prices) : null
 }
 
+function getCityFromAddress(nomenclature: INomenclatureItem): string | undefined {
+  const address = nomenclature.formattedAddress
+  const addressName = typeof address === 'string' ? address : address?.name
+
+  return addressName?.split(',')[0]?.trim()
+}
+
 function formatPrice(price: number | null) {
   if (price === null) return '—'
 
@@ -194,7 +201,7 @@ export default async function TenantDetailPage(props: TenantDetailPageProps) {
     tenant.brand?.name || tenant.tenantName || tenant.keyword || 'Арендатор'
   const cityCount = new Set(
     nomenclatures
-      .map((place) => place.formattedAddress?.split(',')[0]?.trim())
+      .map(getCityFromAddress)
       .filter(Boolean)
   ).size
   const minPrice = getMinimumPrice(nomenclatures)
@@ -429,9 +436,7 @@ export default async function TenantDetailPage(props: TenantDetailPageProps) {
                     {Array.from(
                       new Set(
                         nomenclatures
-                          .map((place) =>
-                            place.formattedAddress?.split(',')[0]?.trim()
-                          )
+                          .map(getCityFromAddress)
                           .filter(Boolean)
                       )
                     )

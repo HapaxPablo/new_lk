@@ -4,6 +4,7 @@
 import { useEffect, useState, useRef, useCallback } from 'react'
 import { useGeolocation } from '@/hooks/useGeolocation'
 import { useCityDetection, type City } from '@/hooks/useCityDetection'
+import { type PopularCity } from '@/lib/api/geocoding'
 import { ModalWrapper } from '@/components/modal/ModalWrapper'
 import { useModal } from '@/providers/modal/ModalProvider'
 import { LocationPermissionModal } from './LocationPermissionModal'
@@ -40,6 +41,7 @@ export default function GeolocationClient() {
     citiesList,
     loading: cityLoading,
     detectedCity: hookDetectedCity,
+    loadCities,
     detectCity,
     confirmCity,
     selectCity,
@@ -192,9 +194,9 @@ export default function GeolocationClient() {
     cityModal.closeModal()
   }, [confirmCity, cityModal, hookDetectedCity])
 
-  const handleCitySelect = useCallback((cityName: string) => {
-    console.log('City selected:', cityName)
-    selectCity(cityName)
+  const handleCitySelect = useCallback((city: PopularCity) => {
+    console.log('City selected:', city.name)
+    selectCity(city)
     cityModal.closeModal()
   }, [selectCity, cityModal])
 
@@ -205,7 +207,8 @@ export default function GeolocationClient() {
     cityDetectionStarted.current = false
     permissionListenerSet.current = false
     cityModal.openModal()
-  }, [clearCity, cityModal])
+    void loadCities()
+  }, [clearCity, cityModal, loadCities])
 
   if (!isClient) return null
 
