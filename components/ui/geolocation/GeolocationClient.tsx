@@ -25,15 +25,18 @@ export default function GeolocationClient() {
   const {
     selectedCity,
     isInitialized,
+    isGeolocationPromptDismissed,
     setSelectedCity,
     setInitialized,
     setDetectedCity,
     clearCity,
+    dismissGeolocationPrompt,
   } = useGeoStore()
 
   const {
     coordinates,
     loading: geoLoading,
+    permissionDenied,
     getLocation,
   } = useGeolocation()
 
@@ -69,7 +72,10 @@ export default function GeolocationClient() {
 
     window.addEventListener('cityChanged', handleCityChange as EventListener)
     return () => {
-      window.removeEventListener('cityChanged', handleCityChange as EventListener)
+      window.removeEventListener(
+        'cityChanged',
+        handleCityChange as EventListener
+      )
     }
   }, [setSelectedCity])
 
@@ -88,7 +94,12 @@ export default function GeolocationClient() {
 
   // Проверяем геопозицию - ТОЛЬКО ОДИН РАЗ
   useEffect(() => {
-    if (!isClient || isInitialized || locationCheckStarted.current) {
+    if (
+      !isClient ||
+      isInitialized ||
+      isGeolocationPromptDismissed ||
+      locationCheckStarted.current
+    ) {
       return
     }
 
@@ -96,18 +107,28 @@ export default function GeolocationClient() {
 
     const checkLocation = async () => {
       console.log('Checking location, no city selected')
-      const hasPermission = await checkGeolocationPermission()
-      console.log('Has permission:', hasPermission)
+      const permissionState = await getGeolocationPermission()
+      console.log('Permission state:', permissionState)
 
-      if (hasPermission) {
+      if (permissionState === 'granted') {
         getLocation()
+      } else if (permissionState === 'denied') {
+        dismissGeolocationPrompt()
       } else {
         permissionModal.openModal()
       }
     }
 
     checkLocation()
-  }, [isClient, isInitialized]) // Убраны getLocation и permissionModal
+  }, [isClient, isInitialized, isGeolocationPromptDismissed]) // Убраны getLocation и permissionModal
+
+  // Запоминаем отказ, полученный из системного окна браузера.
+  useEffect(() => {
+    if (permissionDenied) {
+      dismissGeolocationPrompt()
+      permissionModal.closeModal()
+    }
+  }, [permissionDenied]) // Обрабатываем изменение статуса отказа один раз
 
   // Когда получили координаты, определяем город - ТОЛЬКО ОДИН РАЗ
   useEffect(() => {
@@ -134,7 +155,11 @@ export default function GeolocationClient() {
 
   // Слушаем изменения разрешения геолокации - ТОЛЬКО ОДИН РАЗ
   useEffect(() => {
-    if (!navigator.permissions || permissionListenerSet.current || isInitialized) {
+    if (
+      !navigator.permissions ||
+      permissionListenerSet.current ||
+      isInitialized
+    ) {
       return
     }
 
@@ -185,20 +210,31 @@ export default function GeolocationClient() {
     getLocation()
   }, [permissionModal, getLocation])
 
-  const handleCityConfirm = useCallback((isCorrect: boolean) => {
-    console.log('City confirmed:', isCorrect, hookDetectedCity)
+  const handlePermissionDismissed = useCallback(() => {
+    dismissGeolocationPrompt()
+    permissionModal.closeModal()
+  }, [dismissGeolocationPrompt, permissionModal])
 
-    if (isCorrect && hookDetectedCity && hookDetectedCity.name) {
-      confirmCity(hookDetectedCity)
-    }
-    cityModal.closeModal()
-  }, [confirmCity, cityModal, hookDetectedCity])
+  const handleCityConfirm = useCallback(
+    (isCorrect: boolean) => {
+      console.log('City confirmed:', isCorrect, hookDetectedCity)
 
-  const handleCitySelect = useCallback((city: PopularCity) => {
-    console.log('City selected:', city.name)
-    selectCity(city)
-    cityModal.closeModal()
-  }, [selectCity, cityModal])
+      if (isCorrect && hookDetectedCity && hookDetectedCity.name) {
+        confirmCity(hookDetectedCity)
+      }
+      cityModal.closeModal()
+    },
+    [confirmCity, cityModal, hookDetectedCity]
+  )
+
+  const handleCitySelect = useCallback(
+    (city: PopularCity) => {
+      console.log('City selected:', city.name)
+      selectCity(city)
+      cityModal.closeModal()
+    },
+    [selectCity, cityModal]
+  )
 
   const handleCityChange = useCallback(() => {
     console.log('Changing city')
@@ -220,8 +256,15 @@ export default function GeolocationClient() {
         isLoading={geoLoading || cityLoading}
       />
 
-      <ModalWrapper id="location_permission" title="Разрешить геолокацию">
-        <LocationPermissionModal onEnable={handlePermissionGranted} />
+      <ModalWrapper
+        id="location_permission"
+        title="Разрешить геолокацию"
+        onClose={handlePermissionDismissed}
+      >
+        <LocationPermissionModal
+          onEnable={handlePermissionGranted}
+          onDismiss={handlePermissionDismissed}
+        />
       </ModalWrapper>
 
       <ModalWrapper id="city_confirmation" title="Подтверждение города">
@@ -237,15 +280,15 @@ export default function GeolocationClient() {
   )
 }
 
-async function checkGeolocationPermission(): Promise<boolean> {
-  if (!navigator.permissions) return false
+async function getGeolocationPermission(): Promise<PermissionState | 'prompt'> {
+  if (!navigator.permissions) return 'prompt'
 
   try {
     const result = await navigator.permissions.query({
       name: 'geolocation' as PermissionName,
     })
-    return result.state === 'granted'
+    return result.state
   } catch {
-    return false
+    return 'prompt'
   }
 }

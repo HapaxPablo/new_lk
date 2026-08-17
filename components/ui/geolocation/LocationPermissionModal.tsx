@@ -1,16 +1,14 @@
 'use client'
 
-import { MapPin, Navigation } from 'lucide-react'
-import { useModal } from '@/providers/modal/ModalProvider'
+import { MapPin } from 'lucide-react'
 import styles from './LocationPermissionModal.module.scss'
 
 interface Props {
   onEnable: () => void
+  onDismiss: () => void
 }
 
-export function LocationPermissionModal({ onEnable }: Props) {
-  const { closeModal } = useModal('location_permission')
-
+export function LocationPermissionModal({ onEnable, onDismiss }: Props) {
   return (
     <div className={styles.content}>
       <div className={styles.iconContainer}>
@@ -25,17 +23,11 @@ export function LocationPermissionModal({ onEnable }: Props) {
       </p>
 
       <div className={styles.buttonsContainer}>
-        <button
-          onClick={() => {
-            onEnable()
-            closeModal()
-          }}
-          className={styles.primaryButton}
-        >
+        <button onClick={onEnable} className={styles.primaryButton}>
           Разрешить
         </button>
 
-        <button onClick={() => closeModal()} className={styles.secondaryButton}>
+        <button onClick={onDismiss} className={styles.secondaryButton}>
           Не сейчас
         </button>
       </div>

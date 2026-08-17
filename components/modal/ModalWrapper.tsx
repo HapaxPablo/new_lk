@@ -1,7 +1,7 @@
 'use client'
 
 import { X } from 'lucide-react'
-import { JSX, ReactNode, useEffect } from 'react'
+import { JSX, ReactNode, useCallback, useEffect } from 'react'
 import styles from './ModalWrapper.module.scss'
 import { useModal } from '@/providers/modal/ModalProvider'
 
@@ -13,6 +13,7 @@ interface ModalWrapperProps {
   title?: JSX.Element | string
   children: ReactNode
   className?: string
+  onClose?: () => void
 }
 
 export function ModalWrapper({
@@ -21,18 +22,24 @@ export function ModalWrapper({
   children,
   className = '',
   keyId,
+  onClose,
 }: ModalWrapperProps) {
   const { isOpen, closeModal } = useModal(id, keyId)
 
+  const handleClose = useCallback(() => {
+    closeModal()
+    onClose?.()
+  }, [closeModal, onClose])
+
   const handleOverlayClick = (e: React.MouseEvent<HTMLDivElement>) => {
     if (e.target === e.currentTarget) {
-      closeModal()
+      handleClose()
     }
   }
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') closeModal()
+      if (e.key === 'Escape') handleClose()
     }
 
     if (isOpen) {
@@ -44,7 +51,7 @@ export function ModalWrapper({
       document.removeEventListener('keydown', handleKeyDown)
       document.body.style.overflow = ''
     }
-  }, [isOpen, closeModal])
+  }, [isOpen, handleClose])
 
   if (!isOpen) return null
 
@@ -57,7 +64,7 @@ export function ModalWrapper({
         <div className={styles.modalHeader}>
           {title && <div className={styles.modalTitle}>{title}</div>}
           <button
-            onClick={() => closeModal()}
+            onClick={handleClose}
             className={styles.closeButton}
             aria-label={`Закрыть ${title || 'модальное окно'}`}
           >

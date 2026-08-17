@@ -13,12 +13,14 @@ export interface City {
 interface GeoState {
   selectedCity: City | null
   isInitialized: boolean
+  isGeolocationPromptDismissed: boolean
   coordinates: { latitude: number; longitude: number } | null
   detectedCity: City | null
 
   // Actions
   setSelectedCity: (city: City | null) => void
   setInitialized: (initialized: boolean) => void
+  dismissGeolocationPrompt: () => void
   setCoordinates: (
     coords: { latitude: number; longitude: number } | null
   ) => void
@@ -31,6 +33,7 @@ export const useGeoStore = create<GeoState>()(
     (set) => ({
       selectedCity: null,
       isInitialized: false,
+      isGeolocationPromptDismissed: false,
       coordinates: null,
       detectedCity: null,
 
@@ -41,6 +44,9 @@ export const useGeoStore = create<GeoState>()(
         }),
 
       setInitialized: (initialized) => set({ isInitialized: initialized }),
+
+      dismissGeolocationPrompt: () =>
+        set({ isGeolocationPromptDismissed: true }),
 
       setCoordinates: (coordinates) => set({ coordinates }),
 
@@ -59,6 +65,7 @@ export const useGeoStore = create<GeoState>()(
       partialize: (state) => ({
         selectedCity: state.selectedCity,
         isInitialized: state.isInitialized,
+        isGeolocationPromptDismissed: state.isGeolocationPromptDismissed,
       }),
     }
   )

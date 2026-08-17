@@ -12,6 +12,7 @@ export function useGeolocation() {
   const [coordinates, setCoordinates] = useState<Coordinates | null>(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [permissionDenied, setPermissionDenied] = useState(false)
   const requestInProgress = useRef(false) // Флаг для предотвращения повторных запросов
 
   const getLocation = useCallback(() => {
@@ -30,6 +31,7 @@ export function useGeolocation() {
     requestInProgress.current = true
     setLoading(true)
     setError(null)
+    setPermissionDenied(false)
 
     navigator.geolocation.getCurrentPosition(
       (position) => {
@@ -69,6 +71,7 @@ export function useGeolocation() {
             break
         }
 
+        setPermissionDenied(err.code === err.PERMISSION_DENIED)
         setError(errorMessage)
         setLoading(false)
         requestInProgress.current = false
@@ -86,6 +89,7 @@ export function useGeolocation() {
     coordinates,
     loading,
     error,
+    permissionDenied,
     getLocation,
   }
 }
