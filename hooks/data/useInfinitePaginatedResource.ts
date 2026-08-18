@@ -7,11 +7,17 @@ export interface PaginatedResponse<T> {
   results: T[]
 }
 
-export interface UseInfinitePaginatedResourceOptions<T, R extends PaginatedResponse<T>> {
+export interface UseInfinitePaginatedResourceOptions<
+  T,
+  R extends PaginatedResponse<T>,
+> {
   getKey: (pageIndex: number, previousData: R | null) => string | null
+  fetcher?: (key: string) => Promise<R>
   initialData?: T[]
   initialCount?: number
+  initialPage?: number
   limit?: number
+  useInitialData?: boolean
 }
 
 const defaultFetcher = async <T>(url: string): Promise<T> => {
@@ -30,20 +36,41 @@ const defaultFetcher = async <T>(url: string): Promise<T> => {
 export const useInfinitePaginatedResource = <T, R extends PaginatedResponse<T>>(
   options: UseInfinitePaginatedResourceOptions<T, R>
 ) => {
-  const { getKey, initialData, initialCount } = options
+  const {
+    getKey,
+    fetcher = defaultFetcher,
+    initialData,
+    initialCount,
+    initialPage = 1,
+    limit = 24,
+    useInitialData = true,
+  } = options
 
-  const { data, error, size, setSize, isValidating } =
-    useSWRInfinite<R>(getKey, defaultFetcher, {
+  const { data, error, size, setSize, isValidating } = useSWRInfinite<R>(
+    getKey,
+    fetcher,
+    {
       revalidateOnFocus: false,
       revalidateIfStale: false,
       revalidateFirstPage: false,
       keepPreviousData: true,
-    })
+    }
+  )
 
-  const items = data ? data.flatMap((page) => page.results) : initialData || []
+  const items = data
+    ? data.flatMap((page) => page.results)
+    : useInitialData
+      ? initialData || []
+      : []
   const totalCount = data?.[0]?.count ?? initialCount ?? 0
   const lastPage = data?.[data.length - 1]
-  const hasMore = !error && !!lastPage && lastPage.next !== null
+  const initialOffset = (initialPage - 1) * limit
+  const hasInitialMore =
+    !data &&
+    useInitialData &&
+    !!initialData &&
+    initialData.length + initialOffset < (initialCount ?? 0)
+  const hasMore = !error && (lastPage ? lastPage.next !== null : hasInitialMore)
   const isLoadingInitial = !data && !error
   const isLoadingMore = isValidating && size > 1
 

@@ -3,10 +3,17 @@
 import PlacesSimpleMap from '@/app/(main)/places/components/PlacesSimpleMap'
 import Feedback from '@/components/ui/forms/feedback/Feedback'
 import type { ICity } from '@/types/cities'
-import type { INomenclatureItem } from '@/types/nomenclature'
+import type {
+  INomenclatureItem,
+  INomenclatureMapItem,
+} from '@/types/nomenclature'
+import useSWR from 'swr'
+import { useNomenclatureFiltersStore } from '@/store/useNomenclatureFiltersStore'
+import type { NomenclatureFilters } from '@/store/useNomenclatureFiltersStore'
 
 interface CatalogSidebarProps {
   items: INomenclatureItem[]
+  mapItems: INomenclatureMapItem[]
   cityName?: string
 }
 
@@ -30,40 +37,81 @@ function getCatalogMapView(places: ICity[]) {
   }
 }
 
-function toMapPlace(item: INomenclatureItem): ICity {
-  const address =
-    typeof item.formattedAddress === 'string'
-      ? {
-          name: item.formattedAddress,
-          coordinates: { latitude: null, longitude: null },
-        }
-      : item.formattedAddress
-
+function toMapPlace(item: INomenclatureMapItem): ICity {
   return {
     id: item.id,
-    nomenclatureSlug: item.oldCatalogSlug || item.id,
+    nomenclatureSlug: item.old_slug || item.id,
     title: item.name || item.brand?.name,
-    formattedAddress: address,
-    pricePerMonth: item.pricePerMonth,
-    typeOfPlace:
-      typeof item.typeOfPlace === 'string'
-        ? item.typeOfPlace
-        : item.typeOfPlace?.name || '',
-    exterior: item.exterior.map((image, index) => ({
-      source: image.source,
-      id: `${item.id}-${index}`,
-    })),
+    formattedAddress: {
+      name: item.name,
+      coordinates: item.coordinates || { latitude: null, longitude: null },
+    },
+    pricePerMonth: '0',
+    typeOfPlace: item.type_of_place || '',
+    exterior: item.facade ? [item.facade] : [],
     brand: {
-      id: item.brand?.id || '',
+      id: '',
       name: item.brand?.name || 'Рекламная площадка',
       logotype: item.brand?.logotype || '',
-      slug: item.brand?.slug || '',
+      slug: '',
     },
   }
 }
 
-export function CatalogSidebar({ items, cityName }: CatalogSidebarProps) {
-  const places = items.map(toMapPlace)
+function getMapRequestBody(filters: NomenclatureFilters) {
+  const body: Record<string, string | boolean | string[]> = {}
+  if (filters.search) body.search = filters.search
+  if (filters.brand_id) {
+    const ids = filters.brand_id.split(',').filter(Boolean)
+    if (ids.length > 1) body.brand_ids = ids
+    else body.brand_id = ids[0]
+  }
+  if (filters.counterparty_id) {
+    const ids = filters.counterparty_id.split(',').filter(Boolean)
+    if (ids.length > 1) body.counterparty_ids = ids
+    else body.counterparty_id = ids[0]
+  }
+  if (filters.status) body.status = filters.status
+  if (filters.type_of_place) body.type_of_place = filters.type_of_place
+  if (filters.city_slug) body.city_slug = filters.city_slug
+  if (filters.content_types) {
+    body.content_types = filters.content_types.split(',').filter(Boolean)
+  }
+  if (filters.price_from) body.price_from = filters.price_from
+  if (filters.price_to) body.price_to = filters.price_to
+  if (filters.has_facade) body.has_facade = filters.has_facade === 'true'
+  return body
+}
+
+export function CatalogSidebar({
+  items,
+  mapItems,
+  cityName,
+}: CatalogSidebarProps) {
+  const filters = useNomenclatureFiltersStore((state) => state.filters)
+  const hasHydrated = useNomenclatureFiltersStore((state) => state.hasHydrated)
+  const hasFilters = Object.keys(filters).length > 0
+  const mapRequest =
+    hasHydrated && hasFilters
+      ? JSON.stringify(getMapRequestBody(filters))
+      : null
+  const { data: filteredMap } = useSWR<{
+    count: number
+    results: INomenclatureMapItem[]
+  }>(mapRequest, async (body: string) => {
+    const response = await fetch('/api/nomenclatures/map/', {
+      method: 'POST',
+      cache: 'no-store',
+      headers: { 'Content-Type': 'application/json' },
+      body,
+    })
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status}: ${await response.text()}`)
+    }
+    return response.json()
+  })
+  const activeMapItems = hasFilters ? filteredMap?.results || [] : mapItems
+  const places = activeMapItems.map(toMapPlace)
   const initialView = getCatalogMapView(places)
 
   return (
@@ -78,7 +126,7 @@ export function CatalogSidebar({ items, cityName }: CatalogSidebarProps) {
         <div className="h-72 bg-slate-100">
           <PlacesSimpleMap
             places={places}
-            cityName={cityName || 'Рекламные площадки'}
+            cityName={filters.city_slug || cityName || 'Рекламные площадки'}
             initialView={initialView}
             minZoom={3}
             markerScale={0.4}

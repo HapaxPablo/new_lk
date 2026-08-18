@@ -2,10 +2,12 @@
 
 import { useToast } from '@/hooks/useToast'
 import { AuthResponse } from '@/types/auth'
+import { ICurrentUser, isEmployeeRole } from '@/types/user'
 import { usePathname, useRouter } from 'next/navigation'
 import {
   createContext,
   ReactNode,
+  useCallback,
   useContext,
   useEffect,
   useState,
@@ -14,8 +16,11 @@ import {
 type AuthContextType = {
   isAuthenticated: boolean
   isEmployee: boolean
+  isLoading: boolean
+  user: ICurrentUser | null
   login: (email: string, password: string) => Promise<LoginResponse>
   logout: () => Promise<void>
+  refreshUser: () => Promise<ICurrentUser | null>
   error: string | null
   blockTime: number | null
 }
@@ -32,12 +37,30 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined)
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [isAuthenticated, setIsAuthenticated] = useState(false)
   const [isEmployee, setIsEmployee] = useState(false)
+  const [isLoading, setIsLoading] = useState(true)
+  const [user, setUser] = useState<ICurrentUser | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [blockTime, setBlockTime] = useState<number | null>(null)
   const router = useRouter()
   const url = usePathname()
   const { showToast } = useToast()
-  // console.log(isAuthenticated)
+  const refreshUser = useCallback(async (): Promise<ICurrentUser | null> => {
+    const response = await fetch('/api/auth/users/me', {
+      credentials: 'include',
+      cache: 'no-store',
+    })
+
+    if (!response.ok) {
+      setUser(null)
+      setIsEmployee(false)
+      return null
+    }
+
+    const currentUser: ICurrentUser = await response.json()
+    setUser(currentUser)
+    setIsEmployee(isEmployeeRole(currentUser.role))
+    return currentUser
+  }, [])
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -51,22 +74,33 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         if (response.ok) {
           const result = await response.json()
           setIsAuthenticated(result.isAuthenticated)
-          setIsEmployee(result.isEmployee ?? false)
+          if (result.isAuthenticated) {
+            await refreshUser()
+          } else {
+            setUser(null)
+            setIsEmployee(false)
+          }
           // if (!result.isAuthenticated && url !== '/nomenclatures') {
           //   await logout()
           //   // console.log('сделать проверку токена в 1с');
           // }
         } else {
           setIsAuthenticated(false)
+          setUser(null)
+          setIsEmployee(false)
         }
       } catch (err) {
         console.error('Auth check failed:', err)
         setIsAuthenticated(false)
+        setUser(null)
+        setIsEmployee(false)
+      } finally {
+        setIsLoading(false)
       }
     }
 
     checkAuth()
-  }, [])
+  }, [refreshUser])
 
   const login = async (email: string, password: string): Promise<any> => {
     try {
@@ -88,6 +122,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
       if (data.access) {
         setIsAuthenticated(true)
+        await refreshUser()
         setError(null)
         setBlockTime(null)
         if (url === '/order') {
@@ -144,6 +179,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
       if (response.ok) {
         setIsAuthenticated(false)
+        setIsEmployee(false)
+        setUser(null)
         // router.push('/login')
       } else {
         throw new Error('Ошибка при выходе')
@@ -156,7 +193,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   return (
     <AuthContext.Provider
-      value={{ isAuthenticated, login, logout, error, blockTime, isEmployee }}
+      value={{
+        isAuthenticated,
+        isEmployee,
+        isLoading,
+        user,
+        login,
+        logout,
+        refreshUser,
+        error,
+        blockTime,
+      }}
     >
       {children}
     </AuthContext.Provider>

@@ -3,7 +3,6 @@
 import { INomenclatureItem } from '@/types/nomenclature'
 import dynamic from 'next/dynamic'
 import { Suspense, useCallback, useEffect, useRef } from 'react'
-import { useRouter, useSearchParams } from 'next/navigation'
 import { useInfiniteNomenclatures } from '@/hooks/useInfiniteNomenclatures'
 
 import ScrollButton from '../ui/button/ScrollButton'
@@ -59,13 +58,11 @@ export const NomenclatureWrapperContent = ({
   const cardsWrapperRef = useRef<HTMLDivElement>(null)
   const sentinelRef = useRef<HTMLDivElement>(null)
 
-  const router = useRouter()
-  const searchParams = useSearchParams()
-
   const {
     items,
     totalCount: hookTotalCount,
     hasMore,
+    isLoadingInitial,
     isLoadingMore,
     size,
     setSize,
@@ -133,20 +130,7 @@ export const NomenclatureWrapperContent = ({
     }
   }, [hasMore, isLoadingMore, loadMore])
 
-  useEffect(() => {
-    if (size > 1 && hasMore) {
-      const params = new URLSearchParams(searchParams.toString())
-      params.set('page', String(size))
-      router.replace(`?${params.toString()}`, { scroll: false })
-    }
-    if (!hasMore && size > 1) {
-      const params = new URLSearchParams(searchParams.toString())
-      params.set('page', String(size - 1))
-      router.replace(`?${params.toString()}`, { scroll: false })
-    }
-  }, [size, hasMore])
-
-  const displayItems = items.length > 0 ? items : nomenclatureData
+  const displayItems = items
   const displayTotal = hookTotalCount || count || 0
 
   return (
@@ -160,7 +144,9 @@ export const NomenclatureWrapperContent = ({
       )}
 
       <div ref={cardsWrapperRef} className={styles.cardsWrapper}>
-        {displayItems.length <= 0 ? (
+        {isLoadingInitial && displayItems.length === 0 ? (
+          <LoaderSkeleton />
+        ) : displayItems.length <= 0 ? (
           <div className={styles.emptyState}>
             <p>Места размещения не найдены</p>
           </div>
@@ -168,11 +154,7 @@ export const NomenclatureWrapperContent = ({
           <NomenclatureCards item={displayItems} />
         )}
 
-        <div
-          ref={sentinelRef}
-          className={styles.sentinel}
-          aria-hidden="true"
-        />
+        <div ref={sentinelRef} className={styles.sentinel} aria-hidden="true" />
 
         {isLoadingMore && (
           <div className={styles.loadingMore}>

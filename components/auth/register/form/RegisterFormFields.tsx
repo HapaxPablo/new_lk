@@ -13,10 +13,12 @@ import styles from './RegisterForm.module.scss'
 
 export default function RegisterFormFields({
   setEmail,
+  setPassword,
   setCanConfirm,
   showToast,
 }: {
   setEmail: (email: string) => void
+  setPassword: (password: string) => void
   setCanConfirm: (can: boolean) => void
   showToast: (msg: string, type: 'success' | 'error') => void
 }) {
@@ -65,6 +67,7 @@ export default function RegisterFormFields({
         showToast(`${result.message}`, 'error')
       } else {
         setEmail(apiData.email)
+        setPassword(apiData.password)
         showToast(`${result.message}`, 'success')
         setCanConfirm(result.result)
       }

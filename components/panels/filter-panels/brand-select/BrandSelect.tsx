@@ -9,13 +9,14 @@ import {
   useImperativeHandle,
 } from 'react'
 import { useDebounce } from '@/hooks/useDebounce'
+import { useCachedInfiniteFilterOptions } from '@/hooks/data/useCachedFilterOptions'
 import { IBrand } from '@/types/nomenclature'
 import styles from './BrandSelect.module.scss'
 import { useClickOutside } from '@/hooks/useClickOutside'
 
 interface BrandSelectProps {
-  value: string 
-  onChange: (brandIds: string) => void 
+  value: string
+  onChange: (brandIds: string) => void
   placeholder?: string
   disabled?: boolean
 }
@@ -30,15 +31,28 @@ export const BrandSelect = forwardRef(
     }: BrandSelectProps,
     ref
   ) => {
-    const [brands, setBrands] = useState<IBrand[]>([])
     const [searchTerm, setSearchTerm] = useState('')
-    const [loading, setLoading] = useState(false)
     const [isOpen, setIsOpen] = useState(false)
     const [selectedBrandIds, setSelectedBrandIds] = useState<string[]>([])
-    const [error, setError] = useState<string | null>(null)
 
     const dropdownRef = useRef<HTMLDivElement>(null)
+    const optionsContainerRef = useRef<HTMLDivElement>(null)
     const debouncedSearchTerm = useDebounce(searchTerm, 500)
+    const {
+      options: brands,
+      error,
+      isLoading: loading,
+      isLoadingMore,
+      hasMore,
+      loadMore,
+      mutate,
+    } = useCachedInfiniteFilterOptions<IBrand>({
+      isOpen,
+      endpoint: '/api/brands',
+      search: debouncedSearchTerm,
+      searchParam: 'name',
+      params: { limit: '150', is_deleted: 'false' },
+    })
 
     // Используем хук для закрытия при клике вне элемента
     useClickOutside(
@@ -60,56 +74,18 @@ export const BrandSelect = forwardRef(
       }
     }, [value])
 
-    const loadBrands = useCallback(async (search: string = '') => {
-      setLoading(true)
-      setError(null)
-
-      try {
-        const params = new URLSearchParams()
-
-        if (search) {
-          params.set('name', search)
-        }
-
-        params.set('limit', '150')
-        params.set('page', '1')
-        params.set('is_deleted', 'false')
-
-        const response = await fetch(`/api/brands?${params.toString()}`)
-
-        if (!response.ok) {
-          throw new Error(`Ошибка загрузки: ${response.status}`)
-        }
-
-        const data = await response.json()
-        console.log('Загружены бренды:', data.results || data)
-        setBrands(data.results || data)
-      } catch (error: any) {
-        console.error('Ошибка загрузки брендов:', error)
-        setError(error.message || 'Не удалось загрузить бренды')
-        setBrands([])
-      } finally {
-        setLoading(false)
-      }
-    }, [])
-
-    useEffect(() => {
-      if (!isOpen || brands.length > 0) return
-      console.log('Загрузка брендов при открытии')
-      loadBrands('')
-    }, [isOpen])
-
-    // Загрузка брендов при поиске
-    useEffect(() => {
-      if (!isOpen) return
-      console.log('Поиск брендов:', debouncedSearchTerm)
-      loadBrands(debouncedSearchTerm)
-    }, [debouncedSearchTerm, isOpen])
-
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
       const newSearchTerm = e.target.value
       setSearchTerm(newSearchTerm)
     }
+
+    const handleScroll = useCallback(() => {
+      const container = optionsContainerRef.current
+      if (!container || !hasMore || isLoadingMore) return
+
+      const { scrollTop, scrollHeight, clientHeight } = container
+      if (scrollHeight - scrollTop - clientHeight < 80) loadMore()
+    }, [hasMore, isLoadingMore, loadMore])
 
     const handleBrandToggle = (brand: IBrand) => {
       const isSelected = selectedBrandIds.includes(brand.id)
@@ -131,29 +107,17 @@ export const BrandSelect = forwardRef(
     }
 
     const handleInputFocus = () => {
-      console.log('Фокус на поле ввода')
       setIsOpen(true)
-
-      if (brands.length === 0 && !loading) {
-        loadBrands('')
-      }
     }
 
     const handleRetry = () => {
-      console.log('Повторная попытка загрузки')
-      setError(null)
-      loadBrands(searchTerm)
+      void mutate()
     }
 
     const handleClear = () => {
       setSearchTerm('')
       setSelectedBrandIds([])
       onChange('')
-      setError(null)
-
-      if (isOpen) {
-        loadBrands('')
-      }
     }
 
     const handleSelectAll = () => {
@@ -277,13 +241,17 @@ export const BrandSelect = forwardRef(
                     </button>
                   </div>
                 </div>
-                <div className={styles.wrapper_option}>
-                  {displayedBrands.map((brand) => {
+                <div
+                  ref={optionsContainerRef}
+                  className={styles.wrapper_option}
+                  onScroll={handleScroll}
+                >
+                  {displayedBrands.map((brand, key) => {
                     const isSelected = selectedBrandIds.includes(brand.id)
 
                     return (
                       <div
-                        key={brand.id}
+                        key={`${key}-${brand.id}`}
                         className={`${styles.option} ${
                           isSelected ? styles.selected : ''
                         }`}
@@ -306,6 +274,9 @@ export const BrandSelect = forwardRef(
                       </div>
                     )
                   })}
+                  {isLoadingMore && (
+                    <div className={styles.loading}>Загрузка...</div>
+                  )}
                 </div>
               </div>
             )}

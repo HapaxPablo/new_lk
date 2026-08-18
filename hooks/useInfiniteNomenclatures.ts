@@ -1,46 +1,87 @@
-import { useSearchParams } from 'next/navigation'
 import { INomenclatureItem, INomenclatureResponse } from '@/types/nomenclature'
 import { useInfinitePaginatedResource } from './data/useInfinitePaginatedResource'
+import { useNomenclatureFiltersStore } from '@/store/useNomenclatureFiltersStore'
 
 export const useInfiniteNomenclatures = (
   initialData?: INomenclatureItem[],
   initialServerCount?: number,
   initialPage?: number
 ) => {
-  const searchParams = useSearchParams()
-
-  const limit = Number(searchParams.get('limit')) || 24
-  const search = searchParams.get('search') || ''
-  const brandName = searchParams.get('brand_name') || ''
-  const brandId = searchParams.get('brand_id') || ''
-  const status = searchParams.get('status') || ''
-  const typeOfPlace = searchParams.get('type_of_place') || ''
-  const citySlug = searchParams.get('city_slug') || ''
+  const filters = useNomenclatureFiltersStore((state) => state.filters)
+  const hasHydrated = useNomenclatureFiltersStore((state) => state.hasHydrated)
+  const limit = 24
+  const hasFilters = Object.keys(filters).length > 0
 
   const getKey = (
     pageIndex: number,
     previousData: INomenclatureResponse | null
   ): string | null => {
+    if (!hasHydrated) return null
     if (previousData && previousData.next === null) return null
 
-    const params = new URLSearchParams({
-      limit: limit.toString(),
-      page: (pageIndex + 1).toString(),
+    const body: Record<string, string | number | boolean | string[]> = {
+      limit,
+      page: (initialPage || 1) + pageIndex,
+    }
+    if (filters.search) body.search = filters.search
+    if (filters.brand_id) {
+      const brandIds = filters.brand_id.split(',').filter(Boolean)
+      if (brandIds.length > 1) {
+        body.brand_ids = brandIds
+      } else {
+        body.brand_id = brandIds[0]
+      }
+    }
+    if (filters.counterparty_id) {
+      const counterpartyIds = filters.counterparty_id.split(',').filter(Boolean)
+      if (counterpartyIds.length > 1) {
+        body.counterparty_ids = counterpartyIds
+      } else {
+        body.counterparty_id = counterpartyIds[0]
+      }
+    }
+    if (filters.status) body.status = filters.status
+    if (filters.type_of_place) body.type_of_place = filters.type_of_place
+    if (filters.city_slug) body.city_slug = filters.city_slug
+    if (filters.content_types) {
+      body.content_types = filters.content_types
+        .split(',')
+        .map((value) => value.trim())
+        .filter(Boolean)
+    }
+    if (filters.price_from) body.price_from = filters.price_from
+    if (filters.price_to) body.price_to = filters.price_to
+    if (filters.has_facade) {
+      body.has_facade = filters.has_facade === 'true'
+    }
+    return JSON.stringify(body)
+  }
+
+  const fetcher = async (body: string): Promise<INomenclatureResponse> => {
+    const response = await fetch('/api/nomenclatures/', {
+      method: 'POST',
+      credentials: 'include',
+      cache: 'no-store',
+      headers: { 'Content-Type': 'application/json' },
+      body,
     })
-    if (search) params.set('search', search)
-    if (brandName) params.set('brand_name', brandName)
-    if (brandId) params.set('brand_id', brandId)
-    if (status) params.set('status', status)
-    if (typeOfPlace) params.set('type_of_place', typeOfPlace)
-    if (citySlug) params.set('city_slug', citySlug)
-    return `/api/nomenclatures/?${params.toString()}`
+
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status}: ${await response.text()}`)
+    }
+
+    return response.json()
   }
 
   return useInfinitePaginatedResource<INomenclatureItem, INomenclatureResponse>(
     {
       getKey,
+      fetcher,
       initialData,
       initialCount: initialServerCount,
+      initialPage,
+      limit,
+      useInitialData: !hasFilters,
     }
   )
 }

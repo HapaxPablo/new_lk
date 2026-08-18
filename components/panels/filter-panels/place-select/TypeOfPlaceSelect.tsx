@@ -12,6 +12,9 @@ import { useDebounce } from '@/hooks/useDebounce'
 import { ITypeOfPlace } from '@/types/nomenclature'
 import styles from './TypeOfPlaceSelect.module.scss'
 import { useClickOutside } from '@/hooks/useClickOutside'
+import {
+    useCachedInfiniteFilterOptions,
+} from '@/hooks/data/useCachedFilterOptions'
 
 interface TypeOfPlaceSelectProps {
     value: string
@@ -30,15 +33,27 @@ export const TypeOfPlaceSelect = forwardRef(
         }: TypeOfPlaceSelectProps,
         ref
     ) => {
-        const [placeTypes, setPlaceTypes] = useState<ITypeOfPlace[]>([])
         const [searchTerm, setSearchTerm] = useState('')
-        const [loading, setLoading] = useState(false)
-        const [isOpen, setIsOpen] = useState(true)
+        const [isOpen, setIsOpen] = useState(false)
         const [selectedNames, setSelectedNames] = useState<string[]>([])
-        const [error, setError] = useState<string | null>(null)
 
         const dropdownRef = useRef<HTMLDivElement>(null)
+        const optionsContainerRef = useRef<HTMLDivElement>(null)
         const debouncedSearchTerm = useDebounce(searchTerm, 500)
+        const {
+            options: placeTypes,
+            error,
+            isLoading: loading,
+            isLoadingMore,
+            hasMore,
+            loadMore,
+            mutate,
+        } = useCachedInfiniteFilterOptions<ITypeOfPlace>({
+            isOpen,
+            endpoint: '/api/place',
+            search: debouncedSearchTerm,
+            params: { limit: '150' },
+        })
 
         useClickOutside(
             [dropdownRef],
@@ -58,50 +73,17 @@ export const TypeOfPlaceSelect = forwardRef(
             }
         }, [value])
 
-        const loadPlaceTypes = useCallback(async (search: string = '') => {
-            setLoading(true)
-            setError(null)
-
-            try {
-                const params = new URLSearchParams()
-
-                if (search) {
-                    params.set('name', search)
-                }
-
-                params.set('limit', '150')
-                params.set('page', '1')
-
-                const response = await fetch(`/api/place?${params.toString()}`)
-
-                if (!response.ok) {
-                    throw new Error(`Ошибка загрузки: ${response.status}`)
-                }
-
-                const data = await response.json()
-                setPlaceTypes(data.results || data)
-            } catch (error: any) {
-                console.error('Ошибка загрузки типов мест:', error)
-                setError(error.message || 'Не удалось загрузить типы мест')
-                setPlaceTypes([])
-            } finally {
-                setLoading(false)
-            }
-        }, [])
-
-        useEffect(() => {
-            if (!isOpen || placeTypes.length > 0) return
-            loadPlaceTypes('')
-        }, [isOpen])
-
-        useEffect(() => {
-            if (!isOpen) return
-            loadPlaceTypes(debouncedSearchTerm)
-        }, [debouncedSearchTerm, isOpen])
-
         const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
             setSearchTerm(e.target.value)
         }
+
+        const handleScroll = useCallback(() => {
+            const container = optionsContainerRef.current
+            if (!container || !hasMore || isLoadingMore) return
+
+            const { scrollTop, scrollHeight, clientHeight } = container
+            if (scrollHeight - scrollTop - clientHeight < 80) loadMore()
+        }, [hasMore, isLoadingMore, loadMore])
 
         const handleToggle = (placeType: ITypeOfPlace) => {
             const isSelected = selectedNames.includes(placeType.name)
@@ -115,26 +97,16 @@ export const TypeOfPlaceSelect = forwardRef(
 
         const handleInputFocus = () => {
             setIsOpen(true)
-
-            if (placeTypes.length === 0 && !loading) {
-                loadPlaceTypes('')
-            }
         }
 
         const handleRetry = () => {
-            setError(null)
-            loadPlaceTypes(searchTerm)
+            void mutate()
         }
 
         const handleClear = () => {
             setSearchTerm('')
             setSelectedNames([])
             onChange('')
-            setError(null)
-
-            if (isOpen) {
-                loadPlaceTypes('')
-            }
         }
 
         const handleSelectAll = () => {
@@ -249,7 +221,11 @@ export const TypeOfPlaceSelect = forwardRef(
                                         </button>
                                     </div>
                                 </div>
-                                <div className={styles.wrapper_option}>
+                                <div
+                                    ref={optionsContainerRef}
+                                    className={styles.wrapper_option}
+                                    onScroll={handleScroll}
+                                >
                                     {placeTypes.map((placeType) => {
                                         const isSelected = selectedNames.includes(placeType.name)
 
@@ -278,6 +254,9 @@ export const TypeOfPlaceSelect = forwardRef(
                                             </div>
                                         )
                                     })}
+                                    {isLoadingMore && (
+                                        <div className={styles.loading}>Загрузка...</div>
+                                    )}
                                 </div>
                             </div>
                         )}

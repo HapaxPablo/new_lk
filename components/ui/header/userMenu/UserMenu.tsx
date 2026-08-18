@@ -1,5 +1,6 @@
 'use client'
 import { useAuth } from '@/providers/auth-provider/AuthProvider'
+import { getUserFullName, USER_ROLE_LABELS } from '@/types/user'
 import { LogIn, User } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
@@ -7,10 +8,11 @@ import styles from './UserMenu.module.scss'
 import UserMenuModal from './UserMenuModal'
 const UserMenu = () => {
   const router = useRouter()
-  const { isAuthenticated, logout } = useAuth()
+  const { isAuthenticated, logout, user } = useAuth()
   const [isUserModalOpen, setIsUserModalOpen] = useState<boolean>(false)
 
-  const userData = { name: 'Иван Иванов' } // Заменить на реальные данные из ответа к БД
+  const userName = user ? getUserFullName(user) : 'Пользователь'
+  const userRole = user ? USER_ROLE_LABELS[user.role] || user.role : ''
 
   const handleUserClick = () => {
     if (isAuthenticated) {
@@ -36,7 +38,7 @@ const UserMenu = () => {
         >
           <User className={styles.user__icon} size={24} aria-hidden="true" />
           <span className={styles.user__name} aria-hidden="false">
-            {userData.name}
+            {userName}
           </span>
         </button>
       ) : (
@@ -53,7 +55,8 @@ const UserMenu = () => {
         <UserMenuModal
           isOpen={isUserModalOpen}
           onClose={() => setIsUserModalOpen(false)}
-          userName={userData.name}
+          userName={userName}
+          userRole={userRole}
           onLogout={handleLogout}
         />
       )}

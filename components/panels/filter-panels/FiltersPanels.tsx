@@ -17,27 +17,10 @@ import dynamic from 'next/dynamic'
 import LoaderSkeleton from '@/components/ui/loader/LoaderSkeleton'
 import StatusSelect from './status-select/StatusSelect'
 import { CitySelect } from './cities-select/CitySelect'
-const BrandSelect = dynamic(
-  () =>
-    import('../filter-panels/brand-select/BrandSelect').then((mod) => ({
-      default: mod.BrandSelect,
-    })),
-  {
-    ssr: false,
-    loading: () => <LoaderSkeleton />,
-  }
-)
-
-const CaSelect = dynamic(
-  () =>
-    import('../filter-panels/ca-select/CaSelect').then((mod) => ({
-      default: mod.CaSelect,
-    })),
-  {
-    ssr: false,
-    loading: () => <LoaderSkeleton />,
-  }
-)
+import { TypeOfPlaceSelect } from './place-select/TypeOfPlaceSelect'
+import { BrandSelect } from './brand-select/BrandSelect'
+import { CaSelect } from './ca-select/CaSelect'
+import { useAuth } from '@/providers/auth-provider/AuthProvider'
 
 interface FiltersPanelProps {
   isOpen?: boolean
@@ -54,10 +37,12 @@ const FiltersPanel = ({ isOpen, onClose }: FiltersPanelProps): JSX.Element => {
   const counterpartySelectRef = useRef<{ handleClearAll: () => void }>(null)
   const statusRef = useRef<{ handleClearAll: () => void }>(null)
   const citySelectRef = useRef<{ handleClearAll: () => void }>(null)
+  const placeTypeSelectRef = useRef<{ handleClearAll: () => void }>(null)
 
   const [currentFilters, setCurrentFilters] = useState<ISavedFilters>({})
   const [savePermanently, setSavePermanently] = useState<boolean>(false)
   const [isSettingsLoaded, setIsSettingsLoaded] = useState<boolean>(false)
+  const { isEmployee } = useAuth()
 
   useEffect(() => {
     const loadSettingsAndFilters = () => {
@@ -69,8 +54,9 @@ const FiltersPanel = ({ isOpen, onClose }: FiltersPanelProps): JSX.Element => {
       if (savedFilters) {
         setCurrentFilters(savedFilters)
 
-        // Применяем сохраненные фильтры к URL только если панель не всегда открыта (не десктоп)
-        if (onClose) {
+        // Сохранённые фильтры — начальное состояние, но они не должны
+        // перезаписывать ссылку, с которой пользователь пришёл в каталог.
+        if (onClose && Array.from(searchParams.keys()).length === 0) {
           const params = new URLSearchParams()
           Object.entries(savedFilters).forEach(([key, value]) => {
             if (value) {
@@ -85,7 +71,7 @@ const FiltersPanel = ({ isOpen, onClose }: FiltersPanelProps): JSX.Element => {
     }
 
     loadSettingsAndFilters()
-  }, [])
+  }, [onClose, pathname, router, searchParams])
 
   // Используем клик вовне только если есть функция onClose (мобильная версия)
   useClickOutside([panelRef], onClose!!, !!onClose && isOpen)
@@ -156,11 +142,19 @@ const FiltersPanel = ({ isOpen, onClose }: FiltersPanelProps): JSX.Element => {
     if (citySelectRef.current) {
       citySelectRef.current.handleClearAll()
     }
+    if (placeTypeSelectRef.current) {
+      placeTypeSelectRef.current.handleClearAll()
+    }
   }
 
   const getCurrentValue = (key: string): string => {
     return searchParams.get(key) || currentFilters[key] || ''
   }
+
+  const hasActiveFilters =
+    Array.from(searchParams.keys()).some(
+      (key) => key !== 'page' && key !== 'limit'
+    ) || Object.keys(currentFilters).length > 0
 
   const handleBrandChange = (brandId: string) => {
     handleFilterChange('brand_id', brandId)
@@ -171,12 +165,21 @@ const FiltersPanel = ({ isOpen, onClose }: FiltersPanelProps): JSX.Element => {
   }
 
   const handleStatusChange = (status: string) => {
-    handleFilterChange('status', status)
+    handleFilterChange('status', status === '3' ? '' : status)
   }
 
-  const handleCityChange = (cityName: string) => {
-    // Город не сохраняем в фильтры, так как происходит редирект
-    // handleFilterChange('city', cityName)
+  const handleCityChange = (citySlug: string) => {
+    handleFilterChange('city_slug', citySlug)
+  }
+
+  const handleContentTypesChange = (
+    event: React.ChangeEvent<HTMLSelectElement>
+  ) => {
+    const values = Array.from(
+      event.target.selectedOptions,
+      (option) => option.value
+    )
+    handleFilterChange('content_types', values.join(','))
   }
 
   return (
@@ -192,8 +195,9 @@ const FiltersPanel = ({ isOpen, onClose }: FiltersPanelProps): JSX.Element => {
 
       <div
         ref={panelRef}
-        className={`${styles.panel} ${isOpen ? styles.panelOpen : ''} ${!onClose ? styles.desktopPanel : ''
-          }`}
+        className={`${styles.panel} ${isOpen ? styles.panelOpen : ''} ${
+          !onClose ? styles.desktopPanel : ''
+        }`}
       >
         {onClose && (
           <div className={styles.panelHeader}>
@@ -241,9 +245,10 @@ const FiltersPanel = ({ isOpen, onClose }: FiltersPanelProps): JSX.Element => {
             <label className={styles.filterLabel}>Города</label>
             <CitySelect
               ref={citySelectRef}
-              value={getCurrentValue('city')}
+              value={getCurrentValue('city_slug')}
               onChange={handleCityChange}
               placeholder="Поиск города..."
+              redirectOnSelect={false}
             />
           </div>
 
@@ -258,17 +263,13 @@ const FiltersPanel = ({ isOpen, onClose }: FiltersPanelProps): JSX.Element => {
           </div>
 
           <div className={styles.filterGroup}>
-            <label className={styles.filterLabel}>Контрагент</label>
-            <CaSelect
-              ref={counterpartySelectRef}
-              value={getCurrentValue('counterparty_id')}
-              onChange={handleCaChange}
-              placeholder="Поиск контрагентов ..."
-            />
-          </div>
-
-          <div className={styles.filterGroup}>
-            <label htmlFor='status-select' id="status-label" className={styles.filterLabel}>Статус устройства</label>
+            <label
+              htmlFor="status-select"
+              id="status-label"
+              className={styles.filterLabel}
+            >
+              Статус устройства
+            </label>
             <StatusSelect
               id="status-select"
               ref={statusRef}
@@ -279,16 +280,88 @@ const FiltersPanel = ({ isOpen, onClose }: FiltersPanelProps): JSX.Element => {
           </div>
 
           <div className={styles.filterGroup}>
-            <label className={styles.filterLabel}>Категория</label>
+            <label className={styles.filterLabel}>Тип места</label>
+            <TypeOfPlaceSelect
+              ref={placeTypeSelectRef}
+              value={getCurrentValue('type_of_place')}
+              onChange={(value) => handleFilterChange('type_of_place', value)}
+              placeholder="Выберите типы мест..."
+            />
+          </div>
+
+          {isEmployee && (
+            <div className={styles.filterGroup}>
+              <label className={styles.filterLabel}>Контрагент</label>
+              <CaSelect
+                ref={counterpartySelectRef}
+                value={getCurrentValue('counterparty_id')}
+                onChange={handleCaChange}
+                placeholder="Поиск контрагентов..."
+              />
+            </div>
+          )}
+
+          <div className={styles.filterGroup}>
+            <label className={styles.filterLabel}>Форматы размещения</label>
             <select
               className={styles.filterSelect}
-              onChange={(e) => handleFilterChange('category', e.target.value)}
-              value={getCurrentValue('category')}
+              multiple
+              onChange={handleContentTypesChange}
+              value={getCurrentValue('content_types')
+                .split(',')
+                .filter(Boolean)}
             >
-              <option value="">Все категории</option>
-              <option value="category1">Категория 1</option>
-              <option value="category2">Категория 2</option>
-              <option value="category3">Категория 3</option>
+              <option value="audio">Аудиореклама</option>
+              <option value="video">Видеореклама</option>
+              <option value="audio_video">Аудио + видео</option>
+              <option value="audio_image">Аудио + изображение</option>
+              <option value="video_image">Видео + изображение</option>
+              <option value="audio_video_image">
+                Аудио + видео + изображение
+              </option>
+            </select>
+          </div>
+
+          <div className={styles.filterGroup}>
+            <label className={styles.filterLabel}>Стоимость в день, ₽</label>
+            <div className="grid grid-cols-2 gap-2">
+              <input
+                key={getCurrentValue('price_from')}
+                type="number"
+                min="0"
+                className={styles.filterSelect}
+                placeholder="От"
+                defaultValue={getCurrentValue('price_from')}
+                onBlur={(event) =>
+                  handleFilterChange('price_from', event.target.value)
+                }
+              />
+              <input
+                key={getCurrentValue('price_to')}
+                type="number"
+                min="0"
+                className={styles.filterSelect}
+                placeholder="До"
+                defaultValue={getCurrentValue('price_to')}
+                onBlur={(event) =>
+                  handleFilterChange('price_to', event.target.value)
+                }
+              />
+            </div>
+          </div>
+
+          <div className={styles.filterGroup}>
+            <label className={styles.filterLabel}>Фото фасада</label>
+            <select
+              className={styles.filterSelect}
+              onChange={(event) =>
+                handleFilterChange('has_facade', event.target.value)
+              }
+              value={getCurrentValue('has_facade')}
+            >
+              <option value="">Не важно</option>
+              <option value="true">Только с фото</option>
+              <option value="false">Без фото</option>
             </select>
           </div>
 
@@ -296,7 +369,7 @@ const FiltersPanel = ({ isOpen, onClose }: FiltersPanelProps): JSX.Element => {
             variant="default"
             onClick={handleResetFilters}
             className={styles.resetButton}
-            disabled={Object.keys(currentFilters).length === 0}
+            disabled={!hasActiveFilters}
           >
             Сбросить фильтры
           </Button>

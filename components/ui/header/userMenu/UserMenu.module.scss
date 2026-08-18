@@ -108,6 +108,13 @@
         }
     }
 
+    &__role {
+        display: block;
+        margin-top: 4px;
+        color: #6b7280;
+        font-size: 0.9rem;
+    }
+
     &__menu {
         list-style: none;
         padding: 0;

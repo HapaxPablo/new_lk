@@ -4,7 +4,10 @@ import BreadcrumbsSetter from '@/components/ui/breadcrumbs/BreadcrumbsSetter'
 import LoaderSkeleton from '@/components/ui/loader/LoaderSkeleton'
 import { SITE_URL } from '@/lib/configs/config-meta/configMetaData'
 import { generateNomenclaturesListMetadata } from '@/lib/configs/config-meta/nomenclatures'
-import { INomenclatureResponse } from '@/types/nomenclature'
+import {
+  INomenclatureMapResponse,
+  INomenclatureResponse,
+} from '@/types/nomenclature'
 import { type PopularCity } from '@/lib/api/geocoding'
 import { CatalogSidebar } from '@/components/nomenclatures/CatalogSidebar'
 import {
@@ -13,6 +16,7 @@ import {
 } from '@/components/nomenclatures/NomenclaturesLandingSections'
 import { Metadata } from 'next'
 import dynamic from 'next/dynamic'
+import { cookies } from 'next/headers'
 
 const Toolbar = dynamic(
   () =>
@@ -43,10 +47,71 @@ interface NomenclaturesPageProps {
     search?: string
     brand_name?: string
     brand_id?: string
+    counterparty_id?: string
     status?: string
     type_of_place?: string
     city_slug?: string
+    content_types?: string
+    price_from?: string
+    price_to?: string
+    has_facade?: string
   }>
+}
+
+function getCatalogSearchBody(params: {
+  limit: number
+  page: number
+  search: string
+  brand_name: string
+  brand_id: string
+  counterparty_id: string
+  status: string
+  type_of_place: string
+  city_slug: string
+  content_types: string
+  price_from: string
+  price_to: string
+  has_facade: string
+}) {
+  const body: Record<string, string | number | boolean | string[]> = {
+    limit: params.limit,
+    page: params.page,
+  }
+
+  if (params.search) body.search = params.search
+  if (params.brand_name) body.brand_name = params.brand_name
+  if (params.brand_id) {
+    const brandIds = params.brand_id.split(',').filter(Boolean)
+    if (brandIds.length > 1) {
+      body.brand_ids = brandIds
+    } else {
+      body.brand_id = brandIds[0]
+    }
+  }
+  if (params.counterparty_id) {
+    const counterpartyIds = params.counterparty_id.split(',').filter(Boolean)
+    if (counterpartyIds.length > 1) {
+      body.counterparty_ids = counterpartyIds
+    } else {
+      body.counterparty_id = counterpartyIds[0]
+    }
+  }
+  if (params.status) body.status = params.status
+  if (params.type_of_place) body.type_of_place = params.type_of_place
+  if (params.city_slug) body.city_slug = params.city_slug
+  if (params.content_types) {
+    body.content_types = params.content_types
+      .split(',')
+      .map((value) => value.trim())
+      .filter(Boolean)
+  }
+  if (params.price_from) body.price_from = params.price_from
+  if (params.price_to) body.price_to = params.price_to
+  if (params.has_facade === 'true' || params.has_facade === 'false') {
+    body.has_facade = params.has_facade === 'true'
+  }
+
+  return body
 }
 export async function generateMetadata(
   props: NomenclaturesPageProps
@@ -105,34 +170,85 @@ export default async function NomenclaturesPage(props: NomenclaturesPageProps) {
   const search = params.search || ''
   const brand_name = params.brand_name || ''
   const brand_id = params.brand_id || ''
+  const counterpartyId = params.counterparty_id || ''
   const status = params.status || ''
   const typeOfPlace = params.type_of_place || ''
   const citySlug = params.city_slug || ''
+  const contentTypes = params.content_types || ''
+  const priceFrom = params.price_from || ''
+  const priceTo = params.price_to || ''
+  const hasFacade = params.has_facade || ''
+  const token = (await cookies()).get('access_token')?.value
+  const authHeaders = token
+    ? {
+        Authorization: `access_token ${token}`,
+        Cookie: `access_token=${token}`,
+      }
+    : {}
 
   // console.log('Page params:', { limit, page, search, brand_name, brand_id })
   try {
-    const url = new URL('/api/nomenclatures/', process.env.API_1C_URL)
-    url.searchParams.set('limit', String(limit))
-    url.searchParams.set('page', String(page))
-    if (search) url.searchParams.set('search', search)
-    if (brand_name) url.searchParams.set('brand_name', brand_name)
-    if (brand_id) url.searchParams.set('brand_id', brand_id)
-    if (status) url.searchParams.set('status', status)
-    if (typeOfPlace) url.searchParams.set('type_of_place', typeOfPlace)
-    if (citySlug) url.searchParams.set('city_slug', citySlug)
+    const searchBody = getCatalogSearchBody({
+      limit,
+      page,
+      search,
+      brand_name,
+      brand_id,
+      counterparty_id: counterpartyId,
+      status,
+      type_of_place: typeOfPlace,
+      city_slug: citySlug,
+      content_types: contentTypes,
+      price_from: priceFrom,
+      price_to: priceTo,
+      has_facade: hasFacade,
+    })
+    const searchUrl = new URL(
+      '/api/nomenclatures/web/search/',
+      process.env.API_1C_URL
+    )
+    const mapUrl = new URL('/api/nomenclatures/web/map/', process.env.API_1C_URL)
 
-    // console.log('Making request to:', url.toString())
-
-    const [response, popularCities] = await Promise.all([
-      fetch(url.toString(), { cache: 'no-cache' }),
+    const [response, mapResponse, popularCities] = await Promise.all([
+      fetch(searchUrl.toString(), {
+        method: 'POST',
+        cache: 'no-store',
+        headers: { 'Content-Type': 'application/json', ...authHeaders },
+        body: JSON.stringify(searchBody),
+      }),
+      fetch(mapUrl.toString(), {
+        method: 'POST',
+        cache: 'no-store',
+        headers: { 'Content-Type': 'application/json', ...authHeaders },
+        body: JSON.stringify(searchBody),
+      }),
       getPopularCities(),
     ])
 
     if (!response.ok) {
-      throw new Error(`Ошибка ${response.status}: ${response.statusText}`)
+      throw new Error(
+        `Ошибка ${response.status}: ${await response.text() || response.statusText}`
+      )
+    }
+    if (!mapResponse.ok) {
+      throw new Error(
+        `Ошибка карты ${mapResponse.status}: ${await mapResponse.text() || mapResponse.statusText}`
+      )
     }
 
-    const data: INomenclatureResponse = await response.json()
+    const searchData: Omit<INomenclatureResponse, 'next' | 'previous'> & {
+      next_page: number | null
+      previous_page: number | null
+    } = await response.json()
+    const data: INomenclatureResponse = {
+      ...searchData,
+      next: searchData.next_page === null ? null : String(searchData.next_page),
+      previous:
+        searchData.previous_page === null
+          ? null
+          : String(searchData.previous_page),
+    }
+    const mapData: INomenclatureMapResponse = await mapResponse.json()
 
     const breadcrumbItems = [
       { name: 'Главная', url: SITE_URL },
@@ -190,6 +306,7 @@ export default async function NomenclaturesPage(props: NomenclaturesPageProps) {
                 </div>
                 <CatalogSidebar
                   items={data.results}
+                  mapItems={mapData.results}
                   cityName={citySlug || undefined}
                 />
               </div>

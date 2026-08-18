@@ -9,6 +9,7 @@ import RegisterFormFields from './RegisterFormFields'
 export function RegisterFormDesktop() {
   const [canConfirm, setCanConfritm] = useState<boolean>(false)
   const [email, setEmail] = useState<string>('')
+  const [password, setPassword] = useState<string>('')
   const { showToast } = useToast()
 
   return (
@@ -16,11 +17,12 @@ export function RegisterFormDesktop() {
       {!canConfirm ? (
         <RegisterFormFields
           setEmail={setEmail}
+          setPassword={setPassword}
           setCanConfirm={setCanConfritm}
           showToast={showToast}
         />
       ) : (
-        <ConfirmRegistratrionForm email={email} />
+        <ConfirmRegistratrionForm email={email} password={password} />
       )}
       <div className={styles.imgWrapper}>
         <div className={styles.img} />

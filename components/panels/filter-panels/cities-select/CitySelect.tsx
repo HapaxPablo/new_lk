@@ -3,13 +3,16 @@
 import {
     useState,
     useEffect,
-    useCallback,
     useRef,
     forwardRef,
     useImperativeHandle,
 } from 'react'
 import { useRouter } from 'next/navigation'
 import { useDebounce } from '@/hooks/useDebounce'
+import {
+    getFilterOptions,
+    useCachedFilterOptions,
+} from '@/hooks/data/useCachedFilterOptions'
 import styles from './CitySelect.module.scss'
 import { useClickOutside } from '@/hooks/useClickOutside'
 
@@ -24,10 +27,11 @@ interface ICity {
 }
 
 interface CitySelectProps {
-    value: string
-    onChange: (cityName: string) => void
-    placeholder?: string
-    disabled?: boolean
+  value: string
+  onChange: (citySlug: string) => void
+  placeholder?: string
+  disabled?: boolean
+  redirectOnSelect?: boolean
 }
 
 export const CitySelect = forwardRef(
@@ -37,23 +41,24 @@ export const CitySelect = forwardRef(
             onChange,
             placeholder = 'Выберите город',
             disabled = false,
+            redirectOnSelect = true,
         }: CitySelectProps,
         ref
     ) => {
         const router = useRouter()
-        const [cities, setCities] = useState<ICity[]>([])
         const [searchTerm, setSearchTerm] = useState('')
-        const [loading, setLoading] = useState(false)
         const [isOpen, setIsOpen] = useState(false)
         const [selectedCity, setSelectedCity] = useState<ICity | null>(null)
-        const [error, setError] = useState<string | null>(null)
-        const [offset, setOffset] = useState(0)
-        const [hasMore, setHasMore] = useState(true)
-        const [loadingMore, setLoadingMore] = useState(false)
 
         const dropdownRef = useRef<HTMLDivElement>(null)
-        const optionsContainerRef = useRef<HTMLDivElement>(null)
         const debouncedSearchTerm = useDebounce(searchTerm, 500)
+        const params = new URLSearchParams()
+        if (debouncedSearchTerm) params.set('search', debouncedSearchTerm)
+        const { data, error, isLoading: loading, mutate } =
+            useCachedFilterOptions<ICity>(
+                isOpen ? `/api/cities/?${params.toString()}` : null
+            )
+        const cities = getFilterOptions(data)
 
         useClickOutside(
             [dropdownRef],
@@ -64,42 +69,6 @@ export const CitySelect = forwardRef(
             true
         )
 
-        const loadCities = useCallback(async (search: string = '') => {
-            setLoading(true)
-            setError(null)
-
-            try {
-                const params = new URLSearchParams()
-
-                if (search) {
-                    params.set('search', search)
-                }
-
-                const response = await fetch(`/api/cities/?${params.toString()}`)
-
-                if (!response.ok) {
-                    throw new Error(`Ошибка загрузки: ${response.status}`)
-                }
-
-                const data = await response.json()
-
-                // Универсальная обработка ответа
-                const citiesData = Array.isArray(data)
-                    ? data
-                    : (data.results || data || [])
-
-                setCities(citiesData)
-                setHasMore(false) // Без пагинации
-
-            } catch (error: any) {
-                console.error('Ошибка загрузки городов:', error)
-                setError(error.message || 'Не удалось загрузить города')
-                setCities([])
-            } finally {
-                setLoading(false)
-            }
-        }, [])
-
         useEffect(() => {
             if (value) {
                 // Если значение пришло извне, просто устанавливаем его
@@ -109,61 +78,32 @@ export const CitySelect = forwardRef(
             }
         }, [value])
 
-        useEffect(() => {
-            if (!isOpen || cities.length > 0) return
-            loadCities('')
-        }, [isOpen])
-
-        useEffect(() => {
-            if (!isOpen) return
-            loadCities(debouncedSearchTerm)
-        }, [debouncedSearchTerm, isOpen])
-
-        // Загрузка при скролле
-        const handleScroll = useCallback(() => {
-            if (!optionsContainerRef.current || loadingMore || !hasMore) return
-
-            const { scrollTop, scrollHeight, clientHeight } = optionsContainerRef.current
-            if (scrollHeight - scrollTop - clientHeight < 100) {
-                loadCities(searchTerm)
-            }
-        }, [loadingMore, hasMore, searchTerm, loadCities])
-
         const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
             setSearchTerm(e.target.value)
         }
 
         const handleSelect = (city: ICity) => {
             setSelectedCity(city)
-            onChange(city.name)
+            onChange(city.slug)
             setIsOpen(false)
 
-            // Редирект на /places/{slug}
-            router.push(`/places/${city.slug}`)
+            if (redirectOnSelect) {
+                router.push(`/places/${city.slug}`)
+            }
         }
 
         const handleInputFocus = () => {
             setIsOpen(true)
-
-            if (cities.length === 0 && !loading) {
-                loadCities('')
-            }
         }
 
         const handleRetry = () => {
-            setError(null)
-            loadCities(searchTerm)
+            void mutate()
         }
 
         const handleClear = () => {
             setSearchTerm('')
             setSelectedCity(null)
             onChange('')
-            setError(null)
-
-            if (isOpen) {
-                loadCities('')
-            }
         }
 
         const handleClearAll = () => {
@@ -263,11 +203,7 @@ export const CitySelect = forwardRef(
                                         </div>
                                     )}
                                 </div>
-                                <div
-                                    className={styles.wrapper_option}
-                                    ref={optionsContainerRef}
-                                    onScroll={handleScroll}
-                                >
+                                <div className={styles.wrapper_option}>
                                     {cities.map((city) => {
                                         const isSelected = selectedCity?.id === city.id
 
@@ -286,19 +222,6 @@ export const CitySelect = forwardRef(
                                             </div>
                                         )
                                     })}
-
-                                    {/* {loadingMore && (
-                                        <div className={styles.loadingMore}>
-                                            <div className={styles.loadingSpinner}></div>
-                                            Загрузка...
-                                        </div>
-                                    )} */}
-
-                                    {!hasMore && cities.length > 0 && (
-                                        <div className={styles.endOfList}>
-                                            Все города загружены
-                                        </div>
-                                    )}
                                 </div>
                             </div>
                         )}

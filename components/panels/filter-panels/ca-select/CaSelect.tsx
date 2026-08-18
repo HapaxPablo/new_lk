@@ -10,6 +10,9 @@ import {
 } from 'react'
 import { useDebounce } from '@/hooks/useDebounce'
 import { useClickOutside } from '@/hooks/useClickOutside'
+import {
+  useCachedInfiniteFilterOptions,
+} from '@/hooks/data/useCachedFilterOptions'
 import { ICounterparty } from '@/types/counterparty'
 import styles from './CaStyles.module.css'
 
@@ -30,29 +33,35 @@ export const CaSelect = forwardRef(
     }: CounterpartySelectProps,
     ref
   ) => {
-    const [counterparties, setCounterparties] = useState<ICounterparty[]>([])
     const [searchTerm, setSearchTerm] = useState('')
-    const [loading, setLoading] = useState(false)
     const [isOpen, setIsOpen] = useState(false)
     const [selectedCounterpartyIds, setSelectedCounterpartyIds] = useState<
       string[]
     >([])
-    const [error, setError] = useState<string | null>(null)
 
     const dropdownRef = useRef<HTMLDivElement>(null)
+    const optionsContainerRef = useRef<HTMLDivElement>(null)
     const debouncedSearchTerm = useDebounce(searchTerm, 500)
-
-    // Функция для скрытия ошибки
-    const hideError = useCallback(() => {
-      setError(null)
-    }, [])
+    const {
+      options: counterparties,
+      error,
+      isLoading: loading,
+      isLoadingMore,
+      hasMore,
+      loadMore,
+      mutate,
+    } = useCachedInfiniteFilterOptions<ICounterparty>({
+      isOpen,
+      endpoint: '/api/counterparties/filter-options',
+      search: debouncedSearchTerm,
+      params: { limit: '150' },
+    })
 
     // Используем хук для закрытия при клике вне элемента
     useClickOutside(
       [dropdownRef],
       () => {
         setIsOpen(false)
-        hideError() // Скрываем ошибку при клике вне компонента
       },
       isOpen,
       true
@@ -68,56 +77,18 @@ export const CaSelect = forwardRef(
       }
     }, [value])
 
-    const loadCounterparties = useCallback(async (search: string = '') => {
-      setLoading(true)
-      setError(null)
-
-      try {
-        const params = new URLSearchParams()
-
-        if (search) {
-          params.set('name', search)
-        }
-
-        params.set('limit', '150')
-        params.set('page', '1')
-        params.set('is_deleted', 'false')
-
-        const response = await fetch(`/api/counterparties?${params.toString()}`)
-
-        if (!response.ok) {
-          throw new Error(`Ошибка загрузки: ${response.status}`)
-        }
-
-        const data = await response.json()
-        console.log('Загружены контрагенты:', data.results || data)
-        setCounterparties(data.results || data)
-      } catch (error: any) {
-        console.error('Ошибка загрузки контрагентов:', error)
-        setError(error.message || 'Не удалось загрузить контрагентов')
-        setCounterparties([])
-      } finally {
-        setLoading(false)
-      }
-    }, [])
-
-    useEffect(() => {
-      if (!isOpen || counterparties.length > 0) return
-      console.log('Загрузка контрагентов при открытии')
-      loadCounterparties('')
-    }, [isOpen])
-
-    // Загрузка контрагентов при поиске
-    useEffect(() => {
-      if (!isOpen) return
-      console.log('Поиск контрагентов:', debouncedSearchTerm)
-      loadCounterparties(debouncedSearchTerm)
-    }, [debouncedSearchTerm, isOpen])
-
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
       const newSearchTerm = e.target.value
       setSearchTerm(newSearchTerm)
     }
+
+    const handleScroll = useCallback(() => {
+      const container = optionsContainerRef.current
+      if (!container || !hasMore || isLoadingMore) return
+
+      const { scrollTop, scrollHeight, clientHeight } = container
+      if (scrollHeight - scrollTop - clientHeight < 80) loadMore()
+    }, [hasMore, isLoadingMore, loadMore])
 
     const handleCounterpartyToggle = (counterparty: ICounterparty) => {
       const isSelected = selectedCounterpartyIds.includes(counterparty.id)
@@ -151,29 +122,17 @@ export const CaSelect = forwardRef(
     }
 
     const handleInputFocus = () => {
-      console.log('Фокус на поле ввода')
       setIsOpen(true)
-
-      if (counterparties.length === 0 && !loading) {
-        loadCounterparties('')
-      }
     }
 
     const handleRetry = () => {
-      console.log('Повторная попытка загрузки')
-      setError(null)
-      loadCounterparties(searchTerm)
+      void mutate()
     }
 
     const handleClear = () => {
       setSearchTerm('')
       setSelectedCounterpartyIds([])
       onChange('')
-      setError(null)
-
-      if (isOpen) {
-        loadCounterparties('')
-      }
     }
 
     const handleSelectAll = () => {
@@ -293,7 +252,11 @@ export const CaSelect = forwardRef(
                     </button>
                   </div>
                 </div>
-                <div className={styles.wrapper_option}>
+                <div
+                  ref={optionsContainerRef}
+                  className={styles.wrapper_option}
+                  onScroll={handleScroll}
+                >
                   {displayedCounterparties.map((counterparty) => {
                     const isSelected = selectedCounterpartyIds.includes(
                       counterparty.id
@@ -331,6 +294,7 @@ export const CaSelect = forwardRef(
                       </div>
                     )
                   })}
+                  {isLoadingMore && <div className={styles.loading}>Загрузка...</div>}
                 </div>
               </div>
             )}

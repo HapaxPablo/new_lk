@@ -218,6 +218,27 @@ export interface IResponsiblePerson {
   full_name: string
   phone_number: string[]
 }
+
+export interface INomenclatureMapItem {
+  id: string
+  name: string
+  coordinates: {
+    latitude: string | null
+    longitude: string | null
+  } | null
+  type_of_place: string | null
+  brand: Pick<IBrand, 'name' | 'logotype'> | null
+  facade: {
+    id: string
+    source: string
+  } | null
+  old_slug: string
+}
+
+export interface INomenclatureMapResponse {
+  count: number
+  results: INomenclatureMapItem[]
+}
 export type ResponsiblePersonRole =
   | 'ad'
   | 'radio'
@@ -288,6 +309,7 @@ export interface IAddress {
 }
 
 export interface ITypeOfPlace {
+  id: string
   name: string
   abbreviation?: string
 }

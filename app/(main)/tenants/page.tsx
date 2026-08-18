@@ -314,9 +314,6 @@ export default async function TenantsPage(props: TenantsPageProps) {
           <section className="bg-white">
             <div className="mx-auto grid max-w-7xl gap-8 px-4 py-14 lg:grid-cols-[0.8fr_1.2fr]">
               <div>
-                <p className="text-sm font-bold uppercase tracking-wider text-[#ef5350]">
-                  SEO-блок
-                </p>
                 <h2 className="mt-2 text-3xl font-black text-slate-900">
                   Арендаторы торговых центров и indoor-площадок
                 </h2>

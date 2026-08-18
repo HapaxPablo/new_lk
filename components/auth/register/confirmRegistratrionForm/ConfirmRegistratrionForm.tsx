@@ -2,14 +2,20 @@
 
 import { Button } from '@/components/ui/button/Button'
 import { useToast} from '@/hooks/useToast'
-import { useRouter } from 'next/navigation'
+import { useAuth } from '@/providers/auth-provider/AuthProvider'
 import { useRef } from 'react'
 import styles from './ConfirmRegistratrionForm.module.scss'
 
-export default function ConfirmRegistratrionForm({ email }: { email: string }) {
+export default function ConfirmRegistratrionForm({
+  email,
+  password,
+}: {
+  email: string
+  password: string
+}) {
   const inputsRef = useRef<Array<HTMLInputElement | null>>([])
   const { showToast } = useToast()
-  const router = useRouter()
+  const { login } = useAuth()
 
   const handleChange = (index: number, value: string) => {
     if (!/^\d?$/.test(value)) return // только цифры или пусто
@@ -48,7 +54,10 @@ export default function ConfirmRegistratrionForm({ email }: { email: string }) {
         showToast(`${result.message}`, 'error')
       } else {
         showToast(`${result.message}`, 'success')
-        router.push('/nomenclatures')
+        const loginResult = await login(email, password)
+        if (!loginResult.success) {
+          showToast('Регистрация подтверждена. Войдите в аккаунт.', 'error')
+        }
       }
     } catch (err) {
       console.error('Ошибка сети или сервера')

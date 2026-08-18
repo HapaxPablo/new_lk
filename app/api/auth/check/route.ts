@@ -1,8 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { HttpClient1C } from '@/lib/http-client'
-import { IUserDetailsItem } from '@/types/user'
-
-const EMPLOYEE_ROLES = ['superuser', 'admin', 'manager']
+import { ICurrentUser, isEmployeeRole } from '@/types/user'
 
 export async function POST(request: NextRequest) {
   try {
@@ -28,21 +26,10 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ isAuthenticated: false, isEmployee: false })
     }
 
-    // Получаем id юзера
-    const me = await HttpClient1C.server(request).get<{ id: string }>(
-      'auth/users/me/'
+    const user = await HttpClient1C.server(request).get<ICurrentUser>(
+      'api/users/me/'
     )
-
-    if (!me?.id) {
-      return NextResponse.json({ isAuthenticated: true, isEmployee: false })
-    }
-
-    // Получаем детали юзера
-    const user = await HttpClient1C.server(request).get<IUserDetailsItem>(
-      `api/users/${me.id}/`
-    )
-
-    const isEmployee = EMPLOYEE_ROLES.includes(user?.role?.toLowerCase())
+    const isEmployee = isEmployeeRole(user.role)
 
     return NextResponse.json({ isAuthenticated: true, isEmployee })
   } catch (error) {

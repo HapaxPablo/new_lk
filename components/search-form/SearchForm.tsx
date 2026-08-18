@@ -60,6 +60,9 @@ interface SearchFormProps {
    * @default ''
    */
   inputClassName?: string
+
+  /** Обработчик поиска без изменения URL. */
+  onSearchChange?: (value: string) => void
 }
 
 /**
@@ -80,6 +83,7 @@ export function SearchForm({
   buttonText = 'Найти',
   buttonClassName = '',
   inputClassName = '',
+  onSearchChange,
 }: SearchFormProps) {
   const router = useRouter()
   const pathname = usePathname()
@@ -98,20 +102,21 @@ export function SearchForm({
     // не отправляем если меньше 3 символов (но разрешаем пустую строку — для сброса)
     if (value.length > 0 && value.length < 3) return
 
-    const params = new URLSearchParams(searchParams.toString())
-
-    if (value) {
-      params.set(searchParamName, value)
+    if (onSearchChange) {
+      onSearchChange(value)
     } else {
-      params.delete(searchParamName)
+      const params = new URLSearchParams(searchParams.toString())
+      if (value) {
+        params.set(searchParamName, value)
+      } else {
+        params.delete(searchParamName)
+      }
+      params.delete('page')
+      startTransition(() => {
+        router.push(`${pathname}?${params.toString()}`)
+      })
     }
-    params.delete('page')
-    startTransition(() => {
-      router.push(`${pathname}?${params.toString()}`)
-    })
   }, debounceDelay)
-
-
 
   // Обработчик отправки формы (по кнопке или Enter)
   const handleSubmit = useCallback(
@@ -148,12 +153,29 @@ export function SearchForm({
     // Отменяем отложенный debounce-запрос и сразу очищаем
     debouncedSearch.cancel()
 
+    if (onSearchChange) {
+      onSearchChange('')
+      return
+    }
+
     const params = new URLSearchParams(searchParams.toString())
     params.delete(searchParamName)
-    params.delete('page') // Сбрасываем пагинацию
-
+    params.delete('page')
     router.push(`${pathname}?${params.toString()}`)
-  }, [debouncedSearch, searchParamName, pathname, router, searchParams])
+  }, [
+    debouncedSearch,
+    onSearchChange,
+    searchParamName,
+    pathname,
+    router,
+    searchParams,
+  ])
+
+  useEffect(() => {
+    if (onSearchChange) {
+      setInputValue(initialSearch)
+    }
+  }, [initialSearch])
 
   // Синхронизация initialSearch с состоянием при изменении извне
   // useEffect(() => {
@@ -176,14 +198,12 @@ export function SearchForm({
 
   return (
     <>
-
       {/* {isPending && <Loader size="large" variant="primary" />} */}
 
       <form
         onSubmit={handleSubmit}
         className={`flex ${className} ${hideButton ? 'rounded' : ''}`}
       >
-
         <div className={`relative flex-grow`}>
           <input
             ref={inputRef}

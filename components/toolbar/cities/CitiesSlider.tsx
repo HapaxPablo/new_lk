@@ -3,10 +3,9 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
-import { useSearchParams } from 'next/navigation'
-
 type City = {
   name: string | null
+  typeOfPlace?: string
 }
 
 interface ICity {
@@ -19,15 +18,13 @@ interface ICity {
   nomenclature_count: number
 }
 
-export default function CitiesSlider({ name }: City) {
-  const searchParams = useSearchParams()
+export default function CitiesSlider({ name, typeOfPlace = '' }: City) {
   const [cities, setCities] = useState<ICity[]>([])
   const [loading, setLoading] = useState<boolean>(false)
   const [error, setError] = useState<string | null>(null)
   const [canScrollLeft, setCanScrollLeft] = useState(false)
   const [canScrollRight, setCanScrollRight] = useState(false)
   const sliderRef = useRef<HTMLDivElement>(null)
-  const typeOfPlace = searchParams.get('type_of_place') || ''
 
   const updateScrollControls = useCallback(() => {
     const slider = sliderRef.current

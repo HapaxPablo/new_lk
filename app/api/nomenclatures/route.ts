@@ -13,34 +13,93 @@ export async function GET(request: NextRequest) {
 
     const limit = Number(searchParams.get('limit')) || 24
     const page = Number(searchParams.get('page')) || 1
-    const search = searchParams.get('search') || undefined
-    const brand_name = searchParams.get('brand_name') || undefined
-    const brand_id = searchParams.get('brand_id') || undefined
-    const status = searchParams.get('status') || undefined
-    const type_of_place = searchParams.get('type_of_place') || undefined
-    const city_slug = searchParams.get('city_slug') || undefined
-
-    const paramsFor1C: Record<string, string> = {
-      limit: String(limit),
-      page: String(page),
+    const body: Record<string, string | number | boolean | string[]> = {
+      limit,
+      page,
     }
 
-    if (search) paramsFor1C.search = search
-    if (brand_name) paramsFor1C.brand_name = brand_name
-    if (brand_id) paramsFor1C.brand_id = brand_id
-    if (status) paramsFor1C.status = status
-    if (type_of_place) paramsFor1C.type_of_place = type_of_place
-    if (city_slug) paramsFor1C.city_slug = city_slug
+    const copyString = (key: string) => {
+      const value = searchParams.get(key)
+      if (value) body[key] = value
+    }
 
-    const queryString = new URLSearchParams(paramsFor1C).toString()
+    const stringFilterKeys = [
+      'search',
+      'brand_name',
+      'status',
+      'type_of_place',
+      'city_slug',
+      'price_from',
+      'price_to',
+    ]
+    stringFilterKeys.forEach(copyString)
 
-    const response = await HttpClient1C.server(
-      request
-    ).get<INomenclatureResponse>(`api/nomenclatures/?${queryString}`)
+    const brandIds = (searchParams.get('brand_id') || '')
+      .split(',')
+      .filter(Boolean)
+    if (brandIds.length > 1) body.brand_ids = brandIds
+    else if (brandIds.length === 1) body.brand_id = brandIds[0]
 
-    return Response.json(response)
+    const counterpartyIds = (searchParams.get('counterparty_id') || '')
+      .split(',')
+      .filter(Boolean)
+    if (counterpartyIds.length > 1) body.counterparty_ids = counterpartyIds
+    else if (counterpartyIds.length === 1) body.counterparty_id = counterpartyIds[0]
+
+    const contentTypes = (searchParams.get('content_types') || '')
+      .split(',')
+      .filter(Boolean)
+    if (contentTypes.length) body.content_types = contentTypes
+
+    const hasFacade = searchParams.get('has_facade')
+    if (hasFacade === 'true' || hasFacade === 'false') {
+      body.has_facade = hasFacade === 'true'
+    }
+
+    const response = await HttpClient1C.server(request).post<{
+      count: number
+      page: number
+      limit: number
+      next_page: number | null
+      previous_page: number | null
+      results: INomenclatureResponse['results']
+    }>('api/nomenclatures/web/search/', body)
+
+    return Response.json({
+      ...response,
+      next: response.next_page === null ? null : String(response.next_page),
+      previous:
+        response.previous_page === null ? null : String(response.previous_page),
+    })
   } catch (error: any) {
     console.error('Error in nomenclatures API:', error)
+    return Response.json(
+      { error: error.message },
+      { status: error.status || 500 }
+    )
+  }
+}
+
+export async function POST(request: NextRequest) {
+  try {
+    const body = await request.json()
+    const response = await HttpClient1C.server(request).post<{
+      count: number
+      page: number
+      limit: number
+      next_page: number | null
+      previous_page: number | null
+      results: INomenclatureResponse['results']
+    }>('api/nomenclatures/web/search/', body)
+
+    return Response.json({
+      ...response,
+      next: response.next_page === null ? null : String(response.next_page),
+      previous:
+        response.previous_page === null ? null : String(response.previous_page),
+    })
+  } catch (error: any) {
+    console.error('Error in nomenclatures search API:', error)
     return Response.json(
       { error: error.message },
       { status: error.status || 500 }

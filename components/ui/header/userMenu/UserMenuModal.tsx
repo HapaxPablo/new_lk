@@ -8,6 +8,7 @@ interface IUserMenuModalProps {
   isOpen: boolean
   onClose: () => void
   userName: string
+  userRole: string
   onLogout: () => void
 }
 
@@ -15,6 +16,7 @@ const UserMenuModal = ({
   isOpen,
   onClose,
   userName,
+  userRole,
   onLogout,
 }: IUserMenuModalProps) => {
   const router = useRouter()
@@ -70,7 +72,12 @@ const UserMenuModal = ({
         </h2>
         <div className={styles.userModal__header}>
           <User aria-hidden="true" size={24} />
-          <p>{userName}</p>
+          <div>
+            <p>{userName}</p>
+            {userRole && (
+              <span className={styles.userModal__role}>{userRole}</span>
+            )}
+          </div>
         </div>
         <nav aria-label="Пользовательское меню">
           <ul className={styles.userModal__menu} role="menu">

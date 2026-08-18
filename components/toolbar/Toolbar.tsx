@@ -1,16 +1,13 @@
 'use client'
-import { useClickOutside } from '@/hooks/useClickOutside'
 import { SlidersHorizontal } from 'lucide-react'
-import { usePathname, useRouter, useSearchParams } from 'next/navigation'
-import { JSX, useCallback, useRef, useState } from 'react'
-import FiltersPanel from '../panels/filter-panels/FiltersPanels'
+import { JSX, useState } from 'react'
+import { NomenclatureFiltersPanel } from '../panels/filter-panels/NomenclatureFiltersPanel'
 import { SearchForm } from '../search-form/SearchForm'
 import styles from './Toolbar.module.scss'
 import { Button } from '../ui/button/Button'
 import { useGeoStore } from '@/store/geoStore'
+import { useNomenclatureFiltersStore } from '@/store/useNomenclatureFiltersStore'
 import CitiesSlider from './cities/CitiesSlider'
-import { ModalWrapper } from '../modal/ModalWrapper'
-import { useModal } from '@/providers/modal/ModalProvider'
 // const CitiesSlider = dynamic(
 //   () =>
 //     import('./cities/CitiesSlider').then((mod) => ({
@@ -31,62 +28,28 @@ const Toolbar = ({
   totalItems,
   variant = 'default',
 }: ToolbarProps): JSX.Element => {
-  const router = useRouter()
-  const pathname = usePathname()
-  const searchParams = useSearchParams()
   const [showFilters, setShowFilters] = useState<boolean>(false)
-  const [showLimitOptions, setShowLimitOptions] = useState<boolean>(false)
-  const { openModal: openDevelopmentModal } = useModal('development')
-
-  // Получаем город из Zustand store вместо localStorage
   const selectedCity = useGeoStore((state) => state.selectedCity)
-
-  const limitRef = useRef<HTMLDivElement>(null)
-
-  useClickOutside(
-    [limitRef],
-    () => setShowLimitOptions(false),
-    showLimitOptions
+  const filters = useNomenclatureFiltersStore((state) => state.filters)
+  const setFilter = useNomenclatureFiltersStore((state) => state.setFilter)
+  const resetFilters = useNomenclatureFiltersStore(
+    (state) => state.resetFilters
   )
-
-  const handleLimitChange = (limit: number): void => {
-    const params = new URLSearchParams(searchParams.toString())
-    const currentPage = params.get('page')
-    params.set('limit', limit.toString())
-    params.set('page', currentPage!!)
-    router.push(`${pathname}?${params.toString()}`)
-    setShowLimitOptions(false)
-  }
 
   const toggleFilters = (): void => {
     setShowFilters(!showFilters)
-    setShowLimitOptions(false)
-  }
-
-  const toggleLimitOptions = (): void => {
-    setShowLimitOptions(!showLimitOptions)
   }
 
   const resetCatalogFilters = (): void => {
-    const params = new URLSearchParams()
-    const limit = searchParams.get('limit')
-    if (limit) params.set('limit', limit)
-    router.push(`${pathname}${params.size ? `?${params.toString()}` : ''}`)
+    resetFilters()
   }
 
   const handleTypeOfPlaceChange = (names: string): void => {
-    const params = new URLSearchParams(searchParams.toString())
-    if (names) {
-      params.set('type_of_place', names)
-    } else {
-      params.delete('type_of_place')
-    }
-    params.set('page', '1')
-    router.push(`${pathname}?${params.toString()}`)
+    setFilter('type_of_place', names || undefined)
   }
 
-  const buildTcUrl = useCallback((): string => {
-    const current = searchParams.get('type_of_place') || ''
+  const toggleTc = (): void => {
+    const current = filters.type_of_place || ''
     const values = current
       .split(',')
       .map((s) => s.trim())
@@ -96,16 +59,24 @@ const Toolbar = ({
       ? values.filter((s) => s !== 'Торговый центр').join(',')
       : [...values, 'Торговый центр'].join(',')
 
-    const params = new URLSearchParams(searchParams.toString())
-    if (next) {
-      params.set('type_of_place', next)
-    } else {
-      params.delete('type_of_place')
-    }
-    params.set('page', '1')
+    handleTypeOfPlaceChange(next)
+  }
 
-    return `${pathname}?${params.toString()}`
-  }, [searchParams, pathname])
+  const toggleContentTypes = (contentTypes: string[]): void => {
+    const current = (filters.content_types || '')
+      .split(',')
+      .map((value) => value.trim())
+      .filter(Boolean)
+    const isActive = contentTypes.some((value) => current.includes(value))
+    const next = isActive
+      ? current.filter((value) => !contentTypes.includes(value))
+      : Array.from(new Set([...current, ...contentTypes]))
+
+    setFilter('content_types', next.join(',') || undefined)
+  }
+
+  const toggleMaxPrice = (): void =>
+    setFilter('price_to', filters.price_to === '200' ? undefined : '200')
 
   // const handleTcClick = (): void => {
   //   const current = searchParams.get('type_of_place') || ''
@@ -117,10 +88,26 @@ const Toolbar = ({
   //   handleTypeOfPlaceChange(next)
   // }
 
-  const isTcActive = (searchParams.get('type_of_place') || '')
+  const isTcActive = (filters.type_of_place || '')
     .split(',')
     .map((s) => s.trim())
     .includes('Торговый центр')
+  const selectedContentTypes = (filters.content_types || '')
+    .split(',')
+    .filter(Boolean)
+  const isAudioActive = [
+    'audio',
+    'audio_video',
+    'audio_image',
+    'audio_video_image',
+  ].some((value) => selectedContentTypes.includes(value))
+  const isVideoActive = [
+    'video',
+    'audio_video',
+    'video_image',
+    'audio_video_image',
+  ].some((value) => selectedContentTypes.includes(value))
+  const isMaxPriceActive = filters.price_to === '200'
 
   return (
     <>
@@ -132,6 +119,8 @@ const Toolbar = ({
         <div className={styles.mainPanel}>
           <div className={styles.totalItems}>Всего: {totalItems}</div>
           <SearchForm
+            initialSearch={filters.search || ''}
+            onSearchChange={(value) => setFilter('search', value || undefined)}
             hideButton={variant !== 'catalog'}
             className={styles.searchForm}
             placeholder="Напишите здесь город, улицу, название места или название арендатора для отбора"
@@ -158,7 +147,8 @@ const Toolbar = ({
 
         <div className={styles.quickFilters}>
           <Button
-            href={buildTcUrl()}
+            type="button"
+            onClick={toggleTc}
             variant={isTcActive ? 'primary' : 'default'}
             rel="nofollow noopener"
             className={styles.filterChip}
@@ -170,24 +160,38 @@ const Toolbar = ({
             <>
               <Button
                 type="button"
-                variant="default"
-                onClick={openDevelopmentModal}
+                onClick={() =>
+                  toggleContentTypes([
+                    'audio',
+                    'audio_video',
+                    'audio_image',
+                    'audio_video_image',
+                  ])
+                }
+                variant={isAudioActive ? 'primary' : 'default'}
                 className={styles.filterChip}
               >
                 Аудиореклама
               </Button>
               <Button
                 type="button"
-                variant="default"
-                onClick={openDevelopmentModal}
+                onClick={() =>
+                  toggleContentTypes([
+                    'video',
+                    'audio_video',
+                    'video_image',
+                    'audio_video_image',
+                  ])
+                }
+                variant={isVideoActive ? 'primary' : 'default'}
                 className={styles.filterChip}
               >
                 Видеореклама
               </Button>
               <Button
                 type="button"
-                variant="default"
-                onClick={openDevelopmentModal}
+                onClick={toggleMaxPrice}
+                variant={isMaxPriceActive ? 'primary' : 'default'}
                 className={styles.filterChip}
               >
                 До 200 ₽/день
@@ -204,27 +208,22 @@ const Toolbar = ({
               Сбросить
             </button>
           )}
-
         </div>
 
         <div className={styles.citiesRow}>
           <span className={styles.citiesLabel}>Города</span>
           <div className={styles.citiesWrapper}>
-            <CitiesSlider name={selectedCity?.name || null} />
+            <CitiesSlider
+              name={selectedCity?.name || null}
+              typeOfPlace={filters.type_of_place}
+            />
           </div>
         </div>
       </div>
-      <FiltersPanel
+      <NomenclatureFiltersPanel
         isOpen={showFilters}
         onClose={() => setShowFilters(false)}
       />
-      {variant === 'catalog' && (
-        <ModalWrapper id="development" title="Функция в разработке">
-          <p className="text-center text-gray-600">
-            Этот фильтр появится после подключения к API.
-          </p>
-        </ModalWrapper>
-      )}
     </>
   )
 }

@@ -128,7 +128,9 @@ function getMinimumPrice(nomenclatures: INomenclatureItem[]) {
   return prices.length ? Math.min(...prices) : null
 }
 
-function getCityFromAddress(nomenclature: INomenclatureItem): string | undefined {
+function getCityFromAddress(
+  nomenclature: INomenclatureItem
+): string | undefined {
   const address = nomenclature.formattedAddress
   const addressName = typeof address === 'string' ? address : address?.name
 
@@ -200,9 +202,7 @@ export default async function TenantDetailPage(props: TenantDetailPageProps) {
   const tenantName =
     tenant.brand?.name || tenant.tenantName || tenant.keyword || 'Арендатор'
   const cityCount = new Set(
-    nomenclatures
-      .map(getCityFromAddress)
-      .filter(Boolean)
+    nomenclatures.map(getCityFromAddress).filter(Boolean)
   ).size
   const minPrice = getMinimumPrice(nomenclatures)
   const breadcrumbItems = [
@@ -296,8 +296,6 @@ export default async function TenantDetailPage(props: TenantDetailPageProps) {
 
               <div className="mt-8 grid max-w-4xl grid-cols-2 gap-3 md:grid-cols-4">
                 <HeroFeature value="-" label="Категория" />
-                <HeroFeature value="-" label="Места размещения" />
-                <HeroFeature value="-" label="массовый трафик" />
               </div>
             </div>
           </div>
@@ -435,9 +433,7 @@ export default async function TenantDetailPage(props: TenantDetailPageProps) {
                   <div className="mt-5 flex flex-wrap gap-2">
                     {Array.from(
                       new Set(
-                        nomenclatures
-                          .map(getCityFromAddress)
-                          .filter(Boolean)
+                        nomenclatures.map(getCityFromAddress).filter(Boolean)
                       )
                     )
                       .slice(0, 5)
