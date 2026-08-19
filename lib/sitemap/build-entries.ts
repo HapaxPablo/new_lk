@@ -75,12 +75,14 @@ export async function buildSitemapEntries(): Promise<MetadataRoute.Sitemap> {
     )
     let nomenclatureAdded = 0
     for (const item of nomenclatures) {
-      if (!item.id) {
-        console.warn(`[sitemap] Skipping nomenclature without id`)
+      if (!item.oldCatalogSlug) {
+        console.warn(
+          `[sitemap] Skipping nomenclature without oldCatalogSlug: ${item.name}`
+        )
         continue
       }
 
-      const url = absoluteSitePath(`/nomenclatures/${item.id}`)
+      const url = absoluteSitePath(`/nomenclatures/${item.oldCatalogSlug}`)
       if (seen.has(url)) {
         console.warn(`[sitemap] Duplicate nomenclature URL: ${url}`)
         continue
@@ -115,7 +117,7 @@ export async function buildSitemapEntries(): Promise<MetadataRoute.Sitemap> {
       entries.push({
         url,
         changeFrequency: 'weekly',
-        priority: 0.95,
+        priority: 0.7,
       })
       tenantsAdded++
     }
@@ -140,7 +142,7 @@ export async function buildSitemapEntries(): Promise<MetadataRoute.Sitemap> {
       entries.push({
         url,
         changeFrequency: 'weekly',
-        priority: 0.95,
+        priority: 0.8,
       })
       brandsAdded++
     }

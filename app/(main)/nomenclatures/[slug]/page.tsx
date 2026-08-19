@@ -7,6 +7,7 @@ import {
 import { Radio } from 'lucide-react'
 import {
   IAddress,
+  IImage,
   INomenclatureDetailsItem,
   INomenclatureItem,
   ITenantsResponse,
@@ -172,6 +173,30 @@ async function getSimilarNomenclatures(
   }
 }
 
+async function getNomenclatureVideos(id: string): Promise<IImage[]> {
+  try {
+    const url = new URL(
+      `api/videos/${id}/get_nomenclature_videos/`,
+      process.env.API_1C_URL
+    )
+
+    const response = await fetch(url.toString(), { cache: 'no-store' })
+    if (!response.ok) return []
+
+    const data = await response.json()
+    const list: any[] = Array.isArray(data) ? data : data?.results || []
+
+    return list
+      .map((item) => ({
+        source: item.source || item.url || item.video || '',
+        type: 'video' as const,
+      }))
+      .filter((item) => Boolean(item.source))
+  } catch {
+    return []
+  }
+}
+
 export async function generateMetadata(props: any) {
   const params = await props.params
   const { slug } = params
@@ -217,8 +242,6 @@ export default async function NomenclatureDetailPage(
   const nameForFront = getNomenclatureTitle(nomenclature)
   const nameWhyPlace = `${nomenclature.typeOfPlace?.abbreviation || ''} "${brand ? brand.name : ''}"`
 
-  const allImages = [...exterior, ...interior]
-
   const structuredData = generateNomenclatureStructuredData(nomenclature, slug)
   const breadcrumbItems = [
     { name: 'Главная', url: `${SITE_URL}` },
@@ -232,6 +255,8 @@ export default async function NomenclatureDetailPage(
     nomenclature.address?.citySlug,
     nomenclature.id
   )
+
+  const nomenclatureVideos = await getNomenclatureVideos(nomenclature.id)
 
   const nomenclaturesIds = [slug]
   const formattedAddress: string | undefined =
@@ -262,6 +287,8 @@ export default async function NomenclatureDetailPage(
       slug: brand?.slug ?? '',
     },
   }
+
+  const allImages = [...exterior, ...interior, ...nomenclatureVideos]
 
   return (
     <>
@@ -435,7 +462,6 @@ export default async function NomenclatureDetailPage(
               <EntityCard tone="muted" className="relative h-[430px] p-0">
                 <PlacesSimpleMap places={[mapPlace]} cityName={address.city} />
               </EntityCard>
-
             </div>
 
             <div className="mb-5">

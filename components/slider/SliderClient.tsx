@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useCallback, useRef } from 'react'
 import Image from 'next/image'
-import { ChevronUp, ChevronDown } from 'lucide-react'
+import { ChevronUp, ChevronDown, PlayCircle } from 'lucide-react'
 import styles from './Slider.module.scss'
 import LoaderSkeleton from '../ui/loader/LoaderSkeleton'
 import { IImage } from '@/types/nomenclature'
@@ -252,6 +252,8 @@ const SliderClient = function ({
           {visibleThumbnails.map((image, idx) => {
             const actualIndex = thumbnailOffset + idx
             const isActive = selectedIndex === actualIndex
+            const isVideo = image.type === 'video'
+
             return (
               <div
                 key={actualIndex}
@@ -260,15 +262,35 @@ const SliderClient = function ({
                 } relative aspect-video`}
                 onClick={() => handleThumbnailClick(actualIndex)}
               >
-                {image.source && (
-                  <Image
-                    src={image.source}
-                    alt={`Миниатюра ${actualIndex + 1}`}
-                    fill
-                    loading="lazy"
-                    sizes="100px"
-                  />
-                )}
+                {image.source &&
+                  (isVideo ? (
+                    <>
+                      <video
+                        src={image.source}
+                        muted
+                        preload="metadata"
+                        style={{
+                          width: '100%',
+                          height: '100%',
+                          objectFit: 'cover',
+                          borderRadius: 'inherit',
+                        }}
+                      />
+                      <PlayCircle
+                        size={20}
+                        className="absolute inset-0 m-auto text-white drop-shadow"
+                        style={{ pointerEvents: 'none' }}
+                      />
+                    </>
+                  ) : (
+                    <Image
+                      src={image.source}
+                      alt={`Миниатюра ${actualIndex + 1}`}
+                      fill
+                      loading="lazy"
+                      sizes="100px"
+                    />
+                  ))}
               </div>
             )
           })}
@@ -299,13 +321,28 @@ const SliderClient = function ({
               transition: isSwiping ? 'none' : 'transform 0.3s ease',
             }}
           >
-            <Image
-              src={currentImage.source}
-              alt={`Изображение ${selectedIndex + 1}`}
-              fill
-              loading="lazy"
-              sizes="(max-width: 768px) 100vw, 60vw"
-            />
+            {currentImage.type === 'video' ? (
+              <video
+                key={currentImage.source}
+                src={currentImage.source}
+                controls
+                autoPlay={true}
+                style={{
+                  width: '100%',
+                  height: '100%',
+                  objectFit: 'contain',
+                  backgroundColor: '#000',
+                }}
+              />
+            ) : (
+              <Image
+                src={currentImage.source}
+                alt={`Изображение ${selectedIndex + 1}`}
+                fill
+                loading="lazy"
+                sizes="(max-width: 768px) 100vw, 60vw"
+              />
+            )}
           </div>
         ) : (
           <div className="w-full h-full flex items-center justify-center bg-gray-100">

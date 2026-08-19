@@ -186,6 +186,7 @@ interface IHardwareInfo {
 // Интерфейс для изображений
 export interface IImage {
   source: string
+  type?: 'image' | 'video'
 }
 
 // Интерфейс для основной информации
@@ -240,11 +241,7 @@ export interface INomenclatureMapResponse {
   results: INomenclatureMapItem[]
 }
 export type ResponsiblePersonRole =
-  | 'ad'
-  | 'radio'
-  | 'technic'
-  | 'technic_on_address'
-  | 'placement_marketing'
+  'ad' | 'radio' | 'technic' | 'technic_on_address' | 'placement_marketing'
 
 export type TResponsiblePersons = {
   [role in ResponsiblePersonRole]?: IResponsiblePerson

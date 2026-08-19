@@ -2,7 +2,12 @@
 import React from 'react'
 import { NmcFragment } from './fragment/NmcFragment'
 import { INomenclatureDetailsItem } from '@/types/nomenclature'
-import { formatMediaUnits, formatPossibility, formatSquare, formatWorkTime } from '@/utils/nomenclatureUtils'
+import {
+  formatMediaUnits,
+  formatPossibility,
+  formatSquare,
+  formatWorkTime,
+} from '@/utils/nomenclatureUtils'
 
 interface DescriptionProps {
   nomenclature?: INomenclatureDetailsItem | null
@@ -27,7 +32,13 @@ export function Description({ nomenclature }: DescriptionProps) {
     brand,
     contentType = '',
     typeOfPlace = { name: '', abbreviation: '' },
-    address = { city: '', localityType: '', street: '', streetType: '', house: '' },
+    address = {
+      city: '',
+      localityType: '',
+      street: '',
+      streetType: '',
+      house: '',
+    },
     external_audio_media,
     external_video_media,
     internal_video_media,
@@ -58,8 +69,8 @@ export function Description({ nomenclature }: DescriptionProps) {
   }
 
   const handleRedirectToBrand = () => {
-    if (brand?.slug) {
-      window.open(`/brands/${brand.slug}`, '_blank')
+    if (brand?.id) {
+      window.open(`/brands/${brand.id}`, '_blank')
     }
   }
 
@@ -75,11 +86,19 @@ export function Description({ nomenclature }: DescriptionProps) {
         <NmcFragment text={displayData.typePlace} type="Место" />
       )}
       {displayData.brand && (
-        <NmcFragment text={displayData.brand} type="Бренд" onClick={handleRedirectToBrand} className='cursor-pointer hover:underline text-blue-600!' />
+        <NmcFragment
+          text={displayData.brand}
+          type="Бренд"
+          onClick={handleRedirectToBrand}
+          className="cursor-pointer hover:underline text-blue-600!"
+        />
       )}
 
       {worktime_start && worktime_end && (
-        <NmcFragment text={formatWorkTime(worktime_start, worktime_end)} type="Время работы" />
+        <NmcFragment
+          text={formatWorkTime(worktime_start, worktime_end)}
+          type="Время работы"
+        />
       )}
       {displayData.address && (
         <NmcFragment text={displayData.address} type="Адрес" />
@@ -113,7 +132,10 @@ export function Description({ nomenclature }: DescriptionProps) {
         <NmcFragment text={formatSquare(displayData.square)} type="Площадь" />
       )}
       {displayData.possibility && (
-        <NmcFragment text={formatPossibility(displayData.possibility)} type="Проходимость" />
+        <NmcFragment
+          text={formatPossibility(displayData.possibility)}
+          type="Проходимость"
+        />
       )}
     </div>
   )
