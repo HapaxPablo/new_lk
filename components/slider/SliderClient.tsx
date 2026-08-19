@@ -313,37 +313,37 @@ const SliderClient = function ({
       <div className={styles.main}>
         {currentImage.source ? (
           <div
-            className={styles.main__image}
-            style={{
-              transform: isSwiping
-                ? `translateX(${dragOffset}px)`
-                : 'translateX(0)',
-              transition: isSwiping ? 'none' : 'transform 0.3s ease',
-            }}
-          >
-            {currentImage.type === 'video' ? (
-              <video
-                key={currentImage.source}
-                src={currentImage.source}
-                controls
-                autoPlay={true}
-                style={{
-                  width: '100%',
-                  height: '100%',
-                  objectFit: 'contain',
-                  backgroundColor: '#000',
-                }}
-              />
-            ) : (
-              <Image
-                src={currentImage.source}
-                alt={`Изображение ${selectedIndex + 1}`}
-                fill
-                loading="lazy"
-                sizes="(max-width: 768px) 100vw, 60vw"
-              />
-            )}
-          </div>
+      className={styles.main__image}
+      style={{
+        transform: isSwiping ? `translateX(${dragOffset}px)` : 'translateX(0)',
+        transition: isSwiping ? 'none' : 'transform 0.3s ease',
+        aspectRatio: currentImage.type === 'video' ? '9 / 16' : undefined,
+        maxWidth: currentImage.type === 'video' ? 'fit-content' : undefined,
+        margin: currentImage.type === 'video' ? '0 auto' : undefined,
+      }}
+    >
+      {currentImage.type === 'video' ? (
+        <video
+          key={currentImage.source}
+          src={currentImage.source}
+          controls
+          style={{
+            width: '100%',
+            height: '100%',
+            objectFit: 'cover',
+            backgroundColor: '#000',
+          }}
+        />
+      ) : (
+        <Image
+          src={currentImage.source}
+          alt={`Изображение ${selectedIndex + 1}`}
+          fill
+          loading="lazy"
+          sizes="(max-width: 768px) 100vw, 60vw"
+        />
+      )}
+    </div>
         ) : (
           <div className="w-full h-full flex items-center justify-center bg-gray-100">
             <Image
