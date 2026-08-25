@@ -36,7 +36,7 @@ new-lk/
 │
 ├── lib/ 🧰 Вспомогательные функции
 │ ├── api/ клиент для http запросов
-│ ├── config/ 🗂️ файлы конфигураций   
+│ ├── config/ 🗂️ файлы конфигураций  
 ├── styles/ 🎨 Глобальные стили
 │ ├── globals.css 🌍 Основные стили
 │ └── theme/ 🎨 Тема оформления
@@ -81,4 +81,15 @@ new-lk/
 - `middleware.ts` - Middleware для обработки маршрутов
 - `next.config.js` - Конфигурация Next.js
 - `tsconfig.json` - Настройки TypeScript
+
+### Карта
+
+Для всех карт используется `components/maps/UnifiedMap` на MapLibre. Стиль
+задаётся только через переменную `NEXT_PUBLIC_MAP_LIBRE_STYLE_URL`.
+Если `style.json` содержит относительные адреса тайлов, задайте также
+`NEXT_PUBLIC_MAP_TILE_SERVER_URL`.
+
+Добавьте значения в `.env.local`. Публичные переменные Next.js встраиваются в
+клиент во время сборки, поэтому их же надо передать в build-этап Docker.
+
 - `package.json` - Зависимости проекта

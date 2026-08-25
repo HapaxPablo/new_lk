@@ -11,6 +11,13 @@
   }
 }
 
+.autoplayToggle {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  z-index: 1;
+}
+
 .thumbnails {
   width: 25%;
   height: 100%;
@@ -69,6 +76,10 @@
 
 .thumbnails_img {
   position: relative;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
   overflow: visible;
   border-radius: 0.375rem;
   width: calc(100% - 4px);

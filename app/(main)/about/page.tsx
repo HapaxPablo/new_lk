@@ -2,10 +2,10 @@ import type { Metadata } from 'next'
 import { Users, Target, Radio, Cpu } from 'lucide-react'
 import Feedback from '@/components/ui/forms/feedback/Feedback'
 import styles from './About.module.scss'
-import { MapPlacement } from '@/components/nomenclatureById'
+import UnifiedMap from '@/components/maps/UnifiedMap'
+import type { MapMarker } from '@/components/maps/types'
 import { Button } from '@/components/ui/button/Button'
 import ContactButton from './ContactButton'
-import { headers } from 'next/headers'
 import { SITE_URL } from '@/lib/configs/config-meta/configMetaData'
 import { BreadcrumbJsonLd } from '@/components/seo/BreadcrumbJsonLd'
 import BreadcrumbsSetter from '@/components/ui/breadcrumbs/BreadcrumbsSetter'
@@ -23,6 +23,13 @@ export const metadata: Metadata = {
   },
 }
 
+const OFFICE_MARKER: MapMarker = {
+  id: 'rmc-office',
+  coordinates: [92.854937, 56.014468],
+  title: 'Офис RMC',
+  address: 'г. Красноярск, ул. Красной Армии, 10',
+}
+
 export default async function AboutPage() {
   const jsonLd = {
     '@context': 'https://schema.org',
@@ -32,15 +39,12 @@ export default async function AboutPage() {
     telephone: '+78002225938',
   }
 
-  const headersList = await headers()
-  const isMobile = headersList.get('x-is-mobile') === '1'
   const breadcrumbItems = [
     { name: 'Главная', url: `${SITE_URL}` },
     { name: 'О компании', url: `${SITE_URL}/about` },
   ]
   return (
     <>
-
       <main className={styles.page}>
         <script
           type="application/ld+json"
@@ -63,14 +67,17 @@ export default async function AboutPage() {
         {/* ABOUT */}
         <div className={styles.section}>
           <div className={styles.container}>
-            <h2 className='text-2xl w-full flex items-center justify-center'>О компании</h2>
+            <h2 className="text-2xl w-full flex items-center justify-center">
+              О компании
+            </h2>
             <p className={styles.text}>
-              RMC — мультимедийная сеть indoor-рекламы, работающая по всей России.
-              Мы размещаем рекламу в супермаркетах и торговых центрах с высокой
-              проходимостью.
+              RMC — мультимедийная сеть indoor-рекламы, работающая по всей
+              России. Мы размещаем рекламу в супермаркетах и торговых центрах с
+              высокой проходимостью.
             </p>
             <p className={styles.text}>
-              Помогаем бизнесу находить клиентов в момент принятия решения о покупке.
+              Помогаем бизнесу находить клиентов в момент принятия решения о
+              покупке.
             </p>
           </div>
         </div>
@@ -78,7 +85,9 @@ export default async function AboutPage() {
         {/* ADVANTAGES */}
         <div className={styles.sectionGray}>
           <div className={styles.container}>
-            <h2 className='text-2xl w-full flex items-center justify-center'>Преимущества</h2>
+            <h2 className="text-2xl w-full flex items-center justify-center">
+              Преимущества
+            </h2>
             <div className={styles.grid4}>
               <div className={styles.card}>
                 <p>Высокая проходимость</p>
@@ -99,14 +108,20 @@ export default async function AboutPage() {
         {/* SERVICES */}
         <div className={styles.section}>
           <div className={styles.container}>
-            <h2 className='text-2xl w-full flex items-center justify-center'>Что мы предлагаем</h2>
+            <h2 className="text-2xl w-full flex items-center justify-center">
+              Что мы предлагаем
+            </h2>
             <div className={styles.grid3}>
-              <div className={styles.card}>Размещение: Аудиореклама, Видеореклама</div>
+              <div className={styles.card}>
+                Размещение: Аудиореклама, Видеореклама
+              </div>
               <div className={styles.card}>Корпоративное вещание</div>
               <div className={styles.card}>Производство роликов</div>
             </div>
             <div className={styles.ctaBlock}>
-              <h3 className='text-lg w-full flex items-center justify-center'>Готовы запустить рекламу?</h3>
+              <h3 className="text-lg w-full flex items-center justify-center">
+                Готовы запустить рекламу?
+              </h3>
               <ContactButton />
             </div>
           </div>
@@ -117,7 +132,9 @@ export default async function AboutPage() {
           <div className={styles.container}>
             <div className={styles.grid2}>
               <div>
-                <h2 className='text-2xl w-full flex items-center justify-center'>Технологии</h2>
+                <h2 className="text-2xl w-full flex items-center justify-center">
+                  Технологии
+                </h2>
                 <p className={styles.text}>
                   Собственное ПО и решения на базе Raspberry Pi и Orange Pi
                   обеспечивают стабильность вещания.
@@ -130,7 +147,9 @@ export default async function AboutPage() {
         {/* CONTACTS */}
         <div className={styles.sectionGray}>
           <div className={styles.container}>
-            <h2 className='text-2xl w-full flex items-center justify-center'>Контакты</h2>
+            <h2 className="text-2xl w-full flex items-center justify-center">
+              Контакты
+            </h2>
             <div className={styles.contacts}>
               <p>Телефон: 8 (800) 222-59-38</p>
               <p>Email: info@krasrm.com</p>
@@ -138,17 +157,19 @@ export default async function AboutPage() {
               <p>Пн–Пт: 5:00–16:00 (МСК)</p>
             </div>
             <div className={styles.grid2_row}>
-              <div className='flex flex-row gap-4'>
-                <div className='flex flex-col text-pretty'>
+              <div className="flex flex-row gap-4">
+                <div className="flex flex-col text-pretty">
                   <div>Реквизиты:</div>
                   <div>ООО «АРЭМСИ 24»</div>
                   <div>ИНН 2466158759 КПП 246601001</div>
-                  <div>Юр. адрес 660017 г. Красноярск, ул. Красной Армии, 10, стр.3, оф.2-01</div>
+                  <div>
+                    Юр. адрес 660017 г. Красноярск, ул. Красной Армии, 10,
+                    стр.3, оф.2-01
+                  </div>
                   <div>Р/с 40702810923000000420</div>
                   <div>К/с 30101810600000000774</div>
                   <div>Банк Филиал «Новосибирский» АО «Альфа-Банк»</div>
                   <div>БИК 045004774</div>
-
                 </div>
                 {/* <div>
                 ОКВЭД:
@@ -163,10 +184,10 @@ export default async function AboutPage() {
                   <li>63.11 Деятельность по обработке данных, предоставление услуг по размещению информации и связанная с этим деятельность</li>
                 </ul>
               </div> */}
-
               </div>
-              <div className='w-full flex justify-center text-xl font-semibold text-pretty'>
-                «АРЭМСИ 24» зарегистрирована в реестре аккредитованных IT-компаний, начиная с 19.05.2022 г.
+              <div className="w-full flex justify-center text-xl font-semibold text-pretty">
+                «АРЭМСИ 24» зарегистрирована в реестре аккредитованных
+                IT-компаний, начиная с 19.05.2022 г.
               </div>
               {/* <div>
               <div className='text-xl font-semibold'>Технологический стек АРЭМСИ24:</div>
@@ -193,11 +214,13 @@ export default async function AboutPage() {
             </div> */}
             </div>
             <div className={styles.map}>
-              <MapPlacement
-                className='h-110'
-                zoom={isMobile ? 16 : 17}
-                lat={56.014468}
-                lng={92.854937}
+              <UnifiedMap
+                className="h-110"
+                markers={[OFFICE_MARKER]}
+                initialView={{ center: OFFICE_MARKER.coordinates, zoom: 17 }}
+                interaction="static"
+                cluster={false}
+                fit="none"
               />
             </div>
           </div>
@@ -209,7 +232,7 @@ export default async function AboutPage() {
             <Feedback />
           </div>
         </div>
-      </main >
+      </main>
     </>
   )
 }

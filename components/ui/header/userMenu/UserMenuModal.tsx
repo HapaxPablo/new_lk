@@ -1,7 +1,9 @@
 'use client'
-import { useRef, useEffect } from 'react'
+
+import { useId, useRef } from 'react'
 import { User, X } from 'lucide-react'
 import { useRouter } from 'next/navigation'
+import { useDialogAccessibility } from '@/components/modal/useDialogAccessibility'
 import styles from './UserMenu.module.scss'
 
 interface IUserMenuModalProps {
@@ -20,81 +22,75 @@ const UserMenuModal = ({
   onLogout,
 }: IUserMenuModalProps) => {
   const router = useRouter()
-  const modalRef = useRef<HTMLDivElement>(null)
+  const dialogRef = useRef<HTMLDivElement>(null)
+  const closeButtonRef = useRef<HTMLButtonElement>(null)
+  const titleId = useId()
 
-  // Закрытие по ESC
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') {
-        onClose()
-      }
-    }
+  useDialogAccessibility({
+    isOpen,
+    dialogRef,
+    onClose,
+    initialFocusRef: closeButtonRef,
+  })
 
-    if (isOpen) {
-      document.addEventListener('keydown', handleKeyDown)
-      document.body.style.overflow = 'hidden'
-    }
-
-    return () => {
-      document.removeEventListener('keydown', handleKeyDown)
-      document.body.style.overflow = ''
-    }
-  }, [isOpen, onClose])
-
-  // Закрытие по клику вне модалки
-  const handleBackdropClick = (e: React.MouseEvent) => {
-    if (e.target === modalRef.current) {
-      onClose()
-    }
+  const handleSettingsClick = () => {
+    onClose()
+    router.push('/settings')
   }
 
   if (!isOpen) return null
 
   return (
-    <div
-      ref={modalRef}
-      className={styles.modalBackdrop}
-      onClick={handleBackdropClick}
-      role="dialog"
-      aria-modal="true"
-      aria-labelledby="user-modal-title"
-    >
-      <div className={styles.modalContent}>
+    <>
+      <button
+        type="button"
+        className={styles.modalBackdrop}
+        onClick={onClose}
+        aria-label="Закрыть меню пользователя"
+      />
+      <div
+        ref={dialogRef}
+        className={styles.modalContent}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby={titleId}
+        tabIndex={-1}
+      >
         <button
+          ref={closeButtonRef}
+          type="button"
           onClick={onClose}
           className={styles.closeButton}
-          aria-label="Закрыть модальное окно"
+          aria-label="Закрыть меню пользователя"
         >
-          <X size={20} />
+          <X size={20} aria-hidden="true" />
         </button>
-        <h2 id="user-modal-title" className="visually-hidden">
+        <h2 id={titleId} className={styles.visuallyHidden}>
           Меню пользователя
         </h2>
         <div className={styles.userModal__header}>
           <User aria-hidden="true" size={24} />
           <div>
             <p>{userName}</p>
-            {userRole && (
-              <span className={styles.userModal__role}>{userRole}</span>
-            )}
+            {userRole && <span className={styles.userModal__role}>{userRole}</span>}
           </div>
         </div>
         <nav aria-label="Пользовательское меню">
-          <ul className={styles.userModal__menu} role="menu">
-            <li role="none">
+          <ul className={styles.userModal__menu}>
+            <li>
               <button
-                onClick={() => router.push('/settings')}
+                type="button"
+                onClick={handleSettingsClick}
                 className={styles.userModal__item}
-                role="menuitem"
               >
                 Настройки
               </button>
             </li>
-            <li role="none">
+            <li>
               <button
+                type="button"
                 onClick={onLogout}
                 className={styles.userModal__item}
-                role="menuitem"
               >
                 Выйти
               </button>
@@ -102,7 +98,7 @@ const UserMenuModal = ({
           </ul>
         </nav>
       </div>
-    </div>
+    </>
   )
 }
 

@@ -35,6 +35,8 @@ const SliderClient = function ({
   const [isSwiping, setIsSwiping] = useState(false)
   const [dragStartX, setDragStartX] = useState<number | null>(null)
   const [dragOffset, setDragOffset] = useState(0)
+  const [isAutoPlayPaused, setIsAutoPlayPaused] = useState(false)
+  const [prefersReducedMotion, setPrefersReducedMotion] = useState(false)
   const thumbnailsListRef = useRef<HTMLDivElement>(null)
   const mainImageRef = useRef<HTMLDivElement>(null)
 
@@ -194,7 +196,24 @@ const SliderClient = function ({
   }, [images])
 
   useEffect(() => {
-    if (!autoPlay || items.length <= 1) return
+    const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)')
+    const updatePreference = () => setPrefersReducedMotion(mediaQuery.matches)
+
+    updatePreference()
+    mediaQuery.addEventListener('change', updatePreference)
+
+    return () => mediaQuery.removeEventListener('change', updatePreference)
+  }, [])
+
+  useEffect(() => {
+    if (
+      !autoPlay ||
+      isAutoPlayPaused ||
+      prefersReducedMotion ||
+      items.length <= 1
+    ) {
+      return
+    }
 
     const interval = setInterval(() => {
       if (!isSwiping) {
@@ -209,6 +228,8 @@ const SliderClient = function ({
     items.length,
     autoPlay,
     autoPlayTime,
+    isAutoPlayPaused,
+    prefersReducedMotion,
     goToSlide,
     selectedIndex,
     isSwiping,
@@ -233,6 +254,18 @@ const SliderClient = function ({
       onMouseUp={handleMouseUp}
       onMouseLeave={handleMouseLeave}
     >
+      {autoPlay && hasMultipleImages && (
+        <Button
+          type="button"
+          variant="default"
+          className={styles.autoplayToggle}
+          aria-pressed={isAutoPlayPaused}
+          onClick={() => setIsAutoPlayPaused((value) => !value)}
+        >
+          {isAutoPlayPaused ? 'Включить автопрокрутку' : 'Остановить автопрокрутку'}
+        </Button>
+      )}
+
       <div className={styles.thumbnails}>
         {hasMultipleImages && (
           <div className="w-fit sm:w-full h-full sm:h-fit">
@@ -255,12 +288,15 @@ const SliderClient = function ({
             const isVideo = image.type === 'video'
 
             return (
-              <div
+              <button
+                type="button"
                 key={actualIndex}
                 className={`${styles.thumbnails_img} ${
                   isActive ? styles.thumbnails_img_active : ''
                 } relative aspect-video`}
                 onClick={() => handleThumbnailClick(actualIndex)}
+                aria-label={`Показать изображение ${actualIndex + 1}`}
+                aria-pressed={isActive}
               >
                 {image.source &&
                   (isVideo ? (
@@ -291,7 +327,7 @@ const SliderClient = function ({
                       sizes="100px"
                     />
                   ))}
-              </div>
+              </button>
             )
           })}
         </div>

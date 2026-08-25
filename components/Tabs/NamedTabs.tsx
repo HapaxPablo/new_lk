@@ -9,7 +9,12 @@ import {
   Users,
   Phone,
 } from 'lucide-react'
-import { Tabs, TabItem } from './Tabs'
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from '@/components/ui/tabs'
 import { INomenclatureDetailsItem, ITenantsResponse } from '@/types/nomenclature'
 import {
   PhotosTabContent,
@@ -46,7 +51,7 @@ export const NamedTabs = ({ item, initialTenantsData }: NamedTabsProps) => {
   const interiorCount = interior.length
   const totalPhotos = exteriorCount + interiorCount
 
-  const tabs: TabItem[] = [
+  const tabs = [
     {
       id: 'renters',
       label: 'Арендаторы',
@@ -99,5 +104,32 @@ export const NamedTabs = ({ item, initialTenantsData }: NamedTabsProps) => {
     },
   ]
 
-  return <Tabs items={tabs} defaultTab="renters" />
+  const visibleTabs = tabs.filter((tab) => tab.visual !== false)
+
+  if (visibleTabs.length === 0) {
+    return (
+      <p className="p-4 text-sm text-muted-foreground">
+        Информация в этом разделе отсутствует.
+      </p>
+    )
+  }
+
+  return (
+    <Tabs defaultValue={visibleTabs[0].id} className="gap-4 p-4">
+      <TabsList>
+        {visibleTabs.map((tab) => (
+          <TabsTrigger key={tab.id} value={tab.id}>
+            {tab.icon}
+            {tab.label}
+            {tab.count !== undefined && <span>({tab.count})</span>}
+          </TabsTrigger>
+        ))}
+      </TabsList>
+      {visibleTabs.map((tab) => (
+        <TabsContent key={tab.id} value={tab.id}>
+          {tab.content}
+        </TabsContent>
+      ))}
+    </Tabs>
+  )
 }

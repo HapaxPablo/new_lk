@@ -1,8 +1,9 @@
 'use client'
 
-import PlacesSimpleMap from '@/app/(main)/places/components/PlacesSimpleMap'
+import UnifiedMap from '@/components/maps/UnifiedMap'
+import { toMapMarker } from '@/components/maps/adapters'
 import Feedback from '@/components/ui/forms/feedback/Feedback'
-import type { ICity } from '@/types/cities'
+import type { MapMarker } from '@/components/maps/types'
 import type {
   INomenclatureItem,
   INomenclatureMapItem,
@@ -14,7 +15,6 @@ import type { NomenclatureFilters } from '@/store/useNomenclatureFiltersStore'
 interface CatalogSidebarProps {
   items: INomenclatureItem[]
   mapItems: INomenclatureMapItem[]
-  cityName?: string
 }
 
 const RUSSIA_MAP_VIEW = {
@@ -22,39 +22,15 @@ const RUSSIA_MAP_VIEW = {
   zoom: 3,
 }
 
-function getCatalogMapView(places: ICity[]) {
-  const coordinates = places[0]?.formattedAddress.coordinates
-  const latitude = Number.parseFloat(coordinates?.latitude ?? '')
-  const longitude = Number.parseFloat(coordinates?.longitude ?? '')
-
-  if (!Number.isFinite(latitude) || !Number.isFinite(longitude)) {
+function getCatalogMapView(markers: MapMarker[]) {
+  const coordinates = markers[0]?.coordinates
+  if (!coordinates) {
     return RUSSIA_MAP_VIEW
   }
 
   return {
-    center: [longitude, latitude] as [number, number],
+    center: coordinates,
     zoom: 10,
-  }
-}
-
-function toMapPlace(item: INomenclatureMapItem): ICity {
-  return {
-    id: item.id,
-    nomenclatureSlug: item.old_slug || item.id,
-    title: item.name || item.brand?.name,
-    formattedAddress: {
-      name: item.name,
-      coordinates: item.coordinates || { latitude: null, longitude: null },
-    },
-    pricePerMonth: '0',
-    typeOfPlace: item.type_of_place || '',
-    exterior: item.facade ? [item.facade] : [],
-    brand: {
-      id: '',
-      name: item.brand?.name || 'Рекламная площадка',
-      logotype: item.brand?.logotype || '',
-      slug: '',
-    },
   }
 }
 
@@ -83,11 +59,7 @@ function getMapRequestBody(filters: NomenclatureFilters) {
   return body
 }
 
-export function CatalogSidebar({
-  items,
-  mapItems,
-  cityName,
-}: CatalogSidebarProps) {
+export function CatalogSidebar({ items, mapItems }: CatalogSidebarProps) {
   const filters = useNomenclatureFiltersStore((state) => state.filters)
   const hasHydrated = useNomenclatureFiltersStore((state) => state.hasHydrated)
   const hasFilters = Object.keys(filters).length > 0
@@ -95,7 +67,11 @@ export function CatalogSidebar({
     hasHydrated && hasFilters
       ? JSON.stringify(getMapRequestBody(filters))
       : null
-  const { data: filteredMap } = useSWR<{
+  const {
+    data: filteredMap,
+    error: mapError,
+    mutate: retryMap,
+  } = useSWR<{
     count: number
     results: INomenclatureMapItem[]
   }>(mapRequest, async (body: string) => {
@@ -110,9 +86,11 @@ export function CatalogSidebar({
     }
     return response.json()
   })
-  const activeMapItems = hasFilters ? filteredMap?.results || [] : mapItems
-  const places = activeMapItems.map(toMapPlace)
-  const initialView = getCatalogMapView(places)
+  const activeMapItems = hasFilters ? (filteredMap?.results ?? []) : mapItems
+  const markers = activeMapItems
+    .map(toMapMarker)
+    .filter((marker): marker is MapMarker => marker !== null)
+  const initialView = getCatalogMapView(markers)
 
   return (
     <aside className="space-y-5">
@@ -124,14 +102,27 @@ export function CatalogSidebar({
           </p>
         </div>
         <div className="h-72 bg-slate-100">
-          <PlacesSimpleMap
-            places={places}
-            cityName={filters.city_slug || cityName || 'Рекламные площадки'}
+          <UnifiedMap
+            markers={markers}
             initialView={initialView}
-            minZoom={3}
-            markerScale={0.4}
+            cluster
+            fit="markers"
           />
         </div>
+        {mapError && (
+          <div className="flex flex-wrap items-center justify-between gap-3 border-t border-slate-100 px-5 py-3">
+            <p role="alert" className="text-sm text-red-700">
+              Не удалось обновить карту площадок.
+            </p>
+            <button
+              type="button"
+              onClick={() => retryMap()}
+              className="rounded-md border border-slate-300 px-3 py-1.5 text-sm font-semibold text-slate-900"
+            >
+              Повторить
+            </button>
+          </div>
+        )}
       </section>
 
       <section

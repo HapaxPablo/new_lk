@@ -62,7 +62,8 @@ export default function OrdersTable({ type }: Props) {
           <TextInput value={searchInput} onChange={(event) => setSearchInput(event.currentTarget.value)} placeholder="Поиск по бренду, городу или улице" aria-label="Поиск по заказам" classNames={{ input: 'h-11 rounded-xl border-slate-200 pl-10 text-sm focus:border-blue-500' }} />
         </div>
       </div>
-      <Table striped highlightOnHover className="min-w-[680px]">
+      <div className="overflow-x-auto">
+        <Table striped highlightOnHover className="min-w-[680px]">
         <Table.Thead>
           <Table.Tr>
             <Table.Th>Номенклатура / клиент</Table.Th>
@@ -72,7 +73,19 @@ export default function OrdersTable({ type }: Props) {
         </Table.Thead>
         <Table.Tbody>
           {orders.map((order: any) => (
-            <Table.Tr key={order.id} onClick={() => router.push(`/orders/${type}/${order.id}`)} onKeyDown={(event) => event.key === 'Enter' && router.push(`/orders/${type}/${order.id}`)} tabIndex={0} style={{ cursor: 'pointer' }} className="outline-none focus-within:bg-blue-50">
+            <Table.Tr
+              key={order.id}
+              onClick={() => router.push(`/orders/${type}/${order.id}`)}
+              onKeyDown={(event) => {
+                if (event.key === 'Enter' || event.key === ' ') {
+                  event.preventDefault()
+                  router.push(`/orders/${type}/${order.id}`)
+                }
+              }}
+              tabIndex={0}
+              style={{ cursor: 'pointer' }}
+              className="focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-blue-600 focus-within:bg-blue-50"
+            >
               <Table.Td className="py-4">
                 <div className="font-semibold text-slate-800">{order.nomenclature || order.client?.name || 'Без названия'}</div>
                 {order.name && <div className="mt-1 text-xs text-slate-500">{order.name}</div>}
@@ -92,7 +105,8 @@ export default function OrdersTable({ type }: Props) {
             <Table.Tr><Table.Td colSpan={3} className="py-4"><Loader size="sm" /></Table.Td></Table.Tr>
           )}
         </Table.Tbody>
-      </Table>
+        </Table>
+      </div>
       <div ref={observerRef} className="h-px" />
     </div>
   )

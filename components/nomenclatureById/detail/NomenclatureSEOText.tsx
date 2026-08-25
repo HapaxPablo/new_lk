@@ -10,7 +10,6 @@ export function NomenclatureSEOText({
   address,
   contentType,
 }: NomenclatureSEOTextProps) {
-  console.log('NomenclatureSEOText props:', { placeName, address, contentType }) // Debugging line
   return (
     <section className="bg-white">
       <div className="mx-auto max-w-7xl px-4 py-14">

@@ -46,7 +46,7 @@ export const useInfinitePaginatedResource = <T, R extends PaginatedResponse<T>>(
     useInitialData = true,
   } = options
 
-  const { data, error, size, setSize, isValidating } = useSWRInfinite<R>(
+  const { data, error, mutate, size, setSize, isValidating } = useSWRInfinite<R>(
     getKey,
     fetcher,
     {
@@ -79,6 +79,7 @@ export const useInfinitePaginatedResource = <T, R extends PaginatedResponse<T>>(
     totalCount,
     hasMore,
     error,
+    mutate,
     isLoadingInitial,
     isLoadingMore,
     size,

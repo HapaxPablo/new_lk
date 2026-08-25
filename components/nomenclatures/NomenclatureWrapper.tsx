@@ -61,9 +61,11 @@ export const NomenclatureWrapperContent = ({
   const {
     items,
     totalCount: hookTotalCount,
+    error,
     hasMore,
     isLoadingInitial,
     isLoadingMore,
+    mutate,
     size,
     setSize,
   } = useInfiniteNomenclatures(nomenclatureData, count, page)
@@ -146,12 +148,28 @@ export const NomenclatureWrapperContent = ({
       <div ref={cardsWrapperRef} className={styles.cardsWrapper}>
         {isLoadingInitial && displayItems.length === 0 ? (
           <LoaderSkeleton />
+        ) : error && displayItems.length === 0 ? (
+          <div className={styles.errorState} role="alert">
+            <p>Не удалось загрузить места размещения.</p>
+            <button type="button" onClick={() => mutate()}>
+              Повторить
+            </button>
+          </div>
         ) : displayItems.length <= 0 ? (
           <div className={styles.emptyState}>
             <p>Места размещения не найдены</p>
           </div>
         ) : (
           <NomenclatureCards item={displayItems} />
+        )}
+
+        {error && displayItems.length > 0 && (
+          <div className={styles.errorState} role="alert">
+            <p>Не удалось обновить список мест.</p>
+            <button type="button" onClick={() => mutate()}>
+              Повторить
+            </button>
+          </div>
         )}
 
         <div ref={sentinelRef} className={styles.sentinel} aria-hidden="true" />

@@ -103,7 +103,7 @@ export const Button = React.forwardRef<
       <a
         ref={ref as React.Ref<HTMLAnchorElement>}
         href={href}
-        className="text-center shrink-0 px-4 py-1.5 text-blue-900! bg-gray-200 hover:bg-blue-50 hover:text-blue-600 border border-transparent hover:border-blue-200 rounded-full text-sm whitespace-nowrap transition-all"
+        className={buttonClasses}
 
         {...anchorProps}
       >

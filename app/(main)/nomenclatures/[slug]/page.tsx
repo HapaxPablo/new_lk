@@ -36,7 +36,14 @@ import { cache } from 'react'
 import { notFound } from 'next/navigation'
 import Slider from '@/components/slider/Slider'
 import { PlaceTitle } from '@/components/nomenclatureById/PlaceTitle'
-import { EntityCard } from '@/components/ui/card/EntityCard'
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card'
+import { Badge } from '@/components/ui/badge'
 
 import { QuickStats } from '@/components/nomenclatureById/detail/QuickStats'
 import { PricingTable } from '@/components/nomenclatureById/detail/PricingTable'
@@ -47,8 +54,9 @@ import { CTABriefSection } from '@/components/nomenclatureById/detail/CTABriefSe
 import { SimilarPlacements } from '@/components/nomenclatureById/detail/SimilarPlacements'
 import { NomenclatureSEOText } from '@/components/nomenclatureById/detail/NomenclatureSEOText'
 import { NomenclatureFAQ } from '@/components/nomenclatureById/detail/NomenclatureFAQ'
-import PlacesSimpleMap from '@/app/(main)/places/components/PlacesSimpleMap'
-import { ICity } from '@/types/cities'
+import UnifiedMap from '@/components/maps/UnifiedMap'
+import { parseCoordinates } from '@/components/maps/adapters'
+import type { MapMarker } from '@/components/maps/types'
 
 interface NomenclatureDetailPageProps {
   params: Promise<{
@@ -261,32 +269,19 @@ export default async function NomenclatureDetailPage(
   const nomenclaturesIds = [slug]
   const formattedAddress: string | undefined =
     nomenclature.formattedAddress?.name
-  const mapPlace: ICity = {
-    id: nomenclature.id,
-    title: nameWhyPlace,
-    formattedAddress: {
-      name: formattedAddress ?? null,
-      coordinates: {
-        latitude: address.coordinates?.latitude ?? null,
-        longitude: address.coordinates?.longitude ?? null,
-      },
-    },
-    pricePerMonth,
-    typeOfPlace:
-      nomenclature.typeOfPlace?.abbreviation ||
-      nomenclature.typeOfPlace?.name ||
-      '',
-    exterior: exterior.map((image, index) => ({
-      source: image.source,
-      id: `${nomenclature.id}-${index}`,
-    })),
-    brand: {
-      id: brand?.id ?? '',
-      name: brand?.name ?? '',
-      logotype: brand?.logotype ?? '',
-      slug: brand?.slug ?? '',
-    },
-  }
+  const coordinates = parseCoordinates(address.coordinates)
+  const mapMarkers: MapMarker[] = coordinates
+    ? [
+        {
+          id: nomenclature.id,
+          coordinates,
+          title: nameWhyPlace || 'Рекламная площадка',
+          address: formattedAddress,
+          imageUrl: exterior[0]?.source,
+          logoUrl: brand?.logotype,
+        },
+      ]
+    : []
 
   const allImages = [...exterior, ...interior, ...nomenclatureVideos]
 
@@ -348,59 +343,53 @@ export default async function NomenclatureDetailPage(
                 {/* </div> */}
               </div>
 
-              <EntityCard className="mt-5 p-0">
-                <div className="border-b px-6 py-4">
-                  <h2 className="text-xl font-black text-slate-900">
-                    Характеристики площадки
-                  </h2>
-                </div>
-                <div className="p-4">
+              <Card className="mt-5">
+                <CardHeader className="border-b">
+                  <CardTitle>Характеристики площадки</CardTitle>
+                </CardHeader>
+                <CardContent>
                   <Description nomenclature={nomenclature} />
-                </div>
-              </EntityCard>
+                </CardContent>
+              </Card>
             </div>
 
             {/* Main info */}
             <div className="space-y-5">
-              <EntityCard className="p-6">
-                {brand?.name && (
-                  <div className="mb-3 inline-flex rounded-full bg-orange-50 px-4 py-2 text-sm font-black text-orange-500">
-                    {brand.name}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="sr-only">
+                    Основная информация о площадке
+                  </CardTitle>
+                  {brand?.name && <Badge variant="outline">{brand.name}</Badge>}
+                  <PlaceTitle place={nomenclature} variant="full" />
+                </CardHeader>
+                <CardContent className="flex flex-col gap-6">
+                  {description && (
+                    <p className="max-w-3xl whitespace-pre-line text-base leading-8 text-muted-foreground">
+                      {description}
+                    </p>
+                  )}
+
+                  <div className="flex flex-wrap gap-3">
+                    {contentType && (
+                      <Badge variant="secondary">{contentType}</Badge>
+                    )}
+                    {pricePerMonth && (
+                      <Badge variant="outline">
+                        Стоимость: от {formatPrice(pricePerMonth)}/день
+                      </Badge>
+                    )}
+                    <Badge variant="outline">При размещении от 1 месяца</Badge>
                   </div>
-                )}
-
-                <PlaceTitle place={nomenclature} variant="full" />
-
-                {description && (
-                  <p className="mt-4 max-w-3xl whitespace-pre-line text-base leading-8 text-slate-600">
-                    {description}
-                  </p>
-                )}
-
-                <div className="mt-6 flex flex-wrap gap-3">
-                  {contentType && (
-                    <span className="rounded-xl bg-blue-50 px-4 py-3 text-sm font-black text-blue-700">
-                      {contentType}
-                    </span>
-                  )}
-                  {pricePerMonth && (
-                    <span className="rounded-xl bg-amber-50 px-4 py-3 text-sm font-bold text-amber-700">
-                      Стоимость: от {formatPrice(pricePerMonth)}/день
-                    </span>
-                  )}
-                  <span className="rounded-xl bg-slate-100 px-4 py-3 text-sm font-bold text-slate-700">
-                    При размещении от 1 месяца
-                  </span>
-                </div>
-
-                <div className="mt-6 flex flex-col gap-3 sm:flex-row">
+                </CardContent>
+                <CardFooter className="flex flex-col gap-3 sm:flex-row">
                   <AddButtonToOrder item={nomenclature} />
                   <ModalFeedBack
                     pathName="nomenclatures"
                     nomenclaturesIds={nomenclaturesIds}
                   />
-                </div>
-              </EntityCard>
+                </CardFooter>
+              </Card>
               <QuickStats
                 possibility={nomenclature.possibility}
                 contentType={contentType}
@@ -413,28 +402,24 @@ export default async function NomenclatureDetailPage(
                 <PricingTable pricePerDay={pricePerMonth} />
               </div> */}
               {responsible?.ad && (
-                <EntityCard className="bg-violet-50 p-6 ring-violet-100">
-                  <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-                    <div>
-                      <h2 className="text-2xl font-black text-slate-900">
-                        Ответственный за размещение
-                      </h2>
-                      <div className="mt-4">
-                        <ResponsibleCard
-                          label="за размещения"
-                          icon={<Radio size={16} />}
-                          phoneNumber={responsible?.ad?.phone_number}
-                          name={responsible?.ad?.full_name || 'Не указан'}
-                          color=""
-                        />
-                      </div>
-                      <p className="mt-2 text-sm text-slate-600">
-                        Поможет уточнить условия, сроки запуска и подготовить
-                        медиаплан.
-                      </p>
-                    </div>
-                  </div>
-                </EntityCard>
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Ответственный за размещение</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <ResponsibleCard
+                      label="за размещения"
+                      icon={<Radio size={16} />}
+                      phoneNumber={responsible?.ad?.phone_number}
+                      name={responsible?.ad?.full_name || 'Не указан'}
+                      color=""
+                    />
+                  </CardContent>
+                  <CardFooter className="text-muted-foreground">
+                    Поможет уточнить условия, сроки запуска и подготовить
+                    медиаплан.
+                  </CardFooter>
+                </Card>
               )}
             </div>
           </div>
@@ -447,37 +432,37 @@ export default async function NomenclatureDetailPage(
         <section className="bg-white">
           <div className="mx-auto grid max-w-7xl gap-8 px-4 py-14 lg:grid-cols-[0.95fr_1.05fr]">
             <div>
-              <div className="mb-5">
-                <div className="text-sm font-bold uppercase tracking-wider text-[#ef5350]">
-                  На карте
-                </div>
-                <h2 className="mt-2 text-3xl font-black text-slate-900">
-                  Адрес размещения
-                </h2>
-                {formattedAddress && (
-                  <p className="mt-3 text-slate-600">{formattedAddress}</p>
-                )}
-              </div>
-
-              <EntityCard tone="muted" className="relative h-[430px] p-0">
-                <PlacesSimpleMap places={[mapPlace]} cityName={address.city} />
-              </EntityCard>
+              <Card>
+                <CardHeader>
+                  <Badge variant="outline">На карте</Badge>
+                  <CardTitle>Адрес размещения</CardTitle>
+                  {formattedAddress && (
+                    <p className="text-muted-foreground">{formattedAddress}</p>
+                  )}
+                </CardHeader>
+                <CardContent className="h-[430px] px-0">
+                  <UnifiedMap
+                    markers={mapMarkers}
+                    cluster={false}
+                    fit="markers"
+                  />
+                </CardContent>
+              </Card>
             </div>
 
             <div className="mb-5">
-              <div className="text-sm font-bold uppercase tracking-wider text-[#ef5350]">
-                Арендаторы
-              </div>
-              <h2 className="mt-2 text-3xl font-black text-slate-900">
-                Кто представлен в ТЦ
-              </h2>
-
-              <EntityCard className="p-0">
-                <TabsWrapper
-                  item={nomenclature}
-                  initialTenantsData={tenantsData}
-                />
-              </EntityCard>
+              <Card>
+                <CardHeader>
+                  <Badge variant="outline">Арендаторы</Badge>
+                  <CardTitle>Кто представлен в ТЦ</CardTitle>
+                </CardHeader>
+                <CardContent className="px-0">
+                  <TabsWrapper
+                    item={nomenclature}
+                    initialTenantsData={tenantsData}
+                  />
+                </CardContent>
+              </Card>
             </div>
           </div>
         </section>

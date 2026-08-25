@@ -22,6 +22,11 @@ import { Suspense } from 'react'
 import { GoogleAnalytics } from '@next/third-parties/google'
 import { MantineProvider } from '@/providers/mantine/MantineProvider'
 import '@mantine/core/styles.css'
+import { Geist } from "next/font/google";
+import { cn } from "@/lib/utils";
+
+const geist = Geist({subsets:['latin'],variable:'--font-sans'});
+
 const montserrat = localFont({
   src: [
     {
@@ -118,7 +123,7 @@ export default function RootLayout({
   }
 
   return (
-    <html lang="ru">
+    <html lang="ru" className={cn("font-sans", geist.variable)}>
       <meta charSet="UTF-8" />
       <head>
         <Script

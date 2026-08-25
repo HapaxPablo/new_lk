@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState, useCallback } from 'react'
+import React, { useCallback, useId, useRef, useState } from 'react'
 import styles from './Tabs.module.scss'
 import { TabButton } from './TabButton'
 import { TabPanel } from './TabPanel'
@@ -24,6 +24,11 @@ export const Tabs = ({ items, defaultTab, onTabChange }: TabsProps) => {
   const visibleItems = items.filter(item => item.visual !== false)
 
   const [activeTab, setActiveTab] = useState(defaultTab || visibleItems[0]?.id)
+  const tabRefs = useRef(new Map<string, HTMLButtonElement>())
+  const instanceId = useId().replace(/:/g, '')
+  const selectedTab = visibleItems.some(item => item.id === activeTab)
+    ? activeTab
+    : visibleItems[0]?.id
 
   const handleTabClick = useCallback(
     (tabId: string) => {
@@ -37,23 +42,52 @@ export const Tabs = ({ items, defaultTab, onTabChange }: TabsProps) => {
     return null
   }
 
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
+    const currentIndex = visibleItems.findIndex(item => item.id === selectedTab)
+    if (currentIndex < 0) return
+
+    let nextIndex = currentIndex
+    if (event.key === 'ArrowRight') {
+      nextIndex = (currentIndex + 1) % visibleItems.length
+    } else if (event.key === 'ArrowLeft') {
+      nextIndex = (currentIndex - 1 + visibleItems.length) % visibleItems.length
+    } else if (event.key === 'Home') {
+      nextIndex = 0
+    } else if (event.key === 'End') {
+      nextIndex = visibleItems.length - 1
+    } else {
+      return
+    }
+
+    event.preventDefault()
+    const nextTab = visibleItems[nextIndex]
+    handleTabClick(nextTab.id)
+    tabRefs.current.get(nextTab.id)?.focus()
+  }
+
   return (
     <div className={styles.tabsWrapper}>
       <div
         className={styles.tabsList}
         role="tablist"
+        aria-orientation="horizontal"
+        onKeyDown={handleKeyDown}
         aria-label="Вкладки с информацией"
       >
         {visibleItems.map((tab) => (
           <React.Fragment key={tab.id}>
             <TabButton
-              id={tab.id}
+              ref={element => {
+                if (element) tabRefs.current.set(tab.id, element)
+                else tabRefs.current.delete(tab.id)
+              }}
+              id={`${instanceId}-${tab.id}`}
               label={tab.label}
               icon={tab.icon}
               count={tab.count}
-              isActive={activeTab === tab.id}
+              isActive={selectedTab === tab.id}
               onClick={() => handleTabClick(tab.id)}
-              aria-controls={`panel-${tab.id}`}
+              aria-controls={`panel-${instanceId}-${tab.id}`}
             />
           </React.Fragment>
         ))}
@@ -62,10 +96,10 @@ export const Tabs = ({ items, defaultTab, onTabChange }: TabsProps) => {
       {visibleItems.map((tab) => (
         <React.Fragment key={tab.id}>
           <TabPanel
-            id={`panel-${tab.id}`}
+            id={`panel-${instanceId}-${tab.id}`}
             label={tab.label}
-            isActive={activeTab === tab.id}
-            aria-labelledby={`tab-${tab.id}`}
+            isActive={selectedTab === tab.id}
+            aria-labelledby={`tab-${instanceId}-${tab.id}`}
           >
             {tab.content}
           </TabPanel>

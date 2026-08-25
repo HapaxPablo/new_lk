@@ -10,8 +10,6 @@ interface IProps {
 }
 
 export const TabsWrapper = ({ item, initialTenantsData }: IProps) => {
-  console.log('TabsWrapper item', item)
-  console.log('TabsWrapper initialTenantsData', initialTenantsData)
   if (!item) {
     return (
       <div

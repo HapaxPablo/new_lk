@@ -15,6 +15,8 @@ interface CardNomenclatureProps {
   item: any
   codeMP?: string | null
   compact?: boolean
+  onSelect?: (id: string) => void
+  selected?: boolean
 }
 
 export const CardNomenclature: React.FC<CardNomenclatureProps> = ({
@@ -22,6 +24,8 @@ export const CardNomenclature: React.FC<CardNomenclatureProps> = ({
   className = '',
   codeMP = null,
   compact = false,
+  onSelect,
+  selected = false,
 }) => {
   const { exterior, typeOfPlace, pricePerMonth } = item
   const image = Array.isArray(exterior) ? exterior[0]?.source : exterior
@@ -37,6 +41,7 @@ export const CardNomenclature: React.FC<CardNomenclatureProps> = ({
   const href = `/nomenclatures/${item.oldCatalogSlug || item.id}`
 
   const handleCardClick = () => {
+    onSelect?.(item.id)
     trackSelectItem(
       {
         item_id: item.id,
@@ -53,7 +58,7 @@ export const CardNomenclature: React.FC<CardNomenclatureProps> = ({
 
   return (
     <EntityCard
-      className={`${styles.card} ${compact ? styles.cardCompact : ''} ${className}`.trim()}
+      className={`${styles.card} ${compact ? styles.cardCompact : ''} ${selected ? 'ring-2 ring-[#ef5350]' : ''} ${className}`.trim()}
       style={compact ? { height: 'auto' } : undefined}
       footer={
         <>
@@ -81,7 +86,12 @@ export const CardNomenclature: React.FC<CardNomenclatureProps> = ({
       }
       footerClassName={`${styles.footer} ${compact ? styles.footerCompact : ''}`.trim()}
     >
-      <Link href={href} className={styles.cardLink} onClick={handleCardClick}>
+      <Link
+        href={href}
+        className={styles.cardLink}
+        onClick={handleCardClick}
+        onFocus={() => onSelect?.(item.id)}
+      >
         <div className={styles.media}>
           {image ? (
             <Image

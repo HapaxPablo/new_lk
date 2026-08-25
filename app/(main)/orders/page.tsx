@@ -1,12 +1,39 @@
 'use client'
 
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import Link from 'next/link'
 import { FileText, Import, ListMusic, Plus, Radio } from 'lucide-react'
 import OrdersTable from './components/Orderstable'
 
 export default function Page() {
   const [type, setType] = useState<'ad' | 'bg'>('ad')
+  const tabRefs = useRef<Record<'ad' | 'bg', HTMLButtonElement | null>>({
+    ad: null,
+    bg: null,
+  })
+
+  const selectType = (nextType: 'ad' | 'bg') => {
+    setType(nextType)
+  }
+
+  const handleTypeTabKeyDown = (
+    event: React.KeyboardEvent<HTMLButtonElement>
+  ) => {
+    let nextType: 'ad' | 'bg' | null = null
+    if (event.key === 'ArrowRight' || event.key === 'ArrowDown') {
+      nextType = type === 'ad' ? 'bg' : 'ad'
+    }
+    if (event.key === 'ArrowLeft' || event.key === 'ArrowUp') {
+      nextType = type === 'ad' ? 'bg' : 'ad'
+    }
+    if (event.key === 'Home') nextType = 'ad'
+    if (event.key === 'End') nextType = 'bg'
+    if (!nextType) return
+
+    event.preventDefault()
+    selectType(nextType)
+    tabRefs.current[nextType]?.focus()
+  }
 
   return (
     <div className="mx-auto w-full max-w-7xl px-4 py-6 sm:px-6 lg:px-8 lg:py-10">
@@ -90,26 +117,55 @@ export default function Page() {
             aria-label="Тип заказа"
           >
             <button
+              ref={element => {
+                tabRefs.current.ad = element
+              }}
               type="button"
               role="tab"
+              id="orders-tab-ad"
               aria-selected={type === 'ad'}
-              onClick={() => setType('ad')}
+              aria-controls="orders-panel-ad"
+              tabIndex={type === 'ad' ? 0 : -1}
+              onClick={() => selectType('ad')}
+              onKeyDown={handleTypeTabKeyDown}
               className={`flex-1 rounded-lg px-4 py-2 text-sm font-semibold transition sm:flex-none ${type === 'ad' ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-500 hover:text-slate-800'}`}
             >
               Реклама
             </button>
             <button
+              ref={element => {
+                tabRefs.current.bg = element
+              }}
               type="button"
               role="tab"
+              id="orders-tab-bg"
               aria-selected={type === 'bg'}
-              onClick={() => setType('bg')}
+              aria-controls="orders-panel-bg"
+              tabIndex={type === 'bg' ? 0 : -1}
+              onClick={() => selectType('bg')}
+              onKeyDown={handleTypeTabKeyDown}
               className={`flex-1 rounded-lg px-4 py-2 text-sm font-semibold transition sm:flex-none ${type === 'bg' ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-500 hover:text-slate-800'}`}
             >
               Фоновый контент
             </button>
           </div>
         </div>
-        <OrdersTable type={type} />
+        <div
+          id="orders-panel-ad"
+          role="tabpanel"
+          aria-labelledby="orders-tab-ad"
+          hidden={type !== 'ad'}
+        >
+          {type === 'ad' && <OrdersTable type="ad" />}
+        </div>
+        <div
+          id="orders-panel-bg"
+          role="tabpanel"
+          aria-labelledby="orders-tab-bg"
+          hidden={type !== 'bg'}
+        >
+          {type === 'bg' && <OrdersTable type="bg" />}
+        </div>
       </section>
     </div>
   )

@@ -1,6 +1,6 @@
 // components/nomenclatureById/detail/NomenclatureFAQ.tsx
 import { formatPrice } from '@/utils/nomenclatureUtils'
-import { EntityCard } from '@/components/ui/card/EntityCard'
+import { NomenclatureFAQAccordion } from './NomenclatureFAQAccordion'
 
 interface NomenclatureFAQProps {
   placeName: string
@@ -50,20 +50,8 @@ export function NomenclatureFAQ({
           </h2>
         </div>
 
-        <div className="mt-8 grid gap-4 lg:grid-cols-2">
-          {items.map(([question, answer], index) => (
-            <EntityCard
-              as="details"
-              key={question}
-              open={index === 0}
-              className="p-5"
-            >
-              <summary className="cursor-pointer font-black text-slate-900">
-                {question}
-              </summary>
-              <p className="mt-3 text-sm leading-7 text-slate-600">{answer}</p>
-            </EntityCard>
-          ))}
+        <div className="mt-8">
+          <NomenclatureFAQAccordion items={items} />
         </div>
       </div>
     </section>

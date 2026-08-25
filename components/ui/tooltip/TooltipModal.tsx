@@ -1,26 +1,32 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useId, useRef, useState } from 'react'
 import { X, Loader2 } from 'lucide-react'
-import { useTooltip } from '@/providers/tooltip/TooltipProvider'
-import styles from './TooltipModal.module.scss'
 import Image from 'next/image'
+import { useTooltip } from '@/providers/tooltip/TooltipProvider'
+import { useDialogAccessibility } from '@/components/modal/useDialogAccessibility'
+import styles from './TooltipModal.module.scss'
+
 interface TooltipModalProps {
-  /** Функция для рендеринга данных в зависимости от типа */
   renderContent?: (data: any) => React.ReactNode
 }
 
-/**
- * Модальное окно для отображения подсказок.
- * Использует клиентский httpClient1CClient для запроса к 1С API напрямую.
- */
 export function TooltipModal({ renderContent }: TooltipModalProps) {
   const { isTooltipOpen, tooltipData, closeTooltip } = useTooltip()
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [data, setData] = useState<any>(null)
+  const dialogRef = useRef<HTMLDivElement>(null)
+  const closeButtonRef = useRef<HTMLButtonElement>(null)
+  const titleId = useId()
 
-  // Сброс состояния при закрытии
+  useDialogAccessibility({
+    isOpen: isTooltipOpen,
+    dialogRef,
+    onClose: closeTooltip,
+    initialFocusRef: closeButtonRef,
+  })
+
   useEffect(() => {
     if (!isTooltipOpen) {
       setData(null)
@@ -29,128 +35,115 @@ export function TooltipModal({ renderContent }: TooltipModalProps) {
     }
   }, [isTooltipOpen])
 
-  // Загрузка данных при открытии
   useEffect(() => {
-    if (isTooltipOpen && tooltipData?.endpoint) {
-      loadData()
+    const endpoint = tooltipData?.endpoint
+    if (!isTooltipOpen || !endpoint) return
+
+    const controller = new AbortController()
+
+    async function loadData() {
+      setLoading(true)
+      setError(null)
+
+      try {
+        const proxyUrl = `/api/tooltip?endpoint=${encodeURIComponent(endpoint)}`
+        const response = await fetch(proxyUrl, {
+          credentials: 'include',
+          signal: controller.signal,
+        })
+
+        if (response.status === 401) {
+          setError('Сессия истекла. Пожалуйста, войдите снова.')
+          return
+        }
+
+        if (!response.ok) {
+          const errorData = await response.json().catch(() => ({}))
+          throw new Error(
+            errorData.error || `Ошибка ${response.status}: ${response.statusText}`
+          )
+        }
+
+        const result = await response.json()
+        if (!controller.signal.aborted) setData(result)
+      } catch (requestError) {
+        if (!controller.signal.aborted) {
+          setError(
+            requestError instanceof Error
+              ? requestError.message
+              : 'Произошла ошибка при загрузке данных'
+          )
+        }
+      } finally {
+        if (!controller.signal.aborted) setLoading(false)
+      }
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+
+    loadData()
+    return () => controller.abort()
   }, [isTooltipOpen, tooltipData?.endpoint])
-
-  const loadData = async () => {
-    if (!tooltipData?.endpoint) return
-
-    setLoading(true)
-    setError(null)
-
-    try {
-      // Используем API прокси /api/tooltip для запроса к 1С API через сервер
-      const proxyUrl = `/api/tooltip?endpoint=${encodeURIComponent(tooltipData.endpoint)}`
-
-      const response = await fetch(proxyUrl, {
-        credentials: 'include',
-      })
-
-      // Обработка ошибок авторизации
-      if (response.status === 401) {
-        setError('Сессия истекла. Пожалуйста, войдите снова.')
-        return
-      }
-
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}))
-        throw new Error(
-          errorData.error || `Ошибка ${response.status}: ${response.statusText}`
-        )
-      }
-
-      const result = await response.json()
-      setData(result)
-    } catch (err) {
-      setError(
-        err instanceof Error
-          ? err.message
-          : 'Произошла ошибка при загрузке данных'
-      )
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  const handleOverlayClick = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (e.target === e.currentTarget) {
-      closeTooltip()
-    }
-  }
-
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') closeTooltip()
-    }
-
-    if (isTooltipOpen) {
-      document.addEventListener('keydown', handleKeyDown)
-      document.body.style.overflow = 'hidden'
-    }
-
-    return () => {
-      document.removeEventListener('keydown', handleKeyDown)
-      document.body.style.overflow = ''
-    }
-  }, [isTooltipOpen, closeTooltip])
 
   if (!isTooltipOpen || !tooltipData) return null
 
   return (
-    <div className={styles.modalOverlay} onClick={handleOverlayClick}>
-      <div className={styles.modalContent} onClick={(e) => e.stopPropagation()}>
-        <div className={styles.modalHeader}>
-          <h2 className={styles.modalTitle}>{tooltipData.title}</h2>
-          <button
-            onClick={() => closeTooltip()}
-            className={styles.closeButton}
-            aria-label="Закрыть"
-          >
-            <X size={24} />
-          </button>
-        </div>
+    <>
+      <button
+        type="button"
+        className={styles.modalOverlay}
+        onClick={closeTooltip}
+        aria-label="Закрыть окно подсказки"
+      />
+      <div className={styles.modalPositioner}>
+        <div
+          ref={dialogRef}
+          className={styles.modalContent}
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby={titleId}
+          tabIndex={-1}
+        >
+          <div className={styles.modalHeader}>
+            <h2 id={titleId} className={styles.modalTitle}>
+              {tooltipData.title}
+            </h2>
+            <button
+              ref={closeButtonRef}
+              type="button"
+              onClick={closeTooltip}
+              className={styles.closeButton}
+              aria-label="Закрыть окно подсказки"
+            >
+              <X size={24} aria-hidden="true" />
+            </button>
+          </div>
 
-        <div className={styles.modalBody}>
-          {loading && (
-            <div className={styles.loading}>
-              <Loader2 size={32} className={styles.spinner} />
-              <span>Загрузка данных...</span>
-            </div>
-          )}
+          <div className={styles.modalBody} aria-busy={loading}>
+            {loading && (
+              <div className={styles.loading}>
+                <Loader2 size={32} className={styles.spinner} aria-hidden="true" />
+                <span>Загрузка данных...</span>
+              </div>
+            )}
 
-          {error && (
-            <div className={styles.error}>
-              <p>Ошибка: {error}</p>
-            </div>
-          )}
+            {error && (
+              <div className={styles.error} role="alert">
+                <p>Ошибка: {error}</p>
+              </div>
+            )}
 
-          {!loading && !error && data && (
-            <div className={styles.content}>
-              {renderContent ? (
-                renderContent(data)
-              ) : (
-                <DefaultContent data={data} />
-              )}
-            </div>
-          )}
+            {!loading && !error && data && (
+              <div className={styles.content}>
+                {renderContent ? renderContent(data) : <DefaultContent data={data} />}
+              </div>
+            )}
+          </div>
         </div>
       </div>
-    </div>
+    </>
   )
 }
 
-/**
- * Компонент для отображения данных по умолчанию
- */
 function DefaultContent({ data }: { data: any }) {
-  console.log(data)
-
-  // Попробуем отобразить типичные поля
   const fields = [
     { key: 'name', label: 'Название' },
     { key: 'description', label: 'Описание' },
@@ -174,7 +167,7 @@ function DefaultContent({ data }: { data: any }) {
 
         if (field.isImage && typeof value === 'string') {
           displayValue = (
-            <div className='relative aspect-video'>
+            <div className="relative aspect-video">
               <Image
                 src={value}
                 alt={`Изображение ${field.label || 'места'}`}
@@ -182,7 +175,6 @@ function DefaultContent({ data }: { data: any }) {
                 className={styles.image}
                 sizes="80px"
                 loading="lazy"
-
               />
             </div>
           )

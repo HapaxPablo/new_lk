@@ -27,7 +27,7 @@
     background-color: var(--background-secondary);
   }
 
-  &:focus {
+  &:focus-visible {
     outline: none;
     box-shadow: var(--focus-ring);
   }

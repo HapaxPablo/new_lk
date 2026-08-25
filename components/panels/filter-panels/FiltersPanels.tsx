@@ -4,7 +4,7 @@ import { JSX, useEffect, useRef, useState } from 'react'
 import { usePathname, useSearchParams, useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button/Button'
 import { X } from 'lucide-react'
-import { useClickOutside } from '@/hooks/useClickOutside'
+import { useDialogAccessibility } from '@/components/modal/useDialogAccessibility'
 import {
   ISavedFilters,
   saveFiltersToStorage,
@@ -32,7 +32,7 @@ const FiltersPanel = ({ isOpen, onClose }: FiltersPanelProps): JSX.Element => {
   const pathname = usePathname()
   const searchParams = useSearchParams()
   const panelRef = useRef<HTMLDivElement>(null)
-  const overlayRef = useRef<HTMLDivElement>(null)
+  const closeButtonRef = useRef<HTMLButtonElement>(null)
   const brandSelectRef = useRef<{ handleClearAll: () => void }>(null)
   const counterpartySelectRef = useRef<{ handleClearAll: () => void }>(null)
   const statusRef = useRef<{ handleClearAll: () => void }>(null)
@@ -43,6 +43,14 @@ const FiltersPanel = ({ isOpen, onClose }: FiltersPanelProps): JSX.Element => {
   const [savePermanently, setSavePermanently] = useState<boolean>(false)
   const [isSettingsLoaded, setIsSettingsLoaded] = useState<boolean>(false)
   const { isEmployee } = useAuth()
+  const isMobileDialogOpen = Boolean(isOpen && onClose)
+
+  useDialogAccessibility({
+    isOpen: isMobileDialogOpen,
+    dialogRef: panelRef,
+    onClose: onClose ?? (() => {}),
+    initialFocusRef: closeButtonRef,
+  })
 
   useEffect(() => {
     const loadSettingsAndFilters = () => {
@@ -72,20 +80,6 @@ const FiltersPanel = ({ isOpen, onClose }: FiltersPanelProps): JSX.Element => {
 
     loadSettingsAndFilters()
   }, [onClose, pathname, router, searchParams])
-
-  // Используем клик вовне только если есть функция onClose (мобильная версия)
-  useClickOutside([panelRef], onClose!!, !!onClose && isOpen)
-
-  useEffect(() => {
-    if (isOpen && onClose) {
-      document.body.style.overflow = 'hidden'
-    } else {
-      document.body.style.overflow = 'unset'
-    }
-    return () => {
-      document.body.style.overflow = 'unset'
-    }
-  }, [isOpen, onClose])
 
   const handleFilterChange = (filterKey: string, value: string): void => {
     const params = new URLSearchParams(searchParams.toString())
@@ -186,15 +180,20 @@ const FiltersPanel = ({ isOpen, onClose }: FiltersPanelProps): JSX.Element => {
     <>
       {/* Overlay только для мобильной версии (когда есть onClose) */}
       {onClose && (
-        <div
-          ref={overlayRef}
+        <button
+          type="button"
           className={`${styles.overlay} ${isOpen ? styles.overlayOpen : ''}`}
           onClick={onClose}
+          aria-label="Закрыть фильтры"
         />
       )}
 
       <div
         ref={panelRef}
+        role={onClose ? 'dialog' : undefined}
+        aria-modal={onClose ? true : undefined}
+        aria-label={onClose ? 'Фильтры' : undefined}
+        tabIndex={onClose ? -1 : undefined}
         className={`${styles.panel} ${isOpen ? styles.panelOpen : ''} ${
           !onClose ? styles.desktopPanel : ''
         }`}

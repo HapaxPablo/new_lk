@@ -179,12 +179,11 @@ export default async function NomenclaturesPage(props: NomenclaturesPageProps) {
   const priceTo = params.price_to || ''
   const hasFacade = params.has_facade || ''
   const token = (await cookies()).get('access_token')?.value
-  const authHeaders = token
-    ? {
-        Authorization: `access_token ${token}`,
-        Cookie: `access_token=${token}`,
-      }
-    : {}
+  const headers: Record<string, string> = { 'Content-Type': 'application/json' }
+  if (token) {
+    headers.Authorization = `access_token ${token}`
+    headers.Cookie = `access_token=${token}`
+  }
 
   // console.log('Page params:', { limit, page, search, brand_name, brand_id })
   try {
@@ -213,13 +212,13 @@ export default async function NomenclaturesPage(props: NomenclaturesPageProps) {
       fetch(searchUrl.toString(), {
         method: 'POST',
         cache: 'no-store',
-        headers: { 'Content-Type': 'application/json', ...authHeaders },
+        headers: headers,
         body: JSON.stringify(searchBody),
       }),
       fetch(mapUrl.toString(), {
         method: 'POST',
         cache: 'no-store',
-        headers: { 'Content-Type': 'application/json', ...authHeaders },
+        headers: headers,
         body: JSON.stringify(searchBody),
       }),
       getPopularCities(),
@@ -307,7 +306,6 @@ export default async function NomenclaturesPage(props: NomenclaturesPageProps) {
                 <CatalogSidebar
                   items={data.results}
                   mapItems={mapData.results}
-                  cityName={citySlug || undefined}
                 />
               </div>
             </div>
