@@ -123,7 +123,8 @@ export function NomenclaturesLandingSections({
             {popularCities.map((city) => (
               <a
                 key={city.id}
-                href={`/nomenclatures?city_slug=${encodeURIComponent(city.slug)}#catalog`}
+                href={`/places/${encodeURIComponent(city.slug)}`}
+                target='_blank'
                 className="rounded-full bg-white px-5 py-3 text-sm font-bold text-[#18335f]! shadow-sm ring-1 ring-slate-200 hover:bg-[#18335f] hover:text-white!"
               >
                 {city.name}

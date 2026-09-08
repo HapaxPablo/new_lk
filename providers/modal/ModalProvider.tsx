@@ -15,6 +15,8 @@ export type ModalType =
   | 'ad_order'
   | 'bg_order'
   | 'development'
+  | 'priceTable'
+  | 'map'
 
 type ModalContextType = {
   openModal: (id: ModalType, key?: string) => void
@@ -53,9 +55,20 @@ export function useModal(id: ModalType, key?: string) {
   const context = useContext(ModalContext)
   if (!context) throw new Error('useModal must be used within a ModalProvider')
 
+  const { openModal: openModalFromContext, closeModal: closeModalFromContext } =
+    context
+  const openModal = useCallback(
+    () => openModalFromContext(id, key),
+    [openModalFromContext, id, key]
+  )
+  const closeModal = useCallback(
+    () => closeModalFromContext(id, key),
+    [closeModalFromContext, id, key]
+  )
+
   return {
     isOpen: context.isOpen(id, key),
-    openModal: () => context.openModal(id, key),
-    closeModal: () => context.closeModal(id, key),
+    openModal,
+    closeModal,
   }
 }

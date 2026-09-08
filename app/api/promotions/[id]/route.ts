@@ -3,8 +3,6 @@ import { IPromotionDetails } from '@/types/promotion'
 
 import { NextRequest } from 'next/server'
 
-export const revalidate = 3600
-
 export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }

@@ -17,8 +17,6 @@ export function CityDisplay({
   const [isOpen, setIsOpen] = useState(false)
   const dropdownRef = useRef<HTMLDivElement>(null)
 
-  console.log('CityDisplay render:', { selectedCity, isLoading })
-
   // Закрываем дропдаун при клике вне области
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -50,7 +48,6 @@ export function CityDisplay({
       <div className={styles.cityDisplay}>
         <button
           onClick={() => {
-            console.log('City button clicked - no city selected')
             onCityChange()
           }}
           className={styles.cityButton}
@@ -82,7 +79,6 @@ export function CityDisplay({
             </div>
             <button
               onClick={() => {
-                console.log('Change city clicked')
                 onCityChange()
                 setIsOpen(false)
               }}

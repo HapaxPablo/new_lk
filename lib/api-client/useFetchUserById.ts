@@ -49,14 +49,9 @@ import { useHttpClient } from '@/hooks/useHttpClient'
 export function useFetchUserById(userId?: string) {
   const { isAuthenticated } = useHttpClient()
 
-  console.log('userId', userId)
-
   const { data, error, isLoading, mutate } = useSWR<IUserDetailsItem>(
     userId && isAuthenticated ? `/api/users/${userId}` : null // если не авторизован — запрос не идёт
   )
-
-  console.log('data', data)
-  console.log('error', error?.message)
 
   return {
     userInfo: data,

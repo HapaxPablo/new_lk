@@ -78,7 +78,6 @@ export default function RegisterFormFields({
 
   const onError = (errors: any) => {
     // eslint-disable-next-line no-console
-    console.log('Ошибки валидации:', errors)
   }
 
   useEffect(() => {

@@ -37,8 +37,6 @@ export function trackViewItem(item: EcommerceItem) {
       ],
     },
   })
-
-  console.log('[E-commerce] view_item:', item.item_name)
 }
 
 export function trackSelectItem(
@@ -68,6 +66,4 @@ export function trackSelectItem(
       ],
     },
   })
-
-  console.log('[E-commerce] select_item:', item.item_name)
 }

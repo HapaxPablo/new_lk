@@ -287,6 +287,7 @@ const SliderClient = function ({
                       src={image.source}
                       alt={`Миниатюра ${actualIndex + 1}`}
                       fill
+                      quality={50}
                       loading="lazy"
                       sizes="100px"
                     />
@@ -343,6 +344,7 @@ const SliderClient = function ({
                 src={currentImage.source}
                 alt={`Изображение ${selectedIndex + 1}`}
                 fill
+                quality={60}
                 loading="lazy"
                 sizes="(max-width: 768px) 100vw, 60vw"
               />

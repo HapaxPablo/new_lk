@@ -4,12 +4,13 @@ import BreadcrumbsSetter from '@/components/ui/breadcrumbs/BreadcrumbsSetter'
 import LoaderSkeleton from '@/components/ui/loader/LoaderSkeleton'
 import { SITE_URL } from '@/lib/configs/config-meta/configMetaData'
 import { generateNomenclaturesListMetadata } from '@/lib/configs/config-meta/nomenclatures'
-import {
-  INomenclatureMapResponse,
-  INomenclatureResponse,
-} from '@/types/nomenclature'
+import { fetchWithRetry } from '@/lib/http-client/fetchWithRetry'
+import { toNomenclatureListItem } from '@/lib/nomenclature/dto'
+import { INomenclatureItem } from '@/types/nomenclature'
 import { type PopularCity } from '@/lib/api/geocoding'
 import { CatalogSidebar } from '@/components/nomenclatures/CatalogSidebar'
+import { NomenclatureFiltersInitializer } from '@/components/nomenclatures/NomenclatureFiltersInitializer'
+import type { NomenclatureFilters } from '@/store/useNomenclatureFiltersStore'
 import {
   NomenclaturesLandingSections,
   NomenclaturesSeoSections,
@@ -17,6 +18,15 @@ import {
 import { Metadata } from 'next'
 import dynamic from 'next/dynamic'
 import { cookies } from 'next/headers'
+
+// Клиентская пагинация в useInfiniteNomenclatures заточена под 24 пункта
+// на страницу, поэтому первую SSR-страницу больше 24 не отдаём.
+const MAX_LIST_LIMIT = 24
+
+function positiveInteger(value: string | undefined, fallback: number) {
+  const number = Number(value)
+  return Number.isInteger(number) && number > 0 ? number : fallback
+}
 
 const Toolbar = dynamic(
   () =>
@@ -146,8 +156,10 @@ export async function generateMetadata(
 async function getPopularCities(): Promise<PopularCity[]> {
   try {
     const url = new URL('/api/cities/popular/', process.env.API_1C_URL)
-    const response = await fetch(url.toString(), {
-      next: { revalidate: 300 },
+    // Публичные данные — кэшируем на 5 минут, не привязываясь к user
+    const response = await fetchWithRetry(url.toString(), {
+      method: 'GET',
+      next: { revalidate: 300, tags: ['popular-cities'] },
     })
 
     if (!response.ok) {
@@ -157,172 +169,193 @@ async function getPopularCities(): Promise<PopularCity[]> {
     const data = await response.json()
     return Array.isArray(data) ? data : []
   } catch (error) {
-    console.error('Error fetching popular cities:', error)
+    // Сбой популярных городов не должен падать каталог
+    console.error(
+      'Error fetching popular cities:',
+      error instanceof Error ? error.message : 'unknown'
+    )
     return []
   }
 }
 
 export default async function NomenclaturesPage(props: NomenclaturesPageProps) {
   const searchParams = await props.searchParams
-  const params = await searchParams
-  const limit = Number(params.limit) || 24
-  const page = Number(params.page) || 1
-  const search = params.search || ''
-  const brand_name = params.brand_name || ''
-  const brand_id = params.brand_id || ''
-  const counterpartyId = params.counterparty_id || ''
-  const status = params.status || ''
-  const typeOfPlace = params.type_of_place || ''
-  const citySlug = params.city_slug || ''
-  const contentTypes = params.content_types || ''
-  const priceFrom = params.price_from || ''
-  const priceTo = params.price_to || ''
-  const hasFacade = params.has_facade || ''
+  const limit = Math.min(
+    positiveInteger(searchParams.limit, MAX_LIST_LIMIT),
+    MAX_LIST_LIMIT
+  )
+  const page = positiveInteger(searchParams.page, 1)
+  const search = searchParams.search || ''
+  const brand_name = searchParams.brand_name || ''
+  const brand_id = searchParams.brand_id || ''
+  const counterpartyId = searchParams.counterparty_id || ''
+  const status = searchParams.status || ''
+  const typeOfPlace = searchParams.type_of_place || ''
+  const citySlug = searchParams.city_slug || ''
+  const contentTypes = searchParams.content_types || ''
+  const priceFrom = searchParams.price_from || ''
+  const priceTo = searchParams.price_to || ''
+  const hasFacade = searchParams.has_facade || ''
+  const initialFilters: NomenclatureFilters = {
+    ...(search ? { search } : {}),
+    ...(brand_name ? { brand_name } : {}),
+    ...(brand_id ? { brand_id } : {}),
+    ...(counterpartyId ? { counterparty_id: counterpartyId } : {}),
+    ...(status ? { status } : {}),
+    ...(typeOfPlace ? { type_of_place: typeOfPlace } : {}),
+    ...(citySlug ? { city_slug: citySlug } : {}),
+    ...(contentTypes ? { content_types: contentTypes } : {}),
+    ...(priceFrom ? { price_from: priceFrom } : {}),
+    ...(priceTo ? { price_to: priceTo } : {}),
+    ...(hasFacade === 'true' || hasFacade === 'false'
+      ? { has_facade: hasFacade }
+      : {}),
+  }
+  const hasUrlFilters = Object.keys(initialFilters).length > 0
   const token = (await cookies()).get('access_token')?.value
-  const authHeaders = token
+  const authHeaders: Record<string, string> = token
     ? {
         Authorization: `access_token ${token}`,
         Cookie: `access_token=${token}`,
       }
     : {}
 
-  // console.log('Page params:', { limit, page, search, brand_name, brand_id })
-  try {
-    const searchBody = getCatalogSearchBody({
-      limit,
-      page,
-      search,
-      brand_name,
-      brand_id,
-      counterparty_id: counterpartyId,
-      status,
-      type_of_place: typeOfPlace,
-      city_slug: citySlug,
-      content_types: contentTypes,
-      price_from: priceFrom,
-      price_to: priceTo,
-      has_facade: hasFacade,
-    })
-    const searchUrl = new URL(
-      '/api/nomenclatures/web/search/',
-      process.env.API_1C_URL
-    )
-    const mapUrl = new URL('/api/nomenclatures/web/map/', process.env.API_1C_URL)
+  const searchBody = getCatalogSearchBody({
+    limit,
+    page,
+    search,
+    brand_name,
+    brand_id,
+    counterparty_id: counterpartyId,
+    status,
+    type_of_place: typeOfPlace,
+    city_slug: citySlug,
+    content_types: contentTypes,
+    price_from: priceFrom,
+    price_to: priceTo,
+    has_facade: hasFacade,
+  })
+  const searchUrl = new URL(
+    '/api/nomenclatures/web/search/',
+    process.env.API_1C_URL
+  )
 
-    const [response, mapResponse, popularCities] = await Promise.all([
-      fetch(searchUrl.toString(), {
-        method: 'POST',
-        cache: 'no-store',
-        headers: { 'Content-Type': 'application/json', ...authHeaders },
-        body: JSON.stringify(searchBody),
-      }),
-      fetch(mapUrl.toString(), {
-        method: 'POST',
-        cache: 'no-store',
-        headers: { 'Content-Type': 'application/json', ...authHeaders },
-        body: JSON.stringify(searchBody),
-      }),
+  let popularCities: PopularCity[]
+  let searchData: {
+    count: number
+    next_page: number | null
+    previous_page: number | null
+    results: INomenclatureItem[]
+  }
+
+  try {
+    // Карта не ждём в первичном SSR: она грузится на клиенте, когда
+    // секция карты становится видимой (CatalogSidebar). Сбой карты
+    // больше не роняет каталог.
+    const [response, cities] = await Promise.all([
+      fetchWithRetry(
+        searchUrl.toString(),
+        {
+          method: 'POST',
+          cache: 'no-store',
+          headers: { 'Content-Type': 'application/json', ...authHeaders },
+          body: JSON.stringify(searchBody),
+        },
+        {
+          // Поиск — read-only операция: допустим один повтор при сетевом сбое
+          readOnly: true,
+        }
+      ),
       getPopularCities(),
     ])
 
     if (!response.ok) {
-      throw new Error(
-        `Ошибка ${response.status}: ${await response.text() || response.statusText}`
-      )
-    }
-    if (!mapResponse.ok) {
-      throw new Error(
-        `Ошибка карты ${mapResponse.status}: ${await mapResponse.text() || mapResponse.statusText}`
-      )
+      // Тело upstream в ошибку не тащим — оно может быть большим
+      throw new Error(`Ошибка ${response.status}: ${response.statusText}`)
     }
 
-    const searchData: Omit<INomenclatureResponse, 'next' | 'previous'> & {
-      next_page: number | null
-      previous_page: number | null
-    } = await response.json()
-    const data: INomenclatureResponse = {
-      ...searchData,
-      next: searchData.next_page === null ? null : String(searchData.next_page),
-      previous:
-        searchData.previous_page === null
-          ? null
-          : String(searchData.previous_page),
-    }
-    const mapData: INomenclatureMapResponse = await mapResponse.json()
+    popularCities = cities
+    searchData = await response.json()
+  } catch (error) {
+    console.error(
+      'Error fetching nomenclatures:',
+      error instanceof Error ? error.message : 'unknown'
+    )
+    throw error instanceof Error
+      ? error
+      : new Error('Произошла неизвестная ошибка')
+  }
 
-    const breadcrumbItems = [
-      { name: 'Главная', url: SITE_URL },
-      { name: 'Места для рекламы', url: `${SITE_URL}/nomenclatures` },
-    ]
+  // Сжимаем сущности 1С до DTO, прежде чем сериализовать в HTML
+  const results = Array.isArray(searchData.results)
+    ? searchData.results.map(toNomenclatureListItem)
+    : []
+  const count = searchData.count ?? results.length
 
-    return (
-      <>
-        <EcommerceTracker
-          item={{
-            item_id: 'nomenclatures-list',
-            item_name: 'Список мест для радио-рекламы',
-            price: '',
-          }}
+  const breadcrumbItems = [
+    { name: 'Главная', url: SITE_URL },
+    { name: 'Места для рекламы', url: `${SITE_URL}/nomenclatures` },
+  ]
+
+  return (
+    <>
+      <NomenclatureFiltersInitializer
+        filters={initialFilters}
+        enabled={hasUrlFilters}
+      />
+      <EcommerceTracker
+        item={{
+          item_id: 'nomenclatures-list',
+          item_name: 'Список мест для радио-рекламы',
+          price: '',
+        }}
+      />
+      <BreadcrumbJsonLd items={breadcrumbItems} />
+      <BreadcrumbsSetter title="Места для рекламы" />
+      <div className="h-full w-full overflow-y-auto bg-slate-50 text-slate-900">
+        <NomenclaturesLandingSections
+          totalItems={count}
+          popularCities={popularCities}
         />
-        <BreadcrumbJsonLd items={breadcrumbItems} />
-        <BreadcrumbsSetter title="Места для рекламы" />
-        <div className="h-full w-full overflow-y-auto bg-slate-50 text-slate-900">
-          <NomenclaturesLandingSections
-            totalItems={data.count}
-            popularCities={popularCities}
-          />
 
-          <section
-            id="catalog"
-            className="border-y border-slate-200 bg-slate-50"
-          >
-            <div className="mx-auto max-w-7xl px-4 py-12">
-              <div className="mb-6 max-w-3xl">
-                <p className="text-sm font-bold uppercase tracking-wider text-[#ef5350]">
-                  Каталог площадок
-                </p>
-                <h2 className="mt-2 text-3xl font-black text-slate-900">
-                  Выберите места для вашей рекламы
-                </h2>
-                <p className="mt-2 text-slate-600">
-                  Поиск, фильтры и список площадок работают в отдельной
-                  прокручиваемой области.
-                </p>
-              </div>
+        <section id="catalog" className="border-y border-slate-200 bg-slate-50">
+          <div className="mx-auto max-w-7xl px-4 py-12">
+            <div className="mb-6 max-w-3xl">
+              <p className="text-sm font-bold uppercase tracking-wider text-[#ef5350]">
+                Каталог площадок
+              </p>
+              <h2 className="mt-2 text-3xl font-black text-slate-900">
+                Выберите места для вашей рекламы
+              </h2>
+              <p className="mt-2 text-slate-600">
+                Поиск, фильтры и список площадок работают в отдельной
+                прокручиваемой области.
+              </p>
+            </div>
 
-              <div className="space-y-6">
-                <div className="h-[clamp(38rem,calc(100svh-7rem),48rem)]">
-                  <div className="flex h-full min-h-0 flex-col overflow-hidden rounded-3xl bg-white p-3 shadow-sm ring-1 ring-slate-200">
-                    <Toolbar totalItems={data.count} variant="catalog" />
-                    <div className="mt-3 min-h-0 grow">
-                      <NomenclatureWrapper
-                        nomenclatureData={data.results}
-                        limit={limit}
-                        page={page}
-                        count={data.count}
-                      />
-                    </div>
+            <div className="space-y-6">
+              <div className="h-[clamp(72rem,calc(100svh-4rem),82rem)]">
+                <div className="flex h-full min-h-0 flex-col overflow-hidden rounded-3xl bg-white p-3 shadow-sm ring-1 ring-slate-200">
+                  <Toolbar totalItems={count} variant="catalog" />
+                  <div className="mt-3 min-h-0 grow">
+                    <NomenclatureWrapper
+                      nomenclatureData={results}
+                      limit={limit}
+                      page={page}
+                      count={count}
+                    />
                   </div>
                 </div>
-                <CatalogSidebar
-                  items={data.results}
-                  mapItems={mapData.results}
-                  cityName={citySlug || undefined}
-                />
               </div>
+              <CatalogSidebar
+                nomenclatureIds={results.map((item) => item.id)}
+              />
             </div>
-          </section>
+          </div>
+        </section>
 
-          <NomenclaturesSeoSections />
-        </div>
-      </>
-    )
-  } catch (error) {
-    console.error('Error fetching nomenclatures:', error)
-    if (error instanceof Error) {
-      throw error
-    } else {
-      throw new Error('Произошла неизвестная ошибка')
-    }
-  }
+        <NomenclaturesSeoSections />
+      </div>
+    </>
+  )
 }

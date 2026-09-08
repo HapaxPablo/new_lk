@@ -21,6 +21,6 @@ const LoginFormDesktop = dynamic(
 
 export const LoginWrapper = () => {
   // const isDesktop = useMediaQuery('(min-width: 768px)')
-return <LoginFormDesktop /> 
+  return <LoginFormDesktop />
   // return <>{isDesktop ? <LoginFormDesktop /> : <LoginFormMobile />}</>
 }

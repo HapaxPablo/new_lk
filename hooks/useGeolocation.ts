@@ -18,7 +18,6 @@ export function useGeolocation() {
   const getLocation = useCallback(() => {
     // Предотвращаем повторные запросы
     if (requestInProgress.current) {
-      console.log('GEO request already in progress, skipping')
       return
     }
 
@@ -27,7 +26,6 @@ export function useGeolocation() {
       return
     }
 
-    console.log('=== GEO REQUEST START ===')
     requestInProgress.current = true
     setLoading(true)
     setError(null)
@@ -35,12 +33,6 @@ export function useGeolocation() {
 
     navigator.geolocation.getCurrentPosition(
       (position) => {
-        console.log(
-          'SUCCESS coords:',
-          position.coords.latitude,
-          position.coords.longitude
-        )
-
         const newCoordinates = {
           latitude: position.coords.latitude,
           longitude: position.coords.longitude,
@@ -82,7 +74,6 @@ export function useGeolocation() {
         maximumAge: 300000,
       }
     )
-    console.log('GEO requested, timeout 8s')
   }, []) // Пустой массив зависимостей, так как используем ref
 
   return {

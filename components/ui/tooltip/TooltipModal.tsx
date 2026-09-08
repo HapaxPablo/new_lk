@@ -148,8 +148,6 @@ export function TooltipModal({ renderContent }: TooltipModalProps) {
  * Компонент для отображения данных по умолчанию
  */
 function DefaultContent({ data }: { data: any }) {
-  console.log(data)
-
   // Попробуем отобразить типичные поля
   const fields = [
     { key: 'name', label: 'Название' },

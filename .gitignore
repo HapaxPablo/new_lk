@@ -16,6 +16,7 @@
 # next.js
 /.next/
 /out/
+/public/maplibre/
 
 # production
 /build
@@ -48,3 +49,7 @@ AGENTS.md
 .codex
 .agents
 FRONTEND_AUDIT.md
+review_codex_from_serv_prod.md
+implementation-agent-prompt.md
+production-performance-fix-plan.md
+/docs/*

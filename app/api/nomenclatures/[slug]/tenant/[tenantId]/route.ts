@@ -47,8 +47,6 @@ export async function DELETE(
   request: NextRequest,
   { params }: { params: Promise<{ slug: string; tenantId: string }> }
 ) {
-  console.log('COOKIE HEADER:', request.headers.get('cookie'))
-  console.log('ALL COOKIES:', request.cookies.getAll())
   try {
     const { slug: id, tenantId } = await params
 
@@ -58,7 +56,10 @@ export async function DELETE(
 
     return new Response(null, { status: 204 })
   } catch (error: any) {
-    console.error('DELETE error:', error)
+    // Логируем только статус — в error.message лежит тело upstream
+    console.error('[api/nomenclatures/tenant] DELETE failed', {
+      status: error.status || 500,
+    })
 
     if (error.message === 'Session expired') {
       return Response.json({ detail: 'Session expired' }, { status: 401 })

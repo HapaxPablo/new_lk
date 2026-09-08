@@ -4,7 +4,6 @@ import { NmcFragment } from './fragment/NmcFragment'
 import { INomenclatureDetailsItem } from '@/types/nomenclature'
 import {
   formatMediaUnits,
-  formatPossibility,
   formatSquare,
   formatWorkTime,
 } from '@/utils/nomenclatureUtils'
@@ -46,7 +45,6 @@ export function Description({ nomenclature }: DescriptionProps) {
     worktime_start,
     worktime_end,
     square,
-    possibility,
   } = nomenclature
   const formattedAddress = `${address.city}, ${address.localityType} ${address.street}, ${address.streetType} ${address.house}`
 
@@ -65,7 +63,6 @@ export function Description({ nomenclature }: DescriptionProps) {
     worktimeStart: worktime_start || '',
     worktimeEnd: worktime_end || '',
     square: square || '',
-    possibility: possibility || '',
   }
 
   const handleRedirectToBrand = () => {
@@ -130,12 +127,6 @@ export function Description({ nomenclature }: DescriptionProps) {
       )}
       {displayData.square && (
         <NmcFragment text={formatSquare(displayData.square)} type="Площадь" />
-      )}
-      {displayData.possibility && (
-        <NmcFragment
-          text={formatPossibility(displayData.possibility)}
-          type="Проходимость"
-        />
       )}
     </div>
   )

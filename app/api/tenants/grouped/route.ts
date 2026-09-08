@@ -3,8 +3,6 @@ import { IGroupedTenantsResponse } from '@/types/tenants'
 import { NextRequest } from 'next/server'
 import { withApiErrorHandling } from '@/lib/http-client/errors'
 
-export const dynamic = 'force-dynamic'
-
 export async function GET(request: NextRequest) {
   return withApiErrorHandling(async () => {
     const searchParams = request.nextUrl.searchParams

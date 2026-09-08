@@ -3,8 +3,6 @@ import { ICounterpartyResponse } from '@/types/counterparty'
 import { NextRequest, NextResponse } from 'next/server'
 import { withApiErrorHandling } from '@/lib/http-client/errors'
 
-export const revalidate = 3600
-
 async function handleGet(request: NextRequest) {
   const searchParams = request.nextUrl.searchParams
 
@@ -25,9 +23,9 @@ async function handleGet(request: NextRequest) {
 
   const queryString = new URLSearchParams(paramsFor1C).toString()
 
-  const response = await HttpClient1C.server(request).get<ICounterpartyResponse>(
-    `api/counterparties/?${queryString}`
-  )
+  const response = await HttpClient1C.server(
+    request
+  ).get<ICounterpartyResponse>(`api/counterparties/?${queryString}`)
 
   return NextResponse.json(response)
 }

@@ -15,8 +15,7 @@ export function useLocalStorage<T>(
       if (item) {
         setStoredValue(JSON.parse(item))
       }
-    } catch (error) {
-      console.log(error)
+    } catch {
     }
   }, [key])
 
@@ -25,8 +24,7 @@ export function useLocalStorage<T>(
     try {
       setStoredValue(value)
       window.localStorage.setItem(key, JSON.stringify(value))
-    } catch (error) {
-      console.log(error)
+    } catch {
     }
   }
 

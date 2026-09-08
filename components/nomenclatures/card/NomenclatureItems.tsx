@@ -1,9 +1,9 @@
 import { CardNomenclature } from '@/components/ui/card/CardNomenclature'
-import { INomenclatureItem } from '@/types/nomenclature'
+import { INomenclatureListItem } from '@/types/nomenclature'
 import styles from './NomenclatureItem.module.scss'
 
 interface NomenclatureCardProps {
-  item: INomenclatureItem[]
+  item: INomenclatureListItem[]
   className?: string
 }
 

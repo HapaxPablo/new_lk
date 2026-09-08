@@ -57,7 +57,6 @@ export default function GeolocationClient() {
     // Проверяем, есть ли уже сохраненный город в store
     const savedCity = useGeoStore.getState().selectedCity
     if (savedCity) {
-      console.log('City loaded from store:', savedCity.name)
       setInitialized(true)
       locationCheckStarted.current = true // Не нужно запрашивать геолокацию
     }
@@ -66,7 +65,6 @@ export default function GeolocationClient() {
   // Слушаем событие изменения города
   useEffect(() => {
     const handleCityChange = (event: CustomEvent<City>) => {
-      console.log('City changed event:', event.detail)
       setSelectedCity(event.detail)
     }
 
@@ -82,7 +80,6 @@ export default function GeolocationClient() {
   // Слушаем событие открытия селектора города
   useEffect(() => {
     const handleOpenSelector = () => {
-      console.log('Opening city selector')
       cityModal.openModal()
     }
 
@@ -106,9 +103,7 @@ export default function GeolocationClient() {
     locationCheckStarted.current = true
 
     const checkLocation = async () => {
-      console.log('Checking location, no city selected')
       const permissionState = await getGeolocationPermission()
-      console.log('Permission state:', permissionState)
 
       if (permissionState === 'granted') {
         getLocation()
@@ -138,11 +133,6 @@ export default function GeolocationClient() {
 
     cityDetectionStarted.current = true
 
-    console.log(
-      '🚀 CALLING detectCity:',
-      coordinates.latitude.toFixed(2),
-      coordinates.longitude.toFixed(2)
-    )
     detectCity(coordinates.latitude, coordinates.longitude)
   }, [coordinates, isInitialized]) // Убран detectCity из зависимостей
 
@@ -168,15 +158,12 @@ export default function GeolocationClient() {
     navigator.permissions
       .query({ name: 'geolocation' as PermissionName })
       .then((status) => {
-        console.log('Permission status:', status.state)
-
         if (status.state === 'granted' && !locationCheckStarted.current) {
           locationCheckStarted.current = true
           getLocation()
         }
 
         status.onchange = () => {
-          console.log('Permission changed:', status.state)
           if (status.state === 'granted' && !locationCheckStarted.current) {
             locationCheckStarted.current = true
             getLocation()
@@ -195,7 +182,6 @@ export default function GeolocationClient() {
       hookDetectedCity.name &&
       !cityModal.isOpen
     ) {
-      console.log('🎉 SHOWING CITY MODAL:', hookDetectedCity.name)
       // Небольшая задержка чтобы избежать конфликтов
       setTimeout(() => {
         cityModal.openModal()
@@ -204,7 +190,6 @@ export default function GeolocationClient() {
   }, [hookDetectedCity, cityLoading, isInitialized, cityModal])
 
   const handlePermissionGranted = useCallback(() => {
-    console.log('Permission granted')
     permissionModal.closeModal()
 
     getLocation()
@@ -217,8 +202,6 @@ export default function GeolocationClient() {
 
   const handleCityConfirm = useCallback(
     (isCorrect: boolean) => {
-      console.log('City confirmed:', isCorrect, hookDetectedCity)
-
       if (isCorrect && hookDetectedCity && hookDetectedCity.name) {
         confirmCity(hookDetectedCity)
       }
@@ -229,7 +212,6 @@ export default function GeolocationClient() {
 
   const handleCitySelect = useCallback(
     (city: PopularCity) => {
-      console.log('City selected:', city.name)
       selectCity(city)
       cityModal.closeModal()
     },
@@ -237,7 +219,6 @@ export default function GeolocationClient() {
   )
 
   const handleCityChange = useCallback(() => {
-    console.log('Changing city')
     clearCity()
     locationCheckStarted.current = false
     cityDetectionStarted.current = false

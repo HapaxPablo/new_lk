@@ -38,7 +38,6 @@ export async function getFilesList(queryParams: {
     cookieStore,
     `api/files/?${new URLSearchParams(stringifiedQueryParams).toString()}`
   )
-  console.log('Data from getFilesList:', data)
   return data
 }
 

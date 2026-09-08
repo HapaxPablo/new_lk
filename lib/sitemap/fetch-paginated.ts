@@ -4,7 +4,6 @@ import {
   SITEMAP_FETCH_TIMEOUT_MS,
   SITEMAP_MAX_PAGES,
   SITEMAP_NOMENCLATURES_PAGE_SIZE,
-  SITEMAP_TENANTS_PAGE_SIZE,
 } from './config'
 import { buildSitemapApiUrl, getSitemapApiBaseUrl } from './urls'
 
@@ -174,55 +173,11 @@ export async function fetchAllBrandsForSitemap<
   return all
 }
 
-/**
- * Тенанты: api/tenants/grouped (как /tenants и useTenants — hasMore по count).
- */
-export async function fetchAllTenantsForSitemap<
-  T extends { tenantId: string },
->(): Promise<T[]> {
-  const all: T[] = []
-  let offset = 0
-  const pageSize = SITEMAP_TENANTS_PAGE_SIZE
-  let totalCount: number | undefined
-
-  for (let page = 0; page < SITEMAP_MAX_PAGES; page += 1) {
-    const url = buildSitemapApiUrl('api/tenants/grouped', {
-      limit: String(pageSize),
-      offset: String(offset),
-    })
-
-    const data = await fetchPaginatedPage<T>(url)
-    if (data.results.length === 0) {
-      break
-    }
-
-    all.push(...data.results)
-    if (data.count !== undefined) {
-      totalCount = data.count
-    }
-
-    if (!shouldFetchNextPage(all.length, data.results.length, totalCount)) {
-      break
-    }
-
-    offset += data.results.length
-  }
-
-  if (totalCount !== undefined && all.length < totalCount) {
-    console.warn(
-      `[sitemap] Tenants incomplete: loaded ${all.length} of ${totalCount}`
-    )
-  }
-
-  return all
-}
-
 export async function fetchAllCitiesForSitemap<T>(): Promise<T[]> {
   const apiBase = getSitemapApiBaseUrl()
 
   try {
     const url = `${apiBase}/api/cities/`
-    console.log(`[sitemap] Fetching cities from: ${url}`)
 
     const response = await fetch(url, {
       headers: {
@@ -252,19 +207,6 @@ export async function fetchAllCitiesForSitemap<T>(): Promise<T[]> {
 
     // Бэкенд возвращает массив городов (без пагинации)
     const cities = Array.isArray(data) ? data : data.results || []
-
-    console.log(`[sitemap] ✓ Fetched ${cities.length} cities`)
-
-    // Выводим примеры городов для отладки
-    if (cities.length > 0) {
-      const sampleSize = Math.min(5, cities.length)
-      console.log(`[sitemap] Sample cities (first ${sampleSize}):`)
-      cities.slice(0, sampleSize).forEach((city: any, index: number) => {
-        console.log(
-          `[sitemap]   ${index + 1}. ${city.name} (slug: ${city.slug}, nomenclatures: ${city.nomenclature_count || 0})`
-        )
-      })
-    }
 
     return cities
   } catch (error) {

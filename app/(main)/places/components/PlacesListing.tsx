@@ -1,11 +1,12 @@
 'use client'
 
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { CardNomenclature } from '@/components/ui/card/CardNomenclature'
 import { ICity } from '@/types/cities'
-import PlacesMap from './PlacesMap'
 import styles from './PlacesListing.module.scss'
 import { EntityCard } from '@/components/ui/card/EntityCard'
+import UnifiedMap, { MapMarker } from '@/components/maps/UnifiedMap'
+import { toMapMarker } from '@/components/maps/adapters'
 
 interface PlacesListingProps {
   cityName: string
@@ -14,6 +15,13 @@ interface PlacesListingProps {
 
 export function PlacesListing({ cityName, places }: PlacesListingProps) {
   const [selectedPlaceId, setSelectedPlaceId] = useState<string | null>(null)
+  const markers = useMemo(
+    () =>
+      places
+        .map(toMapMarker)
+        .filter((marker): marker is MapMarker => marker !== null),
+    [places]
+  )
   return (
     <section id="places" className="border-y bg-slate-50">
       <div className="mx-auto max-w-7xl px-4 py-10">
@@ -75,21 +83,24 @@ export function PlacesListing({ cityName, places }: PlacesListingProps) {
                 </div>
               </div>
             </div>
-            <div className="relative h-[320px] bg-slate-200 overflow-hidden">
-              <PlacesMap
-                places={places}
-                cityName={cityName}
-                selectedPlaceId={selectedPlaceId}
-                onPlaceSelect={setSelectedPlaceId}
+            <div className="relative h-80 bg-slate-200">
+              <UnifiedMap
+                markers={markers}
+                selectedMarkerId={selectedPlaceId}
+                onMarkerSelect={setSelectedPlaceId}
+                cluster
+                fit="markers"
               />
+            </div>
+            <div className={styles.cardList}>
+              <div className={styles.cardGrid}>
+                {places.map((place, index) => (
+                  <CardNomenclature key={index} item={place} />
+                ))}
+              </div>
             </div>
           </EntityCard>
           {/* </aside> */}
-          <div className={styles.cardGrid}>
-            {places.map((place, index) => (
-              <CardNomenclature key={index} item={place} />
-            ))}
-          </div>
         </div>
       </div>
 

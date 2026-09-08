@@ -155,7 +155,7 @@ export const RentersTabContent = ({
             type="text"
           />
           <Select
-            options={floors?.data ?? []}
+            options={floors}
             value={floor}
             onChange={setFloor}
             placeholder="Выбрать этаж"

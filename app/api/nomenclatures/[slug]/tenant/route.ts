@@ -9,7 +9,6 @@ export async function GET(
 ) {
   try {
     const { slug: id } = await params
-    console.log('❗ [id] route called with id:', id)
     const searchParams = request.nextUrl.searchParams.toString()
     const query = searchParams ? `?${searchParams}` : ''
 
@@ -19,7 +18,9 @@ export async function GET(
 
     return Response.json(response)
   } catch (error: any) {
-    console.error('Error in [id] tenant API:', error)
+    console.error('[api/nomenclatures/tenant] upstream error', {
+      status: error.status || 500,
+    })
     return Response.json(
       { error: error.message || 'Internal server error' },
       { status: error.status || 500 }

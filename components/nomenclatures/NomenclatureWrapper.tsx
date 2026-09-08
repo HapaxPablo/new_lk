@@ -1,6 +1,6 @@
 'use client'
 
-import { INomenclatureItem } from '@/types/nomenclature'
+import { INomenclatureListItem } from '@/types/nomenclature'
 import dynamic from 'next/dynamic'
 import { Suspense, useCallback, useEffect, useRef } from 'react'
 import { useInfiniteNomenclatures } from '@/hooks/useInfiniteNomenclatures'
@@ -22,7 +22,7 @@ const Pagination = dynamic(
 )
 
 interface NomenclatureCardProps {
-  nomenclatureData: INomenclatureItem[]
+  nomenclatureData: INomenclatureListItem[]
   className?: string
   children?: React.ReactNode
   limit?: number
@@ -66,7 +66,7 @@ export const NomenclatureWrapperContent = ({
     isLoadingMore,
     size,
     setSize,
-  } = useInfiniteNomenclatures(nomenclatureData, count, page)
+  } = useInfiniteNomenclatures(nomenclatureData, count, page, limit)
 
   const loadMore = useCallback(() => {
     if (hasMore && !isLoadingMore) {

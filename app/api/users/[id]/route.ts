@@ -2,15 +2,12 @@ import { HttpClient1C } from '@/lib/http-client'
 import { IUserDetailsItem } from '@/types/user'
 import { NextRequest } from 'next/server'
 
-export const revalidate = 3600
-
 export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const { id } = await params
-    console.log('Users detail API called for ID:', id)
 
     if (!id) {
       return Response.json({ error: 'ID is required' }, { status: 400 })
@@ -20,11 +17,11 @@ export async function GET(
       `api/users/${id}`
     )
 
-    console.log('Successfully fetched users details for ID:', id)
-
     return Response.json(response)
   } catch (error: any) {
-    console.error('Error in users detail API:', error)
+    console.error('[api/users] upstream error', {
+      status: error.status || 500,
+    })
 
     // Более детальная обработка ошибок
     let status = 500

@@ -2,7 +2,6 @@ import { HttpClient1C } from '@/lib/http-client'
 import { INomenclatureDetailsItem } from '@/types/nomenclature'
 import { NextRequest } from 'next/server'
 
-export const revalidate = 3600
 type ApiResult<T> =
   | T
   | {

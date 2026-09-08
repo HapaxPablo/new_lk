@@ -1,18 +1,7 @@
 import { THttpMethod } from '@/types'
 import { NextRequest } from 'next/server'
-import { getIronSession } from 'iron-session'
 import { ReadonlyRequestCookies } from 'next/dist/server/web/spec-extension/adapters/request-cookies'
-
-declare module 'iron-session' {
-  interface IronSessionData {
-    user?: {
-      id: string
-      name: string
-      email: string
-      xrmcCookie?: string
-    }
-  }
-}
+import { fetchWithRetry, type FetchWithRetryOptions } from './fetchWithRetry'
 
 class HttpClient1CServer {
   private baseUrl: string
@@ -28,82 +17,17 @@ class HttpClient1CServer {
     )
   }
 
-  private async getSessionData(request: NextRequest) {
-    try {
-      const res = new Response()
-      const cookieHeader = request.headers.get('cookie')
-      if (!cookieHeader) {
-        return null
-      }
-
-      const session = await getIronSession<any>(request, res, {
-        password:
-          process.env.SESSION_SECRET ||
-          'complex_password_at_least_32_characters',
-        cookieName: '1c_auth_session',
-        cookieOptions: {
-          secure: process.env.NODE_ENV === 'production',
-          sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
-          httpOnly: true,
-          maxAge: 60 * 60 * 24 * 7,
-        },
-      })
-      return session
-    } catch (error) {
-      return null
-    }
-  }
-
-  private async getSessionFromCookies(cookieStore: ReadonlyRequestCookies) {
-    try {
-      const url = new URL('http://localhost')
-      const headers = new Headers()
-
-      const allCookies = cookieStore.getAll()
-      if (allCookies.length > 0) {
-        const cookieString = allCookies
-          .map((cookie) => `${cookie.name}=${cookie.value}`)
-          .join('; ')
-        headers.set('cookie', cookieString)
-      }
-
-      const request = new Request(url, { headers })
-      const res = new Response()
-
-      const session = await getIronSession<any>(request, res, {
-        password:
-          process.env.SESSION_SECRET ||
-          'complex_password_at_least_32_characters',
-        cookieName: '1c_auth_session',
-        cookieOptions: {
-          secure: process.env.NODE_ENV === 'production',
-          sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
-          httpOnly: true,
-          maxAge: 60 * 60 * 24 * 7,
-        },
-      })
-
-      return session
-    } catch (error) {
-      return null
-    }
-  }
-
-  private async getAuthData(
+  private getAuthData(
     source: NextRequest | ReadonlyRequestCookies,
     rawCookieHeader?: string
   ) {
     let token: string | null = null
-    let xrmcCookie: string | undefined = undefined
 
     if (this.isNextRequest(source)) {
       const cookieHeader = rawCookieHeader || source.headers.get('cookie') || ''
 
       const tokenMatch = cookieHeader.match(/access_token=([^;]+)/)
       token = tokenMatch ? tokenMatch[1] : null
-
-      const xrmcMatch = cookieHeader.match(/xrmcCookie=([^;]+)/)
-      xrmcCookie = xrmcMatch ? xrmcMatch[1] : undefined
 
       if (!token) {
         token =
@@ -113,12 +37,6 @@ class HttpClient1CServer {
           source.headers.get('access-token') ||
           null
       }
-
-      if (!xrmcCookie) {
-        const session = await this.getSessionData(source)
-        xrmcCookie =
-          session?.user?.xrmcCookie || source.cookies.get('xrmcCookie')?.value
-      }
     } else {
       const cookieStore = source as ReadonlyRequestCookies
 
@@ -127,24 +45,12 @@ class HttpClient1CServer {
       if (rawCookieHeader) {
         const tokenMatch = rawCookieHeader.match(/access_token=([^;]+)/)
         tokenValue = tokenMatch ? tokenMatch[1] : null
-
-        const xrmcMatch = rawCookieHeader.match(/xrmcCookie=([^;]+)/)
-        xrmcCookie = xrmcMatch ? xrmcMatch[1] : undefined
       }
 
       token = tokenValue || cookieStore.get('access_token')?.value || null
-      if (!xrmcCookie) {
-        xrmcCookie = cookieStore.get('xrmcCookie')?.value
-      }
-
-      if (!xrmcCookie) {
-        const session = await this.getSessionFromCookies(cookieStore)
-        xrmcCookie =
-          session?.user?.xrmcCookie || cookieStore.get('xrmcCookie')?.value
-      }
     }
 
-    return { token, xrmcCookie }
+    return { token }
   }
 
   private async request<T = any>(
@@ -153,12 +59,10 @@ class HttpClient1CServer {
     endpoint: string,
     data?: any,
     isFile: boolean = false,
-    rawCookieHeader?: string
+    rawCookieHeader?: string,
+    fetchOptions?: FetchWithRetryOptions
   ): Promise<T> {
-    const { token, xrmcCookie } = await this.getAuthData(
-      source,
-      rawCookieHeader
-    )
+    const { token } = this.getAuthData(source, rawCookieHeader)
 
     const headers: Record<string, string> = {}
 
@@ -166,21 +70,9 @@ class HttpClient1CServer {
       headers['Authorization'] = `access_token ${token}`
     }
 
-    if (xrmcCookie) {
-      headers['X-XRMC-Cookie'] = xrmcCookie
-    }
-
     // Формируем Cookie заголовок
-    const cookieParts: string[] = []
     if (token) {
-      cookieParts.push(`access_token=${token}`)
-    }
-    if (xrmcCookie) {
-      cookieParts.push(`xrmcCookie=${xrmcCookie}`)
-    }
-
-    if (cookieParts.length > 0) {
-      headers['Cookie'] = cookieParts.join('; ')
+      headers['Cookie'] = `access_token=${token}`
     }
 
     if (source instanceof NextRequest) {
@@ -203,7 +95,11 @@ class HttpClient1CServer {
       config.body = JSON.stringify({})
     }
 
-    const response = await fetch(`${this.baseUrl}${endpoint}`, config)
+    const response = await fetchWithRetry(
+      `${this.baseUrl}${endpoint}`,
+      config,
+      fetchOptions
+    )
 
     if (response.status === 401) {
       throw new Error('Session expired')
@@ -257,6 +153,23 @@ class HttpClient1CServer {
       data,
       false,
       rawCookieHeader
+    )
+  }
+
+  async postReadOnly<T = any>(
+    source: NextRequest | ReadonlyRequestCookies,
+    endpoint: string,
+    data?: any,
+    rawCookieHeader?: string
+  ): Promise<T> {
+    return this.request<T>(
+      source,
+      'POST',
+      endpoint,
+      data,
+      false,
+      rawCookieHeader,
+      { readOnly: true }
     )
   }
 

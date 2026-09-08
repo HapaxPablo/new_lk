@@ -112,13 +112,6 @@ export const CaSelect = forwardRef(
       // Формируем строку с ID через запятую и передаем в onChange
       const counterpartyIdsString = newSelectedCounterparties.join(',')
       onChange(counterpartyIdsString)
-
-      // Выводим в консоль информацию о выбранных контрагентах
-      const selectedCounterpartiesInfo = newSelectedCounterparties.map((id) => {
-        const counterpartyInfo = counterparties.find((c) => c.id === id)
-        return { id, name: counterpartyInfo?.name || 'Unknown' }
-      })
-      console.log('Выбранные контрагенты:', selectedCounterpartiesInfo)
     }
 
     const handleInputFocus = () => {
@@ -142,10 +135,6 @@ export const CaSelect = forwardRef(
       setSelectedCounterpartyIds(allCounterpartyIds)
       const counterpartyIdsString = allCounterpartyIds.join(',')
       onChange(counterpartyIdsString)
-      console.log(
-        'Выбраны все контрагенты:',
-        counterparties.map((c) => ({ id: c.id, name: c.name }))
-      )
     }
 
     const handleClearAll = () => {

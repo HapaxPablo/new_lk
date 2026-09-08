@@ -3,8 +3,6 @@ import { IBrandListResponse } from '@/types/brands'
 import { NextRequest, NextResponse } from 'next/server'
 import { withApiErrorHandling } from '@/lib/http-client/errors'
 
-export const revalidate = 3600
-
 async function handleGet(request: NextRequest) {
   const searchParams = request.nextUrl.searchParams
 

@@ -10,12 +10,14 @@ interface Options<T> {
   enabled: boolean
   fetchPage: (page: number, search: string) => Promise<PageResult<T>>
   onError?: (message: string) => void
+  minSearchLength?: number
 }
 
 export function usePaginatedSearch<T>({
   enabled,
   fetchPage,
   onError,
+  minSearchLength = 0,
 }: Options<T>) {
   const [items, setItems] = useState<T[]>([])
   const [search, setSearch] = useState('')
@@ -46,14 +48,31 @@ export function usePaginatedSearch<T>({
   // первая загрузка / сброс при открытии или изменении поиска
   useEffect(() => {
     if (!enabled) return
+
     setPage(1)
+
+    const normalizedSearch = search.trim()
+    if (
+      normalizedSearch.length > 0 &&
+      normalizedSearch.length < minSearchLength
+    ) {
+      setItems([])
+      setHasMore(false)
+      return
+    }
+
     load(1, search)
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [enabled, search])
+  }, [enabled, minSearchLength, search])
 
   // подгрузка следующих страниц
   useEffect(() => {
-    if (page === 1) return
+    const normalizedSearch = search.trim()
+    const isSearchTooShort =
+      normalizedSearch.length > 0 && normalizedSearch.length < minSearchLength
+
+    if (page === 1 || isSearchTooShort) return
+
     load(page, search)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [page])

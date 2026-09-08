@@ -3,12 +3,10 @@
 import type { MetadataRoute } from 'next'
 import { IBrandListItem } from '@/types/brands'
 import { INomenclatureItem } from '@/types/nomenclature'
-import { IGroupedTenant } from '@/types/tenants'
 import { ICitySitemap } from '@/types/cities'
 import {
   fetchAllBrandsForSitemap,
   fetchAllNomenclaturesForSitemap,
-  fetchAllTenantsForSitemap,
   fetchAllCitiesForSitemap,
 } from './fetch-paginated'
 import {
@@ -46,25 +44,21 @@ export async function buildSitemapEntries(): Promise<MetadataRoute.Sitemap> {
   const entries: MetadataRoute.Sitemap = [...staticEntries()]
   try {
     // Последовательная загрузка для снижения нагрузки на API
-    console.info('[sitemap] Step 1/4: Fetching nomenclatures...')
+    console.info('[sitemap] Step 1/3: Fetching nomenclatures...')
     const nomenclatures =
       await fetchAllNomenclaturesForSitemap<INomenclatureItem>()
     console.info(`[sitemap] ✓ Loaded ${nomenclatures.length} nomenclatures`)
 
-    console.info('[sitemap] Step 2/4: Fetching brands...')
+    console.info('[sitemap] Step 2/3: Fetching brands...')
     const brands = await fetchAllBrandsForSitemap<IBrandListItem>()
     console.info(`[sitemap] ✓ Loaded ${brands.length} brands`)
 
-    console.info('[sitemap] Step 3/4: Fetching tenants...')
-    const tenants = await fetchAllTenantsForSitemap<IGroupedTenant>()
-    console.info(`[sitemap] ✓ Loaded ${tenants.length} tenants`)
-
-    console.info('[sitemap] Step 4/4: Fetching cities...')
+    console.info('[sitemap] Step 3/3: Fetching cities...')
     const cities = await fetchAllCitiesForSitemap<ICitySitemap>()
     console.info(`[sitemap] ✓ Loaded ${cities.length} cities`)
 
     console.info(
-      `[sitemap] Total loaded: ${nomenclatures.length} nomenclatures, ${brands.length} brands, ${tenants.length} tenants, ${cities.length} cities`
+      `[sitemap] Total loaded: ${nomenclatures.length} nomenclatures, ${brands.length} brands, ${cities.length} cities`
     )
 
     const seen = new Set(entries.map((e) => e.url))
@@ -97,31 +91,6 @@ export async function buildSitemapEntries(): Promise<MetadataRoute.Sitemap> {
       nomenclatureAdded++
     }
     console.info(`[sitemap] ✓ Added ${nomenclatureAdded} nomenclature URLs`)
-
-    // Добавляем тенантов
-    console.info(`[sitemap] Adding ${tenants.length} tenant URLs...`)
-    let tenantsAdded = 0
-    for (const tenant of tenants) {
-      if (!tenant.tenantId) {
-        console.warn(`[sitemap] Skipping tenant without tenantId`)
-        continue
-      }
-
-      const url = absoluteSitePath(`/tenants/${tenant.tenantId}`)
-      if (seen.has(url)) {
-        console.warn(`[sitemap] Duplicate tenant URL: ${url}`)
-        continue
-      }
-
-      seen.add(url)
-      entries.push({
-        url,
-        changeFrequency: 'weekly',
-        priority: 0.7,
-      })
-      tenantsAdded++
-    }
-    console.info(`[sitemap] ✓ Added ${tenantsAdded} tenant URLs`)
 
     // Добавляем бренды
     console.info(`[sitemap] Adding ${brands.length} brand URLs...`)
@@ -177,7 +146,6 @@ export async function buildSitemapEntries(): Promise<MetadataRoute.Sitemap> {
     if (
       nomenclatures.length === 0 &&
       brands.length === 0 &&
-      tenants.length === 0 &&
       cities.length === 0
     ) {
       console.warn(

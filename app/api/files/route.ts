@@ -39,9 +39,6 @@ export async function POST(request: NextRequest) {
         responseData = null
       }
 
-      console.log('[api/files] upstream status:', apiResponse.status)
-      console.log('[api/files] upstream body:', rawText)
-
       if (!apiResponse.ok) {
         return NextResponse.json(
           {
@@ -99,9 +96,6 @@ export async function POST(request: NextRequest) {
     } catch {
       responseData = null
     }
-
-    console.log('[api/files] upstream status:', apiResponse.status)
-    console.log('[api/files] upstream body:', rawText)
 
     if (!apiResponse.ok) {
       return NextResponse.json(

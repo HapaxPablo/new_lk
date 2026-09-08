@@ -37,6 +37,7 @@ export const formatPrice = (price: string): string => {
     style: 'currency',
     currency: 'RUB',
     minimumFractionDigits: 0,
+    maximumFractionDigits: 0,
   }).format(numericPrice)
 }
 
@@ -151,7 +152,6 @@ export function declineCity(city: string, caseType: CaseType) {
       return genitive || city // если не удалось, возвращаем исходное название
     } else if (caseType === 'prepositional') {
       const prepositional = cityIn(city)
-      console.log('prepositional', prepositional)
       return prepositional || city
     }
   } catch {

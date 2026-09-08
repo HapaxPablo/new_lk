@@ -9,13 +9,22 @@ interface IFloorOption {
   value: string
 }
 
-const floorFetcher = async (url: string) => {
+interface IFloorsResponse {
+  ok?: boolean
+  message?: string
+  data?: IFloorOption[]
+}
+
+const floorFetcher = async (url: string): Promise<IFloorOption[]> => {
   const res = await fetch(url, { credentials: 'include', cache: 'no-store' })
-  const json = await res.json()
-  if (!res.ok || json?.ok === false) {
-    throw new Error(json?.message || `HTTP ${res.status}`)
+  const json: IFloorOption[] | IFloorsResponse = await res.json()
+
+  if (!res.ok || (!Array.isArray(json) && json.ok === false)) {
+    const message = Array.isArray(json) ? undefined : json.message
+    throw new Error(message || `HTTP ${res.status}`)
   }
-  return json.data // этажи приходят в data
+
+  return Array.isArray(json) ? json : (json.data ?? [])
 }
 
 const tenantsFetcher = async (url: string): Promise<ITenantsResponse> => {
@@ -60,7 +69,6 @@ export const useInfinityTenants = (
     if (floor) {
       // console.log('🔍 Adding floor param:', floor)
       params.set('floor', floor)
-      console.log('🔍 Full params with floor:', params.toString())
     }
 
     return `/api/nomenclatures/${nomenclatureId}/tenant/?${params.toString()}`
@@ -74,7 +82,7 @@ export const useInfinityTenants = (
       keepPreviousData: false,
     })
 
-  const { data: floors } = useSWR(
+  const { data: floors } = useSWR<IFloorOption[]>(
     enabled && nomenclatureId
       ? `/api/nomenclatures/${nomenclatureId}/tenant/floors/`
       : null,

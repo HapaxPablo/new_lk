@@ -291,6 +291,58 @@ export interface INomenclatureItem extends INomenclatureBase {
   oldCatalogSlug: string
 }
 
+/**
+ * Минимальный элемент каталога для списков и карточек.
+ *
+ * Всё, что реально используют CardNomenclature, корзина и select-all.
+ * Не сериализуем сущности 1С целиком в HTML и не гоняем через
+ * server/client границу — так initial HTML /nomenclatures держится
+ * в рамках плана (< 250 KB).
+ */
+export interface INomenclatureListItem {
+  id: string
+  name: string
+  oldCatalogSlug: string
+  pricePerMonth: string
+  brand: Pick<IBrand, 'name' | 'logotype'> | null
+  exterior: { source: string }[]
+  formattedAddress: string | { name: string }
+  typeOfPlace: string | Pick<ITypeOfPlace, 'name' | 'abbreviation'>
+}
+
+export interface INomenclatureListResponse {
+  count: number
+  next: string | null
+  previous: string | null
+  results: INomenclatureListItem[]
+}
+
+/**
+ * Точка карты: только то, что нужно для маркера.
+ * Бренды, фасады и описания на карту не тащим.
+ */
+export interface INomenclatureMapPoint {
+  id: string
+  title: string
+  slug: string
+  coordinates: {
+    latitude: string | null
+    longitude: string | null
+  } | null
+  facade: {
+    id: string
+    source: string
+  } | null
+  brand: Pick<IBrand, 'name' | 'logotype'> | null
+  type_of_place: string | null
+  oldCatalogSlug: string
+}
+
+export interface INomenclatureMapPointResponse {
+  count: number
+  results: INomenclatureMapPoint[]
+}
+
 export interface IAddress {
   city: string
   citySlug?: string
@@ -313,12 +365,14 @@ export interface ITypeOfPlace {
 
 export interface INomenclatureDetailsItem extends INomenclatureBase {
   article: number
+  tariffs?: string
   formattedAddress: IFormattedAddress // сужаем — в деталях всегда объект
   tenants_length: number
   interior: IImage[]
   exterior: IImage[]
   description: string
   address: IAddress
+  slots_per_hour?: string
   // settings: IWeekSettings
   // hw_info: IHardwareInfo
   // main_info: IMainInfo

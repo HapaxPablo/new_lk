@@ -1,23 +1,27 @@
-import { dirname } from 'path'
-import { fileURLToPath } from 'url'
-import { FlatCompat } from '@eslint/eslintrc'
-import nextPlugin from 'eslint-config-next'
+import { defineConfig, globalIgnores } from 'eslint/config'
+import nextVitals from 'eslint-config-next/core-web-vitals'
+import nextTs from 'eslint-config-next/typescript'
+import prettierConfig from 'eslint-config-prettier/flat'
+import prettierPlugin from 'eslint-plugin-prettier'
 
-const __filename = fileURLToPath(import.meta.url)
-const __dirname = dirname(__filename)
-
-const compat = new FlatCompat({
-  baseDirectory: __dirname,
-})
-
-const eslintConfig = [
-  nextEslint,
-  ...compat.extends('next/core-web-vitals', 'next/typescript'),
+export default defineConfig([
+  ...nextVitals,
+  ...nextTs,
+  prettierConfig,
   {
+    plugins: {
+      prettier: prettierPlugin,
+    },
     rules: {
+      'no-console': ['error', { allow: ['info', 'warn', 'error'] }],
       'prettier/prettier': 'warn',
     },
   },
-]
-
-export default eslintConfig
+  globalIgnores([
+    '.next/**',
+    'out/**',
+    'build/**',
+    'public/maplibre/**',
+    'next-env.d.ts',
+  ]),
+])

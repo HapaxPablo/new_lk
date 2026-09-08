@@ -1,10 +1,11 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
-import maplibre, { Map, Popup, LngLatBounds } from 'maplibre-gl'
+import { Map as MapLibreMap, Popup, LngLatBounds } from 'maplibre-gl'
 import 'maplibre-gl/dist/maplibre-gl.css'
 
 import { ICity } from '@/types/cities'
+import { secureMapUrl } from '@/utils/mapUrl'
 
 interface PlacesMapProps {
   places: ICity[]
@@ -62,7 +63,7 @@ export default function PlacesMap({
   onPlaceSelect,
 }: PlacesMapProps) {
   const mapContainer = useRef<HTMLDivElement>(null)
-  const map = useRef<Map | null>(null)
+  const map = useRef<MapLibreMap | null>(null)
   const popup = useRef<Popup | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [isLoaded, setIsLoaded] = useState(false)
@@ -72,22 +73,26 @@ export default function PlacesMap({
 
     const initMap = async () => {
       try {
-        const styleUrl = process.env.NEXT_PUBLIC_MAP_LIBRE_STYLE_URL
+        const styleUrl = secureMapUrl(
+          process.env.NEXT_PUBLIC_MAP_LIBRE_STYLE_URL
+        )
         // console.log('Using map style URL:', styleUrl)
         if (!styleUrl) {
           setError('Карта временно недоступна')
           return
         }
 
-        map.current = new maplibre.Map({
+        const mapInstance = new MapLibreMap({
           container: mapContainer.current!,
           style: styleUrl,
           center: [92.52, 56.0],
           attributionControl: false,
           zoom: 10,
-          transformRequest: (url) => {
+          transformRequest: (url: string) => {
             if (url.startsWith('/')) {
-              const tileBase = process.env.NEXT_PUBLIC_MAP_TILE_SERVER_URL
+              const tileBase = secureMapUrl(
+                process.env.NEXT_PUBLIC_MAP_TILE_SERVER_URL
+              )
               // console.log('Using map tileBase URL:', tileBase)
               if (!tileBase) return { url }
               return { url: `${tileBase}${url}` }
@@ -95,8 +100,9 @@ export default function PlacesMap({
             return { url }
           },
         })
+        map.current = mapInstance
 
-        map.current.once('idle', () => {
+        mapInstance.once('idle', () => {
           if (!map.current) return
 
           const style = map.current.getStyle()
@@ -350,7 +356,6 @@ export default function PlacesMap({
               const feature = pointFeatures[0]
               const coordinates = (feature.geometry as any).coordinates
               const props = feature.properties as any
-              console.log('props.exterior', props.exterior)
               popup.current?.remove()
               popup.current = new Popup({ anchor: 'top', closeButton: true })
                 .setLngLat(coordinates)
@@ -428,7 +433,7 @@ export default function PlacesMap({
           setIsLoaded(true)
         })
 
-        map.current.on('error', (e) => {
+        mapInstance.on('error', (e) => {
           const msg = e.error?.message ?? ''
           console.warn('MapLibre error:', msg)
           // Фатально только если сам style.json недоступен
@@ -458,7 +463,6 @@ export default function PlacesMap({
     const coords = normalizeCoordinates(place)
     if (!coords) return
     map.current.flyTo({ center: coords, zoom: 13, duration: 2000 })
-    console.log('place.exterior', place.exterior)
 
     popup.current?.remove()
     popup.current = new Popup({ anchor: 'top', closeButton: true })

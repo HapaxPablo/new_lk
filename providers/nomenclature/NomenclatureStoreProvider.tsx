@@ -43,7 +43,6 @@ export function NomenclatureStoreProvider({
                 return data
             })
             .then((items: INomenclatureItem[]) => {
-                console.log('[Store] fetched items:', items)
                 setInitial(cookieIds, items)
             })
             .catch((e) => {

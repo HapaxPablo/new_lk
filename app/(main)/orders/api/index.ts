@@ -18,11 +18,13 @@ export const formatDateForApi = (value: string) => {
 
 async function fetchPage<T>(
   url: URL,
-  mapItem: (raw: any) => T
+  mapItem: (raw: any) => T,
+  options?: RequestInit
 ): Promise<{ results: T[]; next: string | null }> {
   const response = await fetch(url.toString(), {
     credentials: 'include',
     cache: 'no-store',
+    ...options,
   })
 
   if (!response.ok) {
@@ -33,7 +35,14 @@ async function fetchPage<T>(
   }
 
   const data = await response.json()
-  return { results: (data.results || []).map(mapItem), next: data.next || null }
+  return {
+    results: (data.results || []).map(mapItem),
+    next:
+      data.next ??
+      (data.next_page === null || data.next_page === undefined
+        ? null
+        : String(data.next_page)),
+  }
 }
 
 export const fetchPlaylistsPage = (page: number, search: string) => {
@@ -48,12 +57,28 @@ export const fetchPlaylistsPage = (page: number, search: string) => {
 }
 
 export const fetchClientsPage = (page: number, search: string) => {
-  const url = new URL('/api/nomenclatures/', window.location.origin)
-  url.searchParams.set('page', String(page))
-  url.searchParams.set('limit', String(CLIENT_PAGE_LIMIT))
-  if (search) url.searchParams.set('search', search)
-  return fetchPage<IClientOption>(url, (item) => ({
-    id: item.id,
-    name: item.name || getNomenclatureTitle(item) || item.id,
-  }))
+  const apiBaseUrl = process.env.NEXT_PUBLIC_API_1C_URL
+  if (!apiBaseUrl) {
+    throw new Error('Не задан публичный адрес API')
+  }
+
+  const url = new URL('/api/nomenclatures/web/search/', apiBaseUrl)
+  const body = {
+    page,
+    limit: CLIENT_PAGE_LIMIT,
+    ...(search ? { search } : {}),
+  }
+
+  return fetchPage<IClientOption>(
+    url,
+    (item) => ({
+      id: item.id,
+      name: item.name || getNomenclatureTitle(item) || item.id,
+    }),
+    {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body),
+    }
+  )
 }

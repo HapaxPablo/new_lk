@@ -61,7 +61,6 @@ export default function CitiesSlider({ name, typeOfPlace = '' }: City) {
           : data.results || data || []
 
         setCities(citiesData)
-        console.log('Загруженные города:', citiesData)
       } catch (error: any) {
         console.error('Ошибка загрузки городов:', error)
         setError(error.message || 'Не удалось загрузить города')

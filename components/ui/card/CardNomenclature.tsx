@@ -2,17 +2,29 @@
 
 import Image from 'next/image'
 import Link from 'next/link'
+import { useState } from 'react'
 import { MapPin } from 'lucide-react'
+import { usePathname } from 'next/navigation'
 import { formatPrice, getNomenclatureTitle } from '@/utils'
 import { trackSelectItem } from '@/lib/ecommerce/ecommerceHelpers'
 import { AddToCartButton } from './AddToCartButton'
 import { EntityCard } from './EntityCard'
 import styles from './CardNomenclature.module.scss'
-import { usePathname } from 'next/navigation'
+
+type CardNomenclatureItem = Parameters<typeof getNomenclatureTitle>[0] & {
+  id: string
+  oldCatalogSlug?: string | null
+  exterior?: Array<{ source?: string | null }> | string | null
+  pricePerMonth?: string | null
+  brand?: {
+    name?: string | null
+    logotype?: string | null
+  } | null
+}
 
 interface CardNomenclatureProps {
   className?: string
-  item: any
+  item: CardNomenclatureItem
   codeMP?: string | null
   compact?: boolean
 }
@@ -23,9 +35,13 @@ export const CardNomenclature: React.FC<CardNomenclatureProps> = ({
   codeMP = null,
   compact = false,
 }) => {
+  const [failedImageUrl, setFailedImageUrl] = useState<string | null>(null)
+  const [failedLogoUrl, setFailedLogoUrl] = useState<string | null>(null)
+
   const { exterior, typeOfPlace, pricePerMonth } = item
   const image = Array.isArray(exterior) ? exterior[0]?.source : exterior
   const brandLogo = item.brand?.logotype
+
   const address =
     typeof item.formattedAddress === 'string'
       ? item.formattedAddress
@@ -42,8 +58,8 @@ export const CardNomenclature: React.FC<CardNomenclatureProps> = ({
         item_id: item.id,
         item_name: getNomenclatureTitle(item),
         item_category: placeType,
-        item_brand: item.brand?.name,
-        price: pricePerMonth,
+        item_brand: item.brand?.name ?? undefined,
+        price: pricePerMonth ?? '',
       },
       'Список номенклатур'
     )
@@ -83,27 +99,33 @@ export const CardNomenclature: React.FC<CardNomenclatureProps> = ({
     >
       <Link href={href} className={styles.cardLink} onClick={handleCardClick}>
         <div className={styles.media}>
-          {image ? (
+          {image && failedImageUrl !== image ? (
             <Image
               src={image}
               alt={getNomenclatureTitle(item)}
               fill
               sizes="(max-width: 767px) 100vw, (max-width: 1280px) 50vw, 420px"
+              quality={45}
               className={styles.image}
+              // Истёкшие signed-URLs (403) не должны ломать карточку:
+              // показываем заглушку, пока бэкенд не починит контракт URL.
+              onError={() => setFailedImageUrl(image)}
             />
           ) : (
             <div className={styles.imagePlaceholder}>{placeType}</div>
           )}
           <div className={styles.imageOverlay} />
-          {brandLogo && (
+          {brandLogo && failedLogoUrl !== brandLogo && (
             <span className={styles.brandBadge}>
               <Image
                 src={brandLogo}
                 alt={`Логотип ${item.brand?.name || 'бренда'}`}
                 width={112}
                 height={40}
+                quality={45}
                 className={styles.brandLogo}
                 loading="lazy"
+                onError={() => setFailedLogoUrl(brandLogo)}
               />
             </span>
           )}

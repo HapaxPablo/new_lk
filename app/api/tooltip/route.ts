@@ -25,17 +25,9 @@ export async function GET(request: NextRequest) {
     // Получаем cookie заголовок напрямую из запроса
     const cookieHeader = request.headers.get('cookie') || ''
 
-    console.log('[Tooltip API] Request received:', {
-      endpoint,
-      hasCookieHeader: !!cookieHeader,
-      cookieHeaderLength: cookieHeader.length,
-      cookies: cookieHeader.substring(0, 100) + '...',
-    })
-
     // Проверяем авторизацию
     const tokenMatch = cookieHeader.match(/access_token=([^;]+)/)
     if (!tokenMatch) {
-      console.log('[Tooltip API] No access token found in cookies')
       return Response.json({ error: 'Необходима авторизация' }, { status: 401 })
     }
 
@@ -48,15 +40,8 @@ export async function GET(request: NextRequest) {
       ? endpoint.slice(1)
       : endpoint
 
-    console.log('[Tooltip API] Fetching from:', cleanEndpoint)
-
     // Для брендов используем прямой URL https://api1.krasrm.com/api/brands/{id}
     if (cleanEndpoint.startsWith('api/brands/')) {
-      console.log(
-        '[Tooltip API] Using direct URL for brands:',
-        `${BRANDS_API_BASE_URL}${cleanEndpoint}`
-      )
-
       const headers: Record<string, string> = {
         'Content-Type': 'application/json',
         Authorization: `access_token ${token}`,
@@ -74,8 +59,6 @@ export async function GET(request: NextRequest) {
         credentials: 'include',
       })
 
-      console.log('[Tooltip API] Brands response status:', response.status)
-
       if (response.status === 401) {
         return Response.json(
           { error: 'Сессия истекла. Пожалуйста, войдите снова.' },
@@ -85,36 +68,33 @@ export async function GET(request: NextRequest) {
 
       if (!response.ok) {
         const error = await response.text()
-        console.log('[Tooltip API] Brands error response:', error)
+        // Логируем только статус — тело upstream не шлём в лог
+        console.error('[api/tooltip] brands upstream error', {
+          status: response.status,
+        })
         throw new Error(`Request failed: ${error}`)
       }
 
       const result = await response.json()
-      console.log('[Tooltip API] Brands response received:', result)
       return Response.json(result)
     }
 
     // Для остальных endpoint используем HttpClient1C.server
-    console.log(
-      '[Tooltip API] Making request to 1C with endpoint:',
-      cleanEndpoint
-    )
-
     let response
     try {
       response = await HttpClient1C.server(request).get(cleanEndpoint)
     } catch (fetchError: any) {
-      console.error('[Tooltip API] Fetch error:', fetchError)
-      console.error('[Tooltip API] Fetch error message:', fetchError.message)
-      console.error('[Tooltip API] Fetch error stack:', fetchError.stack)
+      console.error('[api/tooltip] fetch failed', {
+        status: fetchError.status || 500,
+      })
       throw fetchError
     }
 
-    console.log('[Tooltip API] Response received:', response)
-
     return Response.json(response)
   } catch (error: any) {
-    console.error('[Tooltip API] Error:', error)
+    console.error('[api/tooltip] error', {
+      status: error.status || 500,
+    })
 
     // Обработка ошибки авторизации
     if (error.message === 'Session expired' || error.message.includes('401')) {

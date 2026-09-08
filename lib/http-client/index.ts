@@ -24,6 +24,8 @@ export class HttpClient1C {
         httpClient1CServer.get<T>(request, endpoint),
       post: <T = any>(endpoint: string, data: any) =>
         httpClient1CServer.post<T>(request, endpoint, data),
+      postReadOnly: <T = any>(endpoint: string, data: any) =>
+        httpClient1CServer.postReadOnly<T>(request, endpoint, data),
       put: <T = any>(endpoint: string, data: any) =>
         httpClient1CServer.put<T>(request, endpoint, data),
       patch: <T = any>(endpoint: string, data: any) =>

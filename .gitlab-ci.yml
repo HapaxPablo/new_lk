@@ -38,6 +38,7 @@ build_test:
         --build-arg NEXT_PUBLIC_GA_ID="$NEXT_PUBLIC_GA_ID" \
         --build-arg NEXT_PUBLIC_MAP_LIBRE_STYLE_URL="$NEXT_PUBLIC_MAP_LIBRE_STYLE_URL" \
         --build-arg MAP_LIBRE_STYLE_URL="$MAP_LIBRE_STYLE_URL" \
+        --build-arg NEXT_PUBLIC_MAPTILER_KEY="$NEXT_PUBLIC_MAPTILER_KEY" \
         --no-cache \
         -t $CI_REGISTRY_IMAGE:latest \
         -t $CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA \
@@ -73,6 +74,16 @@ deploy_test:
       $SSH_CMD "docker run --restart unless-stopped -d \
         -p 3000:3000 \
         --name new-lk \
+        --dns 1.1.1.1 \
+        --dns 8.8.8.8 \
+        --log-driver json-file \
+        --log-opt max-size=10m \
+        --log-opt max-file=3 \
+        --health-cmd \"wget -q --spider --tries=1 http://127.0.0.1:3000/api/health/live || exit 1\" \
+        --health-interval 30s \
+        --health-timeout 10s \
+        --health-retries 3 \
+        --health-start-period 40s \
         -e API_1C_URL=\"$API_1C_URL\" \
         -e CRYPTO_SECRET_KEY=\"$CRYPTO_SECRET_KEY\" \
         -e CRYPTO_IV=\"$CRYPTO_IV\" \
@@ -84,6 +95,7 @@ deploy_test:
         -e NEXT_PUBLIC_GA_ID="$NEXT_PUBLIC_GA_ID" \
         -e NEXT_PUBLIC_MAP_LIBRE_STYLE_URL="$NEXT_PUBLIC_MAP_LIBRE_STYLE_URL" \
         -e MAP_LIBRE_STYLE_URL="$MAP_LIBRE_STYLE_URL" \
+        -e NEXT_PUBLIC_MAPTILER_KEY="$NEXT_PUBLIC_MAPTILER_KEY" \
         $CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA"
   after_script:
     - rm -f /tmp/deploy_key.pem

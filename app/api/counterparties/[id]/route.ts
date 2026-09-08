@@ -2,8 +2,6 @@ import { HttpClient1C } from '@/lib/http-client'
 import { ICounterpartyDetails } from '@/types/counterparty'
 import { NextRequest } from 'next/server'
 
-export const revalidate = 3600
-
 export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }

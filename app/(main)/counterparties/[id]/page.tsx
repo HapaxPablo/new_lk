@@ -24,8 +24,6 @@ async function getCounterpartyById(id: string): Promise<ICounterpartyDetails | n
   try {
     const cookieStore = await cookies()
 
-    console.log('Fetching counterparty details for ID:', id)
-
     // Правильный эндпоинт с ID в пути
     const data = await httpClient1CServer.get<ICounterpartyDetails>(
       cookieStore,
@@ -36,10 +34,10 @@ async function getCounterpartyById(id: string): Promise<ICounterpartyDetails | n
     return data
     
   } catch (error) {
+    // Логируем только сообщение и id — без тела ответа
     console.error('Error fetching counterparty:', {
-      error: error instanceof Error ? error.message : error,
+      error: error instanceof Error ? error.message : 'unknown',
       id,
-      apiUrl: process.env.API_1C_URL,
     })
     
     // Если ошибка 404, возвращаем null для отображения 404 страницы
@@ -80,7 +78,7 @@ export async function generateMetadata(
       description: counterparty.description || `Информация о контрагенте ${fullName}`,
     }
   } catch (error) {
-    console.error('Error generating metadata:', error)
+    console.error('Error generating metadata:', error instanceof Error ? error.message : 'unknown')
     return {
       title: 'Ошибка | Контрагенты',
     }
@@ -94,7 +92,6 @@ export default async function CounterpartyDetailPage(
   const { id } = params
 
   const counterparty = await getCounterpartyById(id)
-  console.log('DETAILS', counterparty)
 
   if (!counterparty) {
     notFound() // Используем Next.js notFound для 404 страницы

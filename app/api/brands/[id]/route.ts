@@ -2,21 +2,19 @@ import { HttpClient1C } from '@/lib/http-client'
 import { IBrandDetail } from '@/types/brands'
 import { NextRequest } from 'next/server'
 
-export const revalidate = 3600
-
 export async function GET(
   request: NextRequest,
-  { params }: { params: Promise<{ slug: string }> }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const { slug } = await params
+    const { id } = await params
 
-    if (!slug) {
-      return Response.json({ error: 'slug is required' }, { status: 400 })
+    if (!id) {
+      return Response.json({ error: 'ID is required' }, { status: 400 })
     }
 
     const response = await HttpClient1C.server(request).get<IBrandDetail>(
-      `api/brands/${slug}`
+      `api/brands/${id}`
     )
 
     return Response.json(response)

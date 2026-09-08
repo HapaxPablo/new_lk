@@ -8,3 +8,7 @@ export {
   formatPlaceTitle,
   declineCity,
 } from './nomenclatureUtils'
+export {
+  calculateMonthlyExits,
+  type WorktimeSettings,
+} from './calculateMonthlyExits'

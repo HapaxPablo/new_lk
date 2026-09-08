@@ -20,7 +20,6 @@ interface Props {
 }
 
 export default function UserInfoModalView({ userId }: Props) {
-  console.log('prop userId:', userId)
   const { error, isAuthenticated, isLoading, mutate, userInfo } =
     useFetchUserById(userId)
 

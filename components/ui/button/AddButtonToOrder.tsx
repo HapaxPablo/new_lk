@@ -7,7 +7,6 @@ import { INomenclatureBase } from "@/types/nomenclature"
 export function AddButtonToOrder({ item }: { item: INomenclatureBase }) {
     const { toggle, ids } = useNomenclatureStore()
     const handleAdd = () => toggle(item)
-    console.log('AddButtonToOrder rendered with item:', item)
     const isSelected = ids.includes(item.id)
     return (
         <Button onClick={handleAdd}>

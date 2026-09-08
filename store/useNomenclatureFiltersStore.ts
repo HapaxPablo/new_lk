@@ -5,6 +5,7 @@ import { persist } from 'zustand/middleware'
 
 export interface NomenclatureFilters {
   search?: string
+  brand_name?: string
   brand_id?: string
   counterparty_id?: string
   status?: string
@@ -24,6 +25,7 @@ interface NomenclatureFiltersState {
     value: NomenclatureFilters[K]
   ) => void
   resetFilters: () => void
+  replaceFilters: (filters: NomenclatureFilters) => void
   setHasHydrated: (hasHydrated: boolean) => void
 }
 
@@ -43,6 +45,7 @@ export const useNomenclatureFiltersStore = create<NomenclatureFiltersState>()(
           return { filters }
         }),
       resetFilters: () => set({ filters: {} }),
+      replaceFilters: (filters) => set({ filters }),
       setHasHydrated: (hasHydrated) => set({ hasHydrated }),
     }),
     {

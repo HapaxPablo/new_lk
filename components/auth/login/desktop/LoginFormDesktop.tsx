@@ -63,7 +63,6 @@ export function LoginFormDesktop() {
             // priority
             className="w-auto h-auto"
             loading="lazy"
-
           />
         </div>
         <div className={styles.title}>Вход</div>
@@ -114,7 +113,7 @@ export function LoginFormDesktop() {
           </Link>
         </div>
         <Button type="submit" variant="primary" isLoading={isLoading} fullWidth>
-          {/* {isLoading ? 'Загрузка...' : 'Войти'} */}
+          {isLoading ? 'Загрузка...' : 'Войти'}
         </Button>
 
         <div className={styles.loginWrapper}>

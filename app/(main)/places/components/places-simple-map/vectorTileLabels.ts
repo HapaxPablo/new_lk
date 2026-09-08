@@ -1,5 +1,5 @@
 import { VectorTile } from '@mapbox/vector-tile'
-import Pbf from 'pbf'
+import { PbfReader } from 'pbf'
 
 import {
   LABEL_LIMITS,
@@ -40,7 +40,7 @@ function getFeatureAnchor(feature: {
 function getVectorTileLabelDefinitions(
   data: ArrayBuffer
 ): VectorTileLabelDefinition[] {
-  const vectorTile = new VectorTile(new Pbf(new Uint8Array(data)))
+  const vectorTile = new VectorTile(new PbfReader(new Uint8Array(data)))
   const labels: VectorTileLabelDefinition[] = []
 
   VECTOR_LABEL_LAYERS.forEach(({ id, kind, property, limit }) => {
@@ -125,8 +125,10 @@ export function loadVectorTileLabels(
     return cached
   }
 
-  let request: Promise<VectorTileLabelDefinition[]>
-  request = fetch(`/api/map-tiles/${key}`, { cache: 'force-cache' })
+  const request: Promise<VectorTileLabelDefinition[]> = fetch(
+    `/api/map-tiles/${key}`,
+    { cache: 'force-cache' }
+  )
     .then(async (response) => {
       if (!response.ok) return []
       return getVectorTileLabelDefinitions(await response.arrayBuffer())

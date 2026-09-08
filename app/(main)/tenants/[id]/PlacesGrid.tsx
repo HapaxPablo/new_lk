@@ -55,7 +55,7 @@ export function PlacesGrid({ places, nomenclatures }: PlacesGridProps) {
         </button>
       </div>
 
-      <div className="grid max-h-190 gap-5 overflow-y-auto md:grid-cols-2">
+      <div className="grid gap-5 overflow-y-auto md:grid-cols-2">
         {normalizedPlaces.map((place) => (
           <CardNomenclature key={place.nomenclatureId} item={place} />
         ))}

@@ -23,7 +23,6 @@ interface BreadcrumbJsonLdProps {
  * ]} />
  */
 export function BreadcrumbJsonLd({ items }: BreadcrumbJsonLdProps) {
-    console.log('BreadcrumbJsonLd items:', items)
     if (!items || items.length === 0) {
         return null
     }

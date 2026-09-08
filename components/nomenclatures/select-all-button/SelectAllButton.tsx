@@ -3,11 +3,11 @@
 import { useSearchParams } from 'next/navigation'
 import { useNomenclatureStore } from '@/store/useNomenclatureStore'
 import { Button } from '@/components/ui/button/Button'
-import { INomenclatureItem } from '@/types/nomenclature'
+import { INomenclatureListItem } from '@/types/nomenclature'
 import styles from './SelectAllButton.module.scss'
 
 interface SelectAllButtonProps {
-    items: INomenclatureItem[]
+    items: INomenclatureListItem[]
 }
 
 export const SelectAllButton = ({ items }: SelectAllButtonProps) => {

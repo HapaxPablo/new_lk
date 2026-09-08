@@ -3,11 +3,13 @@ import type { NextConfig } from 'next'
 const nextConfig: NextConfig = {
   trailingSlash: false,
   experimental: {
+    // TypeScript 5.9 даёт compiler API; CLI-режим нужен только для TS 7.
+    useTypeScriptCli: false,
     // Accepts standard byte strings (e.g., '20mb', '100mb', '1gb')
-    middlewareClientMaxBodySize: '50mb',
-  },
-  serverActions: {
-    bodySizeLimit: '50mb', // For Server Action executions
+    proxyClientMaxBodySize: '50mb',
+    serverActions: {
+      bodySizeLimit: '50mb',
+    },
   },
   env: {
     CRYPTO_SECRET_KEY: process.env.CRYPTO_SECRET_KEY,
@@ -187,6 +189,13 @@ const nextConfig: NextConfig = {
   },
 
   images: {
+    // `api1.krasrm.com` in this environment resolves to a private address.
+    // Without this, Next.js blocks image optimization and cards show broken photos.
+    dangerouslyAllowLocalIP: true,
+    // Оригинал тянется с api1 долго (~2 c через NAT). Держим оптимизированные
+    // картинки в кэше сервера 7 дней, чтобы повторные запросы не ходить наверх.
+    minimumCacheTTL: 60 * 60 * 24 * 7,
+    qualities: [15, 20, 35, 45, 50, 60, 75],
     remotePatterns: [
       {
         protocol: 'https',
@@ -199,29 +208,6 @@ const nextConfig: NextConfig = {
       {
         protocol: 'https',
         hostname: 'api1.krasrm.com',
-      },
-      {
-        protocol: 'http',
-        hostname: '192.168.0.61',
-        pathname: '/local-media/**',
-      },
-      {
-        protocol: 'http',
-        hostname: '192.168.0.90',
-        port: '9001',
-        pathname: '/local-media/**',
-      },
-      {
-        protocol: 'https',
-        hostname: 'cdn2.thecatapi.com',
-      },
-      {
-        protocol: 'https',
-        hostname: 'api.thecatapi.com',
-      },
-      {
-        protocol: 'https',
-        hostname: 'api-maps.yandex.ru',
       },
       {
         protocol: 'http',

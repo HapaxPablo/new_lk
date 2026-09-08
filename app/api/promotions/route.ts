@@ -2,19 +2,7 @@ import { HttpClient1C } from '@/lib/http-client'
 import { IPromotionResponse } from '@/types'
 import { NextRequest } from 'next/server'
 
-export const revalidate = 3600
-
 export async function GET(request: NextRequest) {
-  console.log('=== API Route Debug ===')
-  console.log('URL:', request.url)
-  console.log('Headers received:', {
-    'x-access-token': request.headers.get('x-access-token')
-      ? 'present'
-      : 'missing',
-    cookie: request.headers.get('cookie') ? 'present' : 'missing',
-    authorization: request.headers.get('authorization') ? 'present' : 'missing',
-  })
-
   try {
     const { searchParams } = new URL(request.url)
 
@@ -40,11 +28,11 @@ export async function GET(request: NextRequest) {
       `api/promotions/?${queryString}`
     )
 
-    console.log('Response from 1C API received, count:', response.count)
-
     return Response.json(response)
   } catch (error: any) {
-    console.error('Error in promotions API:', error)
+    console.error('[api/promotions] upstream error', {
+      status: error.status || 500,
+    })
 
     const status = error.message.includes('Session expired')
       ? 401

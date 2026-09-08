@@ -7,6 +7,25 @@ interface HeroProps {
   placesCount: number
 }
 
+function getPlacesLabel(count: number): string {
+  const lastTwoDigits = count % 100
+  const lastDigit = count % 10
+
+  if (lastTwoDigits >= 11 && lastTwoDigits <= 14) {
+    return 'мест размещения'
+  }
+
+  if (lastDigit === 1) {
+    return 'место размещения'
+  }
+
+  if (lastDigit >= 2 && lastDigit <= 4) {
+    return 'места размещения'
+  }
+
+  return 'мест размещения'
+}
+
 export function Hero({ brand, placesCount }: HeroProps) {
   return (
     <section className="relative overflow-hidden bg-gradient-to-br from-slate-950 via-[#18335f] to-[#2563eb]">
@@ -44,7 +63,7 @@ export function Hero({ brand, placesCount }: HeroProps) {
                 {placesCount}
               </div>
               <div className="mt-1 text-xs font-semibold text-slate-500">
-                мест размещения
+                {getPlacesLabel(placesCount)}
               </div>
             </EntityCard>
             <EntityCard tone="muted" className="rounded-2xl p-4 text-center">

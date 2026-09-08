@@ -1,20 +1,24 @@
-import { INomenclatureItem, INomenclatureResponse } from '@/types/nomenclature'
+import {
+  INomenclatureListItem,
+  INomenclatureListResponse,
+} from '@/types/nomenclature'
 import { useInfinitePaginatedResource } from './data/useInfinitePaginatedResource'
 import { useNomenclatureFiltersStore } from '@/store/useNomenclatureFiltersStore'
 
 export const useInfiniteNomenclatures = (
-  initialData?: INomenclatureItem[],
+  initialData?: INomenclatureListItem[],
   initialServerCount?: number,
-  initialPage?: number
+  initialPage?: number,
+  pageLimit = 24
 ) => {
   const filters = useNomenclatureFiltersStore((state) => state.filters)
   const hasHydrated = useNomenclatureFiltersStore((state) => state.hasHydrated)
-  const limit = 24
+  const limit = Math.min(Math.max(1, pageLimit), 24)
   const hasFilters = Object.keys(filters).length > 0
 
   const getKey = (
     pageIndex: number,
-    previousData: INomenclatureResponse | null
+    previousData: INomenclatureListResponse | null
   ): string | null => {
     if (!hasHydrated) return null
     if (previousData && previousData.next === null) return null
@@ -24,6 +28,7 @@ export const useInfiniteNomenclatures = (
       page: (initialPage || 1) + pageIndex,
     }
     if (filters.search) body.search = filters.search
+    if (filters.brand_name) body.brand_name = filters.brand_name
     if (filters.brand_id) {
       const brandIds = filters.brand_id.split(',').filter(Boolean)
       if (brandIds.length > 1) {
@@ -57,7 +62,7 @@ export const useInfiniteNomenclatures = (
     return JSON.stringify(body)
   }
 
-  const fetcher = async (body: string): Promise<INomenclatureResponse> => {
+  const fetcher = async (body: string): Promise<INomenclatureListResponse> => {
     const response = await fetch('/api/nomenclatures/', {
       method: 'POST',
       credentials: 'include',
@@ -73,15 +78,16 @@ export const useInfiniteNomenclatures = (
     return response.json()
   }
 
-  return useInfinitePaginatedResource<INomenclatureItem, INomenclatureResponse>(
-    {
-      getKey,
-      fetcher,
-      initialData,
-      initialCount: initialServerCount,
-      initialPage,
-      limit,
-      useInitialData: !hasFilters,
-    }
-  )
+  return useInfinitePaginatedResource<
+    INomenclatureListItem,
+    INomenclatureListResponse
+  >({
+    getKey,
+    fetcher,
+    initialData,
+    initialCount: initialServerCount,
+    initialPage,
+    limit,
+    useInitialData: !hasFilters,
+  })
 }

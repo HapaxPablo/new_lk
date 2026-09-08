@@ -1,8 +1,6 @@
 /** Бренды: размер страницы при обходе API. */
 export const SITEMAP_BRANDS_PAGE_SIZE = 100
 
-export const SITEMAP_TENANTS_PAGE_SIZE = 100
-
 /**
  * Номенклатуры: меньший limit — большие ответы рвут соединение (UND_ERR_SOCKET).
  */

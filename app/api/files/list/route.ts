@@ -1,17 +1,9 @@
 import { getFilesList } from '@/app/(main)/orders/files/api'
 import { NextRequest, NextResponse } from 'next/server'
-import { getIronSession } from 'iron-session'
 
 export async function GET(req: NextRequest) {
   try {
     const params = req.nextUrl.searchParams
-
-    // Получаем сессию из кук запроса
-    const session = await getIronSession(req, new Response(), {
-      password:
-        process.env.SESSION_SECRET || 'complex_password_at_least_32_characters',
-      cookieName: '1c_auth_session',
-    })
 
     const data = await getFilesList({
       page: Number(params.get('page') ?? 1),

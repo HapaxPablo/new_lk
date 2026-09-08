@@ -5,10 +5,13 @@ import {
   BROADCAST_TYPE_LABELS,
   ORDER_STATUS_LABELS,
   ORDER_TYPE_LABELS,
+  type IAdOrderDetail,
+  type IBgOrderDetail,
   type TTaskType,
   TOrderKind,
 } from '@/types/orders'
-import { getAdOrderDetail, getBgOrderDetail } from '@/app/api/orders/route'
+import { httpClient1CServer } from '@/lib/http-client/httpServer'
+import { cookies } from 'next/headers'
 import { OrderActions } from './OrderActions'
 import {
   formatDateTime,
@@ -31,6 +34,22 @@ const BG_CANCEL_TASK_TYPES: Partial<Record<number, TTaskType>> = {
   1: 6,
   2: 7,
   3: 8,
+}
+
+async function getAdOrderDetail(id: string): Promise<IAdOrderDetail> {
+  const cookieStore = await cookies()
+  return httpClient1CServer.get<IAdOrderDetail>(
+    cookieStore,
+    `api/adorders/${id}/`
+  )
+}
+
+async function getBgOrderDetail(id: string): Promise<IBgOrderDetail> {
+  const cookieStore = await cookies()
+  return httpClient1CServer.get<IBgOrderDetail>(
+    cookieStore,
+    `api/bgorders/${id}/`
+  )
 }
 
 export async function generateMetadata({

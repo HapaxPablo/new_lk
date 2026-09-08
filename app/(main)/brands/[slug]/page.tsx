@@ -56,13 +56,19 @@ async function getBrandPlacesCount(brandId: string): Promise<number> {
       `api/brands/${brandId}/nomenclatures`,
       process.env.API_1C_URL
     )
-    url.searchParams.set('limit', '1')
-
     const res = await fetch(url.toString(), { cache: 'no-store' })
     if (!res.ok) return 0
 
     const data = await res.json()
-    return data?.count ?? 0
+
+    // Эндпоинт бренда возвращает массив площадок (именно его использует
+    // BrandNomenclatures), а не всегда пагинированный ответ с `count`.
+    // Поддерживаем оба формата, чтобы счётчик в hero совпадал со списком.
+    if (Array.isArray(data)) {
+      return data.length
+    }
+
+    return data?.count ?? data?.results?.length ?? 0
   } catch {
     return 0
   }

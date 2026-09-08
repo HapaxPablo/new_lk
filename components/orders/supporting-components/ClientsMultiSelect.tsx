@@ -22,6 +22,8 @@ interface Props {
   onError?: (message: string) => void
 }
 
+const MIN_SEARCH_LENGTH = 3
+
 export function ClientsMultiSelect({
   selected,
   onToggle,
@@ -40,7 +42,11 @@ export function ClientsMultiSelect({
       enabled: isOpen,
       fetchPage,
       onError,
+      minSearchLength: MIN_SEARCH_LENGTH,
     })
+
+  const isSearchTooShort =
+    search.trim().length > 0 && search.trim().length < MIN_SEARCH_LENGTH
 
   useClickOutside([wrapperRef], () => setIsDropdownOpen(false), isDropdownOpen)
 
@@ -160,11 +166,19 @@ export function ClientsMultiSelect({
                   )
                 })}
               </div>
-              {!isLoading && items.length === 0 && selected.length === 0 && (
+              {isSearchTooShort && !isLoading && (
                 <div className="px-4 py-3 text-sm text-gray-500">
-                  Ничего не найдено
+                  Введите не менее {MIN_SEARCH_LENGTH} символов для поиска
                 </div>
               )}
+              {!isSearchTooShort &&
+                !isLoading &&
+                items.length === 0 &&
+                selected.length === 0 && (
+                  <div className="px-4 py-3 text-sm text-gray-500">
+                    Ничего не найдено
+                  </div>
+                )}
               {isLoading && (
                 <div className="px-4 py-3 text-sm text-gray-500">
                   Загружаем...
